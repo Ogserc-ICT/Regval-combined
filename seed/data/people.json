@@ -1,0 +1,11 @@
+{
+  "_source": "Registry Lists (columns Z, AA, AF:AG, AR) of the combined workbook; docs/COMBINED_BUILD.md 'Modules and roles'. Seeded inactive and awaiting confirmation (Q22). An admin adds the real work email, confirms and activates each account.",
+  "people": [
+    { "name": "Funmilayo Sorungbe", "roles": ["front_desk"], "notes": "Front desk staff (Registry Lists AR4)" },
+    { "name": "Aliu Funmilola", "roles": ["front_desk"], "notes": "Front desk staff (Registry Lists AR5)" },
+    { "name": "Olanrewaju Oluyombo", "roles": ["registry"], "notes": "Registry staff (Registry Lists Z4)" },
+    { "name": "Abiodun Sodipo", "roles": ["registry"], "notes": "Registry staff (Registry Lists Z5)" },
+    { "name": "Oluwatoyin Sonoiki", "roles": ["router"], "notes": "Secretary to the Commission; routing officer (Registry Lists AA4, AF5)" },
+    { "name": "Adetola Salami", "roles": ["router"], "notes": "Head of Administration; routing officer (Registry Lists AF6)" }
+  ]
+}

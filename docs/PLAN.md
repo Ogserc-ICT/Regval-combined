@@ -6,11 +6,11 @@ Phase 0 · 5 Nov 2026 · companion to `docs/SPEC.md` (rules) and `docs/QUESTIONS
 
 | Area | Proposal | Why |
 | --- | --- | --- |
-| Framework | Next.js (App Router, current stable, pinned at scaffold), TypeScript strict, React Server Components, Server Actions for forms, route handlers for PDFs, exports, cron | Fixed by the brief |
+| Framework | Next.js 16.4 (App Router), TypeScript strict, React Server Components, Server Actions for forms, route handlers for PDFs, exports, cron. **Cache Components off** (`cacheComponents: false`): every page is signed-in and must show current register data, so pages render per request (decided in Phase 1). Next.js 16 calls middleware "proxy" (`src/proxy.ts`). | Fixed by the brief |
 | Database | PostgreSQL on Neon via the Vercel Marketplace; new project and database | Fixed by the brief |
 | ORM | **Drizzle ORM** with the `node-postgres` driver | SQL-first, typed, thin; real interactive transactions and `SELECT … FOR UPDATE` for the counters; no query engine binary; easy to drop to raw SQL for triggers and reports |
 | Migrations | **drizzle-kit** generating plain SQL files, committed and reviewed; hand-written SQL migrations for triggers, grants and constraints; applied by `drizzle-kit migrate` as a Vercel build step against `DATABASE_URL_UNPOOLED` | Migrations never run on a cold start |
-| Auth | **Better Auth**: email + password (argon2), database sessions, admin-created accounts only (sign-up disabled), forced password change on first sign-in, optional TOTP two-factor, account lock after repeated failures. A Microsoft Entra ID provider can be added later without schema change (Q18) | Staff-only; works on Vercel with Postgres; sessions are revocable rows; no third-party identity service needed on day one |
+| Auth | **Better Auth**: email + password (Better Auth's scrypt hashing), database sessions (12 hours), admin-created accounts only (sign-up and self-service account endpoints disabled), forced password change on first sign-in, sign-in rate limit (5 a minute). Optional TOTP two-factor can be added later. A Microsoft Entra ID provider can be added later without schema change (Q18) | Staff-only; works on Vercel with Postgres; sessions are revocable rows; no third-party identity service needed on day one |
 | Authorisation | Our own `user_roles` table and one `authorize(user, action, record)` function called by every server action and route handler; UI hides what the server would refuse | **[G6–G8]** on the server |
 | Validation | Zod schemas shared by forms and server actions | One validator per field type (phone, CAC, email) **[G5]** |
 | Dates | `date-fns` + `@date-fns/tz`; one `lagos` module that owns "now", "today", working days and deemed receipt; `APP_TODAY` honoured outside production only | **[G13]** |
@@ -179,6 +179,8 @@ Sidebar (dark by default, collapsible; light mode available): one entry per modu
 Every number displayed is a link to its record. Every date shown is Lagos time.
 
 ## 8. Project layout
+
+As built in Phase 1, `app/` lives at `src/app/`, sign-in is `src/app/sign-in`, the first-sign-in password page is `src/app/account/password`, and the seed is `seed/seed.ts` with data in `seed/data/`.
 
 ```
 app/

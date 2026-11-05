@@ -22,6 +22,12 @@ This project started from an empty folder. It shares no code, database, number s
 - Design: a modern, premium dashboard with a sidebar, dark mode by default, one look across both modules.
 - Nothing may depend on a local disk or desktop Office: generate PDFs on request, store kept files in Vercel Blob, send email through the email adapter.
 
+## Commands
+
+`pnpm db:up` (local Postgres in Docker) · `pnpm db:migrate` · `pnpm db:seed` · `pnpm dev` · `pnpm typecheck` · `pnpm lint` · `pnpm test:unit` · `pnpm test:integration` · `pnpm build`. Schema changes: edit `src/server/db/schema/*`, then `pnpm db:generate`.
+
+This Next.js version (16.4) differs from older ones; read `node_modules/next/dist/docs/` before using an unfamiliar API (see AGENTS.md).
+
 ## Key docs
 
 - `docs/COMBINED_BUILD.md`: build brief, gaps G1 to G13, phases, acceptance checks
@@ -33,8 +39,8 @@ This project started from an empty folder. It shares no code, database, number s
 
 Update this list as each phase finishes.
 
-- Phase 0, spec and plan: not started
-- Phase 1, scaffold and foundations: not started
+- Phase 0, spec and plan: done 5 Nov 2026; Q1, Q3, Q4, Q6 decided and G14 added 6 Nov 2026
+- Phase 1, scaffold and foundations: done 6 Nov 2026, awaiting review; Vercel project and first preview to be set up by Kamiye (docs/DEPLOY.md)
 - Phase 2, Registration module: not started
 - Phase 3, Registry module: not started
 - Phase 4, outputs and automation: not started

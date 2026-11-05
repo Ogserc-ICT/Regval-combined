@@ -1,0 +1,18 @@
+[
+  { "date": "2026-12-25", "name": "Christmas Day", "status": "Fixed" },
+  { "date": "2026-12-26", "name": "Boxing Day (Saturday)", "status": "Fixed" },
+  { "date": "2026-12-28", "name": "Boxing Day holiday (substitute)", "status": "Provisional", "note": "Confirm FG declaration" },
+  { "date": "2027-01-01", "name": "New Year's Day", "status": "Fixed" },
+  { "date": "2027-03-10", "name": "Eid al-Fitr", "status": "Estimated", "note": "Confirm FG declaration" },
+  { "date": "2027-03-11", "name": "Eid al-Fitr holiday", "status": "Estimated", "note": "Confirm FG declaration" },
+  { "date": "2027-03-26", "name": "Good Friday", "status": "Fixed" },
+  { "date": "2027-03-29", "name": "Easter Monday", "status": "Fixed" },
+  { "date": "2027-05-03", "name": "Workers' Day (substitute for Sat 1 May)", "status": "Provisional", "note": "Confirm FG declaration" },
+  { "date": "2027-05-17", "name": "Eid al-Adha", "status": "Estimated", "note": "Confirm FG declaration" },
+  { "date": "2027-05-18", "name": "Eid al-Adha holiday", "status": "Estimated", "note": "Confirm FG declaration" },
+  { "date": "2027-06-14", "name": "Democracy Day (substitute for Sat 12 June)", "status": "Provisional", "note": "Confirm FG declaration" },
+  { "date": "2027-08-16", "name": "Eid al-Mawlid", "status": "Estimated", "note": "Confirm FG declaration" },
+  { "date": "2027-10-01", "name": "Independence Day", "status": "Fixed" },
+  { "date": "2027-12-27", "name": "Christmas Day holiday (substitute for Sat 25 Dec)", "status": "Provisional", "note": "Confirm FG declaration" },
+  { "date": "2027-12-28", "name": "Boxing Day holiday (substitute for Sun 26 Dec)", "status": "Provisional", "note": "Confirm FG declaration" }
+]
