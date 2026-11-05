@@ -1,11 +1,12 @@
 import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+import { directDatabaseUrl } from "./src/server/db/env";
 
 config({ path: ".env.local" });
 config();
 
 // Migrations always use the direct (unpooled) connection.
-const url = process.env.MIGRATE_DATABASE_URL ?? process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
+const url = process.env.MIGRATE_DATABASE_URL ?? directDatabaseUrl();
 
 export default defineConfig({
   dialect: "postgresql",

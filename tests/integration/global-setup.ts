@@ -5,6 +5,8 @@
 import { config } from "dotenv";
 import { Client } from "pg";
 import { runMigrations } from "../../src/server/db/migrate";
+import { createDb } from "../../src/server/db/connect";
+import { seedReference } from "../../seed/reference";
 
 export default async function setup() {
   config({ path: ".env.local" });
@@ -22,4 +24,10 @@ export default async function setup() {
     await client.end();
   }
   await runMigrations(url);
+  const db = createDb(url, 2);
+  try {
+    await seedReference(db, { id: null, name: "Test seed" });
+  } finally {
+    await db.$client.end();
+  }
 }

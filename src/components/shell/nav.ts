@@ -7,7 +7,7 @@ import type { Permission } from "@/domain/roles";
 export type NavIcon =
   | "dashboard" | "frontdesk" | "intake" | "inward" | "routing" | "outward" | "files" | "pending"
   | "register" | "payments" | "documents" | "evaluation" | "ownuse" | "reports" | "audit"
-  | "settings" | "holidays" | "users";
+  | "settings" | "holidays" | "users" | "signatories";
 
 export type NavItem = {
   label: string;
@@ -40,11 +40,11 @@ export const NAV: NavGroup[] = [
   {
     label: "Registration",
     items: [
-      { label: "Register", href: "/register", icon: "register", permission: "registers:read", phase: 2 },
-      { label: "Payments & Finance", href: "/payments", icon: "payments", permission: "registers:read", phase: 2 },
-      { label: "Documents", href: "/documents", icon: "documents", permission: "registers:read", phase: 2 },
-      { label: "Evaluation", href: "/evaluation", icon: "evaluation", permission: "registers:read", phase: 2 },
-      { label: "Own-use", href: "/own-use", icon: "ownuse", permission: "registers:read", phase: 2 },
+      { label: "Register", href: "/register", icon: "register", permission: "registers:read" },
+      { label: "Payments & Finance", href: "/payments", icon: "payments", permission: "registers:read" },
+      { label: "Documents", href: "/documents", icon: "documents", permission: "registers:read" },
+      { label: "Evaluation", href: "/evaluation", icon: "evaluation", permission: "registers:read" },
+      { label: "Own-use", href: "/own-use", icon: "ownuse", permission: "registers:read" },
     ],
   },
   {
@@ -59,6 +59,7 @@ export const NAV: NavGroup[] = [
     items: [
       { label: "Settings", href: "/admin/settings", icon: "settings", permission: "registers:read" },
       { label: "Holidays", href: "/admin/holidays", icon: "holidays", permission: "registers:read" },
+      { label: "Signatories", href: "/admin/signatories", icon: "signatories", permission: "registers:read" },
       { label: "Staff & roles", href: "/admin/users", icon: "users", permission: "users:manage" },
     ],
   },

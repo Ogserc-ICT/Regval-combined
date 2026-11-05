@@ -14,9 +14,9 @@ export const metadata: Metadata = { title: "Dashboard" };
 
 const PHASES = [
   { n: 0, name: "Spec and plan", status: "done" },
-  { n: 1, name: "Scaffold and foundations", status: "current" },
-  { n: 2, name: "Registration module", status: "next" },
-  { n: 3, name: "Registry module", status: "later" },
+  { n: 1, name: "Scaffold and foundations", status: "done" },
+  { n: 2, name: "Registration module", status: "current" },
+  { n: 3, name: "Registry module", status: "next" },
   { n: 4, name: "Outputs and automation", status: "later" },
   { n: 5, name: "Dashboard and admin", status: "later" },
   { n: 6, name: "Import and go-live", status: "later" },

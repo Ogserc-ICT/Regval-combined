@@ -28,6 +28,14 @@ For whoever sets up the Vercel project (Kamiye, ICT). This app has its own Verce
 
 The admin footer shows the deployed commit (`VERCEL_GIT_COMMIT_SHA`, [G10]).
 
+## If the build fails with "No database connection string found"
+
+The first build step (`tsx scripts/migrate.ts`) needs the database URL **at build time**.
+
+- A push to `main` builds **Production**; any other branch builds **Preview**. The database must be connected to the environment being built: Project › Storage › your Neon database › Settings, tick Production and Preview, then Redeploy.
+- The message lists the database-related variable names the build can see (never their values). If they all carry a prefix you chose when connecting Neon (for example `STORAGE_DATABASE_URL`), add `DB_ENV_PREFIX=STORAGE` for both environments, or reconnect without a prefix.
+- Variables added after a build don't apply to it: use Redeploy (without the build cache) once they are set.
+
 ## Production (Phase 6)
 
 - Promote after the import of the real record.

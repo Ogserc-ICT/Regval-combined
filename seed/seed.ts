@@ -12,13 +12,16 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { and, eq, sql } from "drizzle-orm";
 import { createDb, type Db } from "../src/server/db/connect";
+import { directDatabaseUrl, missingDatabaseMessage } from "../src/server/db/env";
 import { holidays, userRoles, users } from "../src/server/db/schema";
 import { writeAudit, type AuditActor } from "../src/server/audit";
 import { createUserAs } from "../src/server/services/users";
 import { examplesAllowed } from "../src/server/seed-guard";
+import { seedReference } from "./reference";
+import { seedExamples } from "./examples";
 
-config({ path: ".env.local" });
-config();
+config({ path: ".env.local", quiet: true });
+config({ quiet: true });
 
 const SEED: AuditActor = { id: null, name: "Seed" };
 
@@ -96,17 +99,20 @@ export async function seedBootstrapAdmin(db: Db, env = process.env): Promise<str
 }
 
 async function main() {
-  const url = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
-  if (!url) throw new Error("DATABASE_URL is not set");
+  const url = directDatabaseUrl();
+  if (!url) throw new Error(missingDatabaseMessage());
   const db = createDb(url, 2);
   try {
     await db.execute(sql`select 1`);
     console.log(`Holidays added: ${await seedHolidays(db)}`);
+    const ref = await seedReference(db, SEED);
+    console.log(`Reference data added: ${Object.entries(ref).map(([k, n]) => `${k} ${n}`).join(", ")}`);
     console.log(`People added (inactive, awaiting confirmation): ${await seedPeople(db)}`);
     const pw = await seedBootstrapAdmin(db);
     if (pw) console.log(`First admin created. One-time password (shown once): ${pw}`);
     const ex = examplesAllowed();
-    console.log(ex.allowed ? `EXAMPLE rows: allowed (${ex.reason}); none to seed in Phase 1.` : `EXAMPLE rows: not seeded (${ex.reason}).`);
+    if (ex.allowed) console.log(`EXAMPLE rows (${ex.reason}): ${await seedExamples(db)}`);
+    else console.log(`EXAMPLE rows: not seeded (${ex.reason}).`);
   } finally {
     await db.$client.end();
   }

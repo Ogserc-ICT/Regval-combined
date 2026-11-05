@@ -4,7 +4,8 @@
  * ActionResult; route handlers into an HTTP status.
  */
 
-export type FailureKind = "unauthenticated" | "forbidden" | "invalid" | "blocked" | "not_found";
+/** "confirm": warnings the user may accept by resubmitting with confirmation (e.g. duplicate CAC). */
+export type FailureKind = "unauthenticated" | "forbidden" | "invalid" | "blocked" | "not_found" | "confirm";
 
 const STATUS: Record<FailureKind, number> = {
   unauthenticated: 401,
@@ -12,6 +13,7 @@ const STATUS: Record<FailureKind, number> = {
   invalid: 422,
   blocked: 409,
   not_found: 404,
+  confirm: 409,
 };
 
 export class ServiceError extends Error {
@@ -34,6 +36,7 @@ export class ServiceError extends Error {
 
 export const forbidden = (...reasons: string[]) => new ServiceError("forbidden", reasons);
 export const blocked = (...reasons: string[]) => new ServiceError("blocked", reasons);
+export const needsConfirmation = (...warnings: string[]) => new ServiceError("confirm", warnings);
 export const notFound = (what: string) => new ServiceError("not_found", [`${what} not found`]);
 export const invalid = (fieldErrors: Record<string, string[]>, reasons: string[] = []) =>
   new ServiceError("invalid", reasons.length ? reasons : ["Please correct the highlighted fields."], fieldErrors);

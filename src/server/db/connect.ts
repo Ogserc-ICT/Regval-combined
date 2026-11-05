@@ -17,3 +17,24 @@ export function createDb(url: string, max = 10): Db {
   const pool = new Pool({ connectionString: url, max, idleTimeoutMillis: 10_000 });
   return drizzle(pool, { schema }) as Db;
 }
+
+/** A transaction handle has no pool ($client); the app's db does. */
+export function isTransaction(db: DbOrTx): boolean {
+  return !("$client" in db);
+}
+
+/**
+ * Run independent queries: in parallel on the pool, one after another inside a
+ * transaction (a transaction is one connection, and node-postgres does not
+ * allow overlapping queries on one connection).
+ */
+export async function all<const T extends readonly (() => Promise<unknown>)[]>(
+  db: DbOrTx,
+  thunks: T,
+): Promise<{ -readonly [K in keyof T]: Awaited<ReturnType<T[K]>> }> {
+  type R = { -readonly [K in keyof T]: Awaited<ReturnType<T[K]>> };
+  if (!isTransaction(db)) return (await Promise.all(thunks.map((t) => t()))) as unknown as R;
+  const out: unknown[] = [];
+  for (const t of thunks) out.push(await t());
+  return out as unknown as R;
+}

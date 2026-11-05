@@ -1,0 +1,3039 @@
+{
+ "fees": [
+  {
+   "category": "A",
+   "registrationFee": 100000000,
+   "lateInitial": 100000000,
+   "lateDaily": 20000000,
+   "lateCap": 2000000000,
+   "lateTier": 1,
+   "description": "Successor distribution companies, including a multi-State licensee that is a successor distribution company, for all their activities in Ogun State"
+  },
+  {
+   "category": "B",
+   "registrationFee": 100000000,
+   "lateInitial": 100000000,
+   "lateDaily": 20000000,
+   "lateCap": 2000000000,
+   "lateTier": 1,
+   "description": "Integrated utilities, for all their activities in Ogun State"
+  },
+  {
+   "category": "C",
+   "registrationFee": 50000000,
+   "lateInitial": 100000000,
+   "lateDaily": 20000000,
+   "lateCap": 2000000000,
+   "lateTier": 1,
+   "description": "Generation of 10 MW or more, whether for sale or captive use"
+  },
+  {
+   "category": "D",
+   "registrationFee": 30000000,
+   "lateInitial": 50000000,
+   "lateDaily": 10000000,
+   "lateCap": 1000000000,
+   "lateTier": 2,
+   "description": "Generation of 1 MW to less than 10 MW, whether for sale or captive use"
+  },
+  {
+   "category": "E",
+   "registrationFee": 25000000,
+   "lateInitial": 50000000,
+   "lateDaily": 10000000,
+   "lateCap": 1000000000,
+   "lateTier": 2,
+   "description": "Mini-grids and interconnected mini-grids"
+  },
+  {
+   "category": "F",
+   "registrationFee": 50000000,
+   "lateInitial": 100000000,
+   "lateDaily": 20000000,
+   "lateCap": 2000000000,
+   "lateTier": 1,
+   "description": "Distribution licensees other than successor distribution companies; trading and bulk supply"
+  },
+  {
+   "category": "G",
+   "registrationFee": 50000000,
+   "lateInitial": 100000000,
+   "lateDaily": 20000000,
+   "lateCap": 2000000000,
+   "lateTier": 1,
+   "description": "Private, estate and industrial-park networks"
+  },
+  {
+   "category": "H",
+   "registrationFee": 25000000,
+   "lateInitial": 50000000,
+   "lateDaily": 10000000,
+   "lateCap": 1000000000,
+   "lateTier": 2,
+   "description": "Metering service providers"
+  },
+  {
+   "category": "I",
+   "registrationFee": 10000000,
+   "lateInitial": 0,
+   "lateDaily": 0,
+   "lateCap": 0,
+   "lateTier": null,
+   "description": "Own-use generation notification under paragraph 3(4) (200 kW to below 1 MW)"
+  },
+  {
+   "category": "J",
+   "registrationFee": 25000000,
+   "lateInitial": 50000000,
+   "lateDaily": 10000000,
+   "lateCap": 1000000000,
+   "lateTier": 2,
+   "description": "Franchisees and sub-franchisees"
+  },
+  {
+   "category": "K",
+   "registrationFee": 10000000,
+   "lateInitial": 10000000,
+   "lateDaily": 1000000,
+   "lateCap": 200000000,
+   "lateTier": 3,
+   "description": "Any other activity below 1 MW"
+  }
+ ],
+ "activities": [
+  {
+   "name": "Successor distribution company (incl. multi-State)",
+   "code": "SDC",
+   "cat10MwPlus": "A",
+   "cat1To10Mw": "A",
+   "catBelow1Mw": "A",
+   "capacityBased": false,
+   "sort": 1
+  },
+  {
+   "name": "Integrated generation and distribution (integrated utility)",
+   "code": "INT",
+   "cat10MwPlus": "B",
+   "cat1To10Mw": "B",
+   "catBelow1Mw": "B",
+   "capacityBased": false,
+   "sort": 2
+  },
+  {
+   "name": "Generation for sale (on-grid / off-grid / embedded)",
+   "code": "GEN",
+   "cat10MwPlus": "C",
+   "cat1To10Mw": "D",
+   "catBelow1Mw": "K",
+   "capacityBased": true,
+   "sort": 3
+  },
+  {
+   "name": "Captive generation (1 MW or more)",
+   "code": "CPT",
+   "cat10MwPlus": "C",
+   "cat1To10Mw": "D",
+   "catBelow1Mw": "D",
+   "capacityBased": true,
+   "sort": 4
+  },
+  {
+   "name": "Distribution – other licensee",
+   "code": "DIS",
+   "cat10MwPlus": "F",
+   "cat1To10Mw": "F",
+   "catBelow1Mw": "F",
+   "capacityBased": false,
+   "sort": 5
+  },
+  {
+   "name": "Multi-State licensee – non-successor (Ogun operations)",
+   "code": "MSL",
+   "cat10MwPlus": "F",
+   "cat1To10Mw": "F",
+   "catBelow1Mw": "F",
+   "capacityBased": false,
+   "sort": 6
+  },
+  {
+   "name": "Independent electricity distribution network",
+   "code": "IDN",
+   "cat10MwPlus": "F",
+   "cat1To10Mw": "F",
+   "catBelow1Mw": "F",
+   "capacityBased": false,
+   "sort": 7
+  },
+  {
+   "name": "Trading / bulk supply",
+   "code": "TRD",
+   "cat10MwPlus": "F",
+   "cat1To10Mw": "F",
+   "catBelow1Mw": "F",
+   "capacityBased": false,
+   "sort": 8
+  },
+  {
+   "name": "Supply / retail",
+   "code": "SUP",
+   "cat10MwPlus": "K",
+   "cat1To10Mw": "K",
+   "catBelow1Mw": "K",
+   "capacityBased": false,
+   "sort": 9
+  },
+  {
+   "name": "Mini-grid / interconnected mini-grid",
+   "code": "MGD",
+   "cat10MwPlus": "E",
+   "cat1To10Mw": "E",
+   "catBelow1Mw": "E",
+   "capacityBased": true,
+   "sort": 10
+  },
+  {
+   "name": "Private / estate / industrial-park network",
+   "code": "EST",
+   "cat10MwPlus": "G",
+   "cat1To10Mw": "G",
+   "catBelow1Mw": "G",
+   "capacityBased": false,
+   "sort": 11
+  },
+  {
+   "name": "Franchise / sub-franchise",
+   "code": "FRN",
+   "cat10MwPlus": "J",
+   "cat1To10Mw": "J",
+   "catBelow1Mw": "J",
+   "capacityBased": false,
+   "sort": 12
+  },
+  {
+   "name": "Metering services",
+   "code": "MET",
+   "cat10MwPlus": "H",
+   "cat1To10Mw": "H",
+   "catBelow1Mw": "H",
+   "capacityBased": false,
+   "sort": 13
+  },
+  {
+   "name": "Other activity",
+   "code": "OTH",
+   "cat10MwPlus": "C",
+   "cat1To10Mw": "D",
+   "catBelow1Mw": "K",
+   "capacityBased": true,
+   "sort": 14
+  }
+ ],
+ "forms": [
+  {
+   "form": "REG-01A",
+   "category": "A",
+   "title": "Successor distribution companies",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01B",
+   "category": "B",
+   "title": "Integrated utilities",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01C",
+   "category": "C",
+   "title": "Generation of 10 MW and above",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01D",
+   "category": "D",
+   "title": "Generation of 1 MW to below 10 MW",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01E",
+   "category": "E",
+   "title": "Mini-grids and interconnected mini-grids",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01F",
+   "category": "F",
+   "title": "Other distribution licensees; trading and bulk supply",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01G",
+   "category": "G",
+   "title": "Private, estate and industrial-park networks",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01H",
+   "category": "H",
+   "title": "Metering service providers",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01I",
+   "category": "I",
+   "title": "Own-use generation notification (200 kW to below 1 MW)",
+   "orderPara": "3(4); Schedule 1 Part B"
+  },
+  {
+   "form": "REG-01J",
+   "category": "J",
+   "title": "Franchisees and sub-franchisees",
+   "orderPara": "12; Schedule 1 Part A"
+  },
+  {
+   "form": "REG-01K",
+   "category": "K",
+   "title": "Any other activity below 1 MW",
+   "orderPara": "12; Schedule 1 Part A"
+  }
+ ],
+ "formDocuments": [
+  {
+   "form": "REG-01A",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01A",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the Ogun State network",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of substations",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 6,
+   "key": "bulk_supply_agreements",
+   "document": "Bulk supply and interface agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 7,
+   "key": "tariff_order",
+   "document": "Approved tariff order and band classification applied",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 8,
+   "key": "customer_enumeration",
+   "document": "Customer enumeration summary by class and metering status",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 9,
+   "key": "largest_customers",
+   "document": "List of the 20 largest customers",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 10,
+   "key": "env_safety_permits",
+   "document": "Environmental and safety permits",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 11,
+   "key": "financials",
+   "document": "Audited financial statements, last two years (or para 12(2) alternative)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 12,
+   "key": "multistate_ringfencing",
+   "document": "Multi-State: ring-fencing plan, separate Ogun registers and cross-boundary register (para 7(3))",
+   "requiredWhen": "multi_state_licensee"
+  },
+  {
+   "form": "REG-01A",
+   "no": 13,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01A",
+   "no": 14,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01B",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the plant and network",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of plant and substations",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 6,
+   "key": "fuel_supply_agreements",
+   "document": "Gas or fuel supply agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 7,
+   "key": "supply_ppa_agreements",
+   "document": "Bulk supply, power purchase and customer supply agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 8,
+   "key": "tariff_order",
+   "document": "Approved tariff order or tariff schedule applied",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 9,
+   "key": "customer_enumeration",
+   "document": "Customer enumeration summary by class and metering status",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 10,
+   "key": "env_permits_eia",
+   "document": "Environmental permits, including EIA approval",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 11,
+   "key": "financials",
+   "document": "Audited financial statements, last two years (or para 12(2) alternative)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 12,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01B",
+   "no": 13,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01C",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the plant and connection",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of each plant",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 6,
+   "key": "connection_agreement",
+   "document": "Grid or network connection agreement",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 7,
+   "key": "ppa_offtake",
+   "document": "Power purchase and offtake agreements (sale only)",
+   "requiredWhen": "generation_for_sale"
+  },
+  {
+   "form": "REG-01C",
+   "no": 8,
+   "key": "fuel_supply_agreements",
+   "document": "Gas or fuel supply agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 9,
+   "key": "env_permits_eia",
+   "document": "Environmental permits, including EIA approval",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 10,
+   "key": "financials",
+   "document": "Audited financial statements, last two years (or para 12(2) alternative)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 11,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01C",
+   "no": 12,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01D",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the plant and connection",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of each plant",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 6,
+   "key": "connection_agreement",
+   "document": "Grid or network connection agreement (if connected)",
+   "requiredWhen": "grid_connected"
+  },
+  {
+   "form": "REG-01D",
+   "no": 7,
+   "key": "ppa_offtake",
+   "document": "Power purchase and offtake agreements (sale only)",
+   "requiredWhen": "generation_for_sale"
+  },
+  {
+   "form": "REG-01D",
+   "no": 8,
+   "key": "fuel_supply_agreements",
+   "document": "Gas or fuel supply agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 9,
+   "key": "env_permits",
+   "document": "Environmental permits",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 10,
+   "key": "financials",
+   "document": "Audited financial statements, last two years (or para 12(2) alternative)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 11,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01D",
+   "no": 12,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation / registration (or community or cooperative registration)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 2,
+   "key": "constitution",
+   "document": "Constitutional documents (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every NERC or OGSERC permit or registration, by site",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01E",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Site layout or single-line diagram for each site",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset list with GPS coordinates of each site",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 6,
+   "key": "community_consent",
+   "document": "Community agreement or host consent for each site",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 7,
+   "key": "interconnection_agreement",
+   "document": "Interconnection agreement with the DisCo (interconnected only)",
+   "requiredWhen": "interconnected_minigrid"
+  },
+  {
+   "form": "REG-01E",
+   "no": 8,
+   "key": "tariff_order",
+   "document": "Tariff approval or tariff schedule applied",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 9,
+   "key": "customer_list",
+   "document": "Customer list by site and class",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 10,
+   "key": "env_safety_permits",
+   "document": "Environmental and safety permits",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 11,
+   "key": "financials",
+   "document": "Financial statements or management accounts (para 12(2))",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 12,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01E",
+   "no": 13,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01F",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the network (distribution)",
+   "requiredWhen": "f_distribution"
+  },
+  {
+   "form": "REG-01F",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates (distribution)",
+   "requiredWhen": "f_distribution"
+  },
+  {
+   "form": "REG-01F",
+   "no": 6,
+   "key": "supply_ppa_agreements",
+   "document": "Bulk supply, power purchase and sale agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 7,
+   "key": "wheeling_agreements",
+   "document": "Use-of-system or wheeling agreements (trading)",
+   "requiredWhen": "f_trading"
+  },
+  {
+   "form": "REG-01F",
+   "no": 8,
+   "key": "tariff_order",
+   "document": "Tariff or price schedules applied",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 9,
+   "key": "customer_enumeration",
+   "document": "Customer enumeration summary (distribution)",
+   "requiredWhen": "f_distribution"
+  },
+  {
+   "form": "REG-01F",
+   "no": 10,
+   "key": "credit_support",
+   "document": "Evidence of credit support (trading)",
+   "requiredWhen": "f_trading"
+  },
+  {
+   "form": "REG-01F",
+   "no": 11,
+   "key": "env_safety_permits",
+   "document": "Environmental and safety permits (distribution)",
+   "requiredWhen": "f_distribution"
+  },
+  {
+   "form": "REG-01F",
+   "no": 12,
+   "key": "financials",
+   "document": "Audited financial statements, last two years (or para 12(2) alternative)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 13,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01F",
+   "no": 14,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01G",
+   "no": 4,
+   "key": "developer_agreement",
+   "document": "Agreement with the developer or owner of the development",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 5,
+   "key": "bulk_supply_agreements",
+   "document": "Bulk supply agreement and bulk meter details",
+   "requiredWhen": "g_disco_bulk_supply"
+  },
+  {
+   "form": "REG-01G",
+   "no": 6,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram of the network",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 7,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of transformers",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 8,
+   "key": "tariff_order",
+   "document": "Tariff schedule and basis",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 9,
+   "key": "customer_enumeration",
+   "document": "Customer enumeration summary",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 10,
+   "key": "financials",
+   "document": "Financial statements or management accounts (para 12(2))",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 11,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01G",
+   "no": 12,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01H",
+   "no": 4,
+   "key": "nemsa_accreditation",
+   "document": "NEMSA certification or accreditation",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 5,
+   "key": "type_test_certificates",
+   "document": "Type-test certificates for each meter model",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 6,
+   "key": "client_contracts",
+   "document": "Contracts with distribution licensees or other clients",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 7,
+   "key": "installers_list",
+   "document": "List of certified installers and technical staff",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 8,
+   "key": "financials",
+   "document": "Financial statements or management accounts (para 12(2))",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 9,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01H",
+   "no": 10,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01I",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation / business registration",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01I",
+   "no": 2,
+   "key": "nameplate_photos",
+   "document": "Photographs of generator nameplates",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01I",
+   "no": 3,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the notification fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01J",
+   "no": 4,
+   "key": "franchise_agreement",
+   "document": "Franchise or sub-franchise agreement",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 5,
+   "key": "franchisor_consent",
+   "document": "Franchisor's consent or approval (sub-franchise)",
+   "requiredWhen": "sub_franchise"
+  },
+  {
+   "form": "REG-01J",
+   "no": 6,
+   "key": "territory_map",
+   "document": "Map or list of feeders and communities in the territory",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 7,
+   "key": "asset_register",
+   "document": "Asset register with GPS coordinates of transformers",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 8,
+   "key": "customer_enumeration",
+   "document": "Customer enumeration summary",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 9,
+   "key": "financials",
+   "document": "Financial statements or management accounts (para 12(2))",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 10,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01J",
+   "no": 11,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 1,
+   "key": "incorporation",
+   "document": "Certificate of incorporation and CAC status report (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 2,
+   "key": "constitution",
+   "document": "Memorandum and articles of association (or equivalent)",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 3,
+   "key": "licences",
+   "document": "Copy of every licence, permit or registration held",
+   "requiredWhen": "holds_any_licence"
+  },
+  {
+   "form": "REG-01K",
+   "no": 4,
+   "key": "single_line_diagram",
+   "document": "Single-line diagram or simple layout of the installation",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 5,
+   "key": "asset_register",
+   "document": "Asset list with GPS coordinates",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 6,
+   "key": "supply_sale_agreements",
+   "document": "Supply or sale agreements",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 7,
+   "key": "tariff_order",
+   "document": "Tariff or price schedule",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 8,
+   "key": "financials",
+   "document": "Financial statements or management accounts (para 12(2))",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 9,
+   "key": "board_resolution",
+   "document": "Board resolution, or equivalent authorization, approving the registration and signatories",
+   "requiredWhen": null
+  },
+  {
+   "form": "REG-01K",
+   "no": 10,
+   "key": "payment_evidence",
+   "document": "Evidence of payment of the registration fee",
+   "requiredWhen": null
+  }
+ ],
+ "conditions": [
+  {
+   "key": "holds_any_licence",
+   "question": "Holds any licence, permit or registration?",
+   "sort": 0
+  },
+  {
+   "key": "multi_state_licensee",
+   "question": "Multi-State licensee?",
+   "sort": 1
+  },
+  {
+   "key": "generation_for_sale",
+   "question": "Generation includes sale (not captive only)?",
+   "sort": 2
+  },
+  {
+   "key": "grid_connected",
+   "question": "Plant connected to TCN, a DisCo or a private network?",
+   "sort": 3
+  },
+  {
+   "key": "interconnected_minigrid",
+   "question": "Interconnected mini-grid?",
+   "sort": 4
+  },
+  {
+   "key": "f_distribution",
+   "question": "Part 1 (distribution) applies?",
+   "sort": 5
+  },
+  {
+   "key": "f_trading",
+   "question": "Part 2 (trading and bulk supply) applies?",
+   "sort": 6
+  },
+  {
+   "key": "g_disco_bulk_supply",
+   "question": "Supplied by DisCo bulk supply?",
+   "sort": 7
+  },
+  {
+   "key": "sub_franchise",
+   "question": "Sub-franchisee?",
+   "sort": 8
+  }
+ ],
+ "checks": [
+  {
+   "id": "1.1",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Acknowledgement number issued and submission entered in the Register",
+   "ruleText": "Automatic: Y once an acknowledgement number exists",
+   "sort": 0
+  },
+  {
+   "id": "1.2",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Correct form used: REG-01A to K for operators; REG-01I for own-use 200 kW to <1 MW",
+   "ruleText": "Manual",
+   "sort": 1
+  },
+  {
+   "id": "1.3",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Applicant carries out, or proposes to carry out, an activity in para 3(1)",
+   "ruleText": "Automatic: N if the activity is not in the activities list",
+   "sort": 2
+  },
+  {
+   "id": "1.4",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Not excluded under para 3(3) (federal transmission, grid-only sales, own-use <1 MW)",
+   "ruleText": "Automatic: N if captive (CPT) below 1 MW",
+   "sort": 3
+  },
+  {
+   "id": "1.5",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Register searched: no existing registration under the same CAC number",
+   "ruleText": "Automatic: N if the CAC number is on another registration",
+   "sort": 4
+  },
+  {
+   "id": "1.6",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "One registration covers all the applicant's activities and locations in Ogun State",
+   "ruleText": "Manual",
+   "sort": 5
+  },
+  {
+   "id": "1.7",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Multi-State licensee: submission limited to Ogun State operations",
+   "ruleText": "N/A unless MSL or multi-State NERC licence",
+   "sort": 6
+  },
+  {
+   "id": "1.8",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Submitted on time (60 days from Effective Date / 30 days before start)",
+   "ruleText": "Automatic: Y if not late",
+   "sort": 7
+  },
+  {
+   "id": "1.9",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "If late: days late recorded and Schedule 3 Part B late charge calculated",
+   "ruleText": "Automatic: N/A if not late; Y if a late charge applies",
+   "sort": 8
+  },
+  {
+   "id": "1.10",
+   "stage": "STAGE 1 — RECEIPT AND SCOPE",
+   "text": "Form filed matches the confirmed category (or accepted and re-categorised with reasons)",
+   "ruleText": "Automatic: pending until the category is confirmed (§4.13)",
+   "sort": 9
+  },
+  {
+   "id": "2.1",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "A. Identity: name, CAC number, date of incorporation, TIN and addresses",
+   "ruleText": "Manual",
+   "sort": 10
+  },
+  {
+   "id": "2.2",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "B. Ownership: shareholders ≥5%, directors and beneficial owners",
+   "ruleText": "Manual",
+   "sort": 11
+  },
+  {
+   "id": "2.3",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "C. Contact: managing director and compliance officer with phone and email",
+   "ruleText": "Manual",
+   "sort": 12
+  },
+  {
+   "id": "2.4",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "D. Licences: every licence listed with authority, number and dates",
+   "ruleText": "N/A when Unlicensed",
+   "sort": 13
+  },
+  {
+   "id": "2.5",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "E. Activities: all ticked; one primary activity; start date given",
+   "ruleText": "Manual",
+   "sort": 14
+  },
+  {
+   "id": "2.6",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "F. Service area: LGAs, towns, estates, feeders; cross-boundary (multi-State)",
+   "ruleText": "Manual",
+   "sort": 15
+  },
+  {
+   "id": "2.7",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "G. Generation assets: plant, location, MW, fuel, connection point",
+   "ruleText": "Manual",
+   "sort": 16
+  },
+  {
+   "id": "2.8",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "H. Network assets: substations (MVA), feeders (kV, km), transformers (kVA)",
+   "ruleText": "Manual",
+   "sort": 17
+  },
+  {
+   "id": "2.9",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "I. Customers by class, metered/unmetered; top 20 customers",
+   "ruleText": "Manual",
+   "sort": 18
+  },
+  {
+   "id": "2.10",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "J. 12 months of energy received, sent out, billed; billing and collection",
+   "ruleText": "Manual",
+   "sort": 19
+  },
+  {
+   "id": "2.11",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "K. Tariffs by class and band, approving authority and order reference",
+   "ruleText": "Manual",
+   "sort": 20
+  },
+  {
+   "id": "2.12",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "L. Contracts: PPAs, gas, bulk supply, bilateral and franchise",
+   "ruleText": "Manual",
+   "sort": 21
+  },
+  {
+   "id": "2.13",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "M. HSE: incidents, fatalities and outages >24 h in last 24 months",
+   "ruleText": "Manual",
+   "sort": 22
+  },
+  {
+   "id": "2.14",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "N. Confidentiality claims stated with reasons (if any)",
+   "ruleText": "Manual",
+   "sort": 23
+  },
+  {
+   "id": "2.15",
+   "stage": "STAGE 2 — SCHEDULE 1 FORM",
+   "text": "O. Declaration signed and dated by authorized signatories; seal affixed",
+   "ruleText": "Manual",
+   "sort": 24
+  },
+  {
+   "id": "3.0",
+   "stage": "STAGE 3 — SCHEDULE 2 DOCUMENTS",
+   "text": "All Schedule 2 documents received or not applicable",
+   "ruleText": "Automatic: Y if the form's documents are complete",
+   "sort": 25
+  },
+  {
+   "id": "3.1",
+   "stage": "STAGE 3 — SCHEDULE 2 DOCUMENTS",
+   "text": "Outstanding documents listed with reasons and acceptable completion date (12(4))",
+   "ruleText": "N/A when 3.0 is Y",
+   "sort": 26
+  },
+  {
+   "id": "3.2",
+   "stage": "STAGE 3 — SCHEDULE 2 DOCUMENTS",
+   "text": "Non-corporate applicant: equivalent documents provided (12(3))",
+   "ruleText": "N/A for a company (or no registrant type)",
+   "sort": 27
+  },
+  {
+   "id": "4.1",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "CAC details verified on the CAC public search",
+   "ruleText": "Manual",
+   "sort": 28
+  },
+  {
+   "id": "4.2",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Licence numbers and dates confirmed with OGSERC records and NERC's register",
+   "ruleText": "N/A when Unlicensed",
+   "sort": 29
+  },
+  {
+   "id": "4.3",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Licence not expiring within 6 months of Effective Date (else renewal reminder) (8(5))",
+   "ruleText": "Automatic: N if the nearest licence expiry is within the window after the Effective Date",
+   "sort": 30
+  },
+  {
+   "id": "4.4",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Installed capacity agrees with single-line diagram and asset register",
+   "ruleText": "Manual",
+   "sort": 31
+  },
+  {
+   "id": "4.5",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "GPS coordinates within Ogun State and the LGAs stated",
+   "ruleText": "Manual",
+   "sort": 32
+  },
+  {
+   "id": "4.6",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Customer numbers agree with the enumeration summary",
+   "ruleText": "Manual",
+   "sort": 33
+  },
+  {
+   "id": "4.7",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Energy balance plausible; loss and collection rates calculated",
+   "ruleText": "Manual",
+   "sort": 34
+  },
+  {
+   "id": "4.8",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Tariffs agree with the approved tariff order or schedule (8(2))",
+   "ruleText": "Manual",
+   "sort": 35
+  },
+  {
+   "id": "4.9",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Unlicensed operator: tariff not above Effective Date level (18(1)(c))",
+   "ruleText": "N/A unless Unlicensed",
+   "sort": 36
+  },
+  {
+   "id": "4.10",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Supply sources consistent with generation assets and energy received",
+   "ruleText": "Manual",
+   "sort": 37
+  },
+  {
+   "id": "4.11",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Service area checked against DisCo franchise maps for overlap (18(3))",
+   "ruleText": "Manual",
+   "sort": 38
+  },
+  {
+   "id": "4.12",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Any fatality or serious HSE incident referred to technical/safety unit",
+   "ruleText": "Manual",
+   "sort": 39
+  },
+  {
+   "id": "4.13",
+   "stage": "STAGE 4 — VERIFICATION",
+   "text": "Site inspection completed, or not required (22)",
+   "ruleText": "Manual",
+   "sort": 40
+  },
+  {
+   "id": "5.1",
+   "stage": "STAGE 5 — CATEGORY AND FEES",
+   "text": "Category agrees with activities and capacity (highest applies) (17(1))",
+   "ruleText": "Manual",
+   "sort": 41
+  },
+  {
+   "id": "5.2",
+   "stage": "STAGE 5 — CATEGORY AND FEES",
+   "text": "Payment confirmed by Finance against designated account (17(1))",
+   "ruleText": "Manual",
+   "sort": 42
+  },
+  {
+   "id": "5.3",
+   "stage": "STAGE 5 — CATEGORY AND FEES",
+   "text": "Waiver or reduction approved in writing (17(3))",
+   "ruleText": "N/A unless a waiver is approved",
+   "sort": 43
+  },
+  {
+   "id": "5.4",
+   "stage": "STAGE 5 — CATEGORY AND FEES",
+   "text": "Late charge correctly calculated and within Schedule 3 cap (19(1)–(2))",
+   "ruleText": "Automatic: same as 1.9",
+   "sort": 44
+  },
+  {
+   "id": "5.5",
+   "stage": "STAGE 5 — CATEGORY AND FEES",
+   "text": "Fees and charges paid in full",
+   "ruleText": "Automatic: Y if the balance is nil",
+   "sort": 45
+  },
+  {
+   "id": "6.1",
+   "stage": "STAGE 6 — CONFIDENTIALITY",
+   "text": "Confidentiality claims logged, decided and applicant notified (15(3))",
+   "ruleText": "Manual",
+   "sort": 46
+  },
+  {
+   "id": "6.2",
+   "stage": "STAGE 6 — CONFIDENTIALITY",
+   "text": "Information treated as confidential pending decision (15(3))",
+   "ruleText": "Manual",
+   "sort": 47
+  },
+  {
+   "id": "6.3",
+   "stage": "STAGE 6 — CONFIDENTIALITY",
+   "text": "Personal data handled under the NDPA 2023 (15(4))",
+   "ruleText": "Manual",
+   "sort": 48
+  },
+  {
+   "id": "6.4",
+   "stage": "STAGE 6 — CONFIDENTIALITY",
+   "text": "Public Register fields confirmed (15(2))",
+   "ruleText": "Manual",
+   "sort": 49
+  },
+  {
+   "id": "7.1",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "Unlicensed: licence application due date recorded and communicated (18)",
+   "ruleText": "N/A unless Unlicensed",
+   "sort": 50
+  },
+  {
+   "id": "7.2",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "Overlap with licensee's area referred for determination, notice and hearing (18(3))",
+   "ruleText": "Manual",
+   "sort": 51
+  },
+  {
+   "id": "7.3",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "Multi-State: ring-fencing plan, licence application, boundary register noted (7(3))",
+   "ruleText": "N/A unless MSL or multi-State NERC licence",
+   "sort": 52
+  },
+  {
+   "id": "7.4",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "No suspected false information (else referred; show-cause first) (19(3), 20)",
+   "ruleText": "Manual",
+   "sort": 53
+  },
+  {
+   "id": "7.5",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "Own-use site of 1 MW+ on REG-01I directed to REG-01C or REG-01D (3(3)(c))",
+   "ruleText": "Automatic: N/A on REG-01 submissions",
+   "sort": 54
+  },
+  {
+   "id": "7.6",
+   "stage": "STAGE 7 — REGULATORY FLAGS",
+   "text": "Register data flags reviewed and resolved or explained",
+   "ruleText": "Automatic: Y if no data flags (or an override reason explains them)",
+   "sort": 55
+  },
+  {
+   "id": "9.1",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Certificate Issue Date entered and status 'Registered' in the Register",
+   "ruleText": "Automatic: Y when Registered with a certificate date; N/A for updates",
+   "sort": 56
+  },
+  {
+   "id": "9.2",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Registration number generated and locked (locked automatically on approval)",
+   "ruleText": "Automatic: Y when the registration number is locked; N/A for updates",
+   "sort": 57
+  },
+  {
+   "id": "9.3",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Certificate CERT-01 prepared, checked, signed and sealed (13(5))",
+   "ruleText": "N/A for updates and annual confirmations",
+   "sort": 58
+  },
+  {
+   "id": "9.4",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Certificate issued to the registrant (date and mode recorded)",
+   "ruleText": "N/A for updates and annual confirmations",
+   "sort": 59
+  },
+  {
+   "id": "9.5",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Registrant reminded: number on bills in 90 days; annual confirmation by 31 Jan",
+   "ruleText": "N/A for updates and annual confirmations",
+   "sort": 60
+  },
+  {
+   "id": "9.6",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Public Register on the Commission's website updated (15(2))",
+   "ruleText": "Manual",
+   "sort": 61
+  },
+  {
+   "id": "9.7",
+   "stage": "POST-APPROVAL ACTIONS",
+   "text": "Physical and electronic file closed and indexed",
+   "ruleText": "Manual",
+   "sort": 62
+  }
+ ],
+ "lists": [
+  {
+   "listKey": "lga",
+   "value": "Abeokuta North",
+   "sort": 0
+  },
+  {
+   "listKey": "lga",
+   "value": "Abeokuta South",
+   "sort": 1
+  },
+  {
+   "listKey": "lga",
+   "value": "Ado-Odo/Ota",
+   "sort": 2
+  },
+  {
+   "listKey": "lga",
+   "value": "Ewekoro",
+   "sort": 3
+  },
+  {
+   "listKey": "lga",
+   "value": "Ifo",
+   "sort": 4
+  },
+  {
+   "listKey": "lga",
+   "value": "Ijebu East",
+   "sort": 5
+  },
+  {
+   "listKey": "lga",
+   "value": "Ijebu North",
+   "sort": 6
+  },
+  {
+   "listKey": "lga",
+   "value": "Ijebu North East",
+   "sort": 7
+  },
+  {
+   "listKey": "lga",
+   "value": "Ijebu Ode",
+   "sort": 8
+  },
+  {
+   "listKey": "lga",
+   "value": "Ikenne",
+   "sort": 9
+  },
+  {
+   "listKey": "lga",
+   "value": "Imeko Afon",
+   "sort": 10
+  },
+  {
+   "listKey": "lga",
+   "value": "Ipokia",
+   "sort": 11
+  },
+  {
+   "listKey": "lga",
+   "value": "Obafemi Owode",
+   "sort": 12
+  },
+  {
+   "listKey": "lga",
+   "value": "Odeda",
+   "sort": 13
+  },
+  {
+   "listKey": "lga",
+   "value": "Odogbolu",
+   "sort": 14
+  },
+  {
+   "listKey": "lga",
+   "value": "Ogun Waterside",
+   "sort": 15
+  },
+  {
+   "listKey": "lga",
+   "value": "Remo North",
+   "sort": 16
+  },
+  {
+   "listKey": "lga",
+   "value": "Sagamu",
+   "sort": 17
+  },
+  {
+   "listKey": "lga",
+   "value": "Yewa North",
+   "sort": 18
+  },
+  {
+   "listKey": "lga",
+   "value": "Yewa South",
+   "sort": 19
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Company",
+   "sort": 0
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Cooperative",
+   "sort": 1
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Partnership",
+   "sort": 2
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Sole Proprietor",
+   "sort": 3
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Public Body",
+   "sort": 4
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Community Organization",
+   "sort": 5
+  },
+  {
+   "listKey": "registrant_type",
+   "value": "Other",
+   "sort": 6
+  },
+  {
+   "listKey": "licence_status",
+   "value": "OGSERC licence/permit",
+   "sort": 0
+  },
+  {
+   "listKey": "licence_status",
+   "value": "NERC licence (wholly in Ogun)",
+   "sort": 1
+  },
+  {
+   "listKey": "licence_status",
+   "value": "NERC licence (multi-State)",
+   "sort": 2
+  },
+  {
+   "listKey": "licence_status",
+   "value": "NERC registration/permit (mini-grid/captive)",
+   "sort": 3
+  },
+  {
+   "listKey": "licence_status",
+   "value": "Licence application pending",
+   "sort": 4
+  },
+  {
+   "listKey": "licence_status",
+   "value": "Unlicensed",
+   "sort": 5
+  },
+  {
+   "listKey": "submission_channel",
+   "value": "By hand",
+   "sort": 0
+  },
+  {
+   "listKey": "submission_channel",
+   "value": "Email",
+   "sort": 1
+  },
+  {
+   "listKey": "submission_channel",
+   "value": "Online portal",
+   "sort": 2
+  },
+  {
+   "listKey": "payment_channel",
+   "value": "Remita",
+   "sort": 0
+  },
+  {
+   "listKey": "payment_channel",
+   "value": "Bank transfer",
+   "sort": 1
+  },
+  {
+   "listKey": "payment_channel",
+   "value": "POS",
+   "sort": 2
+  },
+  {
+   "listKey": "payment_channel",
+   "value": "Other",
+   "sort": 3
+  },
+  {
+   "listKey": "payment_purpose",
+   "value": "Registration fee",
+   "sort": 0
+  },
+  {
+   "listKey": "payment_purpose",
+   "value": "Late registration charge",
+   "sort": 1
+  },
+  {
+   "listKey": "payment_purpose",
+   "value": "Fee and late charge",
+   "sort": 2
+  },
+  {
+   "listKey": "fuel",
+   "value": "Gas",
+   "sort": 0
+  },
+  {
+   "listKey": "fuel",
+   "value": "Diesel",
+   "sort": 1
+  },
+  {
+   "listKey": "fuel",
+   "value": "Solar PV",
+   "sort": 2
+  },
+  {
+   "listKey": "fuel",
+   "value": "Solar + battery",
+   "sort": 3
+  },
+  {
+   "listKey": "fuel",
+   "value": "Hybrid",
+   "sort": 4
+  },
+  {
+   "listKey": "fuel",
+   "value": "Biomass",
+   "sort": 5
+  },
+  {
+   "listKey": "fuel",
+   "value": "Other",
+   "sort": 6
+  },
+  {
+   "listKey": "refusal_ground",
+   "value": "False or misleading information",
+   "sort": 0
+  },
+  {
+   "listKey": "refusal_ground",
+   "value": "Non-payment of fees or charges",
+   "sort": 1
+  },
+  {
+   "listKey": "refusal_ground",
+   "value": "Activity outside the scope of the Order",
+   "sort": 2
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Abeokuta North",
+   "sort": 0
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Abeokuta South",
+   "sort": 1
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ado-Odo/Ota",
+   "sort": 2
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ewekoro",
+   "sort": 3
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ifo",
+   "sort": 4
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ijebu East",
+   "sort": 5
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ijebu North",
+   "sort": 6
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ijebu North East",
+   "sort": 7
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ijebu Ode",
+   "sort": 8
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ikenne",
+   "sort": 9
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Imeko Afon",
+   "sort": 10
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ipokia",
+   "sort": 11
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Obafemi Owode",
+   "sort": 12
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Odeda",
+   "sort": 13
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Odogbolu",
+   "sort": 14
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Ogun Waterside",
+   "sort": 15
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Remo North",
+   "sort": 16
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Sagamu",
+   "sort": 17
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Yewa North",
+   "sort": 18
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Yewa South",
+   "sort": 19
+  },
+  {
+   "listKey": "registry_lga",
+   "value": "Outside Ogun State",
+   "sort": 20
+  },
+  {
+   "listKey": "ack_issued_via",
+   "value": "Printed slip",
+   "sort": 0
+  },
+  {
+   "listKey": "ack_issued_via",
+   "value": "Email",
+   "sort": 1
+  },
+  {
+   "listKey": "ack_issued_via",
+   "value": "Portal",
+   "sort": 2
+  },
+  {
+   "listKey": "ack_issued_via",
+   "value": "Not yet issued",
+   "sort": 3
+  },
+  {
+   "listKey": "ack_issued_via",
+   "value": "Not required",
+   "sort": 4
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Registrant / licensee",
+   "sort": 0
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Prospective applicant",
+   "sort": 1
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Consumer / member of public",
+   "sort": 2
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Community / association",
+   "sort": 3
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Governor's Office",
+   "sort": 4
+  },
+  {
+   "listKey": "sender_category",
+   "value": "State MDA",
+   "sort": 5
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Ogun State House of Assembly",
+   "sort": 6
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Local Government",
+   "sort": 7
+  },
+  {
+   "listKey": "sender_category",
+   "value": "NERC",
+   "sort": 8
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Federal MDA (other)",
+   "sort": 9
+  },
+  {
+   "listKey": "sender_category",
+   "value": "DisCo / GenCo / TCN",
+   "sort": 10
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Investor / developer",
+   "sort": 11
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Development partner",
+   "sort": 12
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Court / legal counsel",
+   "sort": 13
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Media",
+   "sort": 14
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Vendor / contractor",
+   "sort": 15
+  },
+  {
+   "listKey": "sender_category",
+   "value": "OGSERC internal",
+   "sort": 16
+  },
+  {
+   "listKey": "sender_category",
+   "value": "Other",
+   "sort": 17
+  },
+  {
+   "listKey": "action_required",
+   "value": "Reply required",
+   "sort": 0
+  },
+  {
+   "listKey": "action_required",
+   "value": "Action required",
+   "sort": 1
+  },
+  {
+   "listKey": "action_required",
+   "value": "For information",
+   "sort": 2
+  },
+  {
+   "listKey": "action_required",
+   "value": "File only",
+   "sort": 3
+  },
+  {
+   "listKey": "priority",
+   "value": "Urgent",
+   "sort": 0
+  },
+  {
+   "listKey": "priority",
+   "value": "High",
+   "sort": 1
+  },
+  {
+   "listKey": "priority",
+   "value": "Normal",
+   "sort": 2
+  },
+  {
+   "listKey": "priority",
+   "value": "Low",
+   "sort": 3
+  },
+  {
+   "listKey": "security",
+   "value": "Open",
+   "sort": 0
+  },
+  {
+   "listKey": "security",
+   "value": "Restricted",
+   "sort": 1
+  },
+  {
+   "listKey": "security",
+   "value": "Confidential",
+   "sort": 2
+  },
+  {
+   "listKey": "file_status",
+   "value": "Open",
+   "sort": 0
+  },
+  {
+   "listKey": "file_status",
+   "value": "Closed",
+   "sort": 1
+  },
+  {
+   "listKey": "file_status",
+   "value": "Archived",
+   "sort": 2
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Hand delivery",
+   "sort": 0,
+   "meta": "By hand"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Email",
+   "sort": 1,
+   "meta": "Email"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Online portal",
+   "sort": 2,
+   "meta": "Online portal"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Courier",
+   "sort": 3,
+   "meta": "By hand"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Registered post",
+   "sort": 4,
+   "meta": "By hand"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Internal mail",
+   "sort": 5,
+   "meta": "By hand"
+  },
+  {
+   "listKey": "mode_of_receipt",
+   "value": "Publication / gazette",
+   "sort": 6,
+   "meta": "By hand"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Registration & licensing",
+   "sort": 0,
+   "meta": "REG"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Licensee file",
+   "sort": 1,
+   "meta": "RL"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Tariffs & market",
+   "sort": 2,
+   "meta": "TM"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Technical & standards",
+   "sort": 3,
+   "meta": "TS"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Consumer affairs",
+   "sort": 4,
+   "meta": "CA"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Legal",
+   "sort": 5,
+   "meta": "LEG"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Finance",
+   "sort": 6,
+   "meta": "FIN"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Administration",
+   "sort": 7,
+   "meta": "ADM"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Personnel (confidential)",
+   "sort": 8,
+   "meta": "PF"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Government & external relations",
+   "sort": 9,
+   "meta": "GOV"
+  },
+  {
+   "listKey": "file_class",
+   "value": "Policy & regulations",
+   "sort": 10,
+   "meta": "POL"
+  },
+  {
+   "listKey": "file_class",
+   "value": "General correspondence",
+   "sort": 11,
+   "meta": "GEN"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Acknowledgement / holding reply",
+   "sort": 0,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Reply to correspondence",
+   "sort": 1,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Letter (general)",
+   "sort": 2,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Deficiency notice",
+   "sort": 3,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 10}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Information request to licensee",
+   "sort": 4,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 10}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Registration certificate",
+   "sort": 5,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Licence / permit",
+   "sort": 6,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Decision / determination",
+   "sort": 7,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Regulatory order",
+   "sort": 8,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Regulation / guideline",
+   "sort": 9,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Public notice / consultation paper",
+   "sort": 10,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 20}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Circular to licensees",
+   "sort": 11,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Compliance / enforcement notice",
+   "sort": 12,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 10}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Fee demand / invoice",
+   "sort": 13,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 10}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Response to consumer complaint",
+   "sort": 14,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Letter to Governor's Office / State MDA",
+   "sort": 15,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Letter to NERC / Federal agency",
+   "sort": 16,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Court filing / legal correspondence",
+   "sort": 17,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Press release / media statement",
+   "sort": 18,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Invitation / meeting notice",
+   "sort": 19,
+   "meta": "{\"responseExpected\": true, \"responseDays\": 5}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Internal memo",
+   "sort": 20,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Report submitted",
+   "sort": 21,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  },
+  {
+   "listKey": "outgoing_type",
+   "value": "Other",
+   "sort": 22,
+   "meta": "{\"responseExpected\": false, \"responseDays\": 0}"
+  }
+ ],
+ "divisions": [
+  {
+   "name": "Office of the Chairman",
+   "email": null,
+   "sort": 0
+  },
+  {
+   "name": "Engineering Services",
+   "email": "engineeringstandards@ogserc.org.ng",
+   "sort": 1
+  },
+  {
+   "name": "Electricity Market, Planning and Research",
+   "email": "empr@ogserc.org.ng",
+   "sort": 2
+  },
+  {
+   "name": "Financial Management Services",
+   "email": null,
+   "sort": 3
+  },
+  {
+   "name": "Legal, Licensing and Consumer Affairs",
+   "email": null,
+   "sort": 4
+  }
+ ],
+ "units": [
+  {
+   "name": "Office of the General Counsel and Secretary (Registry)",
+   "division": "Office of the Chairman",
+   "unitGroup": "Registry",
+   "email": null,
+   "sort": 0
+  },
+  {
+   "name": "Internal Audit unit",
+   "division": "Office of the Chairman",
+   "unitGroup": "Internal Audit",
+   "email": null,
+   "sort": 1
+  },
+  {
+   "name": "Public Affairs and Stakeholder unit: Communication",
+   "division": "Office of the Chairman",
+   "unitGroup": "Public Affairs and Protocol",
+   "email": null,
+   "sort": 2
+  },
+  {
+   "name": "Public Affairs and Stakeholder unit: New Media",
+   "division": "Office of the Chairman",
+   "unitGroup": "Public Affairs and Protocol",
+   "email": null,
+   "sort": 3
+  },
+  {
+   "name": "Public Affairs and Stakeholder unit: Protocol",
+   "division": "Office of the Chairman",
+   "unitGroup": "Public Affairs and Protocol",
+   "email": null,
+   "sort": 4
+  },
+  {
+   "name": "Engineering Standards unit",
+   "division": "Engineering Services",
+   "unitGroup": "Standards and Networks",
+   "email": null,
+   "sort": 5
+  },
+  {
+   "name": "Networks unit: Transmission and Distribution",
+   "division": "Engineering Services",
+   "unitGroup": "Standards and Networks",
+   "email": null,
+   "sort": 6
+  },
+  {
+   "name": "Networks unit: Generation",
+   "division": "Engineering Services",
+   "unitGroup": "Standards and Networks",
+   "email": null,
+   "sort": 7
+  },
+  {
+   "name": "Performance Monitoring unit",
+   "division": "Engineering Services",
+   "unitGroup": "Monitoring, Metering and Safety",
+   "email": null,
+   "sort": 8
+  },
+  {
+   "name": "Metering Standards unit",
+   "division": "Engineering Services",
+   "unitGroup": "Monitoring, Metering and Safety",
+   "email": null,
+   "sort": 9
+  },
+  {
+   "name": "Occupational Health, Safety and Performance Analysis unit",
+   "division": "Engineering Services",
+   "unitGroup": "Monitoring, Metering and Safety",
+   "email": null,
+   "sort": 10
+  },
+  {
+   "name": "Market Analysis unit",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Market, Tariff and Regulatory Finance",
+   "email": null,
+   "sort": 11
+  },
+  {
+   "name": "Tariff and Rates unit",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Market, Tariff and Regulatory Finance",
+   "email": null,
+   "sort": 12
+  },
+  {
+   "name": "Regulatory Financial Reporting Analysis (RFRA)",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Market, Tariff and Regulatory Finance",
+   "email": null,
+   "sort": 13
+  },
+  {
+   "name": "Corporate Planning and Strategy (CPS)",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Planning, Renewables, Research and Data",
+   "email": null,
+   "sort": 14
+  },
+  {
+   "name": "Renewable Energy",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Planning, Renewables, Research and Data",
+   "email": null,
+   "sort": 15
+  },
+  {
+   "name": "Research unit: Research Analytics",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Planning, Renewables, Research and Data",
+   "email": null,
+   "sort": 16
+  },
+  {
+   "name": "Research unit: Data Aggregation Platform (DAP)",
+   "division": "Electricity Market, Planning and Research",
+   "unitGroup": "Planning, Renewables, Research and Data",
+   "email": null,
+   "sort": 17
+  },
+  {
+   "name": "Finance and Account unit",
+   "division": "Financial Management Services",
+   "unitGroup": "Finance, Procurement and ICT",
+   "email": null,
+   "sort": 18
+  },
+  {
+   "name": "Procurement unit",
+   "division": "Financial Management Services",
+   "unitGroup": "Finance, Procurement and ICT",
+   "email": null,
+   "sort": 19
+  },
+  {
+   "name": "ICT unit",
+   "division": "Financial Management Services",
+   "unitGroup": "Finance, Procurement and ICT",
+   "email": "it@ogserc.org.ng",
+   "sort": 20
+  },
+  {
+   "name": "Human Resources",
+   "division": "Financial Management Services",
+   "unitGroup": "HR and Admin",
+   "email": null,
+   "sort": 21
+  },
+  {
+   "name": "Front Desk",
+   "division": "Financial Management Services",
+   "unitGroup": "HR and Admin",
+   "email": null,
+   "sort": 22
+  },
+  {
+   "name": "Administration",
+   "division": "Financial Management Services",
+   "unitGroup": "HR and Admin",
+   "email": null,
+   "sort": 23
+  },
+  {
+   "name": "Licensing unit",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Licensing, Legal and Compliance",
+   "email": null,
+   "sort": 24
+  },
+  {
+   "name": "Compliance/Legal Services unit: Legal",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Licensing, Legal and Compliance",
+   "email": null,
+   "sort": 25
+  },
+  {
+   "name": "Compliance/Legal Services unit: Compliance and Enforcement",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Licensing, Legal and Compliance",
+   "email": null,
+   "sort": 26
+  },
+  {
+   "name": "Customer Complaints",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Consumer Affairs",
+   "email": null,
+   "sort": 27
+  },
+  {
+   "name": "Customer Service Standards",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Consumer Affairs",
+   "email": null,
+   "sort": 28
+  },
+  {
+   "name": "Consumer Enlightenment and Education",
+   "division": "Legal, Licensing and Consumer Affairs",
+   "unitGroup": "Consumer Affairs",
+   "email": null,
+   "sort": 29
+  }
+ ],
+ "correspondenceTypes": [
+  {
+   "name": "REG-01 Registration (new)",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "11; Sch. 1 Pt A",
+   "responseTargetDays": 20,
+   "para103Wording": true,
+   "filingType": "NEW",
+   "sort": 0
+  },
+  {
+   "name": "OUN-01 Own-use notification",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "3(4); Sch. 1 Pt B",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": "OWNUSE",
+   "sort": 1
+  },
+  {
+   "name": "Update - material change",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "16(1)",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": "UPDATE",
+   "sort": 2
+  },
+  {
+   "name": "Annual confirmation",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "16(2)",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": "ANNUAL",
+   "sort": 3
+  },
+  {
+   "name": "Deficiency response",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "13(1)(b)",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 4
+  },
+  {
+   "name": "Licence / permit application",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "18(1)",
+   "responseTargetDays": 20,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 5
+  },
+  {
+   "name": "Multi-State ring-fencing plan",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "7(3)",
+   "responseTargetDays": 20,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 6
+  },
+  {
+   "name": "Licence renewal application",
+   "category": "Regulatory filing",
+   "defaultUnit": "Licensing unit",
+   "orderRef": "8(5)",
+   "responseTargetDays": 20,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 7
+  },
+  {
+   "name": "Fee payment evidence",
+   "category": "Regulatory filing",
+   "defaultUnit": "Finance and Account unit",
+   "orderRef": "17",
+   "responseTargetDays": 5,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 8
+  },
+  {
+   "name": "Confidentiality claim / representation",
+   "category": "Regulatory filing",
+   "defaultUnit": "Compliance/Legal Services unit: Legal",
+   "orderRef": "15(3); 20",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 9
+  },
+  {
+   "name": "Application for review",
+   "category": "Regulatory filing",
+   "defaultUnit": "Compliance/Legal Services unit: Legal",
+   "orderRef": "21",
+   "responseTargetDays": 20,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 10
+  },
+  {
+   "name": "Consumer complaint",
+   "category": "Consumer matters",
+   "defaultUnit": "Customer Complaints",
+   "orderRef": "9",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 11
+  },
+  {
+   "name": "Tariff application / review",
+   "category": "Regulatory filing",
+   "defaultUnit": "Tariff and Rates unit",
+   "orderRef": null,
+   "responseTargetDays": 20,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 12
+  },
+  {
+   "name": "Licensee returns / performance report",
+   "category": "Licensee returns & reports",
+   "defaultUnit": "Performance Monitoring unit, Market Analysis",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 13
+  },
+  {
+   "name": "Incident / outage report",
+   "category": "Licensee returns & reports",
+   "defaultUnit": "Performance Monitoring unit, Occupational Health and Safety",
+   "orderRef": null,
+   "responseTargetDays": 5,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 14
+  },
+  {
+   "name": "Consumer petition",
+   "category": "Consumer matters",
+   "defaultUnit": "Customer Complaints",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 15
+  },
+  {
+   "name": "Public representation",
+   "category": "Consumer matters",
+   "defaultUnit": "Public Affairs and Stakeholder unit: Communication",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 16
+  },
+  {
+   "name": "Letter from Governor's Office",
+   "category": "Government & legislature",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 5,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 17
+  },
+  {
+   "name": "Letter from House of Assembly",
+   "category": "Government & legislature",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 5,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 18
+  },
+  {
+   "name": "Letter from State MDA / Local Government",
+   "category": "Government & legislature",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 19
+  },
+  {
+   "name": "Letter from NERC / Federal agency",
+   "category": "Federal & sector agencies",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 20
+  },
+  {
+   "name": "Letter from DisCo / GenCo / TCN",
+   "category": "Industry & investors",
+   "defaultUnit": "Networks unit: Transmission and Distribution",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 21
+  },
+  {
+   "name": "Investor / developer enquiry",
+   "category": "Industry & investors",
+   "defaultUnit": "Licensing unit",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 22
+  },
+  {
+   "name": "Development partner correspondence",
+   "category": "Industry & investors",
+   "defaultUnit": "Corporate Planning and Strategy (CPS)",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 23
+  },
+  {
+   "name": "Court process / legal notice",
+   "category": "Legal & court",
+   "defaultUnit": "Compliance/Legal Services unit: Legal",
+   "orderRef": null,
+   "responseTargetDays": 3,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 24
+  },
+  {
+   "name": "Freedom of Information request",
+   "category": "Legal & court",
+   "defaultUnit": "Compliance/Legal Services unit: Legal",
+   "orderRef": null,
+   "responseTargetDays": 7,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 25
+  },
+  {
+   "name": "Invitation (meeting / event / hearing)",
+   "category": "Invitations & events",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 3,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 26
+  },
+  {
+   "name": "Invoice / vendor correspondence",
+   "category": "Finance & procurement",
+   "defaultUnit": "Finance and Account unit",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 27
+  },
+  {
+   "name": "Staff / personnel matter",
+   "category": "Administration & HR",
+   "defaultUnit": "Human Resources",
+   "orderRef": null,
+   "responseTargetDays": 10,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 28
+  },
+  {
+   "name": "Media / press enquiry",
+   "category": "Media & public",
+   "defaultUnit": "Public Affairs and Stakeholder unit: Communication",
+   "orderRef": null,
+   "responseTargetDays": 2,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 29
+  },
+  {
+   "name": "Circular / publication (for information)",
+   "category": "Other",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": null,
+   "responseTargetDays": 0,
+   "para103Wording": false,
+   "filingType": null,
+   "sort": 30
+  },
+  {
+   "name": "Other correspondence",
+   "category": "Other",
+   "defaultUnit": "Office of the General Counsel and Secretary (Registry)",
+   "orderRef": "10(2)",
+   "responseTargetDays": 10,
+   "para103Wording": true,
+   "filingType": null,
+   "sort": 31
+  }
+ ],
+ "signatories": [
+  {
+   "name": "Jide Onakoya",
+   "designation": "Chairman"
+  },
+  {
+   "name": "Oluwatoyin Sonoiki",
+   "designation": "Secretary to the Commission"
+  }
+ ]
+}

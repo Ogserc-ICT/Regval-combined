@@ -12,9 +12,10 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q3 ACK year and days late | **Decided**: deemed receipt date for both |
 | Q4 deficiency notice numbers | **Decided**: separate yearly counter |
 | Q6 Effective Date change | **Decided**: flag saved submissions + one-click admin recalculation with a logged reason |
-| Q11 policy settings | Admin settings with the defaults below; Kamiye to confirm the flags default (B35) with the Commission **before Phase 2** |
-| All others | Defaults in use; answers expected **before Phase 2** |
-| Q24 capacity per activity | New, open |
+| Q7 determination clock | **Decided (6 Nov 2026)**: a deficiency notice or response does not restart the 30-day clock |
+| Q11 policy settings | **B35 decided (6 Nov 2026)**: an approver may override unresolved flags with a written reason, which is logged (`flagsBlockApproval = N`). The other policy settings keep their defaults as admin settings |
+| Q24 capacity per activity | **Decided (6 Nov 2026)**: one installed capacity per record, as the workbook |
+| Q9, Q15 and all others | Defaults in use; still open |
 
 Also decided, not from this list: the late charge follows the Order, not the workbook (gap G14 in `COMBINED_BUILD.md`; `SPEC.md` §8.2).
 
@@ -47,7 +48,7 @@ Acceptance check 1 says a change "moves every deadline in both modules". The wor
 
 **Q7. Does a deficiency response restart the 30-day determination clock?** (Phase 2)
 Mark complete sets "Date Submission Complete" only if it is blank. If a submission was marked complete, then got a deficiency notice, the response does not restart the clock; the original determination date stands and may already be past, which makes it provisional the next morning.
-Default: workbook behaviour (no restart). Say if para 13 means the 30 days run from the complete response.
+**Decided (6 Nov 2026):** no restart. "Date Submission Complete" is set once and the determination due date never moves because of a deficiency notice or response.
 
 **Q8. Are the Order's periods calendar days?** (Phase 2)
 The workbook counts the 60-day registration period, 30-day determination, 14-day deficiency response, 90-day licence application and 14-day show-cause in calendar days; Registry service targets are in working days.
@@ -93,6 +94,6 @@ Default: unit officers are user accounts linked to one unit; "confirm receipt" r
 
 **Q24. Should installed capacity be recorded per activity instead of once per record?** (Phase 2)
 The workbook holds one "Installed Capacity (MW)" per submission and uses it to categorise every activity on it (`SPEC.md` §7.2). An operator with a 0.5 MW mini-grid and a separate 12 MW generation plant is categorised as if each activity were 12 MW. Recording capacity per activity would categorise each one on its own size.
-Default until answered: one figure per record, as the workbook. The app stores other activities as child rows, so a per-activity capacity can be added later without reshaping the data.
+**Decided (6 Nov 2026):** one figure per record, as the workbook.
 
 **Q23. Form sections.** The detailed sections of REG-01A–K are not in the workbook; it records only "sections not complete" and "capacity stated in sections" (Guide B14). Default: the same two summary fields. Say if the Commission wants the full form sections captured in the app (a larger piece of work, best scoped after go-live).

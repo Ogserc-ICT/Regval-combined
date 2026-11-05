@@ -15,6 +15,20 @@
       "when": 1793886718667,
       "tag": "0001_audit_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793907921150,
+      "tag": "0002_registration",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793907933392,
+      "tag": "0003_registration_guards",
+      "breakpoints": true
     }
   ]
 }

@@ -1,13 +1,14 @@
 "use client";
 
 import {
-  Archive, BookOpenCheck, CalendarDays, ClipboardCheck, ClipboardList, FileInput, FileOutput, FileStack,
-  FolderOpen, Gauge, History, Inbox, ListTodo, PanelLeftClose, PanelLeftOpen, Printer, Route, Settings,
+  Archive, BookOpenCheck, CalendarDays, ClipboardCheck, FileInput, FileOutput, FileStack,
+  FolderOpen, Gauge, History, PenLine, Inbox, ListTodo, PanelLeftClose, PanelLeftOpen, Printer, Route, Settings,
   Users, Wallet, Zap, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Logo, LogoMark } from "@/components/logo";
 import { cn } from "@/lib/cn";
 import type { NavGroup, NavIcon } from "./nav";
 
@@ -15,7 +16,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   dashboard: Gauge, frontdesk: Inbox, intake: FileInput, inward: Archive, routing: Route, outward: FileOutput,
   files: FolderOpen, pending: ListTodo, register: BookOpenCheck, payments: Wallet, documents: FileStack,
   evaluation: ClipboardCheck, ownuse: Zap, reports: Printer, audit: History, settings: Settings,
-  holidays: CalendarDays, users: Users,
+  holidays: CalendarDays, users: Users, signatories: PenLine,
 };
 
 export function Sidebar({ groups }: { groups: NavGroup[] }) {
@@ -29,17 +30,20 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
         collapsed ? "w-16" : "w-64",
       )}
     >
-      <div className={cn("flex h-14 items-center gap-2.5 border-b border-border px-4", collapsed && "justify-center px-0")}>
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-text">
-          <ClipboardList className="h-4 w-4" />
-        </div>
-        {!collapsed && (
-          <div className="min-w-0 leading-tight">
-            <p className="truncate text-sm font-semibold">OGSERC</p>
-            <p className="truncate text-xs text-faint">Registry &amp; Evaluation</p>
+      <Link
+        href="/dashboard"
+        className={cn("flex h-16 items-center gap-3 border-b border-border px-4", collapsed && "justify-center px-0")}
+        aria-label="OGSERC Registry & Evaluation: dashboard"
+      >
+        {collapsed ? (
+          <LogoMark size={36} />
+        ) : (
+          <div className="min-w-0">
+            <Logo height={22} />
+            <p className="mt-1 truncate text-[11px] text-faint">Registry &amp; Evaluation</p>
           </div>
         )}
-      </div>
+      </Link>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3" aria-label="Main">
         {groups.map((g) => (

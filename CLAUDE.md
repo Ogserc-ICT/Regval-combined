@@ -40,8 +40,8 @@ This Next.js version (16.4) differs from older ones; read `node_modules/next/dis
 Update this list as each phase finishes.
 
 - Phase 0, spec and plan: done 5 Nov 2026; Q1, Q3, Q4, Q6 decided and G14 added 6 Nov 2026
-- Phase 1, scaffold and foundations: done 6 Nov 2026, awaiting review; Vercel project and first preview to be set up by Kamiye (docs/DEPLOY.md)
-- Phase 2, Registration module: not started
+- Phase 1, scaffold and foundations: done 6 Nov 2026; deployed on Vercel with a Neon database and signed in successfully
+- Phase 2, Registration module: done 6 Nov 2026, awaiting review (Q9, Q15 on defaults; logo added)
 - Phase 3, Registry module: not started
 - Phase 4, outputs and automation: not started
 - Phase 5, dashboard and admin: not started

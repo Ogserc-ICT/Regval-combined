@@ -9,6 +9,7 @@ import { db } from "@/server/db/client";
 import { toResult, type ActionResult } from "@/server/errors";
 import { deleteHoliday, saveHoliday } from "@/server/services/holidays";
 import { updateSettings, type SettingsChange } from "@/server/services/settings";
+import { saveSignatory } from "@/server/services/signatories";
 import { createUser, resetPassword, updateUser } from "@/server/services/users";
 
 /** Turn a submitted form field into the setting's value type. */
@@ -95,6 +96,23 @@ export async function updateUserAction(_prev: ActionResult | undefined, form: Fo
 export async function resetPasswordAction(_prev: ActionResult<string> | undefined, form: FormData) {
   const actor = await getCurrentActor();
   return toResult(() => resetPassword(db, actor, String(form.get("id") ?? "")));
+}
+
+export async function saveSignatoryAction(_prev: ActionResult<string> | undefined, form: FormData) {
+  const actor = await getCurrentActor();
+  const res = await toResult(
+    () =>
+      saveSignatory(db, actor, String(form.get("id") ?? "") || null, {
+        name: String(form.get("name") ?? ""),
+        designation: String(form.get("designation") ?? ""),
+        role: String(form.get("role") ?? ""),
+        active: form.get("active") === "on",
+        confirmed: form.get("confirmed") === "on",
+      }),
+    "Saved.",
+  );
+  if (res.ok) revalidatePath("/admin/signatories");
+  return res;
 }
 
 export async function verifyAuditAction(): Promise<ActionResult<ChainCheck>> {

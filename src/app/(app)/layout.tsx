@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogOut } from "lucide-react";
+import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-provider";
 import { MobileNav } from "@/components/shell/mobile-nav";
 import { NAV } from "@/components/shell/nav";
@@ -28,6 +29,9 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border bg-bg/85 px-4 backdrop-blur md:px-6">
           <MobileNav groups={groups} />
+          <Link href="/dashboard" className="md:hidden" aria-label="Dashboard">
+            <LogoMark size={30} />
+          </Link>
           <p className="hidden text-sm text-muted sm:block">
             Today <span className="tabular font-medium text-text">{shortDate(lagosToday())}</span>
             <span className="text-faint"> · Africa/Lagos</span>

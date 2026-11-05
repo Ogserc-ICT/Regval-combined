@@ -1,5 +1,6 @@
 import "server-only";
 import { createDb, type Db } from "./connect";
+import { pooledDatabaseUrl } from "./env";
 
 const globalForDb = globalThis as unknown as { __ogsercDb?: Db };
 
@@ -9,4 +10,4 @@ const globalForDb = globalThis as unknown as { __ogsercDb?: Db };
  */
 export const db: Db =
   globalForDb.__ogsercDb ??
-  (globalForDb.__ogsercDb = createDb(process.env.DATABASE_URL ?? ""));
+  (globalForDb.__ogsercDb = createDb(pooledDatabaseUrl() ?? ""));

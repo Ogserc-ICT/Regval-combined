@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Logo } from "@/components/logo";
 import { cn } from "@/lib/cn";
 import type { NavGroup } from "./nav";
 
@@ -25,7 +26,7 @@ export function MobileNav({ groups }: { groups: NavGroup[] }) {
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 left-0 w-72 overflow-y-auto border-r border-border bg-bg-subtle p-3">
             <div className="mb-3 flex items-center justify-between px-2">
-              <p className="text-sm font-semibold">OGSERC</p>
+              <Logo height={20} />
               <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="rounded-lg p-2 text-muted hover:bg-surface-hover">
                 <X className="h-4 w-4" />
               </button>

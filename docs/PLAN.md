@@ -239,7 +239,17 @@ tests/             integration (Postgres), e2e (Playwright)
 
 CI: typecheck, lint, unit, integration (Postgres service), e2e against a built app; required on pull requests.
 
-## 11. Phase map
+## 11. As built in Phase 2
+
+- Reference data (fee table, activities, forms, 124 form documents, 63 checks, lists, units, divisions, correspondence types, signatories) is extracted straight from the workbook into `seed/data/reference.json` and seeded idempotently.
+- Submissions store activity **codes** (SDC, GEN …), not names. Other activities and licences are child rows with no fixed limit.
+- `src/domain/registration/assess.ts` computes every calculated column of the Register and EVAL-01 for one submission; `assessMany` does the same for lists with a fixed number of queries. A test checks both agree.
+- Every evaluation action behind the Finance gate audits a blocked attempt in its own transaction, so it survives the refusal.
+- Database guards (migration 0003): register rows cannot be deleted; ACK, OUN, PAY, DEF and REG numbers cannot change once issued; a payment's facts cannot change after recording; Finance decisions and reversals are final.
+- `all(db, thunks)` runs independent queries in parallel on the pool but one at a time inside a transaction (one connection).
+- Not built yet (Q14): the acknowledgement letter, deficiency notice, EVAL-01 and CERT-01 documents.
+
+## 12. Phase map
 
 | Phase | Delivers |
 | --- | --- |

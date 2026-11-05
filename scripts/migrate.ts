@@ -3,14 +3,15 @@
  * Runs as a Vercel build step; never on a cold start.
  */
 import { config } from "dotenv";
+import { directDatabaseUrl, missingDatabaseMessage } from "../src/server/db/env";
 import { runMigrations } from "../src/server/db/migrate";
 
-config({ path: ".env.local" });
-config();
+config({ path: ".env.local", quiet: true });
+config({ quiet: true });
 
-const url = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
+const url = directDatabaseUrl();
 if (!url) {
-  console.error("DATABASE_URL_UNPOOLED (or DATABASE_URL) is not set");
+  console.error(missingDatabaseMessage());
   process.exit(1);
 }
 runMigrations(url)

@@ -89,7 +89,7 @@ All settings are admin-editable, audited on change (`modCommon.LogEdit` writes "
 | `feesRevisedOn` | blank | Settings A21 | Informational. |
 | Policy: `lateBlocksComplete` | N | Settings B33 | Open: Q11. |
 | Policy: `waiverReducesLate` | N | Settings B34 | Open: Q11. |
-| Policy: `flagsBlockApproval` | N | Settings B35 | Admin setting. N = an approver may override unresolved flags with a written reason, which is logged in the audit entry for the approval. Y = flags block approval outright. Default to be confirmed before Phase 2 (Q11). |
+| Policy: `flagsBlockApproval` | N | Settings B35 | Admin setting. N = an approver may override unresolved flags with a written reason, which is logged in the audit entry for the approval. Y = flags block approval outright. Decided: Q11, default N. |
 | Policy: `lateRequiredForRelease` | N | Settings B36 | Open: Q11. |
 | Policy: `unpaidReminderDays` | blank (no reminder) | Settings B37 | Counted in the daily review only; nothing is sent. |
 | Policy: `supplyRetailCategoryAt1MW` | K | Settings B38 | Category for SUP at 1 MW or more. |
@@ -243,7 +243,7 @@ One **submission** per Register row (`tblRegister`, 165 columns). Inputs (blue),
 
 ### 7.2 Category of one activity (`Cat Primary`, `Cat Other n`)
 
-Capacity `c` = the submission's installed capacity in MW (blank = 0). One capacity applies to every activity on the submission, as in the workbook, until Q24 (capacity per activity) is answered.
+Capacity `c` = the submission's installed capacity in MW (blank = 0). One capacity applies to every activity on the submission, as in the workbook (Decided: Q24).
 
 ```
 if activity not in the map            → none
@@ -519,7 +519,7 @@ Each action lists every blocking reason at once and writes an audit entry.
 | **Assign officers** | Reviewing supervisor, Admin | Users hold the role; §27.2 | Sets evaluator / supervisor / approver | Evaluation sheet |
 | **Answer checks** | Assigned evaluating officer, reviewing supervisor | Gate cleared; not decided | Y/N/N/A per manual check | Evaluation sheet |
 | **Confirm category** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; no final decision; category A–K (not I) | Sets confirmed category; reason required if it differs from the form's category; refreshes documents; audit notes re-categorisation and any charge mismatch | `ConfirmCategoryFor` |
-| **Mark complete** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; submission complete (else lists outstanding documents and unpaid amount and suggests a deficiency notice) | Sets Date Submission Complete if blank; if status was Deficiency Notice Issued → Under Review. Determination due follows. Already complete and not reopening → message only. | `MarkCompleteFor` |
+| **Mark complete** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; submission complete (else lists outstanding documents and unpaid amount and suggests a deficiency notice) | Sets Date Submission Complete if blank; it is never reset, so a deficiency notice or response does not restart the 30-day clock (Decided: Q7); if status was Deficiency Notice Issued → Under Review. Determination due follows. Already complete and not reopening → message only. | `MarkCompleteFor` |
 | **Issue deficiency notice** | Reviewing supervisor (assigned) | Gate; not closed; not already Deficiency Notice Issued; if nothing failed and submission complete → confirm "anyway?" | Issues DEF number; status Deficiency Notice Issued; notice date = today; response due = today + 14; audit with counts of documents outstanding, balance, checks failed | `IssueDeficiencyFor` |
 | **Approve and register** | Assigned approving officer | No approval blockers (§12.3) | New: certificate date = today, REG number, status Registered, final decision "Register (13(1)(a))". Update / annual: apply changes (§16), status Changes Applied, final decision "Accept filing and apply changes (para 16)". Sets date complete and review date if blank, approval date = today. Records overridden flags. | `ApproveFor` |
 | **Lapse** | Assigned approving officer (Open: Q9) | Status Deficiency Notice Issued; today > response due | Status Lapsed; final decision "Treat as lapsed (13(2))"; approval date = today | `LapseFor` |
