@@ -70,19 +70,7 @@ export async function createOwnUse(db: Db, actor: Actor | null, input: OwnUseInp
     const settings = await getSettings(tx);
     const { p, cac, phone, units } = await validate(tx, input, today);
     p.throwIfAny();
-    const kw = installedKw(units.map((u) => u.kw))!;
-    if (kw >= 1000) throw blocked(`Register as captive generation (para 3(3)(c)): ${kw} kW is 1 MW or more.`);
-    const warnings: string[] = [];
-    if (kw < settings.ownUseThresholdKw) warnings.push(`Below ${settings.ownUseThresholdKw} kW: does not need to notify (para 3(4)). Save anyway?`);
-    if (cac && t(input.siteAddress)) {
-      const [dup] = await tx
-        .select({ oun: ownUseNotifications.ounNo })
-        .from(ownUseNotifications)
-        .where(and(sql`lower(trim(${ownUseNotifications.cacNo})) = ${cac.toLowerCase()}`, sql`lower(trim(${ownUseNotifications.siteAddress})) = ${t(input.siteAddress)!.toLowerCase()}`))
-        .limit(1);
-      if (dup) warnings.push(`Another own-use notification (${dup.oun}) has the same CAC number and site address (one notification per site). Save anyway?`);
-    }
-    if (warnings.length && !opts.confirmWarnings) throw needsConfirmation(...warnings);
+    const kw = await checkOwnUse(tx, null, input, cac, units, settings, opts);
 
     const type = await correspondenceTypeForFiling(tx, "OWNUSE");
     const inward = await createInwardItem(tx, {
@@ -100,49 +88,111 @@ export async function createOwnUse(db: Db, actor: Actor | null, input: OwnUseInp
       source: "own_use_direct",
       remarks: "Saved directly on the Own-Use sheet",
     });
-    const ref = await loadRef(tx);
-    const fee = ownUseFee(kw, settings.ownUseThresholdKw, ref.fees);
-    const { number: oun } = await issueNumber(tx, "OUN", { year: yearOf(input.dateFiled) });
     const [row] = await tx
       .insert(ownUseNotifications)
-      .values({
-        inwardItemId: inward.id,
-        ackNo: inward.ackNo,
-        ounNo: oun,
-        name: t(input.name)!,
-        dateFiled: input.dateFiled,
-        cacNo: cac,
-        siteAddress: t(input.siteAddress),
-        lga: input.lga,
-        natureOfBusiness: t(input.natureOfBusiness),
-        gridConnected: t(input.gridConnected),
-        distributionLicensee: t(input.distributionLicensee),
-        contactPerson: t(input.contactPerson),
-        phone,
-        email: t(input.email),
-        remarks: t(input.remarks),
-        createdBy: actor.id,
-        createdByName: actor.name,
-        pricedFee: fee,
-        pricedThresholdKw: settings.ownUseThresholdKw,
-        savedAt: new Date(),
-      })
+      .values({ inwardItemId: inward.id, ackNo: inward.ackNo, name: t(input.name)!, dateFiled: input.dateFiled })
       .returning({ id: ownUseNotifications.id });
-    await tx.insert(ownUseUnits).values(
-      units.map((u, i) => ({ notificationId: row.id, position: i + 1, makeModel: t(u.makeModel), kw: u.kw, fuel: t(u.fuel), avgMwh: u.avgMwh ?? null })),
-    );
-    const elig = kw >= 1000 ? "Register as operator" : kw < settings.ownUseThresholdKw ? "Not required" : "Notification required";
-    await writeAudit(tx, {
-      actor: auditActor(actor),
-      action: "Own-use notification",
-      module: "registration",
-      entityType: "own_use",
-      entityId: row.id,
-      reference: oun,
-      detail: `${t(input.name)} - ${kw} kW - ${elig} - fee ${formatNaira(fee)} - registry ack ${inward.ackNo}`,
-    });
+    const oun = await persistOwnUse(tx, actor, row.id, inward.ackNo, input, cac, phone, units, kw, settings);
     return { id: row.id, ounNo: oun, ackNo: inward.ackNo };
   });
+}
+
+/** Completes an Own-Use row started by Registry Intake: issues the OUN under its existing ACK. */
+export async function saveDraftOwnUse(db: Db, actor: Actor | null, id: string, input: OwnUseInput, opts: { confirmWarnings?: boolean } = {}): Promise<{ id: string; ounNo: string; ackNo: string }> {
+  authorize(actor, "ownuse:save");
+  const today = lagosToday();
+  return db.transaction(async (tx) => {
+    const [draft] = await tx.select().from(ownUseNotifications).where(eq(ownUseNotifications.id, id)).for("update");
+    if (!draft) throw notFound("Own-use notification");
+    if (draft.ounNo) throw blocked(`This notification is already saved as ${draft.ounNo}.`);
+    const settings = await getSettings(tx);
+    const { p, cac, phone, units } = await validate(tx, input, today);
+    p.throwIfAny();
+    const kw = await checkOwnUse(tx, id, input, cac, units, settings, opts);
+    const oun = await persistOwnUse(tx, actor, id, draft.ackNo, input, cac, phone, units, kw, settings);
+    return { id, ounNo: oun, ackNo: draft.ackNo };
+  });
+}
+
+type Unit = OwnUseInput["units"][number];
+
+async function checkOwnUse(tx: Tx, selfId: string | null, input: OwnUseInput, cac: string | null, units: Unit[], settings: Awaited<ReturnType<typeof getSettings>>, opts: { confirmWarnings?: boolean }) {
+  const kw = installedKw(units.map((u) => u.kw))!;
+  if (kw >= 1000) throw blocked(`Register as captive generation (para 3(3)(c)): ${kw} kW is 1 MW or more.`);
+  const warnings: string[] = [];
+  if (kw < settings.ownUseThresholdKw) warnings.push(`Below ${settings.ownUseThresholdKw} kW: does not need to notify (para 3(4)). Save anyway?`);
+  if (cac && t(input.siteAddress)) {
+    const [dup] = await tx
+      .select({ oun: ownUseNotifications.ounNo })
+      .from(ownUseNotifications)
+      .where(
+        and(
+          selfId ? ne(ownUseNotifications.id, selfId) : undefined,
+          sql`lower(trim(${ownUseNotifications.cacNo})) = ${cac.toLowerCase()}`,
+          sql`lower(trim(${ownUseNotifications.siteAddress})) = ${t(input.siteAddress)!.toLowerCase()}`,
+        ),
+      )
+      .limit(1);
+    if (dup) warnings.push(`Another own-use notification (${dup.oun ?? "not yet saved"}) has the same CAC number and site address (one notification per site). Save anyway?`);
+  }
+  if (warnings.length && !opts.confirmWarnings) throw needsConfirmation(...warnings);
+  return kw;
+}
+
+async function persistOwnUse(
+  tx: Tx,
+  actor: Actor,
+  id: string,
+  ackNo: string,
+  input: OwnUseInput,
+  cac: string | null,
+  phone: string | null,
+  units: Unit[],
+  kw: number,
+  settings: Awaited<ReturnType<typeof getSettings>>,
+): Promise<string> {
+  const ref = await loadRef(tx);
+  const fee = ownUseFee(kw, settings.ownUseThresholdKw, ref.fees);
+  const { number: oun } = await issueNumber(tx, "OUN", { year: yearOf(input.dateFiled) });
+  await tx
+    .update(ownUseNotifications)
+    .set({
+      ounNo: oun,
+      name: t(input.name)!,
+      dateFiled: input.dateFiled,
+      cacNo: cac,
+      siteAddress: t(input.siteAddress),
+      lga: input.lga,
+      natureOfBusiness: t(input.natureOfBusiness),
+      gridConnected: t(input.gridConnected),
+      distributionLicensee: t(input.distributionLicensee),
+      contactPerson: t(input.contactPerson),
+      phone,
+      email: t(input.email),
+      remarks: t(input.remarks),
+      createdBy: actor.id,
+      createdByName: actor.name,
+      pricedFee: fee,
+      pricedThresholdKw: settings.ownUseThresholdKw,
+      savedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(ownUseNotifications.id, id));
+  await tx.delete(ownUseUnits).where(eq(ownUseUnits.notificationId, id));
+  await tx.insert(ownUseUnits).values(
+    units.map((u, i) => ({ notificationId: id, position: i + 1, makeModel: t(u.makeModel), kw: u.kw, fuel: t(u.fuel), avgMwh: u.avgMwh ?? null })),
+  );
+  const elig = kw >= 1000 ? "Register as operator" : kw < settings.ownUseThresholdKw ? "Not required" : "Notification required";
+  await writeAudit(tx, {
+    actor: auditActor(actor),
+    action: "Own-use notification",
+    module: "registration",
+    entityType: "own_use",
+    entityId: id,
+    reference: oun,
+    detail: `${t(input.name)} - ${kw} kW - ${elig} - fee ${formatNaira(fee)} - registry ack ${ackNo}`,
+  });
+  return oun;
 }
 
 export type LoadedOwnUse = {
@@ -206,6 +256,7 @@ export async function setOwnUseDocument(db: Db, actor: Actor | null, id: string,
   authorize(actor, "documents:update");
   await db.transaction(async (tx) => {
     const l = await loadOwnUse(tx, id);
+    if (!l.row.ounNo) throw blocked('Save the notification first (it was started by Registry Intake).');
     const item = l.a.documents.items.find((i) => i.key === key);
     if (!item) throw blocked("That document is not on the REG-01I list.");
     if (item.automatic) throw blocked("This document is set automatically.");
@@ -245,6 +296,7 @@ export async function registerOwnUse(db: Db, actor: Actor | null, id: string): P
   return db.transaction(async (tx) => {
     await tx.select({ id: ownUseNotifications.id }).from(ownUseNotifications).where(eq(ownUseNotifications.id, id)).for("update");
     const l = await loadOwnUse(tx, id);
+    if (!l.row.ounNo) throw blocked('Save the notification first (it was started by Registry Intake).');
     const reasons = [...l.a.registrationBlockers];
     if (l.row.createdBy === actor.id) reasons.push("The approving officer cannot be the user who created the submission");
     if (reasons.length) {

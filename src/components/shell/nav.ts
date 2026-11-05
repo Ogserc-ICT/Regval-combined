@@ -28,13 +28,13 @@ export const NAV: NavGroup[] = [
   {
     label: "Registry",
     items: [
-      { label: "Front desk", href: "/front-desk", icon: "frontdesk", permission: "registers:read", phase: 3 },
-      { label: "Registry intake", href: "/registry-intake", icon: "intake", permission: "registers:read", phase: 3 },
-      { label: "Inward", href: "/inward", icon: "inward", permission: "registers:read", phase: 3 },
-      { label: "Routing", href: "/routing", icon: "routing", permission: "registers:read", phase: 3 },
-      { label: "Outward", href: "/outward", icon: "outward", permission: "registers:read", phase: 3 },
-      { label: "Files", href: "/files", icon: "files", permission: "registers:read", phase: 3 },
-      { label: "Pending actions", href: "/pending", icon: "pending", permission: "registers:read", phase: 3 },
+      { label: "Front desk", href: "/front-desk", icon: "frontdesk", permission: "registers:read" },
+      { label: "Registry intake", href: "/registry-intake", icon: "intake", permission: "registers:read" },
+      { label: "Inward", href: "/inward", icon: "inward", permission: "registers:read" },
+      { label: "Routing", href: "/routing", icon: "routing", permission: "registers:read" },
+      { label: "Outward", href: "/outward", icon: "outward", permission: "registers:read" },
+      { label: "Files", href: "/files", icon: "files", permission: "registers:read" },
+      { label: "Pending actions", href: "/pending", icon: "pending", permission: "registers:read" },
     ],
   },
   {

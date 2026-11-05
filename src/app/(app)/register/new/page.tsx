@@ -17,7 +17,7 @@ export default async function NewSubmissionPage() {
     <>
       <PageHeader
         title="New submission"
-        description="Direct entry on the Register. For a filing handed in at the front desk, Registry Intake (Phase 3) will start the entry with its acknowledgement instead."
+        description="Direct entry on the Register. For a filing handed in at the front desk, use Registry Intake instead: it starts the entry with its acknowledgement."
         actions={
           <Link href="/register" className="text-sm text-info hover:underline">
             Back to the Register

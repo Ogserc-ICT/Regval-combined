@@ -36,3 +36,9 @@ export function serverNow(env: NodeJS.ProcessEnv = process.env, realNow: Date = 
 export function lagosToday(env: NodeJS.ProcessEnv = process.env, realNow: Date = new Date()): LocalDate {
   return lagosDate(serverNow(env, realNow));
 }
+
+/** The current Lagos time as "HH:MM", for form defaults. */
+export function lagosTimeNow(env: NodeJS.ProcessEnv = process.env, realNow: Date = new Date()): string {
+  const m = lagosMinuteOfDay(serverNow(env, realNow));
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+}

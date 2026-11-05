@@ -2,7 +2,7 @@
  * Creating inward items (SPEC §18.3, §19). Phase 2 uses the direct-entry
  * path: saving a submission or own-use notification without an ACK issues one
  * from the shared OGSERC/ACK series and logs it in the Inward Register.
- * Phase 3 adds New Inward and Registry Intake on top of the same function.
+ * New Inward and Registry Intake (services/registry) use the same function.
  */
 import { deemedReceiptDate } from "@/domain/deemed";
 import { yearOf, type LocalDate } from "@/domain/dates";
@@ -31,6 +31,16 @@ export type NewInward = {
   remarks?: string | null;
   frontDeskItemId?: string | null;
   isExample?: boolean;
+  // New Inward / Registry Intake details (SPEC §18.1, §19)
+  senderRef?: string | null;
+  documentDate?: string | null;
+  inResponseToOutwardId?: string | null;
+  deliveredBy?: string | null;
+  volumes?: number | null;
+  schedule2Count?: number | null;
+  feeEvidence?: boolean | null;
+  paymentReference?: string | null;
+  amountShownKobo?: number | null;
 };
 
 /** Issues the next ACK (year of the deemed receipt date, Q3) and logs the item. */
@@ -62,6 +72,15 @@ export async function createInwardItem(tx: Tx, input: NewInward): Promise<{ id: 
       remarks: input.remarks ?? null,
       frontDeskItemId: input.frontDeskItemId ?? null,
       isExample: input.isExample ?? false,
+      senderRef: input.senderRef ?? null,
+      documentDate: input.documentDate ?? null,
+      inResponseToOutwardId: input.inResponseToOutwardId ?? null,
+      deliveredBy: input.deliveredBy ?? null,
+      volumes: input.volumes ?? null,
+      schedule2Count: input.schedule2Count ?? null,
+      feeEvidence: input.feeEvidence ?? null,
+      paymentReference: input.paymentReference ?? null,
+      amountShownKobo: input.amountShownKobo ?? null,
       createdBy: input.receivedByUserId,
     })
     .returning({ id: inwardItems.id });

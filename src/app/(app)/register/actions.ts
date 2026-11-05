@@ -7,7 +7,7 @@ import { getCurrentActor } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { toResult, type ActionResult } from "@/server/errors";
 import { confirmPayment, recordPayment, rejectPayment, reversePayment } from "@/server/services/payments";
-import { createSubmission, updateSubmission } from "@/server/services/submissions/save";
+import { createSubmission, saveDraftSubmission, updateSubmission } from "@/server/services/submissions/save";
 import { parseSubmission } from "./parse";
 import { parseNairaToKobo } from "@/lib/format";
 import {
@@ -48,6 +48,20 @@ export async function createSubmissionAction(_p: ActionResult<{ id: string; ackN
   if (res.ok) {
     refresh(res.data.id);
     redirect(`/register/${res.data.id}?saved=1`);
+  }
+  return res;
+}
+
+/** Saves a Register row started by Registry Intake (it keeps its ACK). */
+export async function saveDraftSubmissionAction(_p: ActionResult<{ id: string; ackNo: string }> | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  const res = await toResult(() => saveDraftSubmission(db, actor, id, parseSubmission(f), { confirmWarnings: confirmed(f) }));
+  if (res.ok) {
+    refresh(id);
+    revalidatePath("/registry-intake");
+    revalidatePath("/inward");
+    redirect(`/register/${id}?saved=1`);
   }
   return res;
 }

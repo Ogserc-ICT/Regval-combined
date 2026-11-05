@@ -77,6 +77,15 @@ export function ActionForm<T>({
       {state?.ok ? (
         <div className={inline ? "w-full" : undefined}>
           <Notice tone="accent">{success ? success(state.data) : (state.message ?? "Done.")}</Notice>
+          {state.warnings?.length ? (
+            <Notice tone="warn" className="mt-2">
+              <ul className="list-disc pl-5">
+                {state.warnings.map((w) => (
+                  <li key={w}>{w}</li>
+                ))}
+              </ul>
+            </Notice>
+          ) : null}
         </div>
       ) : null}
       <div className={inline ? undefined : "flex justify-end"}>

@@ -14,7 +14,10 @@ import { ServiceError } from "@/server/errors";
 import { loadOwnUse, type LoadedOwnUse } from "@/server/services/ownuse";
 import { listValues } from "@/server/services/reference";
 import { lagosToday } from "@/server/time";
+import { getSettings } from "@/server/services/settings";
+import { saveDraftOwnUseAction } from "../../_registry/actions";
 import { ownUseDocumentAction, ownUseFlagAction, registerOwnUseAction } from "../actions";
+import { OwnUseForm } from "../own-use-form";
 
 export const metadata: Metadata = { title: "Own-use notification" };
 
@@ -31,6 +34,36 @@ export default async function OwnUseDetailPage({ params, searchParams }: PagePro
     throw e;
   }
   const { row, a } = l;
+  if (!row.ounNo) {
+    // A row started by Registry Intake: complete it here to issue the OUN.
+    const [lgas, fuels, settings] = await Promise.all([listValues(db, "lga"), listValues(db, "fuel"), getSettings(db)]);
+    const str = (v: string | null) => v ?? "";
+    return (
+      <>
+        <PageHeader
+          title={row.name}
+          description={<span>ACK {row.ackNo} · Own-Use row started by Registry Intake</span>}
+          actions={
+            <Link href="/registry-intake" className="text-sm text-info hover:underline">
+              Back to Registry intake
+            </Link>
+          }
+        />
+        {can(actor, "ownuse:save") ? (
+          <OwnUseForm
+            lgas={lgas}
+            fuels={fuels}
+            today={lagosToday()}
+            thresholdKw={settings.ownUseThresholdKw}
+            action={saveDraftOwnUseAction}
+            values={{ id: row.id, name: row.name, dateFiled: row.dateFiled, cacNo: str(row.cacNo), siteAddress: str(row.siteAddress), lga: str(row.lga), contactPerson: str(row.contactPerson), phone: str(row.phone), email: str(row.email), remarks: str(row.remarks) }}
+          />
+        ) : (
+          <Notice tone="info">A Registry officer completes this notification and saves it to issue the OUN number.</Notice>
+        )}
+      </>
+    );
+  }
   const [channels, purposes] = await Promise.all([listValues(db, "payment_channel"), listValues(db, "payment_purpose")]);
   const canDocs = can(actor, "documents:update") && !row.registrationNo;
 

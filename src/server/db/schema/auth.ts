@@ -3,6 +3,7 @@
  * Property names are the ones Better Auth expects; columns are snake_case.
  */
 import { boolean, index, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { units } from "./reference";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -18,6 +19,8 @@ export const users = pgTable("users", {
   /** Seeded from the workbook and not yet confirmed by an admin (brief: "flag for Kamiye to confirm"). */
   pendingConfirmation: boolean("pending_confirmation").notNull().default(false),
   notes: text("notes"),
+  /** Unit officers see and act on items routed to this unit (SPEC §20, §23). */
+  unitId: uuid("unit_id").references(() => units.id),
 });
 
 export const sessions = pgTable(

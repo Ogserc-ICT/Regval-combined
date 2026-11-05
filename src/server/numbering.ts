@@ -9,7 +9,7 @@
  */
 import { sql } from "drizzle-orm";
 import { formatNumber, isYearly, type Series } from "@/domain/numbering";
-import type { Tx } from "./db/connect";
+import type { DbOrTx, Tx } from "./db/connect";
 
 export type IssueOptions = {
   /** Required for yearly series (all except FILE). */
@@ -44,7 +44,7 @@ export async function issueNumber(tx: Tx, series: Series, opts: IssueOptions = {
 }
 
 /** Peek at the last issued serial (for display only; never use it to build a number). */
-export async function lastSerial(tx: Tx, series: Series, year: number, scope = ""): Promise<number> {
+export async function lastSerial(tx: DbOrTx, series: Series, year: number, scope = ""): Promise<number> {
   const res = await tx.execute<{ last_value: number }>(sql`
     select last_value from counters where series = ${series} and year = ${year} and scope = ${scope}`);
   return Number(res.rows[0]?.last_value ?? 0);

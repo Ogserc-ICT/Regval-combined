@@ -89,8 +89,10 @@ export function SubmissionForm<T>({
   action: FormAction<T>;
   lists: SubmissionFormLists;
   values: SubmissionFormValues;
-  mode: "new" | "edit";
+  /** draft: a Register row started by Registry Intake, saved under its existing ACK. */
+  mode: "new" | "edit" | "draft";
 }) {
+  const locked = mode !== "new";
   const [filing, setFiling] = useState(values.filingType);
   const [operating, setOperating] = useState(values.operatingOnEffectiveDate);
   const [others, setOthers] = useState<string[]>(values.otherActivities);
@@ -98,19 +100,19 @@ export function SubmissionForm<T>({
   const activityOptions = lists.activities.map((a) => ({ value: a.code, label: `${a.name} (${a.code})` }));
 
   return (
-    <ActionForm action={action} submitLabel={mode === "new" ? "Save submission" : "Save changes"} pendingLabel="Saving…" hidden={values.id ? { id: values.id } : undefined}>
+    <ActionForm action={action} submitLabel={mode === "new" ? "Save submission" : mode === "draft" ? "Save on the Register" : "Save changes"} pendingLabel="Saving…" hidden={values.id ? { id: values.id } : undefined}>
       {(fe) => {
         const err = (k: string) => fe[k];
         return (
           <div className="flex flex-col gap-6">
-            <Section title="Submission" description={mode === "new" ? "Saving issues the next OGSERC/ACK number from the shared series and logs the filing in the Inward Register." : undefined}>
+            <Section title="Submission" description={mode === "new" ? "Saving issues the next OGSERC/ACK number from the shared series and logs the filing in the Inward Register." : mode === "draft" ? "Started by Registry Intake under its ACK. Saving prices it and opens the payment step." : undefined}>
               <Field label="Filing type *" htmlFor="filingType" errors={err("filingType")}>
-                <Select id="filingType" name="filingType" value={filing} onChange={(e) => setFiling(e.target.value)} disabled={mode === "edit"}>
+                <Select id="filingType" name="filingType" value={filing} onChange={(e) => setFiling(e.target.value)} disabled={locked}>
                   <option value="NEW">New registration</option>
                   <option value="UPDATE">Update: material change (para 16(1))</option>
                   <option value="ANNUAL">Annual confirmation (para 16(2))</option>
                 </Select>
-                {mode === "edit" ? <input type="hidden" name="filingType" value={filing} /> : null}
+                {locked ? <input type="hidden" name="filingType" value={filing} /> : null}
               </Field>
               <Field label="Form filed *" htmlFor="formFiled" errors={err("formFiled")}>
                 <Select id="formFiled" name="formFiled" defaultValue={values.formFiled}>
@@ -123,8 +125,8 @@ export function SubmissionForm<T>({
                 </Field>
               ) : null}
               <Field label="Date submitted *" htmlFor="dateSubmitted" hint="Its deemed receipt date sets the ACK year and the days late." errors={err("dateSubmitted")}>
-                <Input id="dateSubmitted" name="dateSubmitted" type="date" defaultValue={values.dateSubmitted} disabled={mode === "edit"} />
-                {mode === "edit" ? <input type="hidden" name="dateSubmitted" value={values.dateSubmitted} /> : null}
+                <Input id="dateSubmitted" name="dateSubmitted" type="date" defaultValue={values.dateSubmitted} disabled={locked} />
+                {locked ? <input type="hidden" name="dateSubmitted" value={values.dateSubmitted} /> : null}
               </Field>
               <Field label="Submission channel" htmlFor="submissionChannel" errors={err("submissionChannel")}>
                 <Select id="submissionChannel" name="submissionChannel" defaultValue={values.submissionChannel}>

@@ -14,6 +14,8 @@ export type Actor = {
   roles: Role[];
   active: boolean;
   mustChangePassword: boolean;
+  /** Unit officers: the unit they act for (SPEC §20). */
+  unitId?: string | null;
 };
 
 export function auditActor(actor: Actor): AuditActor {

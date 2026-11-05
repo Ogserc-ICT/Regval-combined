@@ -6,6 +6,7 @@ import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { listUsers } from "@/server/services/users";
 import { NewUserForm } from "./new-user-form";
+import { unitOptions } from "./units";
 
 export const metadata: Metadata = { title: "Staff & roles" };
 
@@ -19,7 +20,7 @@ export default async function UsersPage() {
         title="Staff & roles"
         description="Every officer field (received, released, dispatched, recorded by) comes from these accounts. A person can hold several roles; separation of duties is still checked on each record."
       />
-      <NewUserForm />
+      <NewUserForm units={await unitOptions()} />
       <Card className="mt-6">
         <CardHeader
           title={`${users.length} account(s)`}

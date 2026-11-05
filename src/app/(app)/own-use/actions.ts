@@ -6,6 +6,7 @@ import { getCurrentActor } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { toResult, type ActionResult } from "@/server/errors";
 import { createOwnUse, registerOwnUse, setOwnUseDocument, setOwnUseFlagReason } from "@/server/services/ownuse";
+import { parseOwnUseUnits } from "./parse";
 
 const s = (f: FormData, k: string) => {
   const v = f.get(k);
@@ -14,18 +15,7 @@ const s = (f: FormData, k: string) => {
 
 export async function createOwnUseAction(_p: ActionResult<unknown> | undefined, f: FormData) {
   const actor = await getCurrentActor();
-  const kws = f.getAll("unitKw").map(String);
-  const units = kws
-    .map((kw, i) => ({
-      kw: kw.trim() === "" ? NaN : Number(kw.replace(/,/g, "")),
-      makeModel: String(f.getAll("unitMake")[i] ?? ""),
-      fuel: String(f.getAll("unitFuel")[i] ?? ""),
-      avgMwh: (() => {
-        const v = String(f.getAll("unitMwh")[i] ?? "").trim();
-        return v === "" ? null : Number(v);
-      })(),
-    }))
-    .filter((u, i) => kws[i].trim() !== "" || u.makeModel.trim() !== "");
+  const units = parseOwnUseUnits(f);
   const res = await toResult(() =>
     createOwnUse(
       db,

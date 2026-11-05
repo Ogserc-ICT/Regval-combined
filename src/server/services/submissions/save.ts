@@ -304,22 +304,26 @@ export async function createSubmission(db: Db, actor: Actor | null, input: Submi
 /** Saves a Register entry started by Registry Intake (it already has its ACK). */
 export async function saveDraftSubmission(db: Db, actor: Actor | null, id: string, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
   authorize(actor, "submission:save");
+  return db.transaction((tx) => saveDraftInTx(tx, actor, id, input, opts));
+}
+
+/** The body of saveDraftSubmission, for callers already in a transaction (Registry Intake). */
+export async function saveDraftInTx(tx: Tx, actor: Actor, id: string, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
+  authorize(actor, "submission:save");
   const today = lagosToday();
-  return db.transaction(async (tx) => {
-    const [row] = await tx.select().from(submissions).where(eq(submissions.id, id)).for("update");
-    if (!row) throw notFound("Submission");
-    if (row.status) throw blocked(`This submission is already saved as ${row.ackNo}.`);
-    const settings = await getSettings(tx);
-    const v = await validate(tx, input, id, today);
-    const pricing = checkPricing(v.problems, v.cols, v.ref, settings, v.others);
-    v.problems.throwIfAny();
-    const w = await warnings(tx, { id, linkedSubmissionId: v.linkedId, cacNo: v.cols.cacNo ?? null, registeredName: v.cols.registeredName });
-    if (w.length && !opts.confirmWarnings) throw needsConfirmation(...w);
-    await tx.update(submissions).set({ ...v.cols, updatedAt: new Date() }).where(eq(submissions.id, id));
-    await writeChildren(tx, id, v.others, v.licences);
-    await finishSave(tx, actor, id, row.ackNo, v.cols, v.others, pricing, settings, v.linkedId);
-    return { id, ackNo: row.ackNo };
-  });
+  const [row] = await tx.select().from(submissions).where(eq(submissions.id, id)).for("update");
+  if (!row) throw notFound("Submission");
+  if (row.status) throw blocked(`This submission is already saved as ${row.ackNo}.`);
+  const settings = await getSettings(tx);
+  const v = await validate(tx, input, id, today);
+  const pricing = checkPricing(v.problems, v.cols, v.ref, settings, v.others);
+  v.problems.throwIfAny();
+  const w = await warnings(tx, { id, linkedSubmissionId: v.linkedId, cacNo: v.cols.cacNo ?? null, registeredName: v.cols.registeredName });
+  if (w.length && !opts.confirmWarnings) throw needsConfirmation(...w);
+  await tx.update(submissions).set({ ...v.cols, updatedAt: new Date() }).where(eq(submissions.id, id));
+  await writeChildren(tx, id, v.others, v.licences);
+  await finishSave(tx, actor, id, row.ackNo, v.cols, v.others, pricing, settings, v.linkedId);
+  return { id, ackNo: row.ackNo };
 }
 
 const FIELD_LABELS: Partial<Record<keyof Columns, string>> = {

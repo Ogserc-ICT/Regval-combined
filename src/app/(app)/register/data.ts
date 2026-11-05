@@ -58,7 +58,14 @@ export function blankValues(today: string): SubmissionFormValues {
 const str = (v: unknown) => (v === null || v === undefined ? "" : String(v));
 
 export function valuesFrom(l: LoadedSubmission): SubmissionFormValues {
-  const r = l.row;
+  return valuesFromParts(l.row, l.otherActivities, l.licences);
+}
+
+export function valuesFromParts(
+  r: LoadedSubmission["row"],
+  otherActivities: string[],
+  licences: { licenceNo: string | null; expiryDate: string | null }[],
+): SubmissionFormValues {
   const yn = (v: boolean | null | undefined) => (v === true ? "Y" : v === false ? "N" : "");
   return {
     id: r.id,
@@ -77,11 +84,11 @@ export function valuesFrom(l: LoadedSubmission): SubmissionFormValues {
     otherLgas: str(r.otherLgas),
     townsEstates: str(r.townsEstates),
     primaryActivity: str(r.primaryActivity),
-    otherActivities: l.otherActivities,
+    otherActivities,
     installedCapacityMw: str(r.installedCapacityMw),
     customers: str(r.customers),
     licenceStatus: str(r.licenceStatus),
-    licences: l.licences.map((x) => ({ licenceNo: str(x.licenceNo), expiryDate: str(x.expiryDate) })),
+    licences: licences.map((x) => ({ licenceNo: str(x.licenceNo), expiryDate: str(x.expiryDate) })),
     complianceOfficer: str(r.complianceOfficer),
     phone: str(r.phone),
     email: str(r.email),

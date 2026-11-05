@@ -9,7 +9,10 @@ import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { ServiceError } from "@/server/errors";
 import { loadSubmission, type LoadedSubmission } from "@/server/services/submissions/load";
+import { eq } from "drizzle-orm";
+import { submissions } from "@/server/db/schema";
 import { DetailsTab } from "./details-tab";
+import { DraftSubmission } from "./draft";
 import { DocumentsTab } from "./documents-tab";
 import { EvaluationTab } from "./evaluation-tab";
 import { HistoryTab } from "./history-tab";
@@ -33,6 +36,9 @@ export default async function SubmissionPage({ params, searchParams }: PageProps
   const sp = await searchParams;
   const tab = (TABS.find(([k]) => k === sp.tab)?.[0] ?? "summary") as (typeof TABS)[number][0];
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  const [raw] = await db.select().from(submissions).where(eq(submissions.id, id));
+  if (!raw) notFound();
+  if (!raw.status) return <DraftSubmission row={raw} actor={actor} />;
   let l: LoadedSubmission;
   try {
     l = await loadSubmission(db, id);

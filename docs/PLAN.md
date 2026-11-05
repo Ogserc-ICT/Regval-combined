@@ -249,6 +249,18 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - `all(db, thunks)` runs independent queries in parallel on the pool but one at a time inside a transaction (one connection).
 - Not built yet (Q14): the acknowledgement letter, deficiency notice, EVAL-01 and CERT-01 documents.
 
+## 11a. As built in Phase 3
+
+- Tables (migration 0004): `front_desk_items`, `outward_items`, `files`, `file_movements`; `users.unit_id` for unit officers; foreign keys from inward items to their front-desk item (unique, so an FD item is registered once), file and "in response to" outward item.
+- Guards (migration 0005): registry rows cannot be deleted; FD, OUT and file reference numbers cannot change once issued; an FD item's link to its inward item and a file movement's facts (out time, holder, unit, returned time) are locked once set.
+- `src/domain/registry.ts` holds every Registry calculation (response due, status, working days, flags, Register entry state, outward status and flags, file movement status, "currently with", email recipients). The services in `src/server/services/registry/` (front desk, inward, intake, outward, files, load) call it; nothing derived is stored.
+- Registry Intake runs in one transaction: ACK (or the pulled item's ACK), inward item, front-desk link, then the Register or Own-Use row. The Register save runs in a savepoint: when it cannot be saved yet, the row stays "started" with the reasons shown, and the intake still succeeds. Started rows are completed on the submission or own-use page, keeping their ACK; the OUN is issued when the own-use row is saved.
+- Two inward flags cannot occur in the app because the save refuses the cause: "our ref not found in Outward" (the OUT number must exist) and "file ref not in File Index" (routing and outward items must quote a file that exists). The Schedule 2 flag follows the Q16 default: it compares the count entered with the documents on the Schedule 2 list of the form filed, once the Register or Own-Use entry gives the form; no flag before that.
+- Emails ([G9]): the adapter and sending arrive in Phase 4. The "no address" rule is live: when the unit and its division have no email, New Inward, Registry Intake and routing warn and the item's history records "Not emailed: no address". With `ackEmailMode = Off` nothing is checked.
+- Confirm receipt and close are open to a unit officer only for items routed to their own unit (Q17 default); the Registry can close any item. Forwarding before routing asks for confirmation.
+- File references: generated per class (`OGSERC/{code}/{nnn}`), never yearly (Q5 default); a typed reference must be unique, and the generator skips any number already typed in.
+- Not built yet (Phase 4): acknowledgement slip, Daily Register and Pending actions PDFs; sending emails; the daily review.
+
 ## 12. Phase map
 
 | Phase | Delivers |

@@ -8,6 +8,7 @@ import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { auditLog } from "@/server/db/schema";
 import { listUsers } from "@/server/services/users";
+import { unitOptions } from "../units";
 import { EditUserForm } from "./edit-user-form";
 
 export const metadata: Metadata = { title: "Staff account" };
@@ -36,7 +37,7 @@ export default async function UserPage({ params }: PageProps<"/admin/users/[id]"
           </Link>
         }
       />
-      <EditUserForm user={{ id: user.id, name: user.name, email: user.email, active: user.active, pendingConfirmation: user.pendingConfirmation, roles: user.roles }} />
+      <EditUserForm user={{ id: user.id, name: user.name, email: user.email, active: user.active, pendingConfirmation: user.pendingConfirmation, roles: user.roles, unitId: user.unitId }} units={await unitOptions()} />
       <Card className="mt-6">
         <CardHeader title="History" />
         <Table>

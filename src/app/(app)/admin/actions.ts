@@ -66,6 +66,7 @@ export async function createUserAction(_prev: ActionResult<{ id: string; tempPas
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
       roles: form.getAll("roles").map(String),
+      unitId: String(form.get("unitId") ?? "") || null,
     }),
   );
   if (res.ok) revalidatePath("/admin/users");
@@ -83,6 +84,7 @@ export async function updateUserAction(_prev: ActionResult | undefined, form: Fo
         active: form.get("active") === "on",
         confirm: form.get("confirm") === "on",
         roles: form.getAll("roles").map(String),
+      unitId: String(form.get("unitId") ?? "") || null,
       }),
     "Saved.",
   );

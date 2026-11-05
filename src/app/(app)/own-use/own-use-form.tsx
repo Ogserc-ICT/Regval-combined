@@ -2,33 +2,51 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { ActionForm } from "@/components/action-form";
+import { ActionForm, type FormAction } from "@/components/action-form";
 import { Button, Card, CardBody, CardHeader, Field, Input, Select, Textarea } from "@/components/ui";
 import { createOwnUseAction } from "./actions";
 
-export function OwnUseForm({ lgas, fuels, today, thresholdKw }: { lgas: string[]; fuels: string[]; today: string; thresholdKw: number }) {
+export type OwnUseDraftValues = { id: string; name: string; dateFiled: string; cacNo: string; siteAddress: string; lga: string; contactPerson: string; phone: string; email: string; remarks: string };
+
+export function OwnUseForm({
+  lgas,
+  fuels,
+  today,
+  thresholdKw,
+  action = createOwnUseAction,
+  values,
+}: {
+  lgas: string[];
+  fuels: string[];
+  today: string;
+  thresholdKw: number;
+  action?: FormAction<unknown>;
+  /** A row started by Registry Intake. */
+  values?: OwnUseDraftValues;
+}) {
   const [units, setUnits] = useState([0]);
+  const v = values;
   return (
-    <ActionForm action={createOwnUseAction} submitLabel="Save notification" pendingLabel="Saving…">
+    <ActionForm action={action} submitLabel="Save notification" pendingLabel="Saving…" hidden={v ? { id: v.id } : undefined}>
       {(fe) => (
         <div className="flex flex-col gap-6">
           <Card>
-            <CardHeader title="Notifier and site" description="One notification per site. Saving issues the ACK (shared series) and the OUN number." />
+            <CardHeader title="Notifier and site" description={v ? "Started by Registry Intake under its ACK. Saving issues the OUN number." : "One notification per site. Saving issues the ACK (shared series) and the OUN number."} />
             <CardBody className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               <Field label="Name *" htmlFor="name" errors={fe.name} className="md:col-span-2">
-                <Input id="name" name="name" />
+                <Input id="name" name="name" defaultValue={v?.name} />
               </Field>
               <Field label="Date filed *" htmlFor="dateFiled" errors={fe.dateFiled}>
-                <Input id="dateFiled" name="dateFiled" type="date" defaultValue={today} />
+                <Input id="dateFiled" name="dateFiled" type="date" defaultValue={v?.dateFiled ?? today} />
               </Field>
               <Field label="CAC no." htmlFor="cacNo" errors={fe.cacNo}>
-                <Input id="cacNo" name="cacNo" />
+                <Input id="cacNo" name="cacNo" defaultValue={v?.cacNo} />
               </Field>
               <Field label="Site address" htmlFor="siteAddress" className="md:col-span-2">
-                <Input id="siteAddress" name="siteAddress" />
+                <Input id="siteAddress" name="siteAddress" defaultValue={v?.siteAddress} />
               </Field>
               <Field label="LGA *" htmlFor="lga" errors={fe.lga}>
-                <Select id="lga" name="lga" defaultValue="">
+                <Select id="lga" name="lga" defaultValue={v?.lga ?? ""}>
                   <option value="">—</option>
                   {lgas.map((l) => (
                     <option key={l}>{l}</option>
@@ -49,13 +67,13 @@ export function OwnUseForm({ lgas, fuels, today, thresholdKw }: { lgas: string[]
                 <Input id="distributionLicensee" name="distributionLicensee" />
               </Field>
               <Field label="Contact person" htmlFor="contactPerson">
-                <Input id="contactPerson" name="contactPerson" />
+                <Input id="contactPerson" name="contactPerson" defaultValue={v?.contactPerson} />
               </Field>
               <Field label="Phone" htmlFor="phone" hint="11 digits starting with 0, or +234 and 10 digits" errors={fe.phone}>
-                <Input id="phone" name="phone" inputMode="tel" />
+                <Input id="phone" name="phone" defaultValue={v?.phone} inputMode="tel" />
               </Field>
               <Field label="Email" htmlFor="email" errors={fe.email}>
-                <Input id="email" name="email" type="email" />
+                <Input id="email" name="email" defaultValue={v?.email} type="email" />
               </Field>
             </CardBody>
           </Card>
@@ -83,7 +101,7 @@ export function OwnUseForm({ lgas, fuels, today, thresholdKw }: { lgas: string[]
                 <Plus className="h-4 w-4" /> Add a unit
               </Button>
               <Field label="Remarks" htmlFor="remarks" className="mt-2">
-                <Textarea id="remarks" name="remarks" />
+                <Textarea id="remarks" name="remarks" defaultValue={v?.remarks} />
               </Field>
             </CardBody>
           </Card>
