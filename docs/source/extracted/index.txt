@@ -1,0 +1,31 @@
+00 Registry Desk dims=B1:K44 state=visible
+01 Front Desk dims=B1:J67 state=visible
+02 New Inward dims=B1:J33 state=visible
+03 Registry Intake dims=B1:J91 state=visible
+04 New Outward dims=B1:J23 state=visible
+05 Update Item dims=B1:J38 state=visible
+06 File Desk dims=B1:J29 state=visible
+07 Routing Desk dims=B1:J21 state=visible
+08 Guide dims=A1:B50 state=visible
+09 Settings dims=A1:C51 state=visible
+10 Lists dims=A1:BV129 state=visible
+11 Register dims=A1:FI2006 state=visible
+12 Documents dims=A1:K20006 state=visible
+13 Evaluation dims=A1:DR2008 state=visible
+14 Payments dims=A1:X5006 state=visible
+15 Finance Desk dims=A1:L7 state=visible
+16 Own-Use dims=A1:BM2006 state=visible
+17 Dashboard dims=A1:M141 state=visible
+18 Audit Log dims=A1:E50004 state=visible
+19 Registry Guide dims=A1:D64 state=visible
+20 Registry Dashboard dims=A1:R99 state=visible
+21 Inward Register dims=A1:BS1005 state=visible
+22 Outward Register dims=A1:AN1005 state=visible
+23 Front Desk Log dims=A1:V1005 state=visible
+24 Pending Actions dims=A1:O306 state=visible
+25 Acknowledgement Slip dims=A1:H57 state=visible
+26 Daily Register dims=A1:M142 state=visible
+27 File Index dims=A1:R505 state=visible
+28 File Movement dims=A1:R1005 state=visible
+29 Registry Settings dims=A1:D81 state=visible
+30 Registry Lists dims=A1:AR80 state=visible

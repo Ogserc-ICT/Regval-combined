@@ -1,0 +1,350 @@
+B1	'Front Desk — Log a Delivered Document'
+B2	'Record every document handed in. No acknowledgement is issued here: the item gets a front desk intake number and waits on the list below until the Registry registers it and issues the acknowledgement.'
+B4	'Date & time received *'
+C4	'=NOW()'	=> datetime.datetime(2026, 11, 3, 21, 7, 26, 380000)
+D4	'This time becomes the receipt time when the Registry registers it.'
+E4	'recv'
+F4	'Y'
+G4	'=NOW()'	=> 46329.880166435185
+I4	'SAVE TO FRONT DESK LOG'
+B5	'Sender / organisation *'
+E5	'sender'
+F5	'Y'
+B6	'Subject / description *'
+E6	'subject'
+F6	'Y'
+B7	'Correspondence type (if known)'
+D7	'Leave blank if unsure — the Registry sets it.'
+E7	'type'
+B8	'Mode of receipt'
+C8	'Hand delivery'
+E8	'mode'
+G8	'Hand delivery'
+I8	'CLEAR FORM'
+B9	'Delivered by'
+D9	'Name of the person who brought it.'
+E9	'by'
+B10	'Phone'
+E10	'phone'
+B11	'No. of items / volumes'
+E11	'vols'
+I11	'◀ REGISTRY DESK'
+B12	'Received by (front desk) *'
+E12	'officer'
+F12	'Y'
+B13	'Remarks'
+E13	'remarks'
+I14	'Last intake no.'
+I15	'OGSERC/FD/2026/00001'
+B16	'AWAITING REGISTRY'
+D16	'=SUM(FD_pflag)&" item(s) not yet registered by the Registry"'	=> '1 item(s) not yet registered by the Registry'
+B17	'Intake no.'
+C17	'Sender'
+D17	'Subject'
+I17	'Received'
+J17	'Days waiting'
+B18	'=IF($E18="","",INDEX(FD_no,$E18))'	=> 'OGSERC/FD/2026/00001'
+C18	'=IF($E18="","",INDEX(FD_sender,$E18))'	=> 'Verge Power Limited'
+D18	'=IF($E18="","",INDEX(FD_subject,$E18))'	=> 'Petition to the Commission'
+E18	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> 1
+I18	'=IF($E18="","",INDEX(FD_recv,$E18))'	=> datetime.datetime(2026, 11, 3, 20, 50, 31)
+J18	'=IF($E18="","",INDEX(FD_wait,$E18))'	=> 0
+B19	'=IF($E19="","",INDEX(FD_no,$E19))'	=> None
+C19	'=IF($E19="","",INDEX(FD_sender,$E19))'	=> None
+D19	'=IF($E19="","",INDEX(FD_subject,$E19))'	=> None
+E19	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I19	'=IF($E19="","",INDEX(FD_recv,$E19))'	=> None
+J19	'=IF($E19="","",INDEX(FD_wait,$E19))'	=> None
+B20	'=IF($E20="","",INDEX(FD_no,$E20))'	=> None
+C20	'=IF($E20="","",INDEX(FD_sender,$E20))'	=> None
+D20	'=IF($E20="","",INDEX(FD_subject,$E20))'	=> None
+E20	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I20	'=IF($E20="","",INDEX(FD_recv,$E20))'	=> None
+J20	'=IF($E20="","",INDEX(FD_wait,$E20))'	=> None
+B21	'=IF($E21="","",INDEX(FD_no,$E21))'	=> None
+C21	'=IF($E21="","",INDEX(FD_sender,$E21))'	=> None
+D21	'=IF($E21="","",INDEX(FD_subject,$E21))'	=> None
+E21	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I21	'=IF($E21="","",INDEX(FD_recv,$E21))'	=> None
+J21	'=IF($E21="","",INDEX(FD_wait,$E21))'	=> None
+B22	'=IF($E22="","",INDEX(FD_no,$E22))'	=> None
+C22	'=IF($E22="","",INDEX(FD_sender,$E22))'	=> None
+D22	'=IF($E22="","",INDEX(FD_subject,$E22))'	=> None
+E22	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I22	'=IF($E22="","",INDEX(FD_recv,$E22))'	=> None
+J22	'=IF($E22="","",INDEX(FD_wait,$E22))'	=> None
+B23	'=IF($E23="","",INDEX(FD_no,$E23))'	=> None
+C23	'=IF($E23="","",INDEX(FD_sender,$E23))'	=> None
+D23	'=IF($E23="","",INDEX(FD_subject,$E23))'	=> None
+E23	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I23	'=IF($E23="","",INDEX(FD_recv,$E23))'	=> None
+J23	'=IF($E23="","",INDEX(FD_wait,$E23))'	=> None
+B24	'=IF($E24="","",INDEX(FD_no,$E24))'	=> None
+C24	'=IF($E24="","",INDEX(FD_sender,$E24))'	=> None
+D24	'=IF($E24="","",INDEX(FD_subject,$E24))'	=> None
+E24	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I24	'=IF($E24="","",INDEX(FD_recv,$E24))'	=> None
+J24	'=IF($E24="","",INDEX(FD_wait,$E24))'	=> None
+B25	'=IF($E25="","",INDEX(FD_no,$E25))'	=> None
+C25	'=IF($E25="","",INDEX(FD_sender,$E25))'	=> None
+D25	'=IF($E25="","",INDEX(FD_subject,$E25))'	=> None
+E25	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I25	'=IF($E25="","",INDEX(FD_recv,$E25))'	=> None
+J25	'=IF($E25="","",INDEX(FD_wait,$E25))'	=> None
+B26	'=IF($E26="","",INDEX(FD_no,$E26))'	=> None
+C26	'=IF($E26="","",INDEX(FD_sender,$E26))'	=> None
+D26	'=IF($E26="","",INDEX(FD_subject,$E26))'	=> None
+E26	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I26	'=IF($E26="","",INDEX(FD_recv,$E26))'	=> None
+J26	'=IF($E26="","",INDEX(FD_wait,$E26))'	=> None
+B27	'=IF($E27="","",INDEX(FD_no,$E27))'	=> None
+C27	'=IF($E27="","",INDEX(FD_sender,$E27))'	=> None
+D27	'=IF($E27="","",INDEX(FD_subject,$E27))'	=> None
+E27	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I27	'=IF($E27="","",INDEX(FD_recv,$E27))'	=> None
+J27	'=IF($E27="","",INDEX(FD_wait,$E27))'	=> None
+B28	'=IF($E28="","",INDEX(FD_no,$E28))'	=> None
+C28	'=IF($E28="","",INDEX(FD_sender,$E28))'	=> None
+D28	'=IF($E28="","",INDEX(FD_subject,$E28))'	=> None
+E28	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I28	'=IF($E28="","",INDEX(FD_recv,$E28))'	=> None
+J28	'=IF($E28="","",INDEX(FD_wait,$E28))'	=> None
+B29	'=IF($E29="","",INDEX(FD_no,$E29))'	=> None
+C29	'=IF($E29="","",INDEX(FD_sender,$E29))'	=> None
+D29	'=IF($E29="","",INDEX(FD_subject,$E29))'	=> None
+E29	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I29	'=IF($E29="","",INDEX(FD_recv,$E29))'	=> None
+J29	'=IF($E29="","",INDEX(FD_wait,$E29))'	=> None
+B30	'=IF($E30="","",INDEX(FD_no,$E30))'	=> None
+C30	'=IF($E30="","",INDEX(FD_sender,$E30))'	=> None
+D30	'=IF($E30="","",INDEX(FD_subject,$E30))'	=> None
+E30	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I30	'=IF($E30="","",INDEX(FD_recv,$E30))'	=> None
+J30	'=IF($E30="","",INDEX(FD_wait,$E30))'	=> None
+B31	'=IF($E31="","",INDEX(FD_no,$E31))'	=> None
+C31	'=IF($E31="","",INDEX(FD_sender,$E31))'	=> None
+D31	'=IF($E31="","",INDEX(FD_subject,$E31))'	=> None
+E31	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I31	'=IF($E31="","",INDEX(FD_recv,$E31))'	=> None
+J31	'=IF($E31="","",INDEX(FD_wait,$E31))'	=> None
+B32	'=IF($E32="","",INDEX(FD_no,$E32))'	=> None
+C32	'=IF($E32="","",INDEX(FD_sender,$E32))'	=> None
+D32	'=IF($E32="","",INDEX(FD_subject,$E32))'	=> None
+E32	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I32	'=IF($E32="","",INDEX(FD_recv,$E32))'	=> None
+J32	'=IF($E32="","",INDEX(FD_wait,$E32))'	=> None
+B33	'=IF($E33="","",INDEX(FD_no,$E33))'	=> None
+C33	'=IF($E33="","",INDEX(FD_sender,$E33))'	=> None
+D33	'=IF($E33="","",INDEX(FD_subject,$E33))'	=> None
+E33	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I33	'=IF($E33="","",INDEX(FD_recv,$E33))'	=> None
+J33	'=IF($E33="","",INDEX(FD_wait,$E33))'	=> None
+B34	'=IF($E34="","",INDEX(FD_no,$E34))'	=> None
+C34	'=IF($E34="","",INDEX(FD_sender,$E34))'	=> None
+D34	'=IF($E34="","",INDEX(FD_subject,$E34))'	=> None
+E34	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I34	'=IF($E34="","",INDEX(FD_recv,$E34))'	=> None
+J34	'=IF($E34="","",INDEX(FD_wait,$E34))'	=> None
+B35	'=IF($E35="","",INDEX(FD_no,$E35))'	=> None
+C35	'=IF($E35="","",INDEX(FD_sender,$E35))'	=> None
+D35	'=IF($E35="","",INDEX(FD_subject,$E35))'	=> None
+E35	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I35	'=IF($E35="","",INDEX(FD_recv,$E35))'	=> None
+J35	'=IF($E35="","",INDEX(FD_wait,$E35))'	=> None
+B36	'=IF($E36="","",INDEX(FD_no,$E36))'	=> None
+C36	'=IF($E36="","",INDEX(FD_sender,$E36))'	=> None
+D36	'=IF($E36="","",INDEX(FD_subject,$E36))'	=> None
+E36	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I36	'=IF($E36="","",INDEX(FD_recv,$E36))'	=> None
+J36	'=IF($E36="","",INDEX(FD_wait,$E36))'	=> None
+B37	'=IF($E37="","",INDEX(FD_no,$E37))'	=> None
+C37	'=IF($E37="","",INDEX(FD_sender,$E37))'	=> None
+D37	'=IF($E37="","",INDEX(FD_subject,$E37))'	=> None
+E37	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I37	'=IF($E37="","",INDEX(FD_recv,$E37))'	=> None
+J37	'=IF($E37="","",INDEX(FD_wait,$E37))'	=> None
+B38	'=IF($E38="","",INDEX(FD_no,$E38))'	=> None
+C38	'=IF($E38="","",INDEX(FD_sender,$E38))'	=> None
+D38	'=IF($E38="","",INDEX(FD_subject,$E38))'	=> None
+E38	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I38	'=IF($E38="","",INDEX(FD_recv,$E38))'	=> None
+J38	'=IF($E38="","",INDEX(FD_wait,$E38))'	=> None
+B39	'=IF($E39="","",INDEX(FD_no,$E39))'	=> None
+C39	'=IF($E39="","",INDEX(FD_sender,$E39))'	=> None
+D39	'=IF($E39="","",INDEX(FD_subject,$E39))'	=> None
+E39	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I39	'=IF($E39="","",INDEX(FD_recv,$E39))'	=> None
+J39	'=IF($E39="","",INDEX(FD_wait,$E39))'	=> None
+B40	'=IF($E40="","",INDEX(FD_no,$E40))'	=> None
+C40	'=IF($E40="","",INDEX(FD_sender,$E40))'	=> None
+D40	'=IF($E40="","",INDEX(FD_subject,$E40))'	=> None
+E40	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I40	'=IF($E40="","",INDEX(FD_recv,$E40))'	=> None
+J40	'=IF($E40="","",INDEX(FD_wait,$E40))'	=> None
+B41	'=IF($E41="","",INDEX(FD_no,$E41))'	=> None
+C41	'=IF($E41="","",INDEX(FD_sender,$E41))'	=> None
+D41	'=IF($E41="","",INDEX(FD_subject,$E41))'	=> None
+E41	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I41	'=IF($E41="","",INDEX(FD_recv,$E41))'	=> None
+J41	'=IF($E41="","",INDEX(FD_wait,$E41))'	=> None
+B42	'=IF($E42="","",INDEX(FD_no,$E42))'	=> None
+C42	'=IF($E42="","",INDEX(FD_sender,$E42))'	=> None
+D42	'=IF($E42="","",INDEX(FD_subject,$E42))'	=> None
+E42	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I42	'=IF($E42="","",INDEX(FD_recv,$E42))'	=> None
+J42	'=IF($E42="","",INDEX(FD_wait,$E42))'	=> None
+B43	'=IF($E43="","",INDEX(FD_no,$E43))'	=> None
+C43	'=IF($E43="","",INDEX(FD_sender,$E43))'	=> None
+D43	'=IF($E43="","",INDEX(FD_subject,$E43))'	=> None
+E43	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I43	'=IF($E43="","",INDEX(FD_recv,$E43))'	=> None
+J43	'=IF($E43="","",INDEX(FD_wait,$E43))'	=> None
+B44	'=IF($E44="","",INDEX(FD_no,$E44))'	=> None
+C44	'=IF($E44="","",INDEX(FD_sender,$E44))'	=> None
+D44	'=IF($E44="","",INDEX(FD_subject,$E44))'	=> None
+E44	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I44	'=IF($E44="","",INDEX(FD_recv,$E44))'	=> None
+J44	'=IF($E44="","",INDEX(FD_wait,$E44))'	=> None
+B45	'=IF($E45="","",INDEX(FD_no,$E45))'	=> None
+C45	'=IF($E45="","",INDEX(FD_sender,$E45))'	=> None
+D45	'=IF($E45="","",INDEX(FD_subject,$E45))'	=> None
+E45	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I45	'=IF($E45="","",INDEX(FD_recv,$E45))'	=> None
+J45	'=IF($E45="","",INDEX(FD_wait,$E45))'	=> None
+B46	'=IF($E46="","",INDEX(FD_no,$E46))'	=> None
+C46	'=IF($E46="","",INDEX(FD_sender,$E46))'	=> None
+D46	'=IF($E46="","",INDEX(FD_subject,$E46))'	=> None
+E46	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I46	'=IF($E46="","",INDEX(FD_recv,$E46))'	=> None
+J46	'=IF($E46="","",INDEX(FD_wait,$E46))'	=> None
+B47	'=IF($E47="","",INDEX(FD_no,$E47))'	=> None
+C47	'=IF($E47="","",INDEX(FD_sender,$E47))'	=> None
+D47	'=IF($E47="","",INDEX(FD_subject,$E47))'	=> None
+E47	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I47	'=IF($E47="","",INDEX(FD_recv,$E47))'	=> None
+J47	'=IF($E47="","",INDEX(FD_wait,$E47))'	=> None
+B48	'=IF($E48="","",INDEX(FD_no,$E48))'	=> None
+C48	'=IF($E48="","",INDEX(FD_sender,$E48))'	=> None
+D48	'=IF($E48="","",INDEX(FD_subject,$E48))'	=> None
+E48	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I48	'=IF($E48="","",INDEX(FD_recv,$E48))'	=> None
+J48	'=IF($E48="","",INDEX(FD_wait,$E48))'	=> None
+B49	'=IF($E49="","",INDEX(FD_no,$E49))'	=> None
+C49	'=IF($E49="","",INDEX(FD_sender,$E49))'	=> None
+D49	'=IF($E49="","",INDEX(FD_subject,$E49))'	=> None
+E49	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I49	'=IF($E49="","",INDEX(FD_recv,$E49))'	=> None
+J49	'=IF($E49="","",INDEX(FD_wait,$E49))'	=> None
+B50	'=IF($E50="","",INDEX(FD_no,$E50))'	=> None
+C50	'=IF($E50="","",INDEX(FD_sender,$E50))'	=> None
+D50	'=IF($E50="","",INDEX(FD_subject,$E50))'	=> None
+E50	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I50	'=IF($E50="","",INDEX(FD_recv,$E50))'	=> None
+J50	'=IF($E50="","",INDEX(FD_wait,$E50))'	=> None
+B51	'=IF($E51="","",INDEX(FD_no,$E51))'	=> None
+C51	'=IF($E51="","",INDEX(FD_sender,$E51))'	=> None
+D51	'=IF($E51="","",INDEX(FD_subject,$E51))'	=> None
+E51	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I51	'=IF($E51="","",INDEX(FD_recv,$E51))'	=> None
+J51	'=IF($E51="","",INDEX(FD_wait,$E51))'	=> None
+B52	'=IF($E52="","",INDEX(FD_no,$E52))'	=> None
+C52	'=IF($E52="","",INDEX(FD_sender,$E52))'	=> None
+D52	'=IF($E52="","",INDEX(FD_subject,$E52))'	=> None
+E52	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I52	'=IF($E52="","",INDEX(FD_recv,$E52))'	=> None
+J52	'=IF($E52="","",INDEX(FD_wait,$E52))'	=> None
+B53	'=IF($E53="","",INDEX(FD_no,$E53))'	=> None
+C53	'=IF($E53="","",INDEX(FD_sender,$E53))'	=> None
+D53	'=IF($E53="","",INDEX(FD_subject,$E53))'	=> None
+E53	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I53	'=IF($E53="","",INDEX(FD_recv,$E53))'	=> None
+J53	'=IF($E53="","",INDEX(FD_wait,$E53))'	=> None
+B54	'=IF($E54="","",INDEX(FD_no,$E54))'	=> None
+C54	'=IF($E54="","",INDEX(FD_sender,$E54))'	=> None
+D54	'=IF($E54="","",INDEX(FD_subject,$E54))'	=> None
+E54	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I54	'=IF($E54="","",INDEX(FD_recv,$E54))'	=> None
+J54	'=IF($E54="","",INDEX(FD_wait,$E54))'	=> None
+B55	'=IF($E55="","",INDEX(FD_no,$E55))'	=> None
+C55	'=IF($E55="","",INDEX(FD_sender,$E55))'	=> None
+D55	'=IF($E55="","",INDEX(FD_subject,$E55))'	=> None
+E55	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I55	'=IF($E55="","",INDEX(FD_recv,$E55))'	=> None
+J55	'=IF($E55="","",INDEX(FD_wait,$E55))'	=> None
+B56	'=IF($E56="","",INDEX(FD_no,$E56))'	=> None
+C56	'=IF($E56="","",INDEX(FD_sender,$E56))'	=> None
+D56	'=IF($E56="","",INDEX(FD_subject,$E56))'	=> None
+E56	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I56	'=IF($E56="","",INDEX(FD_recv,$E56))'	=> None
+J56	'=IF($E56="","",INDEX(FD_wait,$E56))'	=> None
+B57	'=IF($E57="","",INDEX(FD_no,$E57))'	=> None
+C57	'=IF($E57="","",INDEX(FD_sender,$E57))'	=> None
+D57	'=IF($E57="","",INDEX(FD_subject,$E57))'	=> None
+E57	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I57	'=IF($E57="","",INDEX(FD_recv,$E57))'	=> None
+J57	'=IF($E57="","",INDEX(FD_wait,$E57))'	=> None
+B58	'=IF($E58="","",INDEX(FD_no,$E58))'	=> None
+C58	'=IF($E58="","",INDEX(FD_sender,$E58))'	=> None
+D58	'=IF($E58="","",INDEX(FD_subject,$E58))'	=> None
+E58	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I58	'=IF($E58="","",INDEX(FD_recv,$E58))'	=> None
+J58	'=IF($E58="","",INDEX(FD_wait,$E58))'	=> None
+B59	'=IF($E59="","",INDEX(FD_no,$E59))'	=> None
+C59	'=IF($E59="","",INDEX(FD_sender,$E59))'	=> None
+D59	'=IF($E59="","",INDEX(FD_subject,$E59))'	=> None
+E59	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I59	'=IF($E59="","",INDEX(FD_recv,$E59))'	=> None
+J59	'=IF($E59="","",INDEX(FD_wait,$E59))'	=> None
+B60	'=IF($E60="","",INDEX(FD_no,$E60))'	=> None
+C60	'=IF($E60="","",INDEX(FD_sender,$E60))'	=> None
+D60	'=IF($E60="","",INDEX(FD_subject,$E60))'	=> None
+E60	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I60	'=IF($E60="","",INDEX(FD_recv,$E60))'	=> None
+J60	'=IF($E60="","",INDEX(FD_wait,$E60))'	=> None
+B61	'=IF($E61="","",INDEX(FD_no,$E61))'	=> None
+C61	'=IF($E61="","",INDEX(FD_sender,$E61))'	=> None
+D61	'=IF($E61="","",INDEX(FD_subject,$E61))'	=> None
+E61	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I61	'=IF($E61="","",INDEX(FD_recv,$E61))'	=> None
+J61	'=IF($E61="","",INDEX(FD_wait,$E61))'	=> None
+B62	'=IF($E62="","",INDEX(FD_no,$E62))'	=> None
+C62	'=IF($E62="","",INDEX(FD_sender,$E62))'	=> None
+D62	'=IF($E62="","",INDEX(FD_subject,$E62))'	=> None
+E62	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I62	'=IF($E62="","",INDEX(FD_recv,$E62))'	=> None
+J62	'=IF($E62="","",INDEX(FD_wait,$E62))'	=> None
+B63	'=IF($E63="","",INDEX(FD_no,$E63))'	=> None
+C63	'=IF($E63="","",INDEX(FD_sender,$E63))'	=> None
+D63	'=IF($E63="","",INDEX(FD_subject,$E63))'	=> None
+E63	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I63	'=IF($E63="","",INDEX(FD_recv,$E63))'	=> None
+J63	'=IF($E63="","",INDEX(FD_wait,$E63))'	=> None
+B64	'=IF($E64="","",INDEX(FD_no,$E64))'	=> None
+C64	'=IF($E64="","",INDEX(FD_sender,$E64))'	=> None
+D64	'=IF($E64="","",INDEX(FD_subject,$E64))'	=> None
+E64	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I64	'=IF($E64="","",INDEX(FD_recv,$E64))'	=> None
+J64	'=IF($E64="","",INDEX(FD_wait,$E64))'	=> None
+B65	'=IF($E65="","",INDEX(FD_no,$E65))'	=> None
+C65	'=IF($E65="","",INDEX(FD_sender,$E65))'	=> None
+D65	'=IF($E65="","",INDEX(FD_subject,$E65))'	=> None
+E65	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I65	'=IF($E65="","",INDEX(FD_recv,$E65))'	=> None
+J65	'=IF($E65="","",INDEX(FD_wait,$E65))'	=> None
+B66	'=IF($E66="","",INDEX(FD_no,$E66))'	=> None
+C66	'=IF($E66="","",INDEX(FD_sender,$E66))'	=> None
+D66	'=IF($E66="","",INDEX(FD_subject,$E66))'	=> None
+E66	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I66	'=IF($E66="","",INDEX(FD_recv,$E66))'	=> None
+J66	'=IF($E66="","",INDEX(FD_wait,$E66))'	=> None
+B67	'=IF($E67="","",INDEX(FD_no,$E67))'	=> None
+C67	'=IF($E67="","",INDEX(FD_sender,$E67))'	=> None
+D67	'=IF($E67="","",INDEX(FD_subject,$E67))'	=> None
+E67	'=IF(ROW()-17>SUM(FD_pflag),"",MATCH(ROW()-17,FD_pseq,0))'	=> None
+I67	'=IF($E67="","",INDEX(FD_recv,$E67))'	=> None
+J67	'=IF($E67="","",INDEX(FD_wait,$E67))'	=> None
+DV C4	date	DATE(2020,1,1)
+DV C7	list	InTypeList
+DV C8	list	ModeList
+DV C11	decimal	0
+DV C12	list	FrontDeskStaff

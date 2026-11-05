@@ -1,0 +1,29 @@
+A1	'Payments ledger'
+A2	'New row, enter the payment, then Record payment. Finance confirms or rejects it on the Finance Desk. Never delete a payment: reverse it.'
+A6	'Payment No.'	[fmt @]
+B6	'Date Received'	[fmt @]
+C6	'Reference'	[fmt @]
+D6	'Registrant'	[fmt @]
+E6	'Category'	[fmt @]
+F6	'Purpose'	[fmt @]
+G6	'Channel'	[fmt @]
+H6	'Amount'	[fmt @]
+I6	'RRR / Bank Reference'	[fmt @]
+J6	'Recorded By'	[fmt @]
+K6	'Recorded On'	[fmt @]
+L6	'Finance Status'	[fmt @]
+M6	'Verified with Bank'	[fmt @]
+N6	'Decided By'	[fmt @]
+O6	'Decided On'	[fmt @]
+P6	'Finance Remarks'	[fmt @]
+Q6	'Reversed'	[fmt @]
+R6	'Reversed By'	[fmt @]
+S6	'Reversed On'	[fmt @]
+T6	'Reversal Reason'	[fmt @]
+U6	'Counts as Paid'	[fmt @]
+V6	'With Finance'	[fmt @]
+W6	'Days Waiting'	[fmt @]
+X6	'Checks'	[fmt @]
+DV C7:C5006	None	None
+DV F7:F5006	list	lstPaymentPurpose
+DV G7:G5006	list	lstPaymentChannel

@@ -1,0 +1,250 @@
+A1	'Evaluation (Form OGSERC/EVAL-01)'
+A2	'One row per submission, created by Save submission. Select a row, then use a button. Green check columns are automatic; grey cells are N/A automatically.'
+A6	'SUBMISSION'
+F6	'ASSIGNMENT'
+K6	'RESULT AND DECISION'
+Y6	'STAGE 1 — RECEIPT AND SCOPE'
+AI6	'STAGE 2 — SCHEDULE 1 FORM'
+AX6	'STAGE 3 — SCHEDULE 2 DOCUMENTS'
+BA6	'STAGE 4 — VERIFICATION'
+BN6	'STAGE 5 — CATEGORY AND FEES'
+BS6	'STAGE 6 — CONFIDENTIALITY'
+BW6	'STAGE 7 — REGULATORY FLAGS'
+CC6	'POST-APPROVAL ACTIONS'
+Y7	'Acknowledgement number issued and submission entered in the Register'
+Z7	'Correct form used: REG-01A to K for operators; REG-01I for own-use 200 kW to <1 MW'
+AA7	'Applicant carries out, or proposes to carry out, an activity in para 3(1)'
+AB7	'Not excluded under para 3(3) (federal transmission, grid-only sales, own-use <1 MW)'
+AC7	'Register searched: no existing registration under the same CAC number'
+AD7	"One registration covers all the applicant's activities and locations in Ogun State"
+AE7	'Multi-State licensee: submission limited to Ogun State operations'
+AF7	'Submitted on time (60 days from Effective Date / 30 days before start)'
+AG7	'If late: days late recorded and Schedule 3 Part B late charge calculated'
+AH7	'Form filed matches the confirmed category (or accepted and re-categorised with reasons)'
+AI7	'A. Identity: name, CAC number, date of incorporation, TIN and addresses'
+AJ7	'B. Ownership: shareholders ≥5%, directors and beneficial owners'
+AK7	'C. Contact: managing director and compliance officer with phone and email'
+AL7	'D. Licences: every licence listed with authority, number and dates'
+AM7	'E. Activities: all ticked; one primary activity; start date given'
+AN7	'F. Service area: LGAs, towns, estates, feeders; cross-boundary (multi-State)'
+AO7	'G. Generation assets: plant, location, MW, fuel, connection point'
+AP7	'H. Network assets: substations (MVA), feeders (kV, km), transformers (kVA)'
+AQ7	'I. Customers by class, metered/unmetered; top 20 customers'
+AR7	'J. 12 months of energy received, sent out, billed; billing and collection'
+AS7	'K. Tariffs by class and band, approving authority and order reference'
+AT7	'L. Contracts: PPAs, gas, bulk supply, bilateral and franchise'
+AU7	'M. HSE: incidents, fatalities and outages >24 h in last 24 months'
+AV7	'N. Confidentiality claims stated with reasons (if any)'
+AW7	'O. Declaration signed and dated by authorized signatories; seal affixed'
+AX7	'All Schedule 2 documents received or not applicable'
+AY7	'Outstanding documents listed with reasons and acceptable completion date (12(4))'
+AZ7	'Non-corporate applicant: equivalent documents provided (12(3))'
+BA7	'CAC details verified on the CAC public search'
+BB7	"Licence numbers and dates confirmed with OGSERC records and NERC's register"
+BC7	'Licence not expiring within 6 months of Effective Date (else renewal reminder) (8(5))'
+BD7	'Installed capacity agrees with single-line diagram and asset register'
+BE7	'GPS coordinates within Ogun State and the LGAs stated'
+BF7	'Customer numbers agree with the enumeration summary'
+BG7	'Energy balance plausible; loss and collection rates calculated'
+BH7	'Tariffs agree with the approved tariff order or schedule (8(2))'
+BI7	'Unlicensed operator: tariff not above Effective Date level (18(1)(c))'
+BJ7	'Supply sources consistent with generation assets and energy received'
+BK7	'Service area checked against DisCo franchise maps for overlap (18(3))'
+BL7	'Any fatality or serious HSE incident referred to technical/safety unit'
+BM7	'Site inspection completed, or not required (22)'
+BN7	'Category agrees with activities and capacity (highest applies) (17(1))'
+BO7	'Payment confirmed by Finance against designated account (17(1))'
+BP7	'Waiver or reduction approved in writing (17(3))'
+BQ7	'Late charge correctly calculated and within Schedule 3 cap (19(1)–(2))'
+BR7	'Fees and charges paid in full'
+BS7	'Confidentiality claims logged, decided and applicant notified (15(3))'
+BT7	'Information treated as confidential pending decision (15(3))'
+BU7	'Personal data handled under the NDPA 2023 (15(4))'
+BV7	'Public Register fields confirmed (15(2))'
+BW7	'Unlicensed: licence application due date recorded and communicated (18)'
+BX7	"Overlap with licensee's area referred for determination, notice and hearing (18(3))"
+BY7	'Multi-State: ring-fencing plan, licence application, boundary register noted (7(3))'
+BZ7	'No suspected false information (else referred; show-cause first) (19(3), 20)'
+CA7	'Own-use site of 1 MW+ on REG-01I directed to REG-01C or REG-01D (3(3)(c))'
+CB7	'Register data flags reviewed and resolved or explained'
+CC7	"Certificate Issue Date entered and status 'Registered' in the Register"
+CD7	'Registration number generated and locked (locked automatically on approval)'
+CE7	'Certificate CERT-01 prepared, checked, signed and sealed (13(5))'
+CF7	'Certificate issued to the registrant (date and mode recorded)'
+CG7	'Registrant reminded: number on bills in 90 days; annual confirmation by 31 Jan'
+CH7	"Public Register on the Commission's website updated (15(2))"
+CI7	'Physical and electronic file closed and indexed'
+A8	'Ack No.'	[fmt @]
+B8	'Registered Name'	[fmt @]
+C8	'Category'	[fmt @]
+D8	'Activity Code'	[fmt @]
+E8	'Submission Status'	[fmt @]
+F8	'Evaluating Officer'	[fmt @]
+G8	'Reviewing Supervisor'	[fmt @]
+H8	'Approving Officer'	[fmt @]
+I8	'Date Evaluation Started'	[fmt @]
+J8	'Flag Override Reason'	[fmt @]
+K8	'Satisfied'	[fmt @]
+L8	'Failed'	[fmt @]
+M8	'N/A'	[fmt @]
+N8	'Pending'	[fmt @]
+O8	'Progress'	[fmt @]
+P8	'Evaluation Status'	[fmt @]
+Q8	'Recommended Outcome'	[fmt @]
+R8	'Approval Blockers'	[fmt @]
+S8	'File Closed'	[fmt @]
+T8	'Final Decision'	[fmt @]
+U8	'Reasons'	[fmt @]
+V8	'Review Date'	[fmt @]
+W8	'Approval Date'	[fmt @]
+X8	'Evaluation Remarks'	[fmt @]
+Y8	'1.1'	[fmt @]
+Z8	'1.2'	[fmt @]
+AA8	'1.3'	[fmt @]
+AB8	'1.4'	[fmt @]
+AC8	'1.5'	[fmt @]
+AD8	'1.6'	[fmt @]
+AE8	'1.7'	[fmt @]
+AF8	'1.8'	[fmt @]
+AG8	'1.9'	[fmt @]
+AH8	'1.10'	[fmt @]
+AI8	'2.1'	[fmt @]
+AJ8	'2.2'	[fmt @]
+AK8	'2.3'	[fmt @]
+AL8	'2.4'	[fmt @]
+AM8	'2.5'	[fmt @]
+AN8	'2.6'	[fmt @]
+AO8	'2.7'	[fmt @]
+AP8	'2.8'	[fmt @]
+AQ8	'2.9'	[fmt @]
+AR8	'2.10'	[fmt @]
+AS8	'2.11'	[fmt @]
+AT8	'2.12'	[fmt @]
+AU8	'2.13'	[fmt @]
+AV8	'2.14'	[fmt @]
+AW8	'2.15'	[fmt @]
+AX8	'3.0'	[fmt @]
+AY8	'3.1'	[fmt @]
+AZ8	'3.2'	[fmt @]
+BA8	'4.1'	[fmt @]
+BB8	'4.2'	[fmt @]
+BC8	'4.3'	[fmt @]
+BD8	'4.4'	[fmt @]
+BE8	'4.5'	[fmt @]
+BF8	'4.6'	[fmt @]
+BG8	'4.7'	[fmt @]
+BH8	'4.8'	[fmt @]
+BI8	'4.9'	[fmt @]
+BJ8	'4.10'	[fmt @]
+BK8	'4.11'	[fmt @]
+BL8	'4.12'	[fmt @]
+BM8	'4.13'	[fmt @]
+BN8	'5.1'	[fmt @]
+BO8	'5.2'	[fmt @]
+BP8	'5.3'	[fmt @]
+BQ8	'5.4'	[fmt @]
+BR8	'5.5'	[fmt @]
+BS8	'6.1'	[fmt @]
+BT8	'6.2'	[fmt @]
+BU8	'6.3'	[fmt @]
+BV8	'6.4'	[fmt @]
+BW8	'7.1'	[fmt @]
+BX8	'7.2'	[fmt @]
+BY8	'7.3'	[fmt @]
+BZ8	'7.4'	[fmt @]
+CA8	'7.5'	[fmt @]
+CB8	'7.6'	[fmt @]
+CC8	'9.1'	[fmt @]
+CD8	'9.2'	[fmt @]
+CE8	'9.3'	[fmt @]
+CF8	'9.4'	[fmt @]
+CG8	'9.5'	[fmt @]
+CH8	'9.6'	[fmt @]
+CI8	'9.7'	[fmt @]
+CJ8	'Reg Row'	[fmt @]
+CK8	'x Capacity'	[fmt @]
+CL8	'x Licence Status'	[fmt @]
+CM8	'x Duplicate CAC'	[fmt @]
+CN8	'x Days Late'	[fmt @]
+CO8	'x Late Charge'	[fmt @]
+CP8	'x Balance'	[fmt @]
+CQ8	'x Documents Complete'	[fmt @]
+CR8	'x Complete'	[fmt @]
+CS8	'x Form Category'	[fmt @]
+CT8	'x Confirmed Category'	[fmt @]
+CU8	'x Confirmed Reason'	[fmt @]
+CV8	'x Nearest Expiry'	[fmt @]
+CW8	'x Effective Date'	[fmt @]
+CX8	'x Flag Count'	[fmt @]
+CY8	'x Flags'	[fmt @]
+CZ8	'x Certificate Date'	[fmt @]
+DA8	'x Registration No.'	[fmt @]
+DB8	'x Gate Cleared'	[fmt @]
+DC8	'x Gate Reason'	[fmt @]
+DD8	'x Closed'	[fmt @]
+DE8	'x Determination Due'	[fmt @]
+DF8	'x Deficiency Due'	[fmt @]
+DG8	'x Created By'	[fmt @]
+DH8	'x Linked'	[fmt @]
+DI8	'x Not Linked'	[fmt @]
+DJ8	'x Linked Row'	[fmt @]
+DK8	'x Linked Status'	[fmt @]
+DL8	'x Linked Reg No'	[fmt @]
+DM8	'x MS'	[fmt @]
+DN8	'x Licensed'	[fmt @]
+DO8	'x Unlicensed'	[fmt @]
+DP8	'x Documents Outstanding'	[fmt @]
+DQ8	'x Non-Company'	[fmt @]
+DR8	'x Waiver'	[fmt @]
+DV F9:F2008	list	lstEvaluators
+DV G9:G2008	list	lstSupervisors
+DV H9:H2008	list	lstApprovers
+DV J9:J2008	None	None
+DV Z9:Z2008	list	lstYNNA
+DV AD9:AD2008	list	lstYNNA
+DV AE9:AE2008	list	lstYNNA
+DV AI9:AI2008	list	lstYNNA
+DV AJ9:AJ2008	list	lstYNNA
+DV AK9:AK2008	list	lstYNNA
+DV AL9:AL2008	list	lstYNNA
+DV AM9:AM2008	list	lstYNNA
+DV AN9:AN2008	list	lstYNNA
+DV AO9:AO2008	list	lstYNNA
+DV AP9:AP2008	list	lstYNNA
+DV AQ9:AQ2008	list	lstYNNA
+DV AR9:AR2008	list	lstYNNA
+DV AS9:AS2008	list	lstYNNA
+DV AT9:AT2008	list	lstYNNA
+DV AU9:AU2008	list	lstYNNA
+DV AV9:AV2008	list	lstYNNA
+DV AW9:AW2008	list	lstYNNA
+DV AY9:AY2008	list	lstYNNA
+DV AZ9:AZ2008	list	lstYNNA
+DV BA9:BA2008	list	lstYNNA
+DV BB9:BB2008	list	lstYNNA
+DV BD9:BD2008	list	lstYNNA
+DV BE9:BE2008	list	lstYNNA
+DV BF9:BF2008	list	lstYNNA
+DV BG9:BG2008	list	lstYNNA
+DV BH9:BH2008	list	lstYNNA
+DV BI9:BI2008	list	lstYNNA
+DV BJ9:BJ2008	list	lstYNNA
+DV BK9:BK2008	list	lstYNNA
+DV BL9:BL2008	list	lstYNNA
+DV BM9:BM2008	list	lstYNNA
+DV BN9:BN2008	list	lstYNNA
+DV BO9:BO2008	list	lstYNNA
+DV BP9:BP2008	list	lstYNNA
+DV BS9:BS2008	list	lstYNNA
+DV BT9:BT2008	list	lstYNNA
+DV BU9:BU2008	list	lstYNNA
+DV BV9:BV2008	list	lstYNNA
+DV BW9:BW2008	list	lstYNNA
+DV BX9:BX2008	list	lstYNNA
+DV BY9:BY2008	list	lstYNNA
+DV BZ9:BZ2008	list	lstYNNA
+DV CE9:CE2008	list	lstYNNA
+DV CF9:CF2008	list	lstYNNA
+DV CG9:CG2008	list	lstYNNA
+DV CH9:CH2008	list	lstYNNA
+DV CI9:CI2008	list	lstYNNA

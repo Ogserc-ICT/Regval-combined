@@ -1,0 +1,101 @@
+A1	'Settings'
+A2	'Yellow cells are inputs.'
+A4	'Parameter'
+B4	'Value'
+D4	'Note'
+A5	'Inward / acknowledgement number prefix'
+B5	'OGSERC/ACK'	[fmt @]
+D5	'Same prefix as the Registration Register and EVAL-01 workbook (PREFIX/YEAR/00001).'
+A6	'Outward (dispatch) number prefix'
+B6	'OGSERC/OUT'	[fmt @]
+D6	'Reference number for every letter, notice, certificate, order or memo the Commission sends out.'
+A7	'Office closing time (electronic filings after this are received next working day)'
+B7	datetime.time(17, 0)	[fmt hh:mm]
+D7	'Para 10(3).'
+A8	'Registry forwarding target (working days)'
+B8	2	[fmt 0]
+D8	'Internal service standard — adjust as required.'
+A9	'Dispatch target: document date to dispatch (working days)'
+B9	2	[fmt 0]
+D9	'Outgoing items not dispatched within this are flagged.'
+A10	'Chase proof of delivery after (working days)'
+B10	5	[fmt 0]
+D10	'Dispatched items without confirmed delivery after this are flagged.'
+A11	'Response target for Urgent items (working days)'
+B11	1	[fmt 0]
+D11	"Overrides the type's target when Priority = Urgent."
+A12	'Default response target where the type has none set (working days)'
+B12	10	[fmt 0]
+D12	'Used when a type is missing from Lists.'
+A13	'File return target (working days)'
+B13	3	[fmt 0]
+D13	'Files not returned to the Registry within this are flagged.'
+A14	'Effective Date of the Order'
+B14	datetime.datetime(2026, 11, 2, 0, 0)	[fmt dd\-mmm\-yyyy]
+D14	'PLACEHOLDER — replace with the gazetted Effective Date.'
+A15	'Registration deadline (Effective Date + 60 days)'
+B15	'=EffDate+60'	=> datetime.datetime(2027, 1, 1, 0, 0)
+D15	'Para 11(1). Add any para 25 extension manually.'
+A16	'Dashboard: first month shown'
+B16	datetime.datetime(2026, 11, 1, 0, 0)	[fmt mmm\ yyyy]
+D16	'The monthly table shows 24 months from here.'
+A17	'Acknowledgement email: copy to (CC)'
+D17	"Optional, e.g. the Secretary's mailbox. Unit and division addresses are set in Lists (AM, AP)."
+A18	'Acknowledgement email'
+B18	'Display'	[fmt 0]
+D18	'Send = sent automatically through Outlook when the item is saved · Display = opened for review · Off.'
+A19	'Public holidays (non-working days for para 10(3) and all working-day targets)'
+A20	'Date'
+B20	'Holiday'
+D20	'Status'
+A21	datetime.datetime(2026, 12, 25, 0, 0)	[fmt dd\-mmm\-yyyy]
+B21	'Christmas Day'
+D21	'Fixed'
+A22	datetime.datetime(2026, 12, 26, 0, 0)	[fmt dd\-mmm\-yyyy]
+B22	'Boxing Day (Saturday)'
+D22	'Fixed'
+A23	datetime.datetime(2026, 12, 28, 0, 0)	[fmt dd\-mmm\-yyyy]
+B23	'Boxing Day holiday (substitute)'
+D23	'Provisional — confirm FG declaration'
+A24	datetime.datetime(2027, 1, 1, 0, 0)	[fmt dd\-mmm\-yyyy]
+B24	"New Year's Day"
+D24	'Fixed'
+A25	datetime.datetime(2027, 3, 10, 0, 0)	[fmt dd\-mmm\-yyyy]
+B25	'Eid al-Fitr'
+D25	'Estimated — confirm FG declaration'
+A26	datetime.datetime(2027, 3, 11, 0, 0)	[fmt dd\-mmm\-yyyy]
+B26	'Eid al-Fitr holiday'
+D26	'Estimated — confirm FG declaration'
+A27	datetime.datetime(2027, 3, 26, 0, 0)	[fmt dd\-mmm\-yyyy]
+B27	'Good Friday'
+D27	'Fixed'
+A28	datetime.datetime(2027, 3, 29, 0, 0)	[fmt dd\-mmm\-yyyy]
+B28	'Easter Monday'
+D28	'Fixed'
+A29	datetime.datetime(2027, 5, 3, 0, 0)	[fmt dd\-mmm\-yyyy]
+B29	"Workers' Day (substitute for Sat 1 May)"
+D29	'Provisional — confirm FG declaration'
+A30	datetime.datetime(2027, 5, 17, 0, 0)	[fmt dd\-mmm\-yyyy]
+B30	'Eid al-Adha'
+D30	'Estimated — confirm FG declaration'
+A31	datetime.datetime(2027, 5, 18, 0, 0)	[fmt dd\-mmm\-yyyy]
+B31	'Eid al-Adha holiday'
+D31	'Estimated — confirm FG declaration'
+A32	datetime.datetime(2027, 6, 14, 0, 0)	[fmt dd\-mmm\-yyyy]
+B32	'Democracy Day (substitute for Sat 12 June)'
+D32	'Provisional — confirm FG declaration'
+A33	datetime.datetime(2027, 8, 16, 0, 0)	[fmt dd\-mmm\-yyyy]
+B33	'Eid al-Mawlid'
+D33	'Estimated — confirm FG declaration'
+A34	datetime.datetime(2027, 10, 1, 0, 0)	[fmt dd\-mmm\-yyyy]
+B34	'Independence Day'
+D34	'Fixed'
+A35	datetime.datetime(2027, 12, 27, 0, 0)	[fmt dd\-mmm\-yyyy]
+B35	'Christmas Day holiday (substitute for Sat 25 Dec)'
+D35	'Provisional — confirm FG declaration'
+A36	datetime.datetime(2027, 12, 28, 0, 0)	[fmt dd\-mmm\-yyyy]
+B36	'Boxing Day holiday (substitute for Sun 26 Dec)'
+D36	'Provisional — confirm FG declaration'
+A81	'Add State-declared or ad-hoc holidays in the blank rows. Muslim holiday dates are estimates until the Federal Government declares them.'
+DV A21:A80	date	DATE(2020,1,1)
+DV B18	list	"Send,Display,Off"

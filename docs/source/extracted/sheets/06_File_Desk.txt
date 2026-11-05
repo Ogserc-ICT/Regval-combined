@@ -1,0 +1,84 @@
+B1	'Internal File Desk'
+B2	'For moving Commission files between OGSERC units and officers only. Pick or type a file reference — the title, volume and current holder fill in automatically. For a new file, pick the file class and the next reference is generated.'
+B4	'ISSUE A FILE'
+B5	'File reference *'
+D5	'=IF($C$5="","",IFERROR(INDEX(FI_title,MATCH($C$5,FI_ref,0))&" · now with "&INDEX(FI_with,MATCH($C$5,FI_ref,0)),"Not in the File Index"))'	=> None
+E5	'ref'
+F5	'Y'
+I5	'ISSUE FILE'
+B6	'Volume'
+C6	'=IF($C$5="","",IFERROR(INDEX(FI_vol,MATCH($C$5,FI_ref,0))&"",""))'	=> None
+D6	'Fills in from the File Index.'
+E6	'vol'
+G6	'=IF($C$5="","",IFERROR(INDEX(FI_vol,MATCH($C$5,FI_ref,0))&"",""))'	=> None
+B7	'Issued to (officer) *'
+E7	'to'
+F7	'Y'
+B8	'Unit (internal) *'
+D8	'OGSERC units only (Lists, column M).'
+E8	'tounit'
+F8	'Y'
+B9	'Purpose'
+E9	'purpose'
+B10	'Return by (only to override)'
+D10	'=IFERROR("Default: "&TEXT(WORKDAY(TODAY(),FileDays,Hols),"dd-mmm-yyyy"),"")'	=> 'Default: 06-Nov-2026'
+E10	'retov'
+B11	'Released by (registry) *'
+C11	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+E11	'relby'
+F11	'Y'
+G11	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+B13	'RECORD A RETURN'
+B14	'File reference *'
+D14	'=IF($C$14="","",IFERROR(INDEX(FI_title,MATCH($C$14,FI_ref,0))&" · now with "&INDEX(FI_with,MATCH($C$14,FI_ref,0)),"Not in the File Index"))'	=> None
+E14	'ref'
+F14	'Y'
+I14	'RECORD RETURN'
+B15	'Received back by (registry) *'
+C15	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+E15	'retby'
+F15	'Y'
+G15	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+B17	'OPEN A NEW FILE'
+B18	'File reference *'
+C18	'=IF($C$20="","",IFERROR("OGSERC/"&INDEX(\'Registry Lists\'!$W$4:$W$80,MATCH($C$20,\'Registry Lists\'!$T$4:$T$80,0))&"/"&TEXT(COUNTIF(FI_ref,"OGSERC/"&INDEX(\'Registry Lists\'!$W$4:$W$80,MATCH($C$20,\'Registry Lists\'!$T$4:$T$80,0))&"/*")+1,"000"),""))'	=> None
+D18	'Generated from the file class below (OGSERC/<code>/001). You can overtype it.'
+E18	'ref'
+F18	'Y'
+G18	'=IF($C$20="","",IFERROR("OGSERC/"&INDEX(\'Registry Lists\'!$W$4:$W$80,MATCH($C$20,\'Registry Lists\'!$T$4:$T$80,0))&"/"&TEXT(COUNTIF(FI_ref,"OGSERC/"&INDEX(\'Registry Lists\'!$W$4:$W$80,MATCH($C$20,\'Registry Lists\'!$T$4:$T$80,0))&"/*")+1,"000"),""))'	=> None
+I18	'ADD TO FILE INDEX'
+B19	'File title *'
+E19	'title'
+F19	'Y'
+B20	'File class *'
+D20	'=IF(C20="","Pick the class first — the reference above is generated from it.","")'	=> 'Pick the class first — the reference above is generated from it.'
+E20	'fclass'
+F20	'Y'
+B21	'Owning unit'
+E21	'ounit'
+B22	'Date opened'
+C22	'=TODAY()'	=> datetime.datetime(2026, 11, 3, 0, 0)
+E22	'opened'
+G22	'=TODAY()'	=> datetime.datetime(2026, 11, 3, 0, 0)
+B23	'Volume'
+C23	'1'	[fmt @]
+E23	'vol'
+G23	'1'
+B24	'Security'
+C24	'Open'
+E24	'security'
+G24	'Open'
+B25	'File status'
+C25	'Open'
+E25	'fstatus'
+G25	'Open'
+B26	'Remarks'
+E26	'remarks'
+I28	'◀ REGISTRY DESK'
+DV C5 C14	list	FI_ref
+DV C8 C21	list	UnitList
+DV C10 C22	date	DATE(2020,1,1)
+DV C11 C15	list	RegistryStaff
+DV C20	list	FileClassList
+DV C24	list	SecurityList
+DV C25	list	FileStatusList

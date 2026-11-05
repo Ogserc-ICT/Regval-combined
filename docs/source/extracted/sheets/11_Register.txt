@@ -1,0 +1,208 @@
+A1	'Register of Licensees and Electricity Operators (para 15)'
+A2	'Blue headers: enter data · gold: set by the buttons · green: calculated. Use New row, fill the blue cells, then Save submission.'
+A3	'The web app is the system of record.'
+A4	'SUBMISSION'
+I4	'IDENTITY AND SERVICE AREA'
+P4	'ACTIVITIES'
+V4	'LICENCES'
+AC4	'CONTACT'
+AF4	'TIMELINE AND FEES'
+AK4	'DOCUMENT CONDITIONS (blank = applies)'
+AT4	'FORM SECTIONS'
+AV4	'DETERMINATION (set by buttons)'
+BH4	'PRICING SNAPSHOT (frozen at save)'
+BW4	'CATEGORY'
+CQ4	'FEES AND PAYMENTS (only Finance-confirmed payments count)'
+DK4	'DOCUMENTS (per-form list)'
+DQ4	'CLOCKS'
+FD4	'FLAGS AND NEXT ACTION'
+FH4	'REGISTRY LINK'
+A6	'Ack No.'	[fmt @]
+B6	'Filing Type'	[fmt @]
+C6	'Form Filed'	[fmt @]
+D6	'Linked Registration No.'	[fmt @]
+E6	'Registered Name'	[fmt @]
+F6	'Trading Name'	[fmt @]
+G6	'Date Submitted'	[fmt @]
+H6	'Submission Channel'	[fmt @]
+I6	'Registrant Type'	[fmt @]
+J6	'CAC No.'	[fmt @]
+K6	'TIN'	[fmt @]
+L6	'Registered Address'	[fmt @]
+M6	'Principal LGA'	[fmt @]
+N6	'Other LGAs Served'	[fmt @]
+O6	'Towns / Estates Served'	[fmt @]
+P6	'Primary Activity'	[fmt @]
+Q6	'Other Activity 1'	[fmt @]
+R6	'Other Activity 2'	[fmt @]
+S6	'Other Activity 3'	[fmt @]
+T6	'Installed Capacity (MW)'	[fmt @]
+U6	'Customers'	[fmt @]
+V6	'Licence Status'	[fmt @]
+W6	'Licence 1 No.'	[fmt @]
+X6	'Licence 1 Expiry'	[fmt @]
+Y6	'Licence 2 No.'	[fmt @]
+Z6	'Licence 2 Expiry'	[fmt @]
+AA6	'Licence 3 No.'	[fmt @]
+AB6	'Licence 3 Expiry'	[fmt @]
+AC6	'Compliance Officer'	[fmt @]
+AD6	'Phone'	[fmt @]
+AE6	'Email'	[fmt @]
+AF6	'Operating on Effective Date (Y/N)'	[fmt @]
+AG6	'Planned Start Date'	[fmt @]
+AH6	'Approved Waiver'	[fmt @]
+AI6	'Category Override'	[fmt @]
+AJ6	'Override Reason'	[fmt @]
+AK6	'Holds Any Licence'	[fmt @]
+AL6	'Multi-State Licensee'	[fmt @]
+AM6	'Generation for Sale'	[fmt @]
+AN6	'Grid Connected'	[fmt @]
+AO6	'Interconnected Mini-grid'	[fmt @]
+AP6	'Form F Part 1 (Distribution)'	[fmt @]
+AQ6	'Form F Part 2 (Trading)'	[fmt @]
+AR6	'DisCo Bulk Supply'	[fmt @]
+AS6	'Sub-franchisee'	[fmt @]
+AT6	'Form Sections Not Complete'	[fmt @]
+AU6	'Capacity Stated in Sections (MW)'	[fmt @]
+AV6	'Confirmed Category'	[fmt @]
+AW6	'Category Confirmed Reason'	[fmt @]
+AX6	'Status'	[fmt @]
+AY6	'Released for Evaluation'	[fmt @]
+AZ6	'Date Submission Complete'	[fmt @]
+BA6	'Deficiency Notice Date'	[fmt @]
+BB6	'Show-Cause Date'	[fmt @]
+BC6	'Certificate Issue Date'	[fmt @]
+BD6	'Registration No.'	[fmt @]
+BE6	'Certificate Needs Reissue'	[fmt @]
+BF6	'Remarks'	[fmt @]
+BG6	'Created By'	[fmt @]
+BH6	'Priced Category'	[fmt @]
+BI6	'Priced Fee'	[fmt @]
+BJ6	'Priced Late Initial'	[fmt @]
+BK6	'Priced Late Daily'	[fmt @]
+BL6	'Priced Late Cap'	[fmt @]
+BM6	'Priced Deadline'	[fmt @]
+BN6	'Priced Effective Date'	[fmt @]
+BO6	'Filing Code'	[fmt @]
+BP6	'Linked Row'	[fmt @]
+BQ6	'Linked Status'	[fmt @]
+BR6	'Linked Certificate Date'	[fmt @]
+BS6	'Family'	[fmt @]
+BT6	'CAC Norm'	[fmt @]
+BU6	'Name Norm'	[fmt @]
+BV6	'Closed'	[fmt @]
+BW6	'Primary Code'	[fmt @]
+BX6	'Cat Primary'	[fmt @]
+BY6	'Cat Other 1'	[fmt @]
+BZ6	'Cat Other 2'	[fmt @]
+CA6	'Cat Other 3'	[fmt @]
+CB6	'Category Auto'	[fmt @]
+CC6	'Current Category'	[fmt @]
+CD6	'Current Fee'	[fmt @]
+CE6	'Current Late Initial'	[fmt @]
+CF6	'Current Late Daily'	[fmt @]
+CG6	'Current Late Cap'	[fmt @]
+CH6	'Current Deadline'	[fmt @]
+CI6	'Category Applied'	[fmt @]
+CJ6	'Category Description'	[fmt @]
+CK6	'Form Category'	[fmt @]
+CL6	'Documents Form'	[fmt @]
+CM6	'Other Form 1'	[fmt @]
+CN6	'Other Form 2'	[fmt @]
+CO6	'Other Form 3'	[fmt @]
+CP6	'Effective Date Used'	[fmt @]
+CQ6	'Registration Deadline'	[fmt @]
+CR6	'Days Late'	[fmt @]
+CS6	'Registration Fee'	[fmt @]
+CT6	'Late Charge'	[fmt @]
+CU6	'Net Fee'	[fmt @]
+CV6	'Total Due'	[fmt @]
+CW6	'Amount Paid'	[fmt @]
+CX6	'With Finance'	[fmt @]
+CY6	'Payments With Finance'	[fmt @]
+CZ6	'Last Payment Date'	[fmt @]
+DA6	'Balance'	[fmt @]
+DB6	'Payment Status'	[fmt @]
+DC6	'Release Requires'	[fmt @]
+DD6	'Gate Cleared'	[fmt @]
+DE6	'Gate Reason'	[fmt @]
+DF6	'Stage'	[fmt @]
+DG6	'Process Stage'	[fmt @]
+DH6	'Evidence of Payment'	[fmt @]
+DI6	'Document Values'	[fmt @]
+DJ6	'Documents Listed'	[fmt @]
+DK6	'Documents Outstanding'	[fmt @]
+DL6	'Documents Pending'	[fmt @]
+DM6	'Documents Complete'	[fmt @]
+DN6	'Outstanding Documents'	[fmt @]
+DO6	'Documents Received'	[fmt @]
+DP6	'Submission Complete'	[fmt @]
+DQ6	'Determination Due'	[fmt @]
+DR6	'Deficiency Response Due'	[fmt @]
+DS6	'Licence Application Due'	[fmt @]
+DT6	'Nearest Licence Expiry'	[fmt @]
+DU6	'Days in Queue'	[fmt @]
+DV6	'SLA'	[fmt @]
+DW6	'Registration No. in Use'	[fmt @]
+DX6	'Evaluation Started'	[fmt @]
+DY6	'DUPLICATE_CAC'	[fmt @]
+DZ6	'DUPLICATE_NAME'	[fmt @]
+EA6	'MISSING_REQUIRED'	[fmt @]
+EB6	'UNKNOWN_ACTIVITY'	[fmt @]
+EC6	'UNKNOWN_OTHER_ACTIVITY'	[fmt @]
+ED6	'NO_CAPACITY'	[fmt @]
+EE6	'OVERRIDE_NO_REASON'	[fmt @]
+EF6	'CERT_NOT_COMPLETE'	[fmt @]
+EG6	'CERT_STATUS'	[fmt @]
+EH6	'REGISTERED_NO_CERT_DATE'	[fmt @]
+EI6	'DUPLICATE_REG_NO'	[fmt @]
+EJ6	'LICENCE_RENEWAL'	[fmt @]
+EK6	'CPT_BELOW_1MW'	[fmt @]
+EL6	'MSL_LICENCE'	[fmt @]
+EM6	'NO_START_DATE'	[fmt @]
+EN6	'FUTURE_SUBMISSION'	[fmt @]
+EO6	'LICENCE_APPLICATION_OVERDUE'	[fmt @]
+EP6	'LICENCE_NO_WITHOUT_LICENCE'	[fmt @]
+EQ6	'LICENCE_NO_MISSING'	[fmt @]
+ER6	'GENERATION_CATEGORY'	[fmt @]
+ES6	'CAC_FORMAT'	[fmt @]
+ET6	'FORM_CATEGORY_MISMATCH'	[fmt @]
+EU6	'CONFIRMED_CATEGORY_NOT_CHARGED'	[fmt @]
+EV6	'TECHNICAL_INCOMPLETE'	[fmt @]
+EW6	'TECHNICAL_CAPACITY_MISMATCH'	[fmt @]
+EX6	'LINKED_REGISTRATION'	[fmt @]
+EY6	'ANNUAL_LATE'	[fmt @]
+EZ6	'ANNUAL_CONFIRMATION_OVERDUE'	[fmt @]
+FA6	'EVALUATION_BEFORE_PAYMENT'	[fmt @]
+FB6	'STATUS_WITHOUT_CONFIRMATION'	[fmt @]
+FC6	'PRICING_OUT_OF_DATE'	[fmt @]
+FD6	'Flag Count'	[fmt @]
+FE6	'Flags'	[fmt @]
+FF6	'Flag Codes'	[fmt @]
+FG6	'Next Action'	[fmt @]
+FH6	'Registry Ack No.'	[fmt @]
+FI6	'Front Desk Intake No.'	[fmt @]
+DV B7:B2006	list	lstFilingType
+DV C7:C2006	list	lstForms
+DV D7:D2006	None	None
+DV H7:H2006	list	lstSubmissionChannel
+DV I7:I2006	list	lstRegistrantType
+DV J7:J2006	None	None
+DV M7:M2006	list	lstLGA
+DV P7:P2006 Q7:Q2006 R7:R2006 S7:S2006	list	lstActivity
+DV V7:V2006	list	lstLicenceStatus
+DV AD7:AD2006	None	None
+DV AF7:AF2006	list	lstYN
+DV AH7:AH2006	None	None
+DV AI7:AI2006	list	lstCategoriesNoI
+DV AL7:AL2006	list	lstYN
+DV AM7:AM2006	list	lstYN
+DV AN7:AN2006	list	lstYN
+DV AO7:AO2006	list	lstYN
+DV AP7:AP2006	list	lstYN
+DV AQ7:AQ2006	list	lstYN
+DV AR7:AR2006	list	lstYN
+DV AS7:AS2006	list	lstYN
+DV AT7:AT2006	None	None
+DV AU7:AU2006	None	None
+DV BB7:BB2006	None	None

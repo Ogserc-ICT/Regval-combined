@@ -1,0 +1,43 @@
+1|OGSERC Registration and Evaluation System: workbook v2
+2|Order No. OGSERC/ORD/2026/001 (Order on Commencement of Operations and Registration of Licensees and Electricity Operators, 2026)
+3|Rules version 39f98f8+local changes · built 04-Nov-2026
+5|THE WEB APP IS THE SYSTEM OF RECORD	This workbook mirrors the app's business rules for use where the app cannot be reached (offline work, a quick estimate, a training session). Anything recorded here must be entered in the web app, which holds the official Register, numbers, payments and audit trail. If the workbook and the app disagree, the app is right.
+7|What this workbook cannot enforce
+8|Logins	There are no accounts or passwords. The “user” on every record and audit entry is the Office user name of the computer (File › Options › General), which anyone can change.
+9|Separation of duties	The buttons compare officer names typed on the Evaluation sheet (approver ≠ evaluator ≠ supervisor ≠ the person who saved it; Finance cannot confirm a payment they recorded). Anyone can type another person's name, so this is a reminder, not a control.
+10|A tamper-proof audit log	The Audit Log sheet is written by the buttons and by edits, but anyone with Excel can unprotect the sheet, edit or delete rows, or turn macros off. It is not evidence.
+11|Locked numbers and dates	Sheet protection keeps typing out of the generated numbers, statuses and dates, but the protection password is in the macros and can be removed. Numbers are not guaranteed unique across copies of this file.
+12|One shared record	Each copy of the file is separate. Two people working on two copies create two registers, with clashing acknowledgement and payment numbers.
+13|Documents and certificates	The workbook does not produce the acknowledgement letter, EVAL-01, deficiency notice or CERT-01 certificate. Generate them in the app.
+14|Category-specific sections	The detailed sections of Forms REG-01A to K are not in the workbook. Enter only their summary on the Register: the sections not yet complete, and the capacity they state. Enter the document conditions (Y/N) yourself; in the app the sections decide them.
+15|Limits	Three other activities, three licences and four generator units per record. TIN format is not checked (the format is not yet confirmed by Finance). Today's date is the computer's date, not Africa/Lagos.
+17|Before first use
+18|Excel version	Microsoft 365 or Excel 2021 or later on Windows (the formulas use LET, FILTER, XLOOKUP and TEXTJOIN). Regional settings should use “,” as the thousands separator.
+19|Enable macros	Save the file in a trusted folder, open it and click Enable Content. Without macros the buttons do nothing and no numbers are issued.
+20|Settings	Check the Effective Date (a placeholder until the Order is gazetted), the policy settings and the signatory names. Put staff names in the Lists sheet (Evaluating Officers, Reviewing Supervisors, Approving Officers) for the drop-downs.
+22|How to use it
+23|Colours	Blue headers: enter data. Gold headers: set by the buttons (protected). Green headers: calculated (protected). Grey cells on the Evaluation sheet are N/A automatically.
+24|1. Intake	Register › New row, fill the blue cells, then Save submission. It checks the required fields and formats, issues the Ack No., freezes the pricing, sets “Acknowledged - Awaiting Payment”, creates the document checklist and the evaluation row, and writes the audit entry.
+25|2. Payment	Payments › New row, enter the payment, then Record payment. It stays Pending until Finance confirms it on the Finance Desk. Only confirmed payments count.
+26|3. Finance	Finance Desk › select a payment › Confirm (after checking the bank or Remita) or Reject (with a reason). Confirming the payment that clears the fee releases the submission for evaluation (Received - Under Review).
+27|4. Documents	Documents sheet: mark each item Y, N or N/A. Grey items are automatic: evidence of payment ticks itself once Finance confirms the fee; an item whose condition is N is N/A.
+28|5. Evaluation	Evaluation sheet: assign the three officers, answer the manual checks (green columns are automatic), Confirm category, then Mark complete, Issue deficiency, Approve and register, Lapse or Refuse. Each button lists every reason it is blocked.
+29|6. Daily review	Dashboard › Run daily review now (also offered when the file is opened): releases missed payments, moves overdue determinations to Provisionally Registered (para 13(4)), lists overdue deficiency responses (never lapses them), locks missing numbers, and logs a summary.
+31|Sheets
+32|Settings	Order parameters, policy settings, counters.
+33|Lists	Fee table, activity map, forms, Schedule 2 documents per form, evaluation checks, drop-down lists, staff names.
+34|Register	One row per submission (new registration, update or annual confirmation). Every calculated field: category, fees, late charge, deadlines, Finance gate, documents, completeness, SLA, flags and next action.
+35|Documents	The per-form Schedule 2 checklist of each submission and own-use notification, from registration-forms.json.
+36|Evaluation	Form OGSERC/EVAL-01: 56 decision checks and 7 post-approval checks, counts, recommended outcome and approval blockers.
+37|Payments	Payments ledger with the Finance status. Payments are never deleted: reverse one with a reason.
+38|Finance Desk	Payments waiting for Finance, oldest first.
+39|Own-Use	Own-use notifications (Form REG-01I), one row per site; capacity is the sum of the generator units.
+40|Dashboard	SPEC §10 figures and work queues.
+41|Audit Log	Every button action and edit.
+43|Source	Built from docs/SPEC.md, docs/DECISIONS.md and src/domain/ by `npm run export:workbook`, which also checks every SPEC §11 fixture against the app's domain functions. Rebuild it whenever the rules change; do not edit formulas by hand.
+45|Registry (combined workbook)
+46|One workbook	This file also holds the Registry Correspondence workbook (Registry Desk, Front Desk, New Inward, Inward Register ... and Registry Guide, Registry Settings, Registry Lists, Registry Dashboard). The Registry and the Register share ONE OGSERC/ACK series and one front desk.
+47|1. Front desk	Front Desk: log every document handed in (intake number OGSERC/FD/..., no acknowledgement).
+48|2. Registry officer	Registry Intake (registration filings): pull the front desk item, complete the cream cells, SAVE. The filing gets the next OGSERC/ACK number, is logged in the Inward Register (ready for routing) and its Register or Own-Use row is started; with primary activity, licence status and operating Y/N it is saved at once. Other correspondence goes through New Inward as before.
+49|3. Logged on New Inward	A registration filing saved on New Inward is listed on Registry Intake under "Ack no. already issued by the Registry": pull it, complete it and SAVE to create its Register entry under the same number.
+50|Direct entry	Save submission (Register) and Save notification (Own-Use) also take their number from the shared series and add the filing to the Inward Register.

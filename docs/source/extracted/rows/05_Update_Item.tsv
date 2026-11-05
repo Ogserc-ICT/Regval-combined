@@ -1,0 +1,31 @@
+1|	Update an Existing Item
+2|	Choose a number, click LOAD, change the cream cells and click SAVE CHANGES — or use a one-click action.
+4|	INCOMING ITEM
+5|	Inward no. ▶							LOAD
+6|	Sender			@sender
+7|	Subject			@subject
+8|	Status			@status				SAVE CHANGES
+9|	Response due			@due
+10|	Routed to unit			@unit
+11|	Routed by (Secretary / Head of Admin)			@routedby				FORWARDED TODAY
+12|	Date forwarded		Routing, file and handling are set on the Routing Desk.	fwd
+13|	Received by (unit officer)			unitoff
+14|	Acknowledgement issued via			ackvia				CLOSE TODAY
+15|	Date closed (manual, if no letter)		Only when closed without an outgoing letter.	closeman
+16|	Remarks			remarks
+21|	OUTGOING ITEM
+22|	Outward no. ▶							LOAD
+23|	Addressee			@addressee
+24|	Subject			@subject
+25|	Status			@status				SAVE CHANGES
+26|	Response due			@respdue
+27|	Date dispatched			disp
+28|	Dispatched by			dispby				DISPATCHED TODAY
+29|	Tracking / email / courier ref.			track
+30|	Delivery confirmed? (Y/N)			pod
+31|	Date delivered / acknowledged			deliv				DELIVERED TODAY
+32|	Received by (recipient)			recvby
+33|	Response expected? (Y/N)			respexp
+34|	Response due (override)			respov
+35|	Remarks			remarks
+37|								◀ REGISTRY DESK

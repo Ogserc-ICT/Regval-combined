@@ -1,0 +1,24 @@
+1|	Internal File Desk
+2|	For moving Commission files between OGSERC units and officers only. Pick or type a file reference — the title, volume and current holder fill in automatically. For a new file, pick the file class and the next reference is generated.
+4|	ISSUE A FILE
+5|	File reference *			ref	Y			ISSUE FILE
+6|	Volume		Fills in from the File Index.	vol
+7|	Issued to (officer) *			to	Y
+8|	Unit (internal) *		OGSERC units only (Lists, column M).	tounit	Y
+9|	Purpose			purpose
+10|	Return by (only to override)		Default: 06-Nov-2026	retov
+11|	Released by (registry) *	Olanrewaju Oluyombo		relby	Y	Olanrewaju Oluyombo
+13|	RECORD A RETURN
+14|	File reference *			ref	Y			RECORD RETURN
+15|	Received back by (registry) *	Olanrewaju Oluyombo		retby	Y	Olanrewaju Oluyombo
+17|	OPEN A NEW FILE
+18|	File reference *		Generated from the file class below (OGSERC/<code>/001). You can overtype it.	ref	Y			ADD TO FILE INDEX
+19|	File title *			title	Y
+20|	File class *		Pick the class first — the reference above is generated from it.	fclass	Y
+21|	Owning unit			ounit
+22|	Date opened	2026-11-03		opened		2026-11-03
+23|	Volume	1		vol		1
+24|	Security	Open		security		Open
+25|	File status	Open		fstatus		Open
+26|	Remarks			remarks
+28|								◀ REGISTRY DESK

@@ -1,0 +1,473 @@
+_xlpm._c	#NAME?
+_xlpm._k	#NAME?
+_xlpm._n	#NAME?
+_xlpm._s	#NAME?
+_xlpm.a	#NAME?
+_xlpm.ack	#NAME?
+_xlpm.ao	#NAME?
+_xlpm.ap	#NAME?
+_xlpm.b	#NAME?
+_xlpm.c	#NAME?
+_xlpm.cc	#NAME?
+_xlpm.cf	#NAME?
+_xlpm.cp	#NAME?
+_xlpm.cv	#NAME?
+_xlpm.d	#NAME?
+_xlpm.dd	#NAME?
+_xlpm.det	#NAME?
+_xlpm.df	#NAME?
+_xlpm.e	#NAME?
+_xlpm.eff	#NAME?
+_xlpm.ent	#NAME?
+_xlpm.entv	#NAME?
+_xlpm.eo	#NAME?
+_xlpm.f	#NAME?
+_xlpm.fc	#NAME?
+_xlpm.ff	#NAME?
+_xlpm.fl	#NAME?
+_xlpm.fm	#NAME?
+_xlpm.i	#NAME?
+_xlpm.idx	#NAME?
+_xlpm.ixa	#NAME?
+_xlpm.ixb	#NAME?
+_xlpm.k	#NAME?
+_xlpm.keys	#NAME?
+_xlpm.kkb	#NAME?
+_xlpm.lapse	#NAME?
+_xlpm.m	#NAME?
+_xlpm.n	#NAME?
+_xlpm.ok	#NAME?
+_xlpm.p	#NAME?
+_xlpm.prov	#NAME?
+_xlpm.q	#NAME?
+_xlpm.r	#NAME?
+_xlpm.r0	#NAME?
+_xlpm.ref	#NAME?
+_xlpm.rs	#NAME?
+_xlpm.rw	#NAME?
+_xlpm.s	#NAME?
+_xlpm.ss	#NAME?
+_xlpm.t	#NAME?
+_xlpm.tg	#NAME?
+_xlpm.txt	#NAME?
+_xlpm.u	#NAME?
+_xlpm.v	#NAME?
+_xlpm.x	#NAME?
+_xlpm.y	#NAME?
+AsOfDate	IF(cfgTodayOverride="",TODAY(),cfgTodayOverride)
+cfgAckPrefix	Settings!$B$25
+cfgAmberDays	Settings!$B$16
+cfgAnnualDueDay	Settings!$B$20
+cfgAnnualDueMonth	Settings!$B$19
+cfgBuiltOn	Settings!$B$51
+cfgChairName	Settings!$B$29
+cfgCommName	Settings!$B$30
+cfgDeficiencyDays	Settings!$B$13
+cfgDefPrefix	Settings!$B$28
+cfgDeterminationDays	Settings!$B$12
+cfgEffectiveDate	Settings!$B$7
+cfgExistingDeadline	Settings!$B$10
+cfgExpiryWindowDays	Settings!$B$15
+cfgExtensionDays	Settings!$B$9
+cfgFeesRevisedOn	Settings!$B$21
+cfgFilingFeeOnUpdates	Settings!$B$42
+cfgFlagsBlockApproval	Settings!$B$35
+cfgLastReview	Settings!$B$49
+cfgLateBlocksComplete	Settings!$B$33
+cfgLateRequiredForRelease	Settings!$B$36
+cfgLicenceAppDays	Settings!$B$14
+cfgNewOpLeadDays	Settings!$B$11
+cfgNextAck	Settings!$B$46
+cfgNextOun	Settings!$B$48
+cfgNextPay	Settings!$B$47
+cfgOtherActivityDocs	Settings!$B$40
+cfgOunPrefix	Settings!$B$26
+cfgOwnUseCertificate	Settings!$B$41
+cfgOwnUseThresholdKw	Settings!$B$17
+cfgPayPrefix	Settings!$B$27
+cfgRegPeriodDays	Settings!$B$8
+cfgRegPrefix	Settings!$B$24
+cfgRulesVersion	Settings!$B$50
+cfgShowCauseDays	Settings!$B$18
+cfgSupplyRetailCat	Settings!$B$38
+cfgTodayOverride	Settings!$B$45
+cfgUnpaidReminderDays	Settings!$B$37
+cfgWaiverOnLate	Settings!$B$34
+cfgWrongForm	Settings!$B$39
+dashAmber	Dashboard!$B$21
+dashAvgDays	Dashboard!$B$23
+dashAwaiting	Dashboard!$B$11
+dashClosed	Dashboard!$B$15
+dashCollected	Dashboard!$B$33
+dashCollectionRate	Dashboard!$B$37
+dashDaysToDeadline	Dashboard!$B$7
+dashDeadline	Dashboard!$B$6
+dashEffectiveDate	Dashboard!$B$5
+dashEvalDecided	Dashboard!$B$29
+dashEvalInProgress	Dashboard!$B$27
+dashEvalNotAssigned	Dashboard!$B$26
+dashEvalReady	Dashboard!$B$28
+dashFlagged	Dashboard!$B$22
+dashInProgress	Dashboard!$B$14
+dashLate	Dashboard!$B$17
+dashMyName	Dashboard!$C$139
+dashOutstanding	Dashboard!$B$36
+dashOverpaid	Dashboard!$B$39
+dashOwnUse	Dashboard!$B$16
+dashProvisional	Dashboard!$B$13
+dashRed	Dashboard!$B$20
+dashRegistered	Dashboard!$B$12
+dashTotal	Dashboard!$B$10
+dashTotalDue	Dashboard!$B$32
+dashUnpaidClosed	Dashboard!$B$38
+dashWithFinance	Dashboard!$B$34
+dashWithFinanceCount	Dashboard!$B$35
+lstActivity	tblActivities[Activity]
+lstApprovers	tblLApprovers[Approving Officers]
+lstCategories	tblLCategories[Category]
+lstCategoriesNoI	tblLCategoriesNoI[Category (not I)]
+lstConditionKeys	tblLConditionKeys[Condition Key]
+lstEvaluators	tblLEvaluators[Evaluating Officers]
+lstFilingType	tblLFilingType[Filing Type]
+lstFinalDecision	tblLFinalDecision[Final Decision]
+lstFinanceStatus	tblLFinanceStatus[Finance Status]
+lstForms	tblLForms[Form (A–K)]
+lstFuel	tblLFuel[Fuel / Technology]
+lstLGA	tblLLGA[LGA]
+lstLicenceStatus	tblLLicenceStatus[Licence Status]
+lstMonths	tblLMonths[Month]
+lstPaymentChannel	tblLPaymentChannel[Payment Channel]
+lstPaymentPurpose	tblLPaymentPurpose[Payment Purpose]
+lstRefusalGrounds	tblLRefusalGrounds[Refusal Ground]
+lstRegistrantType	tblLRegistrantType[Registrant Type]
+lstStatus	tblLStatus[Status]
+lstSubmissionChannel	tblLSubmissionChannel[Submission Channel]
+lstSupervisors	tblLSupervisors[Reviewing Supervisors]
+lstWrongForm	tblLWrongForm[Wrong Form Handling]
+lstYN	tblLYN[Y/N]
+lstYNNA	tblLYNNA[Y/N/N/A]
+AckMailCC	'Registry Settings'!$B$17
+AckMailMode	'Registry Settings'!$B$18
+AckPrefix	'Registry Settings'!$B$5
+ActionList	OFFSET('Registry Lists'!$R$4,0,0,MAX(1,COUNTA('Registry Lists'!$R$4:$R$80)),1)
+BTN_BackupWorkbook__1	'Registry Desk'!$E$25:$F$26
+BTN_ClearExamples__1	'Registry Desk'!$H$25:$I$26
+BTN_ClearFrontDesk__1	'Front Desk'!$I$8:$J$9
+BTN_ClearInward__1	'New Inward'!$I$16:$J$17
+BTN_ClearOutward__1	'New Outward'!$I$8:$J$9
+BTN_ClearRoute__1	'Routing Desk'!$I$12:$J$13
+BTN_CloseToday__1	'Update Item'!$I$14:$J$15
+BTN_DeliveredToday__1	'Update Item'!$I$31:$J$32
+BTN_DispatchedToday__1	'Update Item'!$I$28:$J$29
+BTN_ForwardToday__1	'Update Item'!$I$11:$J$12
+BTN_GoDashboard__1	'Registry Desk'!$E$21:$F$22
+BTN_GoDesk__1	'New Inward'!$I$19:$J$20
+BTN_GoDesk__10	'Front Desk'!$I$11:$J$12
+BTN_GoDesk__11	'Front Desk Log'!$T$1:$U$2
+BTN_GoDesk__2	'New Outward'!$I$11:$J$12
+BTN_GoDesk__3	'Update Item'!$I$37:$J$38
+BTN_GoDesk__4	'File Desk'!$I$28:$J$29
+BTN_GoDesk__5	'Registry Guide'!$D$1:$D$2
+BTN_GoDesk__6	'Registry Dashboard'!$P$1:$Q$2
+BTN_GoDesk__7	'Pending Actions'!$N$1:$O$2
+BTN_GoDesk__8	'Daily Register'!$L$1:$M$2
+BTN_GoDesk__9	'Routing Desk'!$I$18:$J$19
+BTN_GoFiles__1	'Registry Desk'!$K$11:$K$13
+BTN_GoFrontDesk__1	'Registry Desk'!$B$34:$C$36
+BTN_GoFrontDeskLog__1	'Registry Desk'!$E$34:$F$36
+BTN_GoGuide__1	'Registry Desk'!$K$25:$K$26
+BTN_GoInward__1	'Registry Desk'!$H$21:$I$22
+BTN_GoNewInward__1	'Registry Desk'!$B$11:$C$13
+BTN_GoNewOutward__1	'Registry Desk'!$E$11:$F$13
+BTN_GoOutward__1	'Registry Desk'!$K$21:$K$22
+BTN_GoRoute__1	'Registry Desk'!$B$29:$C$31
+BTN_GoUpdate__1	'Registry Desk'!$H$11:$I$13
+BTN_IssueFile__1	'File Desk'!$I$5:$J$7
+BTN_LoadInward__1	'Update Item'!$I$5:$J$6
+BTN_LoadOutward__1	'Update Item'!$I$22:$J$23
+BTN_LoadRoute__1	'Routing Desk'!$I$5:$J$6
+BTN_LockAllNumbers__1	'Registry Desk'!$B$25:$C$26
+BTN_NewFile__1	'File Desk'!$I$18:$J$20
+BTN_PdfDaily__1	'Registry Desk'!$K$18:$K$19
+BTN_PdfSlip__1	'Registry Desk'!$E$18:$F$19
+BTN_PrintDaily__1	'Registry Desk'!$H$18:$I$19
+BTN_PrintPending__1	'Registry Desk'!$B$21:$C$22
+BTN_PrintSlip__1	'Registry Desk'!$B$18:$C$19
+BTN_PullFrontDesk__1	'New Inward'!$D$3
+BTN_ResendAckMail__1	'Registry Desk'!$E$29:$F$31
+BTN_ReturnFile__1	'File Desk'!$I$14:$J$15
+BTN_SaveFrontDesk__1	'Front Desk'!$I$4:$J$6
+BTN_SaveInward__1	'New Inward'!$I$4:$J$6
+BTN_SaveInwardPdf__1	'New Inward'!$I$12:$J$14
+BTN_SaveInwardPrint__1	'New Inward'!$I$8:$J$10
+BTN_SaveOutward__1	'New Outward'!$I$4:$J$6
+BTN_SaveRoute__1	'Routing Desk'!$I$8:$J$10
+BTN_SaveUpdateInward__1	'Update Item'!$I$8:$J$9
+BTN_SaveUpdateOutward__1	'Update Item'!$I$25:$J$26
+CloseTime	'Registry Settings'!$B$7
+CommSecretary	'Registry Desk'!$F$4
+DailyDate	'Daily Register'!$C$4
+DashStart	'Registry Settings'!$B$16
+DefaultSLA	'Registry Settings'!$B$12
+DeskSlipNo	'Registry Desk'!$C$16
+DispDays	'Registry Settings'!$B$9
+DIV_EMAILS	'Registry Lists'!$AP$4:$AP$40
+DIV_NAMES	'Registry Lists'!$AO$4:$AO$40
+DivisionList	OFFSET('Registry Lists'!$AO$4,0,0,MAX(1,COUNTA('Registry Lists'!$AO$4:$AO$40)),1)
+DutyOfficer	'Registry Desk'!$C$4
+EffDate	'Registry Settings'!$B$14
+FD_by	'Front Desk Log'!$J$6:$J$1005
+FD_gen	'Front Desk Log'!$B$6:$B$1005
+FD_inno	'Front Desk Log'!$O$6:$O$1005
+FD_lock	'Front Desk Log'!$C$6:$C$1005
+FD_mode	'Front Desk Log'!$I$6:$I$1005
+FD_no	'Front Desk Log'!$D$6:$D$1005
+FD_officer	'Front Desk Log'!$M$6:$M$1005
+FD_pflag	'Front Desk Log'!$T$6:$T$1005
+FD_phone	'Front Desk Log'!$K$6:$K$1005
+FD_plist	'Front Desk Log'!$V$6:$V$1005
+FD_pseq	'Front Desk Log'!$U$6:$U$1005
+FD_PULL_NO	'New Inward'!$C$3
+FD_recv	'Front Desk Log'!$E$6:$E$1005
+FD_regon	'Front Desk Log'!$P$6:$P$1005
+FD_remarks	'Front Desk Log'!$N$6:$N$1005
+FD_sender	'Front Desk Log'!$F$6:$F$1005
+FD_sn	'Front Desk Log'!$A$6:$A$1005
+FD_status	'Front Desk Log'!$Q$6:$Q$1005
+FD_subject	'Front Desk Log'!$G$6:$G$1005
+FD_type	'Front Desk Log'!$H$6:$H$1005
+FD_vols	'Front Desk Log'!$L$6:$L$1005
+FD_wait	'Front Desk Log'!$R$6:$R$1005
+FD_yr	'Front Desk Log'!$S$6:$S$1005
+FDPendingList	OFFSET('Front Desk Log'!$V$6,0,0,MAX(1,SUM(FD_pflag)),1)
+FI_closedon	'File Index'!$P$6:$P$505
+FI_daysout	'File Index'!$N$6:$N$505
+FI_fclass	'File Index'!$C$6:$C$505
+FI_flags	'File Index'!$O$6:$O$505
+FI_fstatus	'File Index'!$H$6:$H$505
+FI_inc	'File Index'!$I$6:$I$505
+FI_lastc	'File Index'!$K$6:$K$505
+FI_m	'File Index'!$R$6:$R$505
+FI_opened	'File Index'!$E$6:$E$505
+FI_ounit	'File Index'!$D$6:$D$505
+FI_outc	'File Index'!$J$6:$J$505
+FI_ref	'File Index'!$A$6:$A$505
+FI_remarks	'File Index'!$Q$6:$Q$505
+FI_security	'File Index'!$G$6:$G$505
+FI_since	'File Index'!$M$6:$M$505
+FI_title	'File Index'!$B$6:$B$505
+FI_vol	'File Index'!$F$6:$F$505
+FI_with	'File Index'!$L$6:$L$505
+FILECLASS_TBL	'Registry Lists'!$T$4:$W$80
+FileClassList	OFFSET('Registry Lists'!$T$4,0,0,MAX(1,COUNTA('Registry Lists'!$T$4:$T$80)),1)
+FileDays	'Registry Settings'!$B$13
+FileStatusList	OFFSET('Registry Lists'!$V$4,0,0,MAX(1,COUNTA('Registry Lists'!$V$4:$V$80)),1)
+FM_daysout	'File Movement'!$N$6:$N$1005
+FM_flags	'File Movement'!$P$6:$P$1005
+FM_latest	'File Movement'!$R$6:$R$1005
+FM_out	'File Movement'!$B$6:$B$1005
+FM_purpose	'File Movement'!$I$6:$I$1005
+FM_ref	'File Movement'!$C$6:$C$1005
+FM_relby	'File Movement'!$F$6:$F$1005
+FM_remarks	'File Movement'!$Q$6:$Q$1005
+FM_ret	'File Movement'!$L$6:$L$1005
+FM_retby	'File Movement'!$M$6:$M$1005
+FM_retdue	'File Movement'!$K$6:$K$1005
+FM_retov	'File Movement'!$J$6:$J$1005
+FM_sn	'File Movement'!$A$6:$A$1005
+FM_status	'File Movement'!$O$6:$O$1005
+FM_title	'File Movement'!$D$6:$D$1005
+FM_to	'File Movement'!$G$6:$G$1005
+FM_tounit	'File Movement'!$H$6:$H$1005
+FM_vol	'File Movement'!$E$6:$E$1005
+FORM_FD	'Front Desk'!$B$4:$G$13
+FORM_FILE_NEW	'File Desk'!$B$18:$G$26
+FORM_FILE_OUT	'File Desk'!$B$5:$G$11
+FORM_FILE_RET	'File Desk'!$B$14:$G$15
+FORM_IN	'New Inward'!$B$4:$G$27
+FORM_OUT	'New Outward'!$B$4:$G$23
+FORM_ROUTE	'Routing Desk'!$B$6:$G$21
+FORM_UPD_IN	'Update Item'!$B$6:$G$19
+FORM_UPD_OUT	'Update Item'!$B$23:$G$35
+FrontDeskStaff	OFFSET('Registry Lists'!$AR$4,0,0,MAX(1,COUNTA('Registry Lists'!$AR$4:$AR$40)),1)
+FwdDays	'Registry Settings'!$B$8
+Hols	'Registry Settings'!$A$21:$A$80
+IN_ackvia	'Inward Register'!$AI$6:$AI$1005
+IN_action	'Inward Register'!$AJ$6:$AJ$1005
+IN_actoff	'Inward Register'!$AL$6:$AL$1005
+IN_amt	'Inward Register'!$AB$6:$AB$1005
+IN_by	'Inward Register'!$W$6:$W$1005
+IN_cac	'Inward Register'!$P$6:$P$1005
+IN_cat	'Inward Register'!$I$6:$I$1005
+IN_closed	'Inward Register'!$AR$6:$AR$1005
+IN_closeman	'Inward Register'!$AQ$6:$AQ$1005
+IN_contact	'Inward Register'!$T$6:$T$1005
+IN_deemed	'Inward Register'!$G$6:$G$1005
+IN_div	'Inward Register'!$BK$6:$BK$1005
+IN_docdate	'Inward Register'!$N$6:$N$1005
+IN_dseq	'Inward Register'!$BC$6:$BC$1005
+IN_due	'Inward Register'!$AN$6:$AN$1005
+IN_dueov	'Inward Register'!$AM$6:$AM$1005
+IN_email	'Inward Register'!$V$6:$V$1005
+IN_fdno	'Inward Register'!$BL$6:$BL$1005
+IN_fee	'Inward Register'!$Z$6:$Z$1005
+IN_fileref	'Inward Register'!$AD$6:$AD$1005
+IN_flags	'Inward Register'!$AW$6:$AW$1005
+IN_fwd	'Inward Register'!$AG$6:$AG$1005
+IN_gen	'Inward Register'!$B$6:$B$1005
+IN_late	'Inward Register'!$AV$6:$AV$1005
+IN_lga	'Inward Register'!$S$6:$S$1005
+IN_lock	'Inward Register'!$C$6:$C$1005
+IN_mailed	'Inward Register'!$BJ$6:$BJ$1005
+IN_mailto	'Inward Register'!$BI$6:$BI$1005
+IN_mode	'Inward Register'!$F$6:$F$1005
+IN_mon	'Inward Register'!$BA$6:$BA$1005
+IN_no	'Inward Register'!$D$6:$D$1005
+IN_officer	'Inward Register'!$AC$6:$AC$1005
+IN_ontime	'Inward Register'!$BD$6:$BD$1005
+IN_opendays	'Inward Register'!$AU$6:$AU$1005
+IN_oref	'Inward Register'!$J$6:$J$1005
+IN_ourref	'Inward Register'!$R$6:$R$1005
+IN_payref	'Inward Register'!$AA$6:$AA$1005
+IN_pflag	'Inward Register'!$BE$6:$BE$1005
+IN_phone	'Inward Register'!$U$6:$U$1005
+IN_prio	'Inward Register'!$AK$6:$AK$1005
+IN_pseq	'Inward Register'!$BF$6:$BF$1005
+IN_rday	'Inward Register'!$AY$6:$AY$1005
+IN_recv	'Inward Register'!$E$6:$E$1005
+IN_regdays	'Inward Register'!$AT$6:$AT$1005
+IN_relno	'Inward Register'!$Q$6:$Q$1005
+IN_remarks	'Inward Register'!$AX$6:$AX$1005
+IN_reply	'Inward Register'!$AO$6:$AO$1005
+IN_replydate	'Inward Register'!$AP$6:$AP$1005
+IN_routedby	'Inward Register'!$BG$6:$BG$1005
+IN_routedon	'Inward Register'!$BH$6:$BH$1005
+IN_scat	'Inward Register'!$L$6:$L$1005
+IN_sch2	'Inward Register'!$Y$6:$Y$1005
+IN_sender	'Inward Register'!$K$6:$K$1005
+IN_sla	'Inward Register'!$BB$6:$BB$1005
+IN_sn	'Inward Register'!$A$6:$A$1005
+IN_sref	'Inward Register'!$M$6:$M$1005
+IN_status	'Inward Register'!$AS$6:$AS$1005
+IN_subject	'Inward Register'!$O$6:$O$1005
+IN_type	'Inward Register'!$H$6:$H$1005
+IN_unit	'Inward Register'!$AE$6:$AE$1005
+IN_unitoff	'Inward Register'!$AH$6:$AH$1005
+IN_unitov	'Inward Register'!$AF$6:$AF$1005
+IN_vols	'Inward Register'!$X$6:$X$1005
+IN_yr	'Inward Register'!$AZ$6:$AZ$1005
+InTypeCat	OFFSET('Registry Lists'!$A$4,0,1,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+InTypeList	OFFSET('Registry Lists'!$A$4,0,0,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+InTypePara	OFFSET('Registry Lists'!$A$4,0,5,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+InTypeRef	OFFSET('Registry Lists'!$A$4,0,3,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+InTypeSLA	OFFSET('Registry Lists'!$A$4,0,4,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+InTypeUnit	OFFSET('Registry Lists'!$A$4,0,2,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+IssueList	OFFSET('Registry Lists'!$O$4,0,0,MAX(1,COUNTA('Registry Lists'!$O$4:$O$80)),1)
+LastFD	'Front Desk'!$I$15
+LastIn	'New Inward'!$I$24
+LastOut	'New Outward'!$I$16
+LGAList	OFFSET('Registry Lists'!$N$4,0,0,MAX(1,COUNTA('Registry Lists'!$N$4:$N$80)),1)
+ModeList	OFFSET('Registry Lists'!$L$4,0,0,MAX(1,COUNTA('Registry Lists'!$L$4:$L$80)),1)
+OUT_addressee	'Outward Register'!$H$6:$H$1005
+OUT_defresp	'Outward Register'!$AK$6:$AK$1005
+OUT_deliv	'Outward Register'!$X$6:$X$1005
+OUT_desig	'Outward Register'!$R$6:$R$1005
+OUT_disp	'Outward Register'!$T$6:$T$1005
+OUT_dispby	'Outward Register'!$U$6:$U$1005
+OUT_dispdays	'Outward Register'!$AF$6:$AF$1005
+OUT_div	'Outward Register'!$AN$6:$AN$1005
+OUT_dmode	'Outward Register'!$S$6:$S$1005
+OUT_docdate	'Outward Register'!$E$6:$E$1005
+OUT_dseq	'Outward Register'!$AM$6:$AM$1005
+OUT_dtype	'Outward Register'!$F$6:$F$1005
+OUT_fileref	'Outward Register'!$N$6:$N$1005
+OUT_flags	'Outward Register'!$AG$6:$AG$1005
+OUT_gen	'Outward Register'!$B$6:$B$1005
+OUT_inreply	'Outward Register'!$L$6:$L$1005
+OUT_insender	'Outward Register'!$M$6:$M$1005
+OUT_lock	'Outward Register'!$C$6:$C$1005
+OUT_mon	'Outward Register'!$AJ$6:$AJ$1005
+OUT_no	'Outward Register'!$D$6:$D$1005
+OUT_ounit	'Outward Register'!$O$6:$O$1005
+OUT_pod	'Outward Register'!$W$6:$W$1005
+OUT_prep	'Outward Register'!$P$6:$P$1005
+OUT_rcat	'Outward Register'!$I$6:$I$1005
+OUT_rcontact	'Outward Register'!$J$6:$J$1005
+OUT_recvby	'Outward Register'!$Y$6:$Y$1005
+OUT_relno	'Outward Register'!$K$6:$K$1005
+OUT_remarks	'Outward Register'!$AH$6:$AH$1005
+OUT_respdays	'Outward Register'!$AL$6:$AL$1005
+OUT_respdue	'Outward Register'!$AB$6:$AB$1005
+OUT_respexp	'Outward Register'!$Z$6:$Z$1005
+OUT_respov	'Outward Register'!$AA$6:$AA$1005
+OUT_resprec	'Outward Register'!$AC$6:$AC$1005
+OUT_resprecd	'Outward Register'!$AD$6:$AD$1005
+OUT_signed	'Outward Register'!$Q$6:$Q$1005
+OUT_sn	'Outward Register'!$A$6:$A$1005
+OUT_status	'Outward Register'!$AE$6:$AE$1005
+OUT_subject	'Outward Register'!$G$6:$G$1005
+OUT_track	'Outward Register'!$V$6:$V$1005
+OUT_yr	'Outward Register'!$AI$6:$AI$1005
+OutPrefix	'Registry Settings'!$B$6
+OutTypeDays	OFFSET('Registry Lists'!$H$4,0,2,MAX(1,COUNTA('Registry Lists'!$H$4:$H$80)),1)
+OutTypeList	OFFSET('Registry Lists'!$H$4,0,0,MAX(1,COUNTA('Registry Lists'!$H$4:$H$80)),1)
+OutTypeResp	OFFSET('Registry Lists'!$H$4,0,1,MAX(1,COUNTA('Registry Lists'!$H$4:$H$80)),1)
+PartyList	OFFSET('Registry Lists'!$Q$4,0,0,MAX(1,COUNTA('Registry Lists'!$Q$4:$Q$80)),1)
+PendUnit	'Pending Actions'!$B$4
+PODDays	'Registry Settings'!$B$10
+PriorityList	OFFSET('Registry Lists'!$S$4,0,0,MAX(1,COUNTA('Registry Lists'!$S$4:$S$80)),1)
+RegDeadline	'Registry Settings'!$B$15
+RegistryStaff	OFFSET('Registry Lists'!$Z$4,0,0,MAX(1,COUNTA('Registry Lists'!$Z$4:$Z$80)),1)
+ROUTE_IN_NO	'Routing Desk'!$C$5
+ROUTER_TBL	'Registry Lists'!$AF$4:$AI$40
+RouterList	OFFSET('Registry Lists'!$AF$4,0,0,MAX(1,COUNTA('Registry Lists'!$AF$4:$AF$40)),1)
+SecretaryList	OFFSET('Registry Lists'!$AA$4,0,0,MAX(1,COUNTA('Registry Lists'!$AA$4:$AA$80)),1)
+SecurityList	OFFSET('Registry Lists'!$U$4,0,0,MAX(1,COUNTA('Registry Lists'!$U$4:$U$80)),1)
+SignatoryDesig	OFFSET('Registry Lists'!$AC$4,0,1,MAX(1,COUNTA('Registry Lists'!$AC$4:$AC$40)),1)
+SignatoryList	OFFSET('Registry Lists'!$AC$4,0,0,MAX(1,COUNTA('Registry Lists'!$AC$4:$AC$40)),1)
+UNIT_DIVS	'Registry Lists'!$AK$4:$AK$80
+UNIT_EMAILS	'Registry Lists'!$AM$4:$AM$80
+UNIT_GROUPS	'Registry Lists'!$AL$4:$AL$80
+UNIT_NAMES	'Registry Lists'!$M$4:$M$80
+UnitFilter	OFFSET('Registry Lists'!$X$4,0,0,COUNTA('Registry Lists'!$M$4:$M$80)+1,1)
+UnitList	OFFSET('Registry Lists'!$M$4,0,0,MAX(1,COUNTA('Registry Lists'!$M$4:$M$80)),1)
+UPD_IN_NO	'Update Item'!$C$5
+UPD_OUT_NO	'Update Item'!$C$22
+UrgentDays	'Registry Settings'!$B$11
+YNList	OFFSET('Registry Lists'!$P$4,0,0,MAX(1,COUNTA('Registry Lists'!$P$4:$P$80)),1)
+IN_evaltype	'Inward Register'!$BM$6:$BM$1005
+IN_evalsync	'Inward Register'!$BN$6:$BN$1005
+IN_epflag	'Inward Register'!$BO$6:$BO$1005
+IN_epseq	'Inward Register'!$BP$6:$BP$1005
+IN_eplist	'Inward Register'!$BQ$6:$BQ$1005
+IN_eoflag	'Inward Register'!$BR$6:$BR$1005
+IN_eoseq	'Inward Register'!$BS$6:$BS$1005
+InTypeEval	OFFSET('Registry Lists'!$A$4,0,6,MAX(1,COUNTA('Registry Lists'!$A$4:$A$80)),1)
+BTN_RX_GoIntake__9	'Registry Desk'!$B$42:$C$44
+BTN_RX_GoRegister__9	'Registry Desk'!$E$42:$F$44
+FORM_RX	'Registry Intake'!$B$6:$G$32
+RX_FD_PULL	'Registry Intake'!$C$3
+RX_ACK_PULL	'Registry Intake'!$C$4
+RX_LastAck	'Registry Intake'!$I$31
+BTN_RX_PullFrontDesk__1	'Registry Intake'!$D$3
+BTN_RX_PullAck__1	'Registry Intake'!$D$4
+BTN_RX_SaveIntake__1	'Registry Intake'!$I$6:$J$8
+BTN_RX_SaveIntakePrint__1	'Registry Intake'!$I$10:$J$12
+BTN_RX_SaveIntakePdf__1	'Registry Intake'!$I$14:$J$16
+BTN_RX_ClearIntake__1	'Registry Intake'!$I$18:$J$19
+BTN_RX_GoFrontDesk__1	'Registry Intake'!$I$21:$J$22
+BTN_RX_GoRegister__1	'Registry Intake'!$I$24:$J$25
+BTN_RX_PrintSlip__1	'Registry Intake'!$I$33:$J$34
+BTN_RX_GoFilings__1	'Registry Intake'!$I$27:$J$28
+RX_PendingAckList	OFFSET('Inward Register'!$BQ$6,0,0,MAX(1,SUM(IN_epflag)),1)
+RX_O_no	'Inward Register'!$D$6:$D$1005
+RX_O_sender	'Inward Register'!$K$6:$K$1005
+RX_O_status	'Inward Register'!$BN$6:$BN$1005
+RX_O_recv	'Inward Register'!$E$6:$E$1005
+RX_O_flag	'Inward Register'!$BR$6:$BR$1005
+RX_O_seq	'Inward Register'!$BS$6:$BS$1005
+RX_FilingTypes	Lists!$BQ$6:$BQ$9
+RX_CorrTypes	Lists!$BR$6:$BR$9
+RX_OrderRefs	Lists!$BS$6:$BS$9
+RX_ModeNames	Lists!$BU$6:$BU$12
+RX_ModeChannels	Lists!$BV$6:$BV$12

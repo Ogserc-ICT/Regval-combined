@@ -1,0 +1,635 @@
+A1	'Lookup lists'
+A2	'Edit or extend any list by typing in the next empty row — dropdowns and lookups pick up new entries automatically. Keep names identical to what is already used in the registers.'
+W2	'Used to number new files: OGSERC/<code>/001'
+Z2	'Replace with the names of registry staff.'
+AA2	'Replace with the name of the Secretary to the Commission (and anyone who acts).'
+AC2	'People who sign outgoing letters (column AD = designation printed under the name).'
+AF2	'Only these officers can route items on the Routing Desk. Set a Windows user name and/or a PIN for each, then hide this sheet.'
+AJ2	'Organisation: division and unit group for each unit in column M (same row). Unit emails receive acknowledgements.'
+AO2	'Division emails also receive every acknowledgement for their units.'
+AR2	'Front desk officers (Front Desk form dropdown).'
+A3	'Incoming correspondence type'
+B3	'Category'
+C3	'Default unit'
+D3	'Order ref.'
+E3	'Response target (working days; 0 = none)'
+F3	'Para 10(3) slip wording (Y/N)'
+G3	'Registration filing type (evaluation workbook)'
+H3	'Outgoing document type'
+I3	'Response expected (Y/N)'
+J3	'Response window (working days)'
+L3	'ModeList'
+M3	'UnitList'
+N3	'LGAList'
+O3	'IssueList'
+P3	'YNList'
+Q3	'PartyList'
+R3	'ActionList'
+S3	'PriorityList'
+T3	'FileClassList'
+U3	'SecurityList'
+V3	'FileStatusList'
+W3	'File class code'
+X3	'UnitFilter'
+Z3	'RegistryStaff'
+AA3	'SecretaryList'
+AC3	'SignatoryList'
+AD3	'Designation'
+AF3	'Routing officers'
+AG3	'Role'
+AH3	'Windows user name (optional)'
+AI3	'Routing PIN'
+AJ3	'Unit (from column M)'
+AK3	'Division'
+AL3	'Unit group'
+AM3	'Unit email(s) — separate with ;'
+AO3	'DivisionList'
+AP3	'Division email(s) — separate with ;'
+AR3	'FrontDeskStaff'
+A4	'REG-01 Registration (new)'
+B4	'Regulatory filing'
+C4	'Licensing unit'
+D4	'11; Sch. 1 Pt A'
+E4	20
+F4	'Y'
+G4	'New registration'
+H4	'Acknowledgement / holding reply'
+I4	'N'
+J4	0
+L4	'Hand delivery'
+M4	'Office of the General Counsel and Secretary (Registry)'
+N4	'Abeokuta North'
+O4	'Printed slip'
+P4	'Y'
+Q4	'Registrant / licensee'
+R4	'Reply required'
+S4	'Urgent'
+T4	'Registration & licensing'
+U4	'Open'
+V4	'Open'
+W4	'REG'
+X4	'All units'
+Z4	'Olanrewaju Oluyombo'
+AA4	'Oluwatoyin Sonoiki'
+AC4	'Jide Onakoya'
+AD4	'Chairman'
+AF4	'Oluwatoyin Sonoiki'
+AG4	'Secretary to the Commission'
+AJ4	'=IF(M4="","",M4)'	=> 'Office of the General Counsel and Secretary (Registry)'
+AK4	'Office of the Chairman'
+AL4	'Registry'
+AO4	'Office of the Chairman'
+AR4	'Funmilayo Sorungbe'
+A5	'OUN-01 Own-use notification'
+B5	'Regulatory filing'
+C5	'Licensing unit'
+D5	'3(4); Sch. 1 Pt B'
+E5	10
+F5	'Y'
+G5	'Own-use notification (REG-01I)'
+H5	'Reply to correspondence'
+I5	'N'
+J5	0
+L5	'Email'
+M5	'Internal Audit unit'
+N5	'Abeokuta South'
+O5	'Email'
+P5	'N'
+Q5	'Prospective applicant'
+R5	'Action required'
+S5	'High'
+T5	'Licensee file'
+U5	'Restricted'
+V5	'Closed'
+W5	'RL'
+X5	'=IF(M4="","",M4)'	=> 'Office of the General Counsel and Secretary (Registry)'
+Z5	'Abiodun Sodipo'
+AC5	'Oluwatoyin Sonoiki'
+AD5	'Secretary to the Commission'
+AF5	'Adetola Salami'
+AG5	'Head of Administration'
+AJ5	'=IF(M5="","",M5)'	=> 'Internal Audit unit'
+AK5	'Office of the Chairman'
+AL5	'Internal Audit'
+AO5	'Engineering Services'
+AP5	'engineeringstandards@ogserc.org.ng'
+AR5	'Aliu Funmilola'
+A6	'Update - material change'
+B6	'Regulatory filing'
+C6	'Licensing unit'
+D6	'16(1)'
+E6	10
+F6	'Y'
+G6	'Update: material change (para 16(1))'
+H6	'Letter (general)'
+I6	'N'
+J6	0
+L6	'Online portal'
+M6	'Public Affairs and Stakeholder unit: Communication'
+N6	'Ado-Odo/Ota'
+O6	'Portal'
+Q6	'Consumer / member of public'
+R6	'For information'
+S6	'Normal'
+T6	'Tariffs & market'
+U6	'Confidential'
+V6	'Archived'
+W6	'TM'
+X6	'=IF(M5="","",M5)'	=> 'Internal Audit unit'
+AJ6	'=IF(M6="","",M6)'	=> 'Public Affairs and Stakeholder unit: Communication'
+AK6	'Office of the Chairman'
+AL6	'Public Affairs and Protocol'
+AO6	'Electricity Market, Planning and Research'
+AP6	'empr@ogserc.org.ng'
+A7	'Annual confirmation'
+B7	'Regulatory filing'
+C7	'Licensing unit'
+D7	'16(2)'
+E7	10
+F7	'Y'
+G7	'Annual confirmation (para 16(2))'
+H7	'Deficiency notice'
+I7	'Y'
+J7	10
+L7	'Courier'
+M7	'Public Affairs and Stakeholder unit: New Media'
+N7	'Ewekoro'
+O7	'Not yet issued'
+Q7	'Community / association'
+R7	'File only'
+S7	'Low'
+T7	'Technical & standards'
+W7	'TS'
+X7	'=IF(M6="","",M6)'	=> 'Public Affairs and Stakeholder unit: Communication'
+AJ7	'=IF(M7="","",M7)'	=> 'Public Affairs and Stakeholder unit: New Media'
+AK7	'Office of the Chairman'
+AL7	'Public Affairs and Protocol'
+AO7	'Financial Management Services'
+A8	'Deficiency response'
+B8	'Regulatory filing'
+C8	'Licensing unit'
+D8	'13(1)(b)'
+E8	10
+F8	'Y'
+H8	'Information request to licensee'
+I8	'Y'
+J8	10
+L8	'Registered post'
+M8	'Public Affairs and Stakeholder unit: Protocol'
+N8	'Ifo'
+O8	'Not required'
+Q8	"Governor's Office"
+T8	'Consumer affairs'
+W8	'CA'
+X8	'=IF(M7="","",M7)'	=> 'Public Affairs and Stakeholder unit: New Media'
+AJ8	'=IF(M8="","",M8)'	=> 'Public Affairs and Stakeholder unit: Protocol'
+AK8	'Office of the Chairman'
+AL8	'Public Affairs and Protocol'
+AO8	'Legal, Licensing and Consumer Affairs'
+A9	'Licence / permit application'
+B9	'Regulatory filing'
+C9	'Licensing unit'
+D9	'18(1)'
+E9	20
+F9	'Y'
+H9	'Registration certificate'
+I9	'N'
+J9	0
+L9	'Internal mail'
+M9	'Engineering Standards unit'
+N9	'Ijebu East'
+Q9	'State MDA'
+T9	'Legal'
+W9	'LEG'
+X9	'=IF(M8="","",M8)'	=> 'Public Affairs and Stakeholder unit: Protocol'
+AJ9	'=IF(M9="","",M9)'	=> 'Engineering Standards unit'
+AK9	'Engineering Services'
+AL9	'Standards and Networks'
+A10	'Multi-State ring-fencing plan'
+B10	'Regulatory filing'
+C10	'Licensing unit'
+D10	'7(3)'
+E10	20
+F10	'Y'
+H10	'Licence / permit'
+I10	'N'
+J10	0
+L10	'Publication / gazette'
+M10	'Networks unit: Transmission and Distribution'
+N10	'Ijebu North'
+Q10	'Ogun State House of Assembly'
+T10	'Finance'
+W10	'FIN'
+X10	'=IF(M9="","",M9)'	=> 'Engineering Standards unit'
+AJ10	'=IF(M10="","",M10)'	=> 'Networks unit: Transmission and Distribution'
+AK10	'Engineering Services'
+AL10	'Standards and Networks'
+A11	'Licence renewal application'
+B11	'Regulatory filing'
+C11	'Licensing unit'
+D11	'8(5)'
+E11	20
+F11	'Y'
+H11	'Decision / determination'
+I11	'N'
+J11	0
+M11	'Networks unit: Generation'
+N11	'Ijebu North East'
+Q11	'Local Government'
+T11	'Administration'
+W11	'ADM'
+X11	'=IF(M10="","",M10)'	=> 'Networks unit: Transmission and Distribution'
+AJ11	'=IF(M11="","",M11)'	=> 'Networks unit: Generation'
+AK11	'Engineering Services'
+AL11	'Standards and Networks'
+A12	'Fee payment evidence'
+B12	'Regulatory filing'
+C12	'Finance and Account unit'
+D12	'17'
+E12	5
+F12	'Y'
+H12	'Regulatory order'
+I12	'N'
+J12	0
+M12	'Performance Monitoring unit'
+N12	'Ijebu Ode'
+Q12	'NERC'
+T12	'Personnel (confidential)'
+W12	'PF'
+X12	'=IF(M11="","",M11)'	=> 'Networks unit: Generation'
+AJ12	'=IF(M12="","",M12)'	=> 'Performance Monitoring unit'
+AK12	'Engineering Services'
+AL12	'Monitoring, Metering and Safety'
+A13	'Confidentiality claim / representation'
+B13	'Regulatory filing'
+C13	'Compliance/Legal Services unit: Legal'
+D13	'15(3); 20'
+E13	10
+F13	'Y'
+H13	'Regulation / guideline'
+I13	'N'
+J13	0
+M13	'Metering Standards unit'
+N13	'Ikenne'
+Q13	'Federal MDA (other)'
+T13	'Government & external relations'
+W13	'GOV'
+X13	'=IF(M12="","",M12)'	=> 'Performance Monitoring unit'
+AJ13	'=IF(M13="","",M13)'	=> 'Metering Standards unit'
+AK13	'Engineering Services'
+AL13	'Monitoring, Metering and Safety'
+A14	'Application for review'
+B14	'Regulatory filing'
+C14	'Compliance/Legal Services unit: Legal'
+D14	'21'
+E14	20
+F14	'Y'
+H14	'Public notice / consultation paper'
+I14	'Y'
+J14	20
+M14	'Occupational Health, Safety and Performance Analysis unit'
+N14	'Imeko Afon'
+Q14	'DisCo / GenCo / TCN'
+T14	'Policy & regulations'
+W14	'POL'
+X14	'=IF(M13="","",M13)'	=> 'Metering Standards unit'
+AJ14	'=IF(M14="","",M14)'	=> 'Occupational Health, Safety and Performance Analysis unit'
+AK14	'Engineering Services'
+AL14	'Monitoring, Metering and Safety'
+A15	'Consumer complaint'
+B15	'Consumer matters'
+C15	'Customer Complaints'
+D15	'9'
+E15	10
+F15	'Y'
+H15	'Circular to licensees'
+I15	'N'
+J15	0
+M15	'Market Analysis unit'
+N15	'Ipokia'
+Q15	'Investor / developer'
+T15	'General correspondence'
+W15	'GEN'
+X15	'=IF(M14="","",M14)'	=> 'Occupational Health, Safety and Performance Analysis unit'
+AJ15	'=IF(M15="","",M15)'	=> 'Market Analysis unit'
+AK15	'Electricity Market, Planning and Research'
+AL15	'Market, Tariff and Regulatory Finance'
+A16	'Tariff application / review'
+B16	'Regulatory filing'
+C16	'Tariff and Rates unit'
+E16	20
+F16	'N'
+H16	'Compliance / enforcement notice'
+I16	'Y'
+J16	10
+M16	'Tariff and Rates unit'
+N16	'Obafemi Owode'
+Q16	'Development partner'
+X16	'=IF(M15="","",M15)'	=> 'Market Analysis unit'
+AJ16	'=IF(M16="","",M16)'	=> 'Tariff and Rates unit'
+AK16	'Electricity Market, Planning and Research'
+AL16	'Market, Tariff and Regulatory Finance'
+A17	'Licensee returns / performance report'
+B17	'Licensee returns & reports'
+C17	'Performance Monitoring unit, Market Analysis'
+E17	10
+F17	'N'
+H17	'Fee demand / invoice'
+I17	'Y'
+J17	10
+M17	'Regulatory Financial Reporting Analysis (RFRA)'
+N17	'Odeda'
+Q17	'Court / legal counsel'
+X17	'=IF(M16="","",M16)'	=> 'Tariff and Rates unit'
+AJ17	'=IF(M17="","",M17)'	=> 'Regulatory Financial Reporting Analysis (RFRA)'
+AK17	'Electricity Market, Planning and Research'
+AL17	'Market, Tariff and Regulatory Finance'
+A18	'Incident / outage report'
+B18	'Licensee returns & reports'
+C18	'Performance Monitoring unit, Occupational Health and Safety'
+E18	5
+F18	'N'
+H18	'Response to consumer complaint'
+I18	'N'
+J18	0
+M18	'Corporate Planning and Strategy (CPS)'
+N18	'Odogbolu'
+Q18	'Media'
+X18	'=IF(M17="","",M17)'	=> 'Regulatory Financial Reporting Analysis (RFRA)'
+AJ18	'=IF(M18="","",M18)'	=> 'Corporate Planning and Strategy (CPS)'
+AK18	'Electricity Market, Planning and Research'
+AL18	'Planning, Renewables, Research and Data'
+A19	'Consumer petition'
+B19	'Consumer matters'
+C19	'Customer Complaints'
+E19	10
+F19	'N'
+H19	"Letter to Governor's Office / State MDA"
+I19	'N'
+J19	0
+M19	'Renewable Energy'
+N19	'Ogun Waterside'
+Q19	'Vendor / contractor'
+X19	'=IF(M18="","",M18)'	=> 'Corporate Planning and Strategy (CPS)'
+AJ19	'=IF(M19="","",M19)'	=> 'Renewable Energy'
+AK19	'Electricity Market, Planning and Research'
+AL19	'Planning, Renewables, Research and Data'
+A20	'Public representation'
+B20	'Consumer matters'
+C20	'Public Affairs and Stakeholder unit: Communication'
+E20	10
+F20	'N'
+H20	'Letter to NERC / Federal agency'
+I20	'N'
+J20	0
+M20	'Research unit: Research Analytics'
+N20	'Remo North'
+Q20	'OGSERC internal'
+X20	'=IF(M19="","",M19)'	=> 'Renewable Energy'
+AJ20	'=IF(M20="","",M20)'	=> 'Research unit: Research Analytics'
+AK20	'Electricity Market, Planning and Research'
+AL20	'Planning, Renewables, Research and Data'
+A21	"Letter from Governor's Office"
+B21	'Government & legislature'
+C21	'Office of the General Counsel and Secretary (Registry)'
+E21	5
+F21	'N'
+H21	'Court filing / legal correspondence'
+I21	'N'
+J21	0
+M21	'Research unit: Data Aggregation Platform (DAP)'
+N21	'Sagamu'
+Q21	'Other'
+X21	'=IF(M20="","",M20)'	=> 'Research unit: Research Analytics'
+AJ21	'=IF(M21="","",M21)'	=> 'Research unit: Data Aggregation Platform (DAP)'
+AK21	'Electricity Market, Planning and Research'
+AL21	'Planning, Renewables, Research and Data'
+A22	'Letter from House of Assembly'
+B22	'Government & legislature'
+C22	'Office of the General Counsel and Secretary (Registry)'
+E22	5
+F22	'N'
+H22	'Press release / media statement'
+I22	'N'
+J22	0
+M22	'Finance and Account unit'
+N22	'Yewa North'
+X22	'=IF(M21="","",M21)'	=> 'Research unit: Data Aggregation Platform (DAP)'
+AJ22	'=IF(M22="","",M22)'	=> 'Finance and Account unit'
+AK22	'Financial Management Services'
+AL22	'Finance, Procurement and ICT'
+A23	'Letter from State MDA / Local Government'
+B23	'Government & legislature'
+C23	'Office of the General Counsel and Secretary (Registry)'
+E23	10
+F23	'N'
+H23	'Invitation / meeting notice'
+I23	'Y'
+J23	5
+M23	'Procurement unit'
+N23	'Yewa South'
+X23	'=IF(M22="","",M22)'	=> 'Finance and Account unit'
+AJ23	'=IF(M23="","",M23)'	=> 'Procurement unit'
+AK23	'Financial Management Services'
+AL23	'Finance, Procurement and ICT'
+A24	'Letter from NERC / Federal agency'
+B24	'Federal & sector agencies'
+C24	'Office of the General Counsel and Secretary (Registry)'
+E24	10
+F24	'N'
+H24	'Internal memo'
+I24	'N'
+J24	0
+M24	'ICT unit'
+N24	'Outside Ogun State'
+X24	'=IF(M23="","",M23)'	=> 'Procurement unit'
+AJ24	'=IF(M24="","",M24)'	=> 'ICT unit'
+AK24	'Financial Management Services'
+AL24	'Finance, Procurement and ICT'
+AM24	'it@ogserc.org.ng'
+A25	'Letter from DisCo / GenCo / TCN'
+B25	'Industry & investors'
+C25	'Networks unit: Transmission and Distribution'
+E25	10
+F25	'N'
+H25	'Report submitted'
+I25	'N'
+J25	0
+M25	'Human Resources'
+X25	'=IF(M24="","",M24)'	=> 'ICT unit'
+AJ25	'=IF(M25="","",M25)'	=> 'Human Resources'
+AK25	'Financial Management Services'
+AL25	'HR and Admin'
+A26	'Investor / developer enquiry'
+B26	'Industry & investors'
+C26	'Licensing unit'
+E26	10
+F26	'N'
+H26	'Other'
+I26	'N'
+J26	0
+M26	'Front Desk'
+X26	'=IF(M25="","",M25)'	=> 'Human Resources'
+AJ26	'=IF(M26="","",M26)'	=> 'Front Desk'
+AK26	'Financial Management Services'
+AL26	'HR and Admin'
+A27	'Development partner correspondence'
+B27	'Industry & investors'
+C27	'Corporate Planning and Strategy (CPS)'
+E27	10
+F27	'N'
+M27	'Administration'
+X27	'=IF(M26="","",M26)'	=> 'Front Desk'
+AJ27	'=IF(M27="","",M27)'	=> 'Administration'
+AK27	'Financial Management Services'
+AL27	'HR and Admin'
+A28	'Court process / legal notice'
+B28	'Legal & court'
+C28	'Compliance/Legal Services unit: Legal'
+E28	3
+F28	'N'
+M28	'Licensing unit'
+X28	'=IF(M27="","",M27)'	=> 'Administration'
+AJ28	'=IF(M28="","",M28)'	=> 'Licensing unit'
+AK28	'Legal, Licensing and Consumer Affairs'
+AL28	'Licensing, Legal and Compliance'
+A29	'Freedom of Information request'
+B29	'Legal & court'
+C29	'Compliance/Legal Services unit: Legal'
+E29	7
+F29	'N'
+M29	'Compliance/Legal Services unit: Legal'
+X29	'=IF(M28="","",M28)'	=> 'Licensing unit'
+AJ29	'=IF(M29="","",M29)'	=> 'Compliance/Legal Services unit: Legal'
+AK29	'Legal, Licensing and Consumer Affairs'
+AL29	'Licensing, Legal and Compliance'
+A30	'Invitation (meeting / event / hearing)'
+B30	'Invitations & events'
+C30	'Office of the General Counsel and Secretary (Registry)'
+E30	3
+F30	'N'
+M30	'Compliance/Legal Services unit: Compliance and Enforcement'
+X30	'=IF(M29="","",M29)'	=> 'Compliance/Legal Services unit: Legal'
+AJ30	'=IF(M30="","",M30)'	=> 'Compliance/Legal Services unit: Compliance and Enforcement'
+AK30	'Legal, Licensing and Consumer Affairs'
+AL30	'Licensing, Legal and Compliance'
+A31	'Invoice / vendor correspondence'
+B31	'Finance & procurement'
+C31	'Finance and Account unit'
+E31	10
+F31	'N'
+M31	'Customer Complaints'
+X31	'=IF(M30="","",M30)'	=> 'Compliance/Legal Services unit: Compliance and Enforcement'
+AJ31	'=IF(M31="","",M31)'	=> 'Customer Complaints'
+AK31	'Legal, Licensing and Consumer Affairs'
+AL31	'Consumer Affairs'
+A32	'Staff / personnel matter'
+B32	'Administration & HR'
+C32	'Human Resources'
+E32	10
+F32	'N'
+M32	'Customer Service Standards'
+X32	'=IF(M31="","",M31)'	=> 'Customer Complaints'
+AJ32	'=IF(M32="","",M32)'	=> 'Customer Service Standards'
+AK32	'Legal, Licensing and Consumer Affairs'
+AL32	'Consumer Affairs'
+A33	'Media / press enquiry'
+B33	'Media & public'
+C33	'Public Affairs and Stakeholder unit: Communication'
+E33	2
+F33	'N'
+M33	'Consumer Enlightenment and Education'
+X33	'=IF(M32="","",M32)'	=> 'Customer Service Standards'
+AJ33	'=IF(M33="","",M33)'	=> 'Consumer Enlightenment and Education'
+AK33	'Legal, Licensing and Consumer Affairs'
+AL33	'Consumer Affairs'
+A34	'Circular / publication (for information)'
+B34	'Other'
+C34	'Office of the General Counsel and Secretary (Registry)'
+E34	0
+F34	'N'
+X34	'=IF(M33="","",M33)'	=> 'Consumer Enlightenment and Education'
+AJ34	'=IF(M34="","",M34)'	=> None
+A35	'Other correspondence'
+B35	'Other'
+C35	'Office of the General Counsel and Secretary (Registry)'
+D35	'10(2)'
+E35	10
+F35	'Y'
+X35	'=IF(M34="","",M34)'	=> None
+AJ35	'=IF(M35="","",M35)'	=> None
+X36	'=IF(M35="","",M35)'	=> None
+AJ36	'=IF(M36="","",M36)'	=> None
+A37	'Response targets are internal service standards, not statutory limits — adjust to Commission policy. The Order clock for deciding a complete REG-01 is 30 days (para 13(1)); the 20-working-day target sits inside it. Units follow a working structure — rename to match the approved OGSERC organogram (rename in the registers too).'
+X37	'=IF(M36="","",M36)'	=> None
+AJ37	'=IF(M37="","",M37)'	=> None
+X38	'=IF(M37="","",M37)'	=> None
+AJ38	'=IF(M38="","",M38)'	=> None
+X39	'=IF(M38="","",M38)'	=> None
+AJ39	'=IF(M39="","",M39)'	=> None
+X40	'=IF(M39="","",M39)'	=> None
+AJ40	'=IF(M40="","",M40)'	=> None
+X41	'=IF(M40="","",M40)'	=> None
+AJ41	'=IF(M41="","",M41)'	=> None
+X42	'=IF(M41="","",M41)'	=> None
+AJ42	'=IF(M42="","",M42)'	=> None
+X43	'=IF(M42="","",M42)'	=> None
+AJ43	'=IF(M43="","",M43)'	=> None
+X44	'=IF(M43="","",M43)'	=> None
+AJ44	'=IF(M44="","",M44)'	=> None
+X45	'=IF(M44="","",M44)'	=> None
+AJ45	'=IF(M45="","",M45)'	=> None
+X46	'=IF(M45="","",M45)'	=> None
+AJ46	'=IF(M46="","",M46)'	=> None
+X47	'=IF(M46="","",M46)'	=> None
+AJ47	'=IF(M47="","",M47)'	=> None
+X48	'=IF(M47="","",M47)'	=> None
+AJ48	'=IF(M48="","",M48)'	=> None
+X49	'=IF(M48="","",M48)'	=> None
+AJ49	'=IF(M49="","",M49)'	=> None
+X50	'=IF(M49="","",M49)'	=> None
+AJ50	'=IF(M50="","",M50)'	=> None
+X51	'=IF(M50="","",M50)'	=> None
+AJ51	'=IF(M51="","",M51)'	=> None
+X52	'=IF(M51="","",M51)'	=> None
+AJ52	'=IF(M52="","",M52)'	=> None
+X53	'=IF(M52="","",M52)'	=> None
+AJ53	'=IF(M53="","",M53)'	=> None
+X54	'=IF(M53="","",M53)'	=> None
+AJ54	'=IF(M54="","",M54)'	=> None
+X55	'=IF(M54="","",M54)'	=> None
+AJ55	'=IF(M55="","",M55)'	=> None
+X56	'=IF(M55="","",M55)'	=> None
+AJ56	'=IF(M56="","",M56)'	=> None
+X57	'=IF(M56="","",M56)'	=> None
+AJ57	'=IF(M57="","",M57)'	=> None
+X58	'=IF(M57="","",M57)'	=> None
+AJ58	'=IF(M58="","",M58)'	=> None
+X59	'=IF(M58="","",M58)'	=> None
+AJ59	'=IF(M59="","",M59)'	=> None
+X60	'=IF(M59="","",M59)'	=> None
+AJ60	'=IF(M60="","",M60)'	=> None
+X61	'=IF(M60="","",M60)'	=> None
+AJ61	'=IF(M61="","",M61)'	=> None
+X62	'=IF(M61="","",M61)'	=> None
+AJ62	'=IF(M62="","",M62)'	=> None
+X63	'=IF(M62="","",M62)'	=> None
+AJ63	'=IF(M63="","",M63)'	=> None
+X64	'=IF(M63="","",M63)'	=> None
+AJ64	'=IF(M64="","",M64)'	=> None
+AJ65	'=IF(M65="","",M65)'	=> None
+AJ66	'=IF(M66="","",M66)'	=> None
+AJ67	'=IF(M67="","",M67)'	=> None
+AJ68	'=IF(M68="","",M68)'	=> None
+AJ69	'=IF(M69="","",M69)'	=> None
+AJ70	'=IF(M70="","",M70)'	=> None
+AJ71	'=IF(M71="","",M71)'	=> None
+AJ72	'=IF(M72="","",M72)'	=> None
+AJ73	'=IF(M73="","",M73)'	=> None
+AJ74	'=IF(M74="","",M74)'	=> None
+AJ75	'=IF(M75="","",M75)'	=> None
+AJ76	'=IF(M76="","",M76)'	=> None
+AJ77	'=IF(M77="","",M77)'	=> None
+AJ78	'=IF(M78="","",M78)'	=> None
+AJ79	'=IF(M79="","",M79)'	=> None
+AJ80	'=IF(M80="","",M80)'	=> None

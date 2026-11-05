@@ -1,0 +1,79 @@
+B1	'Log an Outgoing Item'
+B2	'Log the letter before signature to get its outward number, then quote that number on the document. Record dispatch later on "Update Item" if not sent today.'
+B4	'Date of document *'
+C4	'=TODAY()'	=> datetime.datetime(2026, 11, 3, 0, 0)
+E4	'docdate'
+F4	'Y'
+G4	'=TODAY()'	=> datetime.datetime(2026, 11, 3, 0, 0)
+I4	'SAVE & GET NUMBER'
+B5	'Document type *'
+D5	'=IF($C$5="","",IFERROR(IF(INDEX(OutTypeResp,MATCH($C$5,OutTypeList,0))="Y","Reply expected within "&INDEX(OutTypeDays,MATCH($C$5,OutTypeList,0))&" working days of dispatch","No reply expected by default"),"Type not in Lists"))'	=> None
+E5	'dtype'
+F5	'Y'
+B6	'Subject *'
+E6	'subject'
+F6	'Y'
+B7	'Addressee / recipient *'
+E7	'addressee'
+F7	'Y'
+B8	'Recipient category *'
+E8	'rcat'
+F8	'Y'
+I8	'CLEAR FORM'
+B9	'Recipient address / email'
+E9	'rcontact'
+B10	'In reply to (inward no.)'
+D10	'=IF($C$10="","",IFERROR("Replies to "&INDEX(IN_sender,MATCH($C$10,IN_no,0))&" — closes that item","Not found in the Inward Register"))'	=> None
+E10	'inreply'
+B11	'Related OGSERC No.'
+E11	'relno'
+I11	'◀ REGISTRY DESK'
+B12	'File reference'
+D12	'=IF($C$12="","",IFERROR(INDEX(FI_title,MATCH($C$12,FI_ref,0)),"Not in the File Index — add it on File Desk"))'	=> None
+E12	'fileref'
+B13	'Originating unit *'
+E13	'ounit'
+F13	'Y'
+B14	'Prepared by'
+E14	'prep'
+B15	'Signed by *'
+C15	'=CommSecretary'	=> 'Oluwatoyin Sonoiki'
+D15	'Pick who signs (Lists, column AC). Defaults to the Secretary on the Desk; another name can be typed.'
+E15	'signed'
+F15	'Y'
+G15	'=CommSecretary'	=> 'Oluwatoyin Sonoiki'
+I15	'Quote this number on the document'
+B16	'Signatory designation'
+C16	'=IF($C$15="","",IFERROR(INDEX(SignatoryDesig,MATCH($C$15,SignatoryList,0))&"",""))'	=> 'Secretary to the Commission'
+D16	'Fills in from the signatory; type it if the signatory is not on the list.'
+E16	'desig'
+G16	'=IF($C$15="","",IFERROR(INDEX(SignatoryDesig,MATCH($C$15,SignatoryList,0))&"",""))'	=> 'Secretary to the Commission'
+B17	'Dispatch mode *'
+E17	'dmode'
+F17	'Y'
+B18	'Date dispatched (blank if not yet sent)'
+E18	'disp'
+B19	'Dispatched by'
+C19	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+D19	'Cleared automatically if no dispatch date is entered.'
+E19	'dispby'
+G19	'=DutyOfficer'	=> 'Olanrewaju Oluyombo'
+B20	'Tracking / email / courier ref.'
+E20	'track'
+B21	'Response expected? (Y/N)'
+D21	'Leave blank to use the document type default.'
+E21	'respexp'
+B22	'Response due (only to override)'
+E22	'respov'
+B23	'Remarks'
+E23	'remarks'
+DV C4 C18 C22	date	DATE(2020,1,1)
+DV C5	list	OutTypeList
+DV C8	list	PartyList
+DV C10	list	IN_no
+DV C12	list	FI_ref
+DV C13	list	UnitList
+DV C17	list	ModeList
+DV C19	list	RegistryStaff
+DV C21	list	YNList
+DV C15	list	SignatoryList

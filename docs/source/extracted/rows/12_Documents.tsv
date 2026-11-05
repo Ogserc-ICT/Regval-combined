@@ -1,0 +1,3 @@
+1|Schedule 2 documents checklist (per form)
+2|Rows are created from the form's list (registration-forms.json) when a submission is saved, and again after Confirm category. Enter Y, N or N/A in the blue column; Status shows what counts.
+6|Reference	Registrant	Form	Key	Received (Y/N/N/A)	Document	Requirement	Status	On Current List	Remarks	Lookup Key

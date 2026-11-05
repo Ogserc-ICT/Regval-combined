@@ -1,0 +1,6 @@
+1|OGSERC Registry — File Movement Register
+2|Record every time a file leaves the Registry and when it comes back. Enter one row per movement; fill "Date Returned" when it is back.
+4|MOVEMENT									RETURN						CHECKS		HELPER
+5|S/N	Date & Time Out *	File Reference *	File Title	Volume	Released by (Registry) *	Issued to (Officer) *	Unit	Purpose	Return By (override)	Return Due	Date Returned	Received Back by	Working Days Out	Status	Checks / Flags	Remarks	Latest Movement for File (helper)
+6|1	2026-11-20 14:00	OGSERC/RL/001	EXAMPLE — Sample Mini-Grid Ltd: registration (clear before use)	1	Registry Officer	Reg. Officer	Licensing unit	EXAMPLE — completeness review of REG-01 (clear before use)		2026-11-25	2026-11-25	Registry Officer	3	Returned			OGSERC/RL/001
+7|2	2026-12-02 12:00	OGSERC/GOV/001	EXAMPLE — NERC and federal agencies (clear before use)	1	Registry Officer	PA to Chairman	Office of the General Counsel and Secretary (Registry)	EXAMPLE — draft reply to NERC (clear before use)		2026-12-07			0	Out			OGSERC/GOV/001

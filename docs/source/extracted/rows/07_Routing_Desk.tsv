@@ -1,0 +1,20 @@
+1|	Route an Incoming Item
+2|	Secretary to the Commission and Head of Administration only. Choose the inward number, click LOAD, set routing, file and handling, choose your name and click SAVE ROUTING (your PIN or Windows sign-in is checked).
+4|	INCOMING ITEM
+5|	Inward no. ▶							LOAD
+6|	Sender			@sender
+7|	Subject			@subject
+8|	Correspondence type			@type				SAVE ROUTING
+9|	Status			@status
+10|	Routed to unit		Suggested from the type until you set an override below.	@unit
+11|	Division			@div
+12|	ROUTING AND FILE							CLEAR FORM
+13|	Forward to unit (override)		Leave blank to keep the suggested unit.	unitov
+14|	File reference			fileref
+15|	HANDLING
+16|	Action required *			action	Y
+17|	Priority			prio
+18|	Action officer			actoff				◀ REGISTRY DESK
+19|	Response due (only to override)		Use when the sender sets a deadline.	dueov
+20|	Routed by *		Your name (Lists, Routing officers).	routedby	Y
+21|	Routed on			@routedon

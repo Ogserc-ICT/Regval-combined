@@ -1,0 +1,481 @@
+=== tblFees A5:G16
+  [Category]
+  [Registration Fee]
+  [Late Initial]
+  [Late Daily]
+  [Late Daily Cap]
+  [Late Tier]
+  [Description]
+=== tblLCategories AC5:AC16
+  [Category]
+=== tblLCategoriesNoI AE5:AE15
+  [Category (not I)]
+=== tblLLGA AG5:AG25
+  [LGA]
+=== tblLRegistrantType AI5:AI12
+  [Registrant Type]
+=== tblLLicenceStatus AK5:AK11
+  [Licence Status]
+=== tblLSubmissionChannel AM5:AM8
+  [Submission Channel]
+=== tblLPaymentChannel AO5:AO9
+  [Payment Channel]
+=== tblLPaymentPurpose AQ5:AQ8
+  [Payment Purpose]
+=== tblLFuel AS5:AS12
+  [Fuel / Technology]
+=== tblLFinalDecision AU5:AU12
+  [Final Decision]
+=== tblActivities A19:F33
+  [Activity]
+  [Code]
+  [Category 10 MW+]
+  [Category 1 to 10 MW]
+  [Category below 1 MW]
+  [Capacity-Based]
+=== tblLRefusalGrounds AW5:AW8
+  [Refusal Ground]
+=== tblLYN AY5:AY7
+  [Y/N]
+=== tblLYNNA BA5:BA8
+  [Y/N/N/A]
+=== tblLFinanceStatus BC5:BC8
+  [Finance Status]
+=== tblLWrongForm BE5:BE7
+  [Wrong Form Handling]
+=== tblLConditionKeys BG5:BG14
+  [Condition Key]
+=== tblLMonths BI5:BI17
+  [Month]
+=== tblLEvaluators BK5:BK6
+  [Evaluating Officers]
+=== tblLSupervisors BM5:BM6
+  [Reviewing Supervisors]
+=== tblLApprovers BO5:BO6
+  [Approving Officers]
+=== tblForms A37:E48
+  [Form]
+  [Category]
+  [Title]
+  [Para]
+  [Documents] = COUNTIFS(tblFormDocs[Form],tblForms[[#This Row],[Form]])
+=== tblRegister A6:FI7
+  [Ack No.]
+  [Filing Type]
+  [Form Filed]
+  [Linked Registration No.]
+  [Registered Name]
+  [Trading Name]
+  [Date Submitted]
+  [Submission Channel]
+  [Registrant Type]
+  [CAC No.]
+  [TIN]
+  [Registered Address]
+  [Principal LGA]
+  [Other LGAs Served]
+  [Towns / Estates Served]
+  [Primary Activity]
+  [Other Activity 1]
+  [Other Activity 2]
+  [Other Activity 3]
+  [Installed Capacity (MW)]
+  [Customers]
+  [Licence Status]
+  [Licence 1 No.]
+  [Licence 1 Expiry]
+  [Licence 2 No.]
+  [Licence 2 Expiry]
+  [Licence 3 No.]
+  [Licence 3 Expiry]
+  [Compliance Officer]
+  [Phone]
+  [Email]
+  [Operating on Effective Date (Y/N)]
+  [Planned Start Date]
+  [Approved Waiver]
+  [Category Override]
+  [Override Reason]
+  [Holds Any Licence] = IF(TRIM(tblRegister[[#This Row],[Licence Status]])="","",IF(tblRegister[[#This Row],[Licence Status]]="Unlicensed","N","Y"))
+  [Multi-State Licensee]
+  [Generation for Sale]
+  [Grid Connected]
+  [Interconnected Mini-grid]
+  [Form F Part 1 (Distribution)]
+  [Form F Part 2 (Trading)]
+  [DisCo Bulk Supply]
+  [Sub-franchisee]
+  [Form Sections Not Complete]
+  [Capacity Stated in Sections (MW)]
+  [Confirmed Category]
+  [Category Confirmed Reason]
+  [Status]
+  [Released for Evaluation]
+  [Date Submission Complete]
+  [Deficiency Notice Date]
+  [Show-Cause Date]
+  [Certificate Issue Date]
+  [Registration No.]
+  [Certificate Needs Reissue]
+  [Remarks]
+  [Created By]
+  [Priced Category]
+  [Priced Fee]
+  [Priced Late Initial]
+  [Priced Late Daily]
+  [Priced Late Cap]
+  [Priced Deadline]
+  [Priced Effective Date]
+  [Filing Code] = IF(tblRegister[[#This Row],[Filing Type]]="Update: material change (para 16(1))","UPDATE",IF(tblRegister[[#This Row],[Filing Type]]="Annual confirmation (para 16(2))","ANNUAL","NEW"))
+  [Linked Row] = IF(OR(tblRegister[[#This Row],[Filing Code]]="NEW",TRIM(tblRegister[[#This Row],[Linked Registration No.]])=""),"",IFERROR(_xlfn.XMATCH(TRIM(tblRegister[[#This Row],[Linked Registration No.]]),tblRegister[Registration No.]),""))
+  [Linked Status] = IF(tblRegister[[#This Row],[Linked Row]]="","",INDEX(tblRegister[Status],tblRegister[[#This Row],[Linked Row]])&"")
+  [Linked Certificate Date] = IF(tblRegister[[#This Row],[Linked Row]]="","",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Certificate Issue Date],tblRegister[[#This Row],[Linked Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [Family] = IF(tblRegister[[#This Row],[Linked Row]]<>"",INDEX(tblRegister[Ack No.],tblRegister[[#This Row],[Linked Row]])&"",IF(tblRegister[[#This Row],[Ack No.]]<>"",tblRegister[[#This Row],[Ack No.]],"ROW"&ROW()))
+  [CAC Norm] = LOWER(TRIM(tblRegister[[#This Row],[CAC No.]]))
+  [Name Norm] = LOWER(TRIM(tblRegister[[#This Row],[Registered Name]]))
+  [Closed] = IF(OR(tblRegister[[#This Row],[Status]]="Registered",tblRegister[[#This Row],[Status]]="Refused",tblRegister[[#This Row],[Status]]="Lapsed",tblRegister[[#This Row],[Status]]="Cancelled",tblRegister[[#This Row],[Status]]="Changes Applied"),"Yes","No")
+  [Primary Code] = IF(tblRegister[[#This Row],[Primary Activity]]="","",_xlfn.XLOOKUP(tblRegister[[#This Row],[Primary Activity]],tblActivities[Activity],tblActivities[Code],""))
+  [Cat Primary] = _xlfn.LET(_xlpm.a,tblRegister[[#This Row],[Primary Activity]],_xlpm.c,N(tblRegister[[#This Row],[Installed Capacity (MW)]]),_xlpm.i,IF(_xlpm.a="",0,IFERROR(_xlfn.XMATCH(_xlpm.a,tblActivities[Activity]),0)),IF(_xlpm.i=0,"",IF(AND(INDEX(tblActivities[Code],_xlpm.i)="SUP",_xlpm.c>=1),cfgSupplyRetailCat,IF(_xlpm.c>=10,INDEX(tblActivities[Category 10 MW+],_xlpm.i),IF(_xlpm.c>=1,INDEX(tblActivities[Category 1 to 10 MW],_xlpm.i),INDEX(tblActivities[Category below 1 MW],_xlpm.i))))))
+  [Cat Other 1] = _xlfn.LET(_xlpm.a,tblRegister[[#This Row],[Other Activity 1]],_xlpm.c,N(tblRegister[[#This Row],[Installed Capacity (MW)]]),_xlpm.i,IF(_xlpm.a="",0,IFERROR(_xlfn.XMATCH(_xlpm.a,tblActivities[Activity]),0)),IF(_xlpm.i=0,"",IF(AND(INDEX(tblActivities[Code],_xlpm.i)="SUP",_xlpm.c>=1),cfgSupplyRetailCat,IF(_xlpm.c>=10,INDEX(tblActivities[Category 10 MW+],_xlpm.i),IF(_xlpm.c>=1,INDEX(tblActivities[Category 1 to 10 MW],_xlpm.i),INDEX(tblActivities[Category below 1 MW],_xlpm.i))))))
+  [Cat Other 2] = _xlfn.LET(_xlpm.a,tblRegister[[#This Row],[Other Activity 2]],_xlpm.c,N(tblRegister[[#This Row],[Installed Capacity (MW)]]),_xlpm.i,IF(_xlpm.a="",0,IFERROR(_xlfn.XMATCH(_xlpm.a,tblActivities[Activity]),0)),IF(_xlpm.i=0,"",IF(AND(INDEX(tblActivities[Code],_xlpm.i)="SUP",_xlpm.c>=1),cfgSupplyRetailCat,IF(_xlpm.c>=10,INDEX(tblActivities[Category 10 MW+],_xlpm.i),IF(_xlpm.c>=1,INDEX(tblActivities[Category 1 to 10 MW],_xlpm.i),INDEX(tblActivities[Category below 1 MW],_xlpm.i))))))
+  [Cat Other 3] = _xlfn.LET(_xlpm.a,tblRegister[[#This Row],[Other Activity 3]],_xlpm.c,N(tblRegister[[#This Row],[Installed Capacity (MW)]]),_xlpm.i,IF(_xlpm.a="",0,IFERROR(_xlfn.XMATCH(_xlpm.a,tblActivities[Activity]),0)),IF(_xlpm.i=0,"",IF(AND(INDEX(tblActivities[Code],_xlpm.i)="SUP",_xlpm.c>=1),cfgSupplyRetailCat,IF(_xlpm.c>=10,INDEX(tblActivities[Category 10 MW+],_xlpm.i),IF(_xlpm.c>=1,INDEX(tblActivities[Category 1 to 10 MW],_xlpm.i),INDEX(tblActivities[Category below 1 MW],_xlpm.i))))))
+  [Category Auto] = _xlfn.LET(_xlpm.p,tblRegister[[#This Row],[Cat Primary]],_xlpm.c,CHOOSE({1,2,3,4},_xlpm.p,tblRegister[[#This Row],[Cat Other 1]],tblRegister[[#This Row],[Cat Other 2]],tblRegister[[#This Row],[Cat Other 3]]),IF(_xlpm.p="","",IF(OR(_xlpm.c="A"),"A",IF(OR(_xlpm.c="B"),"B",_xlfn.LET(_xlpm.f,IF(_xlpm.c="",-1,IFERROR(_xlfn.XLOOKUP(_xlpm.c,tblFees[Category],tblFees[Registration Fee]),0)),INDEX(_xlpm.c,_xlfn.XMATCH(MAX(_xlpm.f),_xlpm.f)))))))
+  [Current Category] = _xlfn.LET(_xlpm.c,IF(tblRegister[[#This Row],[Category Override]]<>"",tblRegister[[#This Row],[Category Override]],tblRegister[[#This Row],[Category Auto]]),IF(_xlpm.c="","",IF(ISNUMBER(_xlfn.XMATCH(_xlpm.c,tblFees[Category])),_xlpm.c,"")))
+  [Current Fee] = IF(tblRegister[[#This Row],[Current Category]]="",0,IF(OR(tblRegister[[#This Row],[Filing Code]]="NEW",cfgFilingFeeOnUpdates="Y"),_xlfn.XLOOKUP(tblRegister[[#This Row],[Current Category]],tblFees[Category],tblFees[Registration Fee],0),0))
+  [Current Late Initial] = IF(OR(tblRegister[[#This Row],[Current Category]]="",tblRegister[[#This Row],[Filing Code]]<>"NEW"),0,_xlfn.XLOOKUP(tblRegister[[#This Row],[Current Category]],tblFees[Category],tblFees[Late Initial],0))
+  [Current Late Daily] = IF(OR(tblRegister[[#This Row],[Current Category]]="",tblRegister[[#This Row],[Filing Code]]<>"NEW"),0,_xlfn.XLOOKUP(tblRegister[[#This Row],[Current Category]],tblFees[Category],tblFees[Late Daily],0))
+  [Current Late Cap] = IF(OR(tblRegister[[#This Row],[Current Category]]="",tblRegister[[#This Row],[Filing Code]]<>"NEW"),0,_xlfn.XLOOKUP(tblRegister[[#This Row],[Current Category]],tblFees[Category],tblFees[Late Daily Cap],0))
+  [Current Deadline] = IF(tblRegister[[#This Row],[Filing Code]]<>"NEW","",IF(tblRegister[[#This Row],[Operating on Effective Date (Y/N)]]="Y",cfgExistingDeadline,IF(tblRegister[[#This Row],[Planned Start Date]]="","",tblRegister[[#This Row],[Planned Start Date]]-cfgNewOpLeadDays)))
+  [Category Applied] = IF((tblRegister[[#This Row],[Priced Category]]<>""),tblRegister[[#This Row],[Priced Category]],tblRegister[[#This Row],[Current Category]])
+  [Category Description] = IF(tblRegister[[#This Row],[Category Applied]]="","",_xlfn.XLOOKUP(tblRegister[[#This Row],[Category Applied]],tblFees[Category],tblFees[Description],""))
+  [Form Category] = IF(tblRegister[[#This Row],[Form Filed]]="","",_xlfn.XLOOKUP(tblRegister[[#This Row],[Form Filed]],tblForms[Form],tblForms[Category],""))
+  [Documents Form] = _xlfn.LET(_xlpm.cc,tblRegister[[#This Row],[Confirmed Category]],_xlpm.ff,tblRegister[[#This Row],[Form Filed]],_xlpm.cf,IF(AND(_xlpm.cc<>"",cfgWrongForm="Accept and re-categorise"),_xlfn.XLOOKUP(_xlpm.cc,tblForms[Category],tblForms[Form],""),""),IF(_xlpm.cf<>"",_xlpm.cf,IF(AND(_xlpm.ff<>"",ISNUMBER(_xlfn.XMATCH(_xlpm.ff,tblForms[Form]))),_xlpm.ff,IF(tblRegister[[#This Row],[Priced Category]]="","",_xlfn.XLOOKUP(tblRegister[[#This Row],[Priced Category]],tblForms[Category],tblForms[Form],"")))))
+  [Other Form 1] = _xlfn.LET(_xlpm.c,tblRegister[[#This Row],[Cat Other 1]],IF(OR(cfgOtherActivityDocs<>"Y",_xlpm.c="",_xlpm.c="I"),"","REG-01"&_xlpm.c))
+  [Other Form 2] = _xlfn.LET(_xlpm.c,tblRegister[[#This Row],[Cat Other 2]],IF(OR(cfgOtherActivityDocs<>"Y",_xlpm.c="",_xlpm.c="I"),"","REG-01"&_xlpm.c))
+  [Other Form 3] = _xlfn.LET(_xlpm.c,tblRegister[[#This Row],[Cat Other 3]],IF(OR(cfgOtherActivityDocs<>"Y",_xlpm.c="",_xlpm.c="I"),"","REG-01"&_xlpm.c))
+  [Effective Date Used] = IF((tblRegister[[#This Row],[Priced Category]]<>""),tblRegister[[#This Row],[Priced Effective Date]],cfgEffectiveDate)
+  [Registration Deadline] = IF((tblRegister[[#This Row],[Priced Category]]<>""),IF(tblRegister[[#This Row],[Priced Deadline]]="","",tblRegister[[#This Row],[Priced Deadline]]),tblRegister[[#This Row],[Current Deadline]])
+  [Days Late] = IF(OR(tblRegister[[#This Row],[Date Submitted]]="",tblRegister[[#This Row],[Registration Deadline]]=""),0,MAX(0,tblRegister[[#This Row],[Date Submitted]]-tblRegister[[#This Row],[Registration Deadline]]))
+  [Registration Fee] = IF((tblRegister[[#This Row],[Priced Category]]<>""),N(tblRegister[[#This Row],[Priced Fee]]),tblRegister[[#This Row],[Current Fee]])
+  [Late Charge] = _xlfn.LET(_xlpm.s,(tblRegister[[#This Row],[Priced Category]]<>""),_xlpm.i,IF(_xlpm.s,N(tblRegister[[#This Row],[Priced Late Initial]]),tblRegister[[#This Row],[Current Late Initial]]),_xlpm.d,IF(_xlpm.s,N(tblRegister[[#This Row],[Priced Late Daily]]),tblRegister[[#This Row],[Current Late Daily]]),_xlpm.cp,IF(_xlpm.s,N(tblRegister[[#This Row],[Priced Late Cap]]),tblRegister[[#This Row],[Current Late Cap]]),_xlpm.n,tblRegister[[#This Row],[Days Late]],IF(_xlpm.n<=0,0,_xlpm.i+MIN(_xlpm.d*_xlpm.n,_xlpm.cp)))
+  [Net Fee] = MAX(0,tblRegister[[#This Row],[Registration Fee]]-N(tblRegister[[#This Row],[Approved Waiver]]))
+  [Total Due] = IF(cfgWaiverOnLate="Y",MAX(0,tblRegister[[#This Row],[Registration Fee]]+tblRegister[[#This Row],[Late Charge]]-N(tblRegister[[#This Row],[Approved Waiver]])),tblRegister[[#This Row],[Net Fee]]+tblRegister[[#This Row],[Late Charge]])
+  [Amount Paid] = IF(tblRegister[[#This Row],[Ack No.]]="",0,SUMIFS(tblPayments[Amount],tblPayments[Reference],tblRegister[[#This Row],[Ack No.]],tblPayments[Counts as Paid],"Yes"))
+  [With Finance] = IF(tblRegister[[#This Row],[Ack No.]]="",0,SUMIFS(tblPayments[Amount],tblPayments[Reference],tblRegister[[#This Row],[Ack No.]],tblPayments[With Finance],"Yes"))
+  [Payments With Finance] = IF(tblRegister[[#This Row],[Ack No.]]="",0,COUNTIFS(tblPayments[Reference],tblRegister[[#This Row],[Ack No.]],tblPayments[With Finance],"Yes"))
+  [Last Payment Date] = IF(tblRegister[[#This Row],[Amount Paid]]>0,_xlfn.MAXIFS(tblPayments[Date Received],tblPayments[Reference],tblRegister[[#This Row],[Ack No.]],tblPayments[Counts as Paid],"Yes"),"")
+  [Balance] = ROUND(tblRegister[[#This Row],[Total Due]]-tblRegister[[#This Row],[Amount Paid]],2)
+  [Payment Status] = IF(tblRegister[[#This Row],[Total Due]]=0,"Nil",IF(tblRegister[[#This Row],[Balance]]<=0,"Paid",IF(tblRegister[[#This Row],[Amount Paid]]>0,"Part-paid","Unpaid")))
+  [Release Requires] = IF(cfgLateRequiredForRelease="Y",tblRegister[[#This Row],[Total Due]],tblRegister[[#This Row],[Net Fee]])
+  [Gate Cleared] = IF(tblRegister[[#This Row],[Amount Paid]]>=tblRegister[[#This Row],[Release Requires]],"Yes","No")
+  [Gate Reason] = "Payment not yet confirmed by Finance: "&(IF(tblRegister[[#This Row],[Amount Paid]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Amount Paid]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Amount Paid]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Amount Paid]])*100,0),100),"00"),""))&" of "&(IF(tblRegister[[#This Row],[Release Requires]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Release Requires]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Release Requires]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Release Requires]])*100,0),100),"00"),""))&" confirmed"&IF(tblRegister[[#This Row],[Payments With Finance]]>0,"; "&(IF(tblRegister[[#This Row],[With Finance]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[With Finance]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[With Finance]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[With Finance]])*100,0),100),"00"),""))&" recorded and waiting for Finance","")
+  [Stage] = IF(tblRegister[[#This Row],[Closed]]="Yes",5,IF(OR(tblRegister[[#This Row],[Status]]="Acknowledged - Awaiting Payment",tblRegister[[#This Row],[Status]]=""),IF((tblRegister[[#This Row],[Gate Cleared]]="Yes"),3,IF(tblRegister[[#This Row],[Payments With Finance]]>0,2,1)),4))
+  [Process Stage] = CHOOSE(tblRegister[[#This Row],[Stage]],"Acknowledged – awaiting payment","Payment with Finance","Payment confirmed","Evaluation and determination","Closed – "&tblRegister[[#This Row],[Status]])
+  [Evidence of Payment] = IF(tblRegister[[#This Row],[Net Fee]]=0,"N/A",IF(tblRegister[[#This Row],[Amount Paid]]>=tblRegister[[#This Row],[Net Fee]],"Y",""))
+  [Document Values] = _xlfn.LET(_xlpm.ack,tblRegister[[#This Row],[Ack No.]],_xlpm.df,tblRegister[[#This Row],[Documents Form]],_xlpm.fm,tblFormDocs[Form],_xlpm.m,(_xlpm.fm=_xlpm.df)+(cfgOtherActivityDocs="Y")*((_xlpm.fm=tblRegister[[#This Row],[Other Form 1]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 2]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 3]])),_xlpm.ok,AND(_xlpm.df<>"",SUM(--(_xlpm.m>0))>0),_xlpm.ixa,_xlfn._xlws.FILTER(_xlfn.SEQUENCE(ROWS(_xlpm.fm)),_xlpm.m>0,1),_xlpm.ixb,_xlfn.SORTBY(_xlpm.ixa,--(INDEX(tblFormDocs[Key],_xlpm.ixa)="payment_evidence"),1,--(INDEX(_xlpm.fm,_xlpm.ixa)<>_xlpm.df),1,_xlpm.ixa,1),_xlpm.kkb,INDEX(tblFormDocs[Key],_xlpm.ixb),_xlpm.idx,_xlfn._xlws.FILTER(_xlpm.ixb,_xlfn.XMATCH(_xlpm.kkb,_xlpm.kkb)=_xlfn.SEQUENCE(ROWS(_xlpm.kkb))),_xlpm.keys,INDEX(tblFormDocs[Key],_xlpm.idx),_xlpm.txt,INDEX(tblFormDocs[Document],_xlpm.idx),_xlpm.rw,INDEX(tblFormDocs[Required When],_xlpm.idx),_xlpm.cv,IFERROR(INDEX(tblRegister[[#This Row],[Holds Any Licence]:[Sub-franchisee]],1,_xlfn.XMATCH(_xlpm.rw,lstConditionKeys)),""),_xlpm.d,IF(_xlpm.ack="","",_xlfn._xlws.FILTER(tblDocuments[[Key]:[Received (Y/N/N/A)]],tblDocuments[Reference]=_xlpm.ack,"")),_xlpm.ent,IFERROR(_xlfn.XLOOKUP(_xlpm.keys,INDEX(_xlpm.d,0,1),INDEX(_xlpm.d,0,2),""),""),_xlpm.entv,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.ent&"",{"Y","N","N/A"})),UPPER(_xlpm.ent&""),""),_xlpm.eff,IF(_xlpm.keys="payment_evidence",tblRegister[[#This Row],[Evidence of Payment]],IF(_xlpm.cv="N","N/A",_xlpm.entv)),IF(_xlpm.ok,_xlfn.TEXTJOIN("|",FALSE,_xlpm.keys&"="&_xlpm.eff),""))
+  [Documents Listed] = _xlfn.LET(_xlpm.x,tblRegister[[#This Row],[Document Values]]&"|",IF(tblRegister[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=","")))/1))
+  [Documents Outstanding] = _xlfn.LET(_xlpm.x,tblRegister[[#This Row],[Document Values]]&"|",IF(tblRegister[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=N|","")))/3))
+  [Documents Pending] = _xlfn.LET(_xlpm.x,tblRegister[[#This Row],[Document Values]]&"|",IF(tblRegister[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=|","")))/2))
+  [Documents Complete] = IF(AND(tblRegister[[#This Row],[Documents Listed]]>0,tblRegister[[#This Row],[Documents Outstanding]]=0,tblRegister[[#This Row],[Documents Pending]]=0),"Yes","No")
+  [Outstanding Documents] = _xlfn.LET(_xlpm.ack,tblRegister[[#This Row],[Ack No.]],_xlpm.df,tblRegister[[#This Row],[Documents Form]],_xlpm.fm,tblFormDocs[Form],_xlpm.m,(_xlpm.fm=_xlpm.df)+(cfgOtherActivityDocs="Y")*((_xlpm.fm=tblRegister[[#This Row],[Other Form 1]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 2]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 3]])),_xlpm.ok,AND(_xlpm.df<>"",SUM(--(_xlpm.m>0))>0),_xlpm.ixa,_xlfn._xlws.FILTER(_xlfn.SEQUENCE(ROWS(_xlpm.fm)),_xlpm.m>0,1),_xlpm.ixb,_xlfn.SORTBY(_xlpm.ixa,--(INDEX(tblFormDocs[Key],_xlpm.ixa)="payment_evidence"),1,--(INDEX(_xlpm.fm,_xlpm.ixa)<>_xlpm.df),1,_xlpm.ixa,1),_xlpm.kkb,INDEX(tblFormDocs[Key],_xlpm.ixb),_xlpm.idx,_xlfn._xlws.FILTER(_xlpm.ixb,_xlfn.XMATCH(_xlpm.kkb,_xlpm.kkb)=_xlfn.SEQUENCE(ROWS(_xlpm.kkb))),_xlpm.keys,INDEX(tblFormDocs[Key],_xlpm.idx),_xlpm.txt,INDEX(tblFormDocs[Document],_xlpm.idx),_xlpm.rw,INDEX(tblFormDocs[Required When],_xlpm.idx),_xlpm.cv,IFERROR(INDEX(tblRegister[[#This Row],[Holds Any Licence]:[Sub-franchisee]],1,_xlfn.XMATCH(_xlpm.rw,lstConditionKeys)),""),_xlpm.d,IF(_xlpm.ack="","",_xlfn._xlws.FILTER(tblDocuments[[Key]:[Received (Y/N/N/A)]],tblDocuments[Reference]=_xlpm.ack,"")),_xlpm.ent,IFERROR(_xlfn.XLOOKUP(_xlpm.keys,INDEX(_xlpm.d,0,1),INDEX(_xlpm.d,0,2),""),""),_xlpm.entv,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.ent&"",{"Y","N","N/A"})),UPPER(_xlpm.ent&""),""),_xlpm.eff,IF(_xlpm.keys="payment_evidence",tblRegister[[#This Row],[Evidence of Payment]],IF(_xlpm.cv="N","N/A",_xlpm.entv)),IF(_xlpm.ok,_xlfn.TEXTJOIN("; ",TRUE,_xlfn._xlws.FILTER(_xlpm.txt,(_xlpm.eff<>"Y")*(_xlpm.eff<>"N/A"),"")),""))
+  [Documents Received] = _xlfn.LET(_xlpm.ack,tblRegister[[#This Row],[Ack No.]],_xlpm.df,tblRegister[[#This Row],[Documents Form]],_xlpm.fm,tblFormDocs[Form],_xlpm.m,(_xlpm.fm=_xlpm.df)+(cfgOtherActivityDocs="Y")*((_xlpm.fm=tblRegister[[#This Row],[Other Form 1]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 2]])+(_xlpm.fm=tblRegister[[#This Row],[Other Form 3]])),_xlpm.ok,AND(_xlpm.df<>"",SUM(--(_xlpm.m>0))>0),_xlpm.ixa,_xlfn._xlws.FILTER(_xlfn.SEQUENCE(ROWS(_xlpm.fm)),_xlpm.m>0,1),_xlpm.ixb,_xlfn.SORTBY(_xlpm.ixa,--(INDEX(tblFormDocs[Key],_xlpm.ixa)="payment_evidence"),1,--(INDEX(_xlpm.fm,_xlpm.ixa)<>_xlpm.df),1,_xlpm.ixa,1),_xlpm.kkb,INDEX(tblFormDocs[Key],_xlpm.ixb),_xlpm.idx,_xlfn._xlws.FILTER(_xlpm.ixb,_xlfn.XMATCH(_xlpm.kkb,_xlpm.kkb)=_xlfn.SEQUENCE(ROWS(_xlpm.kkb))),_xlpm.keys,INDEX(tblFormDocs[Key],_xlpm.idx),_xlpm.txt,INDEX(tblFormDocs[Document],_xlpm.idx),_xlpm.rw,INDEX(tblFormDocs[Required When],_xlpm.idx),_xlpm.cv,IFERROR(INDEX(tblRegister[[#This Row],[Holds Any Licence]:[Sub-franchisee]],1,_xlfn.XMATCH(_xlpm.rw,lstConditionKeys)),""),_xlpm.d,IF(_xlpm.ack="","",_xlfn._xlws.FILTER(tblDocuments[[Key]:[Received (Y/N/N/A)]],tblDocuments[Reference]=_xlpm.ack,"")),_xlpm.ent,IFERROR(_xlfn.XLOOKUP(_xlpm.keys,INDEX(_xlpm.d,0,1),INDEX(_xlpm.d,0,2),""),""),_xlpm.entv,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.ent&"",{"Y","N","N/A"})),UPPER(_xlpm.ent&""),""),_xlpm.eff,IF(_xlpm.keys="payment_evidence",tblRegister[[#This Row],[Evidence of Payment]],IF(_xlpm.cv="N","N/A",_xlpm.entv)),IF(_xlpm.ok,_xlfn.TEXTJOIN("; ",TRUE,_xlfn._xlws.FILTER(_xlpm.txt,_xlpm.eff="Y","")),""))
+  [Submission Complete] = IF(AND((tblRegister[[#This Row],[Documents Complete]]="Yes"),tblRegister[[#This Row],[Amount Paid]]>=IF(cfgLateBlocksComplete="Y",tblRegister[[#This Row],[Total Due]],tblRegister[[#This Row],[Net Fee]])),"Yes","No")
+  [Determination Due] = IF(tblRegister[[#This Row],[Date Submission Complete]]="","",tblRegister[[#This Row],[Date Submission Complete]]+cfgDeterminationDays)
+  [Deficiency Response Due] = IF(tblRegister[[#This Row],[Deficiency Notice Date]]="","",tblRegister[[#This Row],[Deficiency Notice Date]]+cfgDeficiencyDays)
+  [Licence Application Due] = IF(tblRegister[[#This Row],[Licence Status]]="Unlicensed",tblRegister[[#This Row],[Effective Date Used]]+cfgLicenceAppDays,"")
+  [Nearest Licence Expiry] = IF(COUNT(tblRegister[[#This Row],[Licence 1 Expiry]],tblRegister[[#This Row],[Licence 2 Expiry]],tblRegister[[#This Row],[Licence 3 Expiry]])=0,"",MIN(tblRegister[[#This Row],[Licence 1 Expiry]],tblRegister[[#This Row],[Licence 2 Expiry]],tblRegister[[#This Row],[Licence 3 Expiry]]))
+  [Days in Queue] = IF(OR(tblRegister[[#This Row],[Closed]]="Yes",tblRegister[[#This Row],[Date Submitted]]=""),"",MAX(0,AsOfDate-tblRegister[[#This Row],[Date Submitted]]))
+  [SLA] = _xlfn.LET(_xlpm.q,tblRegister[[#This Row],[Days in Queue]],_xlpm.det,tblRegister[[#This Row],[Determination Due]],_xlpm.dd,tblRegister[[#This Row],[Deficiency Response Due]],IF(OR(_xlpm.q="",tblRegister[[#This Row],[Status]]="Provisionally Registered",tblRegister[[#This Row],[Status]]="Acknowledged - Awaiting Payment"),"",IF(OR(IF(_xlpm.det="",FALSE,AsOfDate>_xlpm.det),IF(AND(tblRegister[[#This Row],[Status]]="Deficiency Notice Issued",_xlpm.dd<>""),AsOfDate>_xlpm.dd,FALSE)),"Red",IF(IF(_xlpm.det="",_xlpm.q>cfgDeterminationDays,_xlpm.det-AsOfDate<=cfgAmberDays),"Amber","Green"))))
+  [Registration No. in Use] = IF(tblRegister[[#This Row],[Registration No.]]<>"",tblRegister[[#This Row],[Registration No.]],IF(tblRegister[[#This Row],[Status]]="Provisionally Registered",tblRegister[[#This Row],[Ack No.]],""))
+  [Evaluation Started] = IF(tblRegister[[#This Row],[Ack No.]]="","",_xlfn.LET(_xlpm.v,_xlfn.XLOOKUP(tblRegister[[#This Row],[Ack No.]],tblEvaluation[Ack No.],tblEvaluation[Date Evaluation Started],"")&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [DUPLICATE_CAC] = IF(AND(TRIM(tblRegister[[#This Row],[CAC No.]])<>"",SUM((tblRegister[CAC Norm]=tblRegister[[#This Row],[CAC Norm]])*(tblRegister[Family]<>tblRegister[[#This Row],[Family]]))>0),"Duplicate CAC number on another submission (one registration per person, para 11(4))","")
+  [DUPLICATE_NAME] = IF(AND(TRIM(tblRegister[[#This Row],[Registered Name]])<>"",SUM((tblRegister[Name Norm]=tblRegister[[#This Row],[Name Norm]])*(tblRegister[Family]<>tblRegister[[#This Row],[Family]]))>0),"Duplicate registered name","")
+  [MISSING_REQUIRED] = _xlfn.LET(_xlpm.m,_xlfn.TEXTJOIN(", ",TRUE,IF(TRIM(tblRegister[[#This Row],[Registered Name]])="","registered name",""),IF(tblRegister[[#This Row],[Date Submitted]]="","date submitted",""),IF(TRIM(tblRegister[[#This Row],[Form Filed]])="","form filed",""),IF(TRIM(tblRegister[[#This Row],[Principal LGA]])="","principal LGA",""),IF(TRIM(tblRegister[[#This Row],[Primary Activity]])="","primary activity",""),IF(TRIM(tblRegister[[#This Row],[Licence Status]])="","licence status",""),IF(TRIM(tblRegister[[#This Row],[Operating on Effective Date (Y/N)]])="","operating on Effective Date",""),IF(TRIM(tblRegister[[#This Row],[Status]])="","status","")),IF(_xlpm.m="","","Missing required field: "&_xlpm.m))
+  [UNKNOWN_ACTIVITY] = IF(AND(tblRegister[[#This Row],[Primary Activity]]<>"",tblRegister[[#This Row],[Primary Code]]=""),"Primary activity not in the activities list","")
+  [UNKNOWN_OTHER_ACTIVITY] = _xlfn.LET(_xlpm.u,_xlfn.TEXTJOIN(", ",TRUE,IF(tblRegister[[#This Row],[Other Activity 1]]="","",IF(ISNA(_xlfn.XMATCH(tblRegister[[#This Row],[Other Activity 1]],tblActivities[Activity])),tblRegister[[#This Row],[Other Activity 1]],"")),IF(tblRegister[[#This Row],[Other Activity 2]]="","",IF(ISNA(_xlfn.XMATCH(tblRegister[[#This Row],[Other Activity 2]],tblActivities[Activity])),tblRegister[[#This Row],[Other Activity 2]],"")),IF(tblRegister[[#This Row],[Other Activity 3]]="","",IF(ISNA(_xlfn.XMATCH(tblRegister[[#This Row],[Other Activity 3]],tblActivities[Activity])),tblRegister[[#This Row],[Other Activity 3]],""))),IF(_xlpm.u="","","Other activity not in the activities list: "&_xlpm.u))
+  [NO_CAPACITY] = IF(AND(tblRegister[[#This Row],[Primary Code]]<>"",_xlfn.XLOOKUP(tblRegister[[#This Row],[Primary Code]],tblActivities[Code],tblActivities[Capacity-Based],"N")="Y",tblRegister[[#This Row],[Installed Capacity (MW)]]=""),"Capacity-based activity ("&tblRegister[[#This Row],[Primary Code]]&") with no installed capacity","")
+  [OVERRIDE_NO_REASON] = IF(AND(tblRegister[[#This Row],[Category Override]]<>"",tblRegister[[#This Row],[Category Override]]<>tblRegister[[#This Row],[Category Auto]],TRIM(tblRegister[[#This Row],[Override Reason]])=""),"Category overridden with no reason","")
+  [CERT_NOT_COMPLETE] = IF(AND(tblRegister[[#This Row],[Certificate Issue Date]]<>"",tblRegister[[#This Row],[Submission Complete]]="No"),"Certificate dated but submission not complete","")
+  [CERT_STATUS] = IF(AND(tblRegister[[#This Row],[Certificate Issue Date]]<>"",tblRegister[[#This Row],[Status]]<>"Registered",tblRegister[[#This Row],[Status]]<>"Cancelled"),"Certificate dated but status not Registered/Cancelled","")
+  [REGISTERED_NO_CERT_DATE] = IF(AND(tblRegister[[#This Row],[Status]]="Registered",tblRegister[[#This Row],[Certificate Issue Date]]=""),"Registered without certificate date","")
+  [DUPLICATE_REG_NO] = IF(tblRegister[[#This Row],[Registration No. in Use]]="","",IF(SUM((tblRegister[Registration No.]=tblRegister[[#This Row],[Registration No. in Use]])*(tblRegister[Family]<>tblRegister[[#This Row],[Family]]))>0,"Duplicate registration number",""))
+  [LICENCE_RENEWAL] = IF(tblRegister[[#This Row],[Nearest Licence Expiry]]="","",IF(tblRegister[[#This Row],[Nearest Licence Expiry]]-tblRegister[[#This Row],[Effective Date Used]]<=cfgExpiryWindowDays,"Licence expires within 6 months of the Effective Date – renewal (para 8(5))",""))
+  [CPT_BELOW_1MW] = IF(AND(tblRegister[[#This Row],[Primary Code]]="CPT",N(tblRegister[[#This Row],[Installed Capacity (MW)]])<1),"Own-use below 1 MW is excluded – use Form REG-01I (own-use notification)","")
+  [MSL_LICENCE] = IF(AND(tblRegister[[#This Row],[Primary Code]]="MSL",tblRegister[[#This Row],[Licence Status]]<>"NERC licence (multi-State)"),"Check licence status for multi-State licensee","")
+  [NO_START_DATE] = IF(AND(tblRegister[[#This Row],[Operating on Effective Date (Y/N)]]="N",tblRegister[[#This Row],[Planned Start Date]]=""),"Not operating on Effective Date and no planned start date","")
+  [FUTURE_SUBMISSION] = IF(tblRegister[[#This Row],[Date Submitted]]="","",IF(tblRegister[[#This Row],[Date Submitted]]>AsOfDate,"Date submitted is in the future",""))
+  [LICENCE_APPLICATION_OVERDUE] = IF(tblRegister[[#This Row],[Licence Application Due]]="","",IF(AsOfDate>tblRegister[[#This Row],[Licence Application Due]],"Unlicensed and licence application overdue (para 18(2))",""))
+  [LICENCE_NO_WITHOUT_LICENCE] = IF(AND(OR(tblRegister[[#This Row],[Licence Status]]="Unlicensed",tblRegister[[#This Row],[Licence Status]]="Licence application pending"),OR(TRIM(tblRegister[[#This Row],[Licence 1 No.]])<>"",TRIM(tblRegister[[#This Row],[Licence 2 No.]])<>"",TRIM(tblRegister[[#This Row],[Licence 3 No.]])<>"")),"Licence number entered but licence status is """&tblRegister[[#This Row],[Licence Status]]&"""","")
+  [LICENCE_NO_MISSING] = IF(AND(tblRegister[[#This Row],[Licence Status]]<>"",NOT(OR(tblRegister[[#This Row],[Licence Status]]="Unlicensed",tblRegister[[#This Row],[Licence Status]]="Licence application pending")),NOT(OR(TRIM(tblRegister[[#This Row],[Licence 1 No.]])<>"",TRIM(tblRegister[[#This Row],[Licence 2 No.]])<>"",TRIM(tblRegister[[#This Row],[Licence 3 No.]])<>""))),"Licence held but no licence number entered","")
+  [GENERATION_CATEGORY] = IF(AND(OR(tblRegister[[#This Row],[Primary Code]]="GEN",tblRegister[[#This Row],[Primary Code]]="CPT"),N(tblRegister[[#This Row],[Installed Capacity (MW)]])>=10,ISNA(_xlfn.XMATCH(tblRegister[[#This Row],[Category Applied]]&"",{"A","B","C"}))),"Generation of 10 MW or more but the applied category is not C (or A/B)","")
+  [CAC_FORMAT] = _xlfn.LET(_xlpm.t,UPPER(_xlfn.LET(_xlpm._s,tblRegister[[#This Row],[CAC No.]]&"",_xlpm._n,LEN(_xlpm._s),IF(_xlpm._n=0,"",_xlfn.LET(_xlpm._c,MID(_xlpm._s,_xlfn.SEQUENCE(_xlpm._n),1),_xlpm._k,_xlpm._c<>" ",IF(OR(_xlpm._k),MID(_xlpm._s,_xlfn.XMATCH(TRUE,_xlpm._k),_xlfn.XMATCH(TRUE,_xlpm._k,0,-1)-_xlfn.XMATCH(TRUE,_xlpm._k)+1),""))))),_xlpm.p,LEFT(_xlpm.t,2),_xlpm.r0,MID(_xlpm.t,3,999),_xlpm.r,IF(LEFT(_xlpm.r0,1)=" ",MID(_xlpm.r0,2,999),_xlpm.r0),_xlpm.ok,AND(OR(_xlpm.p="RC",_xlpm.p="BN",_xlpm.p="IT"),LEN(_xlpm.r)>0,IFERROR(SUM(--ISERROR(FIND(MID(_xlpm.r,_xlfn.SEQUENCE(MAX(1,LEN(_xlpm.r))),1),"0123456789")))=0,FALSE)),IF(OR(_xlpm.t="",_xlpm.ok),"","CAC number format is invalid (expected RC, BN or IT followed by digits)"))
+  [FORM_CATEGORY_MISMATCH] = _xlfn.LET(_xlpm.tg,IF(tblRegister[[#This Row],[Confirmed Category]]<>"",tblRegister[[#This Row],[Confirmed Category]],tblRegister[[#This Row],[Category Applied]]),_xlpm.ff,tblRegister[[#This Row],[Form Filed]],_xlpm.fc,tblRegister[[#This Row],[Form Category]],IF(OR(_xlpm.ff="",_xlpm.fc="",_xlpm.tg="",_xlpm.fc=_xlpm.tg),"",IF(tblRegister[[#This Row],[Confirmed Category]]="","Form filed ("&_xlpm.ff&") does not match the calculated category ("&_xlpm.tg&") – confirm the category",IF(cfgWrongForm="Require the correct form","Filed on "&_xlpm.ff&" but the category is confirmed as "&_xlpm.tg&" – the applicant must file on REG-01"&_xlpm.tg,IF(TRIM(tblRegister[[#This Row],[Category Confirmed Reason]])="","Filed on "&_xlpm.ff&" but confirmed as Category "&_xlpm.tg&" with no reason recorded","")))))
+  [CONFIRMED_CATEGORY_NOT_CHARGED] = IF(AND(tblRegister[[#This Row],[Confirmed Category]]<>"",tblRegister[[#This Row],[Category Applied]]<>"",tblRegister[[#This Row],[Confirmed Category]]<>tblRegister[[#This Row],[Category Applied]]),"Category confirmed as "&tblRegister[[#This Row],[Confirmed Category]]&" but Category "&tblRegister[[#This Row],[Category Applied]]&" is charged – correct the activities or capacity, or override the category, then an admin recalculates","")
+  [TECHNICAL_INCOMPLETE] = IF(OR(TRIM(tblRegister[[#This Row],[Form Sections Not Complete]])="",tblRegister[[#This Row],[Documents Form]]=""),"",tblRegister[[#This Row],[Documents Form]]&" sections not complete: "&TRIM(tblRegister[[#This Row],[Form Sections Not Complete]]))
+  [TECHNICAL_CAPACITY_MISMATCH] = IF(OR(tblRegister[[#This Row],[Installed Capacity (MW)]]="",tblRegister[[#This Row],[Capacity Stated in Sections (MW)]]=""),"",_xlfn.LET(_xlpm.a,N(tblRegister[[#This Row],[Capacity Stated in Sections (MW)]]),_xlpm.b,N(tblRegister[[#This Row],[Installed Capacity (MW)]]),IF(ABS(_xlpm.a-_xlpm.b)<=MAX(0.001,0.01*MAX(ABS(_xlpm.a),ABS(_xlpm.b))),"","Installed capacity is "&_xlpm.b&" MW, but "&tblRegister[[#This Row],[Documents Form]]&" sections give "&ROUND(_xlpm.a,3)&" MW")))
+  [LINKED_REGISTRATION] = IF(tblRegister[[#This Row],[Filing Code]]="NEW","",IF(tblRegister[[#This Row],[Linked Row]]="","Not linked to a registered submission (quote its registration number)",IF(AND(tblRegister[[#This Row],[Linked Status]]<>"Registered",tblRegister[[#This Row],[Closed]]="No"),"The linked registration "&IF(tblRegister[[#This Row],[Linked Registration No.]]="","(no number)",TRIM(tblRegister[[#This Row],[Linked Registration No.]]))&" is "&tblRegister[[#This Row],[Linked Status]]&", not Registered","")))
+  [ANNUAL_LATE] = IF(OR(tblRegister[[#This Row],[Filing Code]]<>"ANNUAL",tblRegister[[#This Row],[Date Submitted]]="",tblRegister[[#This Row],[Linked Certificate Date]]=""),"",IF(AND(YEAR(tblRegister[[#This Row],[Linked Certificate Date]])<YEAR(tblRegister[[#This Row],[Date Submitted]]),tblRegister[[#This Row],[Date Submitted]]>DATE(YEAR(tblRegister[[#This Row],[Date Submitted]]),cfgAnnualDueMonth,cfgAnnualDueDay)),"Annual confirmation filed after "&(cfgAnnualDueDay&" "&INDEX(lstMonths,cfgAnnualDueMonth))&" (para 16(2))",""))
+  [ANNUAL_CONFIRMATION_OVERDUE] = _xlfn.LET(_xlpm.y,YEAR(AsOfDate),IF(OR(tblRegister[[#This Row],[Filing Code]]<>"NEW",tblRegister[[#This Row],[Status]]<>"Registered",tblRegister[[#This Row],[Certificate Issue Date]]=""),"",IF(OR(YEAR(tblRegister[[#This Row],[Certificate Issue Date]])>=_xlpm.y,NOT(AsOfDate>DATE(_xlpm.y,cfgAnnualDueMonth,cfgAnnualDueDay))),"",IF(SUM((tblRegister[Family]=tblRegister[[#This Row],[Family]])*(tblRegister[Filing Code]="ANNUAL")*(tblRegister[Linked Row]<>"")*(IFERROR(YEAR(tblRegister[Date Submitted]),0)=_xlpm.y)*(tblRegister[Status]<>"Refused")*(tblRegister[Status]<>"Lapsed")*(tblRegister[Status]<>"Cancelled"))>0,"","Annual confirmation for "&_xlpm.y&" not filed by "&(cfgAnnualDueDay&" "&INDEX(lstMonths,cfgAnnualDueMonth))&" (para 16(2))"))))
+  [EVALUATION_BEFORE_PAYMENT] = IF(tblRegister[[#This Row],[Evaluation Started]]="","",IF(OR(tblRegister[[#This Row],[Released for Evaluation]]="",tblRegister[[#This Row],[Evaluation Started]]<N(tblRegister[[#This Row],[Released for Evaluation]])),"Evaluation started before Finance confirmed payment",""))
+  [STATUS_WITHOUT_CONFIRMATION] = IF(AND(OR(tblRegister[[#This Row],[Status]]="Received - Under Review",tblRegister[[#This Row],[Status]]="Deficiency Notice Issued",tblRegister[[#This Row],[Status]]="Provisionally Registered",tblRegister[[#This Row],[Status]]="Registered",tblRegister[[#This Row],[Status]]="Lapsed",tblRegister[[#This Row],[Status]]="Changes Applied"),tblRegister[[#This Row],[Released for Evaluation]]=""),"Status moved past acknowledgement without Finance confirmation","")
+  [PRICING_OUT_OF_DATE] = IF(tblRegister[[#This Row],[Priced Category]]="","",_xlfn.LET(_xlpm.d,IF(tblRegister[[#This Row],[Current Category]]="","category can no longer be determined",_xlfn.TEXTJOIN("; ",TRUE,IF(tblRegister[[#This Row],[Priced Category]]<>tblRegister[[#This Row],[Current Category]],"category "&tblRegister[[#This Row],[Priced Category]]&" → "&tblRegister[[#This Row],[Current Category]],""),IF(N(tblRegister[[#This Row],[Priced Fee]])<>tblRegister[[#This Row],[Current Fee]],"fee "&(IF(N(tblRegister[[#This Row],[Priced Fee]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(N(tblRegister[[#This Row],[Priced Fee]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Fee]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Fee]]))*100,0),100),"00"),""))&" → "&(IF(tblRegister[[#This Row],[Current Fee]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Current Fee]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Fee]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Fee]])*100,0),100),"00"),"")),""),IF(N(tblRegister[[#This Row],[Priced Late Initial]])<>tblRegister[[#This Row],[Current Late Initial]],"late initial "&(IF(N(tblRegister[[#This Row],[Priced Late Initial]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Initial]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Initial]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Initial]]))*100,0),100),"00"),""))&" → "&(IF(tblRegister[[#This Row],[Current Late Initial]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Current Late Initial]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Initial]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Initial]])*100,0),100),"00"),"")),""),IF(N(tblRegister[[#This Row],[Priced Late Daily]])<>tblRegister[[#This Row],[Current Late Daily]],"late daily "&(IF(N(tblRegister[[#This Row],[Priced Late Daily]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Daily]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Daily]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Daily]]))*100,0),100),"00"),""))&" → "&(IF(tblRegister[[#This Row],[Current Late Daily]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Current Late Daily]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Daily]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Daily]])*100,0),100),"00"),"")),""),IF(N(tblRegister[[#This Row],[Priced Late Cap]])<>tblRegister[[#This Row],[Current Late Cap]],"late cap "&(IF(N(tblRegister[[#This Row],[Priced Late Cap]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Cap]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Cap]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(N(tblRegister[[#This Row],[Priced Late Cap]]))*100,0),100),"00"),""))&" → "&(IF(tblRegister[[#This Row],[Current Late Cap]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Current Late Cap]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Cap]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Current Late Cap]])*100,0),100),"00"),"")),""),IF(tblRegister[[#This Row],[Priced Deadline]]&""<>tblRegister[[#This Row],[Current Deadline]]&"","deadline "&IF(tblRegister[[#This Row],[Priced Deadline]]="","none",(DAY(tblRegister[[#This Row],[Priced Deadline]])&" "&INDEX(lstMonths,MONTH(tblRegister[[#This Row],[Priced Deadline]]))&" "&YEAR(tblRegister[[#This Row],[Priced Deadline]])))&" → "&IF(tblRegister[[#This Row],[Current Deadline]]="","none",(DAY(tblRegister[[#This Row],[Current Deadline]])&" "&INDEX(lstMonths,MONTH(tblRegister[[#This Row],[Current Deadline]]))&" "&YEAR(tblRegister[[#This Row],[Current Deadline]]))),""),IF(tblRegister[[#This Row],[Priced Effective Date]]<>cfgEffectiveDate,"Effective Date "&IF(tblRegister[[#This Row],[Priced Effective Date]]="","none",(DAY(tblRegister[[#This Row],[Priced Effective Date]])&" "&INDEX(lstMonths,MONTH(tblRegister[[#This Row],[Priced Effective Date]]))&" "&YEAR(tblRegister[[#This Row],[Priced Effective Date]])))&" → "&(DAY(cfgEffectiveDate)&" "&INDEX(lstMonths,MONTH(cfgEffectiveDate))&" "&YEAR(cfgEffectiveDate)),""))),IF(_xlpm.d="","","Saved pricing differs from current rules ("&_xlpm.d&") – an admin may recalculate")))
+  [Flag Count] = COUNTIF(tblRegister[[#This Row],[DUPLICATE_CAC]:[PRICING_OUT_OF_DATE]],"?*")
+  [Flags] = _xlfn.TEXTJOIN("; ",TRUE,tblRegister[[#This Row],[DUPLICATE_CAC]:[PRICING_OUT_OF_DATE]])
+  [Flag Codes] = _xlfn.TEXTJOIN(",",TRUE,IF(tblRegister[[#This Row],[DUPLICATE_CAC]:[PRICING_OUT_OF_DATE]]<>"",tblRegister[[#Headers],[DUPLICATE_CAC]:[PRICING_OUT_OF_DATE]],""))
+  [Next Action] = _xlfn.LET(_xlpm.dd,tblRegister[[#This Row],[Deficiency Response Due]],_xlpm.det,tblRegister[[#This Row],[Determination Due]],_xlfn.SWITCH(tblRegister[[#This Row],[Status]],"Registered",IF(tblRegister[[#This Row],[Registration No.]]<>"","Complete","Lock the registration number"),"Cancelled","Closed – Cancelled","Refused","Closed – Refused","Changes Applied","Closed – Changes Applied","Lapsed","Closed – Lapsed; fresh application needed","Deficiency Notice Issued",IF(_xlpm.dd="","Await response",IF(AsOfDate>_xlpm.dd,"Response overdue – lapse the submission (para 13(2))","Await response by "&(DAY(_xlpm.dd)&" "&INDEX(lstMonths,MONTH(_xlpm.dd))&" "&YEAR(_xlpm.dd)))),"Provisionally Registered","Determine and issue the certificate","Acknowledged - Awaiting Payment",IF((tblRegister[[#This Row],[Gate Cleared]]="Yes"),"Payment confirmed – release for evaluation (runs automatically)",IF(tblRegister[[#This Row],[Payments With Finance]]>0,"Payment with Finance – awaiting confirmation","Await payment of "&(IF(MAX(0,tblRegister[[#This Row],[Release Requires]]-tblRegister[[#This Row],[Amount Paid]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(MAX(0,tblRegister[[#This Row],[Release Requires]]-tblRegister[[#This Row],[Amount Paid]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(MAX(0,tblRegister[[#This Row],[Release Requires]]-tblRegister[[#This Row],[Amount Paid]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(MAX(0,tblRegister[[#This Row],[Release Requires]]-tblRegister[[#This Row],[Amount Paid]]))*100,0),100),"00"),""))&", then Finance confirmation")),IF(tblRegister[[#This Row],[Submission Complete]]="No",_xlfn.LET(_xlpm.n,tblRegister[[#This Row],[Documents Outstanding]]+tblRegister[[#This Row],[Documents Pending]],_xlpm.t,_xlfn.TEXTJOIN(" and ",TRUE,IF(_xlpm.n>0,"obtain "&_xlpm.n&" outstanding document(s)",""),IF(tblRegister[[#This Row],[Balance]]>0,"collect "&(IF(tblRegister[[#This Row],[Balance]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblRegister[[#This Row],[Balance]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblRegister[[#This Row],[Balance]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblRegister[[#This Row],[Balance]])*100,0),100),"00"),"")),"")),UPPER(LEFT(_xlpm.t,1))&MID(_xlpm.t,2,9999)&" – or issue a deficiency notice"),IF(OR(tblRegister[[#This Row],[Date Submission Complete]]="",_xlpm.det=""),"Enter the Date Submission Complete",IF(AsOfDate>_xlpm.det,IF(tblRegister[[#This Row],[Filing Code]]<>"NEW","Overdue – determine and apply the changes","Overdue – provisional registration applies (para 13(4))"),"Determine by "&(DAY(_xlpm.det)&" "&INDEX(lstMonths,MONTH(_xlpm.det))&" "&YEAR(_xlpm.det)))))))
+  [Registry Ack No.]
+  [Front Desk Intake No.]
+=== tblDocuments A6:K7
+  [Reference]
+  [Registrant] = IF(tblDocuments[[#This Row],[Reference]]="","",IF(ISNUMBER(_xlfn.XMATCH(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.])),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.],tblOwnUse[Name],""),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblRegister[Ack No.],tblRegister[Registered Name],"(not found)")))
+  [Form]
+  [Key]
+  [Received (Y/N/N/A)]
+  [Document]
+  [Requirement] = _xlfn.LET(_xlpm.k,tblDocuments[[#This Row],[Key]],_xlpm.rw,_xlfn.XLOOKUP(tblDocuments[[#This Row],[Form]]&"|"&_xlpm.k,tblFormDocs[Form Key],tblFormDocs[Required When],"")&"",IF(_xlpm.k="payment_evidence","Automatic: ticked when Finance confirms the fee",IF(OR(_xlpm.rw="",_xlpm.rw="0"),"Required","Applies unless “"&_xlfn.XLOOKUP(_xlpm.rw,tblConditions[Condition],tblConditions[Question],_xlpm.rw)&"” is N")))
+  [Status] = _xlfn.LET(_xlpm.v,"|"&IF(ISNUMBER(_xlfn.XMATCH(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.])),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.],tblOwnUse[Document Values],""),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblRegister[Ack No.],tblRegister[Document Values],""))&"|",_xlpm.k,"|"&tblDocuments[[#This Row],[Key]]&"=",_xlpm.p,SEARCH(_xlpm.k,_xlpm.v),IF(ISERROR(_xlpm.p),"(not on the current list)",_xlfn.LET(_xlpm.s,_xlpm.p+LEN(_xlpm.k),MID(_xlpm.v,_xlpm.s,SEARCH("|",_xlpm.v,_xlpm.s)-_xlpm.s))))
+  [On Current List] = IF(ISNUMBER(SEARCH("|"&tblDocuments[[#This Row],[Key]]&"=","|"&IF(ISNUMBER(_xlfn.XMATCH(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.])),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblOwnUse[OUN No.],tblOwnUse[Document Values],""),_xlfn.XLOOKUP(tblDocuments[[#This Row],[Reference]],tblRegister[Ack No.],tblRegister[Document Values],"")))),"Yes","No")
+  [Remarks]
+  [Lookup Key] = tblDocuments[[#This Row],[Reference]]&"|"&tblDocuments[[#This Row],[Key]]
+=== tblEvaluation A8:DR9
+  [Ack No.]
+  [Registered Name] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Registered Name],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [Category] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Category Applied],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [Activity Code] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Primary Code],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [Submission Status] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Status],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [Evaluating Officer]
+  [Reviewing Supervisor]
+  [Approving Officer]
+  [Date Evaluation Started]
+  [Flag Override Reason]
+  [Satisfied] = _xlfn.LET(_xlpm.v,tblEvaluation[[#This Row],[1.1]:[7.6]],_xlpm.r,{"AUTO","","AUTO","AUTO","AUTO","","1","AUTO","AUTO","AUTO","","","","2","","","","","","","","","","","","AUTO","3","4","","2","AUTO","","","","","","5","","","","","","","6","AUTO","AUTO","","","","","5","","1","","AUTO","AUTO"},_xlpm.ap,IF(_xlpm.r="1",tblEvaluation[[#This Row],[x MS]],IF(_xlpm.r="2",tblEvaluation[[#This Row],[x Licensed]],IF(_xlpm.r="3",tblEvaluation[[#This Row],[x Documents Outstanding]],IF(_xlpm.r="4",tblEvaluation[[#This Row],[x Non-Company]],IF(_xlpm.r="5",tblEvaluation[[#This Row],[x Unlicensed]],IF(_xlpm.r="6",tblEvaluation[[#This Row],[x Waiver]],IF(_xlpm.r="7",tblEvaluation[[#This Row],[x Not Linked]],TRUE))))))),_xlpm.e,IF(_xlpm.ap,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.v&"",{"Y","N","N/A"})),UPPER(_xlpm.v&""),""),"N/A"),SUM(--(_xlpm.e="Y")))
+  [Failed] = _xlfn.LET(_xlpm.v,tblEvaluation[[#This Row],[1.1]:[7.6]],_xlpm.r,{"AUTO","","AUTO","AUTO","AUTO","","1","AUTO","AUTO","AUTO","","","","2","","","","","","","","","","","","AUTO","3","4","","2","AUTO","","","","","","5","","","","","","","6","AUTO","AUTO","","","","","5","","1","","AUTO","AUTO"},_xlpm.ap,IF(_xlpm.r="1",tblEvaluation[[#This Row],[x MS]],IF(_xlpm.r="2",tblEvaluation[[#This Row],[x Licensed]],IF(_xlpm.r="3",tblEvaluation[[#This Row],[x Documents Outstanding]],IF(_xlpm.r="4",tblEvaluation[[#This Row],[x Non-Company]],IF(_xlpm.r="5",tblEvaluation[[#This Row],[x Unlicensed]],IF(_xlpm.r="6",tblEvaluation[[#This Row],[x Waiver]],IF(_xlpm.r="7",tblEvaluation[[#This Row],[x Not Linked]],TRUE))))))),_xlpm.e,IF(_xlpm.ap,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.v&"",{"Y","N","N/A"})),UPPER(_xlpm.v&""),""),"N/A"),SUM(--(_xlpm.e="N")))
+  [N/A] = _xlfn.LET(_xlpm.v,tblEvaluation[[#This Row],[1.1]:[7.6]],_xlpm.r,{"AUTO","","AUTO","AUTO","AUTO","","1","AUTO","AUTO","AUTO","","","","2","","","","","","","","","","","","AUTO","3","4","","2","AUTO","","","","","","5","","","","","","","6","AUTO","AUTO","","","","","5","","1","","AUTO","AUTO"},_xlpm.ap,IF(_xlpm.r="1",tblEvaluation[[#This Row],[x MS]],IF(_xlpm.r="2",tblEvaluation[[#This Row],[x Licensed]],IF(_xlpm.r="3",tblEvaluation[[#This Row],[x Documents Outstanding]],IF(_xlpm.r="4",tblEvaluation[[#This Row],[x Non-Company]],IF(_xlpm.r="5",tblEvaluation[[#This Row],[x Unlicensed]],IF(_xlpm.r="6",tblEvaluation[[#This Row],[x Waiver]],IF(_xlpm.r="7",tblEvaluation[[#This Row],[x Not Linked]],TRUE))))))),_xlpm.e,IF(_xlpm.ap,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.v&"",{"Y","N","N/A"})),UPPER(_xlpm.v&""),""),"N/A"),SUM(--(_xlpm.e="N/A")))
+  [Pending] = _xlfn.LET(_xlpm.v,tblEvaluation[[#This Row],[1.1]:[7.6]],_xlpm.r,{"AUTO","","AUTO","AUTO","AUTO","","1","AUTO","AUTO","AUTO","","","","2","","","","","","","","","","","","AUTO","3","4","","2","AUTO","","","","","","5","","","","","","","6","AUTO","AUTO","","","","","5","","1","","AUTO","AUTO"},_xlpm.ap,IF(_xlpm.r="1",tblEvaluation[[#This Row],[x MS]],IF(_xlpm.r="2",tblEvaluation[[#This Row],[x Licensed]],IF(_xlpm.r="3",tblEvaluation[[#This Row],[x Documents Outstanding]],IF(_xlpm.r="4",tblEvaluation[[#This Row],[x Non-Company]],IF(_xlpm.r="5",tblEvaluation[[#This Row],[x Unlicensed]],IF(_xlpm.r="6",tblEvaluation[[#This Row],[x Waiver]],IF(_xlpm.r="7",tblEvaluation[[#This Row],[x Not Linked]],TRUE))))))),_xlpm.e,IF(_xlpm.ap,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.v&"",{"Y","N","N/A"})),UPPER(_xlpm.v&""),""),"N/A"),SUM(--(_xlpm.e="")))
+  [Progress] = (tblEvaluation[[#This Row],[Satisfied]]+tblEvaluation[[#This Row],[Failed]]+tblEvaluation[[#This Row],[N/A]])/56
+  [Evaluation Status] = IF(tblEvaluation[[#This Row],[Final Decision]]<>"","Decided",IF(TRIM(tblEvaluation[[#This Row],[Evaluating Officer]])="","Not assigned",IF(tblEvaluation[[#This Row],[Pending]]>0,"In progress","Ready for decision")))
+  [Recommended Outcome] = _xlfn.LET(_xlpm.ss,tblEvaluation[[#This Row],[Submission Status]],_xlpm.dd,tblEvaluation[[#This Row],[x Deficiency Due]],_xlpm.det,tblEvaluation[[#This Row],[x Determination Due]],_xlpm.lapse,IF(AND(_xlpm.ss="Deficiency Notice Issued",_xlpm.dd<>""),AsOfDate>_xlpm.dd,FALSE),_xlpm.prov,IF(AND(_xlpm.det<>"",tblEvaluation[[#This Row],[Final Decision]]=""),AsOfDate>_xlpm.det,FALSE),IF(OR(tblEvaluation[[#This Row],[1.3]]="N",tblEvaluation[[#This Row],[1.4]]="N"),"Redirect to REG-01I / outside scope",IF(AND(_xlpm.ss="Acknowledged - Awaiting Payment",NOT(tblEvaluation[[#This Row],[x Gate Cleared]])),"Awaiting Finance confirmation",IF(_xlpm.lapse,"Treat as lapsed (13(2))",IF(_xlpm.prov,"Provisional registration (13(4))",IF(tblEvaluation[[#This Row],[Failed]]>0,"Issue deficiency notice (13(1)(b))",IF(tblEvaluation[[#This Row],[Pending]]>0,"Evaluation in progress",IF(tblEvaluation[[#This Row],[x Linked]],"Accept filing and apply changes (para 16)","Register (13(1)(a))"))))))))
+  [Approval Blockers] = _xlfn.LET(_xlpm.fl,tblEvaluation[[#This Row],[x Flag Count]],_xlpm.ao,tblEvaluation[[#This Row],[Approving Officer]],_xlpm.eo,tblEvaluation[[#This Row],[Evaluating Officer]],_xlpm.rs,tblEvaluation[[#This Row],[Reviewing Supervisor]],_xlfn.TEXTJOIN(CHAR(10),TRUE,IF(tblEvaluation[[#This Row],[x Closed]],"Submission is closed ("&tblEvaluation[[#This Row],[Submission Status]]&")",""),IF(tblEvaluation[[#This Row],[x Gate Cleared]],"",tblEvaluation[[#This Row],[x Gate Reason]]),IF(TRIM(_xlpm.eo)="","No evaluating officer assigned",""),IF(TRIM(_xlpm.rs)="","No reviewing supervisor assigned",""),IF(TRIM(_xlpm.ao)="","No approving officer assigned",""),IF(tblEvaluation[[#This Row],[x Complete]],"","Submission is not complete (documents or fees outstanding)"),IF(tblEvaluation[[#This Row],[Failed]]>0,tblEvaluation[[#This Row],[Failed]]&" evaluation check(s) failed",""),IF(tblEvaluation[[#This Row],[Pending]]>0,tblEvaluation[[#This Row],[Pending]]&" evaluation check(s) pending",""),IF(OR(tblEvaluation[[#This Row],[Category]]="",tblEvaluation[[#This Row],[Activity Code]]=""),"Category or activity code cannot be determined",""),IF(_xlpm.fl=0,"",IF(cfgFlagsBlockApproval="Y",_xlpm.fl&" unresolved data flag(s): "&tblEvaluation[[#This Row],[x Flags]],IF(TRIM(tblEvaluation[[#This Row],[Flag Override Reason]])="",_xlpm.fl&" unresolved data flag(s) with no written override reason: "&tblEvaluation[[#This Row],[x Flags]],""))),IF(AND(TRIM(_xlpm.ao)<>"",LOWER(TRIM(_xlpm.ao))=LOWER(TRIM(_xlpm.eo))),"The approving officer cannot be the evaluating officer",""),IF(AND(TRIM(_xlpm.ao)<>"",LOWER(TRIM(_xlpm.ao))=LOWER(TRIM(_xlpm.rs))),"The approving officer cannot be the reviewing supervisor",""),IF(AND(TRIM(_xlpm.ao)<>"",LOWER(TRIM(_xlpm.ao))=LOWER(TRIM(tblEvaluation[[#This Row],[x Created By]]))),"The approving officer cannot be the user who created the submission",""),IF(AND(TRIM(_xlpm.rs)<>"",LOWER(TRIM(_xlpm.rs))=LOWER(TRIM(_xlpm.eo))),"The reviewing supervisor cannot be the evaluating officer",""),IF(tblEvaluation[[#This Row],[x Linked]],IF(tblEvaluation[[#This Row],[x Linked Row]]="","Not linked to a registered submission",IF(tblEvaluation[[#This Row],[x Linked Status]]<>"Registered","The linked registration "&tblEvaluation[[#This Row],[x Linked Reg No]]&" is "&tblEvaluation[[#This Row],[x Linked Status]]&", not Registered","")),IF(OR(OR(TRIM(cfgChairName)="",TRIM(cfgChairName)="[Name]"),OR(TRIM(cfgCommName)="",TRIM(cfgCommName)="[Name]")),"Certificate signatory names are not set in Settings",""))))
+  [File Closed] = _xlfn.LET(_xlpm.v,tblEvaluation[[#This Row],[9.1]:[9.7]],_xlpm.r,{"AUTO","AUTO","7","7","7","",""},_xlpm.ap,IF(_xlpm.r="1",tblEvaluation[[#This Row],[x MS]],IF(_xlpm.r="2",tblEvaluation[[#This Row],[x Licensed]],IF(_xlpm.r="3",tblEvaluation[[#This Row],[x Documents Outstanding]],IF(_xlpm.r="4",tblEvaluation[[#This Row],[x Non-Company]],IF(_xlpm.r="5",tblEvaluation[[#This Row],[x Unlicensed]],IF(_xlpm.r="6",tblEvaluation[[#This Row],[x Waiver]],IF(_xlpm.r="7",tblEvaluation[[#This Row],[x Not Linked]],TRUE))))))),_xlpm.e,IF(_xlpm.ap,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.v&"",{"Y","N","N/A"})),UPPER(_xlpm.v&""),""),"N/A"),IF(AND((_xlpm.e="Y")+(_xlpm.e="N/A")),"Yes","No"))
+  [Final Decision]
+  [Reasons]
+  [Review Date]
+  [Approval Date]
+  [Evaluation Remarks]
+  [1.1] = IF(tblEvaluation[[#This Row],[Ack No.]]<>"","Y","N")
+  [1.2]
+  [1.3] = IF(tblEvaluation[[#This Row],[Activity Code]]<>"","Y","N")
+  [1.4] = IF(AND(tblEvaluation[[#This Row],[Activity Code]]="CPT",tblEvaluation[[#This Row],[x Capacity]]<1),"N","Y")
+  [1.5] = IF(tblEvaluation[[#This Row],[x Duplicate CAC]],"N","Y")
+  [1.6]
+  [1.7]
+  [1.8] = IF(tblEvaluation[[#This Row],[x Days Late]]=0,"Y","N")
+  [1.9] = IF(tblEvaluation[[#This Row],[x Days Late]]=0,"N/A",IF(tblEvaluation[[#This Row],[x Late Charge]]>0,"Y","N"))
+  [1.10] = _xlfn.LET(_xlpm.fc,tblEvaluation[[#This Row],[x Form Category]],_xlpm.cc,tblEvaluation[[#This Row],[x Confirmed Category]],IF(_xlpm.fc="","N",IF(_xlpm.cc="","",IF(_xlpm.fc=_xlpm.cc,"Y",IF(AND(cfgWrongForm="Accept and re-categorise",TRIM(tblEvaluation[[#This Row],[x Confirmed Reason]])<>""),"Y","N")))))
+  [2.1]
+  [2.2]
+  [2.3]
+  [2.4]
+  [2.5]
+  [2.6]
+  [2.7]
+  [2.8]
+  [2.9]
+  [2.10]
+  [2.11]
+  [2.12]
+  [2.13]
+  [2.14]
+  [2.15]
+  [3.0] = IF(tblEvaluation[[#This Row],[x Documents Complete]],"Y","N")
+  [3.1]
+  [3.2]
+  [4.1]
+  [4.2]
+  [4.3] = IF(tblEvaluation[[#This Row],[x Nearest Expiry]]="","N/A",IF(tblEvaluation[[#This Row],[x Nearest Expiry]]-tblEvaluation[[#This Row],[x Effective Date]]<=cfgExpiryWindowDays,"N","Y"))
+  [4.4]
+  [4.5]
+  [4.6]
+  [4.7]
+  [4.8]
+  [4.9]
+  [4.10]
+  [4.11]
+  [4.12]
+  [4.13]
+  [5.1]
+  [5.2]
+  [5.3]
+  [5.4] = IF(tblEvaluation[[#This Row],[x Days Late]]=0,"N/A",IF(tblEvaluation[[#This Row],[x Late Charge]]>0,"Y","N"))
+  [5.5] = IF(tblEvaluation[[#This Row],[x Balance]]<=0,"Y","N")
+  [6.1]
+  [6.2]
+  [6.3]
+  [6.4]
+  [7.1]
+  [7.2]
+  [7.3]
+  [7.4]
+  [7.5] = "N/A"
+  [7.6] = IF(OR(tblEvaluation[[#This Row],[x Flag Count]]=0,TRIM(tblEvaluation[[#This Row],[Flag Override Reason]])<>""),"Y","N")
+  [9.1] = IF(tblEvaluation[[#This Row],[x Linked]],"N/A",IF(AND(tblEvaluation[[#This Row],[x Certificate Date]]<>"",tblEvaluation[[#This Row],[Submission Status]]="Registered"),"Y",""))
+  [9.2] = IF(tblEvaluation[[#This Row],[x Linked]],"N/A",IF(tblEvaluation[[#This Row],[x Registration No.]]<>"","Y",""))
+  [9.3]
+  [9.4]
+  [9.5]
+  [9.6]
+  [9.7]
+  [Reg Row] = IF(tblEvaluation[[#This Row],[Ack No.]]="",0,IFERROR(_xlfn.XMATCH(tblEvaluation[[#This Row],[Ack No.]],tblRegister[Ack No.]),0))
+  [x Capacity] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Installed Capacity (MW)],tblEvaluation[[#This Row],[Reg Row]])))
+  [x Licence Status] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Licence Status],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Duplicate CAC] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[DUPLICATE_CAC],tblEvaluation[[#This Row],[Reg Row]])<>"")
+  [x Days Late] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Days Late],tblEvaluation[[#This Row],[Reg Row]])))
+  [x Late Charge] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Late Charge],tblEvaluation[[#This Row],[Reg Row]])))
+  [x Balance] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Balance],tblEvaluation[[#This Row],[Reg Row]])))
+  [x Documents Complete] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[Documents Complete],tblEvaluation[[#This Row],[Reg Row]])="Yes")
+  [x Complete] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[Submission Complete],tblEvaluation[[#This Row],[Reg Row]])="Yes")
+  [x Form Category] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Form Category],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Confirmed Category] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Confirmed Category],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Confirmed Reason] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Category Confirmed Reason],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Nearest Expiry] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Nearest Licence Expiry],tblEvaluation[[#This Row],[Reg Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [x Effective Date] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Effective Date Used],tblEvaluation[[#This Row],[Reg Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [x Flag Count] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Flag Count],tblEvaluation[[#This Row],[Reg Row]])))
+  [x Flags] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Flags],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Certificate Date] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Certificate Issue Date],tblEvaluation[[#This Row],[Reg Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [x Registration No.] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Registration No.],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Gate Cleared] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[Gate Cleared],tblEvaluation[[#This Row],[Reg Row]])="Yes")
+  [x Gate Reason] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Gate Reason],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Closed] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[Closed],tblEvaluation[[#This Row],[Reg Row]])="Yes")
+  [x Determination Due] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Determination Due],tblEvaluation[[#This Row],[Reg Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [x Deficiency Due] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",_xlfn.LET(_xlpm.v,INDEX(tblRegister[Deficiency Response Due],tblEvaluation[[#This Row],[Reg Row]])&"",IF(_xlpm.v="","",--_xlpm.v)))
+  [x Created By] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Created By],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Linked] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,FALSE,INDEX(tblRegister[Filing Code],tblEvaluation[[#This Row],[Reg Row]])<>"NEW")
+  [x Not Linked] = NOT(tblEvaluation[[#This Row],[x Linked]])
+  [x Linked Row] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Linked Row],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Linked Status] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Linked Status],tblEvaluation[[#This Row],[Reg Row]])&"")
+  [x Linked Reg No] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",TRIM(INDEX(tblRegister[Linked Registration No.],tblEvaluation[[#This Row],[Reg Row]])&""))
+  [x MS] = OR(tblEvaluation[[#This Row],[Activity Code]]="MSL",tblEvaluation[[#This Row],[x Licence Status]]="NERC licence (multi-State)")
+  [x Licensed] = tblEvaluation[[#This Row],[x Licence Status]]<>"Unlicensed"
+  [x Unlicensed] = tblEvaluation[[#This Row],[x Licence Status]]="Unlicensed"
+  [x Documents Outstanding] = NOT(tblEvaluation[[#This Row],[x Documents Complete]])
+  [x Non-Company] = _xlfn.LET(_xlpm.t,IF(tblEvaluation[[#This Row],[Reg Row]]=0,"",INDEX(tblRegister[Registrant Type],tblEvaluation[[#This Row],[Reg Row]])&""),AND(TRIM(_xlpm.t)<>"",_xlpm.t<>"Company"))
+  [x Waiver] = IF(tblEvaluation[[#This Row],[Reg Row]]=0,0,N(INDEX(tblRegister[Approved Waiver],tblEvaluation[[#This Row],[Reg Row]])))>0
+=== tblPayments A6:X7
+  [Payment No.]
+  [Date Received]
+  [Reference]
+  [Registrant] = IF(tblPayments[[#This Row],[Reference]]="","",IFERROR(_xlfn.XLOOKUP(tblPayments[[#This Row],[Reference]],tblRegister[Ack No.],tblRegister[Registered Name]),IFERROR(_xlfn.XLOOKUP(tblPayments[[#This Row],[Reference]],tblOwnUse[OUN No.],tblOwnUse[Name]),"(not found)")))
+  [Category] = IF(tblPayments[[#This Row],[Reference]]="","",IFERROR(_xlfn.XLOOKUP(tblPayments[[#This Row],[Reference]],tblRegister[Ack No.],tblRegister[Category Applied]),IF(ISNUMBER(_xlfn.XMATCH(tblPayments[[#This Row],[Reference]],tblOwnUse[OUN No.])),"I","")))
+  [Purpose]
+  [Channel]
+  [Amount]
+  [RRR / Bank Reference]
+  [Recorded By]
+  [Recorded On]
+  [Finance Status]
+  [Verified with Bank]
+  [Decided By]
+  [Decided On]
+  [Finance Remarks]
+  [Reversed]
+  [Reversed By]
+  [Reversed On]
+  [Reversal Reason]
+  [Counts as Paid] = IF(AND(tblPayments[[#This Row],[Finance Status]]="Confirmed",tblPayments[[#This Row],[Reversed]]<>"Y"),"Yes","No")
+  [With Finance] = IF(AND(tblPayments[[#This Row],[Payment No.]]<>"",OR(tblPayments[[#This Row],[Finance Status]]="Pending",tblPayments[[#This Row],[Finance Status]]=""),tblPayments[[#This Row],[Reversed]]<>"Y"),"Yes","No")
+  [Days Waiting] = IF(OR(tblPayments[[#This Row],[With Finance]]="No",tblPayments[[#This Row],[Recorded On]]=""),"",MAX(0,AsOfDate-INT(tblPayments[[#This Row],[Recorded On]])))
+  [Checks] = _xlfn.TEXTJOIN("; ",TRUE,IF(AND(tblPayments[[#This Row],[Reference]]<>"",tblPayments[[#This Row],[Registrant]]="(not found)"),"Reference is not an Ack No. or OUN No.",""),IF(TRIM(tblPayments[[#This Row],[RRR / Bank Reference]])="","",IF(SUM(--(TRIM(tblPayments[RRR / Bank Reference])=TRIM(tblPayments[[#This Row],[RRR / Bank Reference]])))>1,"Duplicate RRR / bank reference","")))
+=== tblOwnUse A6:BM7
+  [OUN No.]
+  [Name]
+  [Date Filed]
+  [CAC No.]
+  [Site Address]
+  [LGA]
+  [Nature of Business]
+  [Grid Connected (Y/N)]
+  [Distribution Licensee]
+  [Contact Person]
+  [Phone]
+  [Email]
+  [Unit 1 Make/Model]
+  [Unit 1 kW]
+  [Unit 1 Fuel]
+  [Unit 1 Avg MWh]
+  [Unit 2 Make/Model]
+  [Unit 2 kW]
+  [Unit 2 Fuel]
+  [Unit 2 Avg MWh]
+  [Unit 3 Make/Model]
+  [Unit 3 kW]
+  [Unit 3 Fuel]
+  [Unit 3 Avg MWh]
+  [Unit 4 Make/Model]
+  [Unit 4 kW]
+  [Unit 4 Fuel]
+  [Unit 4 Avg MWh]
+  [Flag Override Reason]
+  [Remarks]
+  [Created By]
+  [Priced Fee]
+  [Priced Threshold (kW)]
+  [Registration No.]
+  [Certificate Issue Date]
+  [Registered By]
+  [Units] = COUNT(tblOwnUse[[#This Row],[Unit 1 kW]],tblOwnUse[[#This Row],[Unit 2 kW]],tblOwnUse[[#This Row],[Unit 3 kW]],tblOwnUse[[#This Row],[Unit 4 kW]])
+  [Installed Capacity (kW)] = IF(tblOwnUse[[#This Row],[Units]]=0,"",_xlfn.LET(_xlpm.u,CHOOSE({1,2,3,4},tblOwnUse[[#This Row],[Unit 1 kW]],tblOwnUse[[#This Row],[Unit 2 kW]],tblOwnUse[[#This Row],[Unit 3 kW]],tblOwnUse[[#This Row],[Unit 4 kW]]),SUM(IF(ISNUMBER(_xlpm.u),ROUND(_xlpm.u*1000,0),0))/1000))
+  [Current Fee] = IF(tblOwnUse[[#This Row],[Installed Capacity (kW)]]="","",IF(AND(tblOwnUse[[#This Row],[Installed Capacity (kW)]]<1000,tblOwnUse[[#This Row],[Installed Capacity (kW)]]>=cfgOwnUseThresholdKw),_xlfn.XLOOKUP("I",tblFees[Category],tblFees[Registration Fee],0),0))
+  [Threshold Used] = IF((tblOwnUse[[#This Row],[Priced Threshold (kW)]]<>""),tblOwnUse[[#This Row],[Priced Threshold (kW)]],cfgOwnUseThresholdKw)
+  [Eligibility] = IF(tblOwnUse[[#This Row],[Installed Capacity (kW)]]="","",IF(tblOwnUse[[#This Row],[Installed Capacity (kW)]]>=1000,"Register as operator",IF(tblOwnUse[[#This Row],[Installed Capacity (kW)]]<tblOwnUse[[#This Row],[Threshold Used]],"Not required","Notification required")))
+  [Fee Due] = IF((tblOwnUse[[#This Row],[Priced Threshold (kW)]]<>""),N(tblOwnUse[[#This Row],[Priced Fee]]),N(tblOwnUse[[#This Row],[Current Fee]]))
+  [Amount Paid] = IF(tblOwnUse[[#This Row],[OUN No.]]="",0,SUMIFS(tblPayments[Amount],tblPayments[Reference],tblOwnUse[[#This Row],[OUN No.]],tblPayments[Counts as Paid],"Yes"))
+  [Balance] = ROUND(tblOwnUse[[#This Row],[Fee Due]]-tblOwnUse[[#This Row],[Amount Paid]],2)
+  [Payment Status] = IF(tblOwnUse[[#This Row],[Fee Due]]=0,"Nil",IF(tblOwnUse[[#This Row],[Balance]]<=0,"Paid",IF(tblOwnUse[[#This Row],[Amount Paid]]>0,"Part-paid","Unpaid")))
+  [Filed After Deadline] = IF(tblOwnUse[[#This Row],[Date Filed]]="","No",IF(tblOwnUse[[#This Row],[Date Filed]]>cfgExistingDeadline,"Yes","No"))
+  [Evidence of Payment] = IF(tblOwnUse[[#This Row],[Fee Due]]=0,"N/A",IF(tblOwnUse[[#This Row],[Amount Paid]]>=tblOwnUse[[#This Row],[Fee Due]],"Y",""))
+  [Document Values] = _xlfn.LET(_xlpm.ref,tblOwnUse[[#This Row],[OUN No.]],_xlpm.fm,tblFormDocs[Form],_xlpm.keys,_xlfn._xlws.FILTER(tblFormDocs[Key],_xlpm.fm="REG-01I"),_xlpm.txt,_xlfn._xlws.FILTER(tblFormDocs[Document],_xlpm.fm="REG-01I"),_xlpm.d,IF(_xlpm.ref="","",_xlfn._xlws.FILTER(tblDocuments[[Key]:[Received (Y/N/N/A)]],tblDocuments[Reference]=_xlpm.ref,"")),_xlpm.ent,IFERROR(_xlfn.XLOOKUP(_xlpm.keys,INDEX(_xlpm.d,0,1),INDEX(_xlpm.d,0,2),""),""),_xlpm.entv,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.ent&"",{"Y","N","N/A"})),UPPER(_xlpm.ent&""),""),_xlpm.eff,IF(_xlpm.keys="payment_evidence",tblOwnUse[[#This Row],[Evidence of Payment]],_xlpm.entv),_xlfn.TEXTJOIN("|",FALSE,_xlpm.keys&"="&_xlpm.eff))
+  [Documents Listed] = _xlfn.LET(_xlpm.x,tblOwnUse[[#This Row],[Document Values]]&"|",IF(tblOwnUse[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=","")))/1))
+  [Documents Outstanding] = _xlfn.LET(_xlpm.x,tblOwnUse[[#This Row],[Document Values]]&"|",IF(tblOwnUse[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=N|","")))/3))
+  [Documents Pending] = _xlfn.LET(_xlpm.x,tblOwnUse[[#This Row],[Document Values]]&"|",IF(tblOwnUse[[#This Row],[Document Values]]="",0,(LEN(_xlpm.x)-LEN(SUBSTITUTE(_xlpm.x,"=|","")))/2))
+  [Documents Complete] = IF(AND(tblOwnUse[[#This Row],[Documents Listed]]>0,tblOwnUse[[#This Row],[Documents Outstanding]]=0,tblOwnUse[[#This Row],[Documents Pending]]=0),"Yes","No")
+  [Outstanding Documents] = _xlfn.LET(_xlpm.ref,tblOwnUse[[#This Row],[OUN No.]],_xlpm.fm,tblFormDocs[Form],_xlpm.keys,_xlfn._xlws.FILTER(tblFormDocs[Key],_xlpm.fm="REG-01I"),_xlpm.txt,_xlfn._xlws.FILTER(tblFormDocs[Document],_xlpm.fm="REG-01I"),_xlpm.d,IF(_xlpm.ref="","",_xlfn._xlws.FILTER(tblDocuments[[Key]:[Received (Y/N/N/A)]],tblDocuments[Reference]=_xlpm.ref,"")),_xlpm.ent,IFERROR(_xlfn.XLOOKUP(_xlpm.keys,INDEX(_xlpm.d,0,1),INDEX(_xlpm.d,0,2),""),""),_xlpm.entv,IF(ISNUMBER(_xlfn.XMATCH(_xlpm.ent&"",{"Y","N","N/A"})),UPPER(_xlpm.ent&""),""),_xlpm.eff,IF(_xlpm.keys="payment_evidence",tblOwnUse[[#This Row],[Evidence of Payment]],_xlpm.entv),_xlfn.TEXTJOIN("; ",TRUE,_xlfn._xlws.FILTER(_xlpm.txt,(_xlpm.eff<>"Y")*(_xlpm.eff<>"N/A"),"")))
+  [CAC Norm] = LOWER(TRIM(tblOwnUse[[#This Row],[CAC No.]]))
+  [Site Norm] = LOWER(TRIM(tblOwnUse[[#This Row],[Site Address]]))
+  [OU_MISSING_REQUIRED] = _xlfn.LET(_xlpm.m,_xlfn.TEXTJOIN(", ",TRUE,IF(TRIM(tblOwnUse[[#This Row],[Name]])="","name",""),IF(tblOwnUse[[#This Row],[Date Filed]]="","date filed",""),IF(TRIM(tblOwnUse[[#This Row],[LGA]])="","LGA",""),IF(tblOwnUse[[#This Row],[Installed Capacity (kW)]]="","generator units","")),IF(_xlpm.m="","","Missing required field: "&_xlpm.m))
+  [OU_DUPLICATE_SITE] = IF(OR(tblOwnUse[[#This Row],[CAC Norm]]="",tblOwnUse[[#This Row],[Site Norm]]=""),"",IF(SUM((tblOwnUse[CAC Norm]=tblOwnUse[[#This Row],[CAC Norm]])*(tblOwnUse[Site Norm]=tblOwnUse[[#This Row],[Site Norm]])*(ROW(tblOwnUse[CAC Norm])<>ROW()))>0,"Another own-use notification has the same CAC number and site address",""))
+  [OU_CAC_ON_REGISTER] = IF(tblOwnUse[[#This Row],[CAC Norm]]="","",IF(SUM(--(tblRegister[CAC Norm]=tblOwnUse[[#This Row],[CAC Norm]]))>0,"CAC number is also on the Register",""))
+  [OU_FEE_UNPAID] = IF(tblOwnUse[[#This Row],[Amount Paid]]<tblOwnUse[[#This Row],[Fee Due]],"Fee not fully paid","")
+  [OU_PRICING_OUT_OF_DATE] = IF(OR(NOT((tblOwnUse[[#This Row],[Priced Threshold (kW)]]<>"")),tblOwnUse[[#This Row],[Current Fee]]=""),"",_xlfn.LET(_xlpm.d,_xlfn.TEXTJOIN("; ",TRUE,IF(N(tblOwnUse[[#This Row],[Priced Fee]])<>tblOwnUse[[#This Row],[Current Fee]],"fee "&(IF(N(tblOwnUse[[#This Row],[Priced Fee]])<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(N(tblOwnUse[[#This Row],[Priced Fee]]))*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(N(tblOwnUse[[#This Row],[Priced Fee]]))*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(N(tblOwnUse[[#This Row],[Priced Fee]]))*100,0),100),"00"),""))&" → "&(IF(tblOwnUse[[#This Row],[Current Fee]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblOwnUse[[#This Row],[Current Fee]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Current Fee]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Current Fee]])*100,0),100),"00"),"")),""),IF(tblOwnUse[[#This Row],[Priced Threshold (kW)]]<>cfgOwnUseThresholdKw,"threshold "&tblOwnUse[[#This Row],[Priced Threshold (kW)]]&" kW → "&cfgOwnUseThresholdKw&" kW","")),IF(_xlpm.d="","","Saved pricing differs from current rules ("&_xlpm.d&") – an admin may recalculate")))
+  [Flag Count] = COUNTIF(tblOwnUse[[#This Row],[OU_MISSING_REQUIRED]:[OU_PRICING_OUT_OF_DATE]],"?*")
+  [Flags] = _xlfn.TEXTJOIN("; ",TRUE,tblOwnUse[[#This Row],[OU_MISSING_REQUIRED]:[OU_PRICING_OUT_OF_DATE]])
+  [Registration Blockers] = _xlfn.LET(_xlpm.fl,_xlfn.TEXTJOIN("; ",TRUE,tblOwnUse[[#This Row],[OU_MISSING_REQUIRED]],tblOwnUse[[#This Row],[OU_DUPLICATE_SITE]],tblOwnUse[[#This Row],[OU_CAC_ON_REGISTER]],tblOwnUse[[#This Row],[OU_PRICING_OUT_OF_DATE]]),_xlpm.n,SUM(--(CHOOSE({1,2,3,4},tblOwnUse[[#This Row],[OU_MISSING_REQUIRED]],tblOwnUse[[#This Row],[OU_DUPLICATE_SITE]],tblOwnUse[[#This Row],[OU_CAC_ON_REGISTER]],tblOwnUse[[#This Row],[OU_PRICING_OUT_OF_DATE]])<>"")),_xlfn.TEXTJOIN(CHAR(10),TRUE,IF(cfgOwnUseCertificate="Y","","Own-use certificates are switched off in Settings"),IF(tblOwnUse[[#This Row],[Registration No.]]<>"","Already registered as "&tblOwnUse[[#This Row],[Registration No.]],""),IF(tblOwnUse[[#This Row],[Eligibility]]="Notification required","","Capacity "&N(tblOwnUse[[#This Row],[Installed Capacity (kW)]])&" kW: "&IF(tblOwnUse[[#This Row],[Eligibility]]="","no generator units recorded",tblOwnUse[[#This Row],[Eligibility]])),IF(tblOwnUse[[#This Row],[Amount Paid]]<tblOwnUse[[#This Row],[Fee Due]],"Fee not confirmed by Finance: "&(IF(tblOwnUse[[#This Row],[Amount Paid]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblOwnUse[[#This Row],[Amount Paid]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Amount Paid]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Amount Paid]])*100,0),100),"00"),""))&" of "&(IF(tblOwnUse[[#This Row],[Fee Due]]<0,"-","")&"₦"&TEXT(INT(ROUND(ABS(tblOwnUse[[#This Row],[Fee Due]])*100,0)/100),"#,##0")&IF(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Fee Due]])*100,0),100)>0,"."&TEXT(MOD(ROUND(ABS(tblOwnUse[[#This Row],[Fee Due]])*100,0),100),"00"),"")),""),IF(tblOwnUse[[#This Row],[Documents Complete]]="Yes","","Documents outstanding: "&tblOwnUse[[#This Row],[Outstanding Documents]]),IF(_xlpm.n=0,"",IF(cfgFlagsBlockApproval="Y",_xlpm.n&" unresolved data flag(s): "&_xlpm.fl,IF(TRIM(tblOwnUse[[#This Row],[Flag Override Reason]])="",_xlpm.n&" unresolved data flag(s) with no written override reason: "&_xlpm.fl,""))),IF(OR(OR(TRIM(cfgChairName)="",TRIM(cfgChairName)="[Name]"),OR(TRIM(cfgCommName)="",TRIM(cfgCommName)="[Name]")),"Certificate signatory names are not set in Settings","")))
+  [Registry Ack No.]
+  [Front Desk Intake No.]
+=== tblAudit A4:E5
+  [Timestamp]
+  [User]
+  [Action]
+  [Reference]
+  [Detail]
+=== tblConditions A52:C61
+  [Condition]
+  [Register Column]
+  [Question]
+=== tblFormDocs I5:N129
+  [Form]
+  [No.]
+  [Key]
+  [Document]
+  [Required When]
+  [Form Key] = tblFormDocs[[#This Row],[Form]]&"|"&tblFormDocs[[#This Row],[Key]]
+=== tblChecks Q5:T68
+  [ID]
+  [Stage]
+  [Check]
+  [Rule]
+=== tblLFilingType W5:W8
+  [Filing Type]
+=== tblLStatus Y5:Y14
+  [Status]
+=== tblLForms AA5:AA15
+  [Form (A–K)]

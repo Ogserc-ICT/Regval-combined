@@ -1,0 +1,252 @@
+# OGSERC Registry & Evaluation — Plan
+
+Phase 0 · 5 Nov 2026 · companion to `docs/SPEC.md` (rules) and `docs/QUESTIONS.md` (open points).
+
+## 1. Decisions to approve
+
+| Area | Proposal | Why |
+| --- | --- | --- |
+| Framework | Next.js (App Router, current stable, pinned at scaffold), TypeScript strict, React Server Components, Server Actions for forms, route handlers for PDFs, exports, cron | Fixed by the brief |
+| Database | PostgreSQL on Neon via the Vercel Marketplace; new project and database | Fixed by the brief |
+| ORM | **Drizzle ORM** with the `node-postgres` driver | SQL-first, typed, thin; real interactive transactions and `SELECT … FOR UPDATE` for the counters; no query engine binary; easy to drop to raw SQL for triggers and reports |
+| Migrations | **drizzle-kit** generating plain SQL files, committed and reviewed; hand-written SQL migrations for triggers, grants and constraints; applied by `drizzle-kit migrate` as a Vercel build step against `DATABASE_URL_UNPOOLED` | Migrations never run on a cold start |
+| Auth | **Better Auth**: email + password (argon2), database sessions, admin-created accounts only (sign-up disabled), forced password change on first sign-in, optional TOTP two-factor, account lock after repeated failures. A Microsoft Entra ID provider can be added later without schema change (Q18) | Staff-only; works on Vercel with Postgres; sessions are revocable rows; no third-party identity service needed on day one |
+| Authorisation | Our own `user_roles` table and one `authorize(user, action, record)` function called by every server action and route handler; UI hides what the server would refuse | **[G6–G8]** on the server |
+| Validation | Zod schemas shared by forms and server actions | One validator per field type (phone, CAC, email) **[G5]** |
+| Dates | `date-fns` + `@date-fns/tz`; one `lagos` module that owns "now", "today", working days and deemed receipt; `APP_TODAY` honoured outside production only | **[G13]** |
+| Money | Integers in kobo (`bigint`), formatted at the edge | No floating-point rounding |
+| UI | Tailwind CSS, shadcn/ui (Radix primitives), lucide icons, `next-themes` (dark by default), TanStack Table for registers, Recharts for dashboard charts | Premium dashboard look, one design system for both modules |
+| PDFs | `@react-pdf/renderer` in Node route handlers, streamed; slips kept for email stored in Vercel Blob (private) | No local disk, no Office |
+| Exports | CSV and `.xlsx` (`exceljs`), generated in chunks and streamed | Replaces "Back up workbook now" |
+| Email | `EmailTransport` interface with `console` (dev) and `resend` providers, chosen by `EMAIL_PROVIDER`; a `graph` provider can be added behind the same interface (Q19) | **[G9]** |
+| Cron | Vercel Cron `0 6 * * *` → `/api/cron/daily-review` with `CRON_SECRET` | 07:00 Lagos |
+| Tests | Vitest (domain unit tests, worked examples), Vitest + real Postgres for service and concurrency tests, Playwright for a few end-to-end role checks; GitHub Actions with a Postgres service container | Acceptance checks run in CI |
+| Hosting | Vercel Pro, one project; function region and Neon region London (`lhr1` / `aws-eu-west-2`) if Neon offers it, else Frankfurt (`fra1` / `aws-eu-central-1`) | Closest to Lagos; confirm in Phase 1 (Q20) |
+
+## 2. Architecture
+
+```
+app/ (routes, RSC pages, server actions, route handlers)
+   │  calls
+   ▼
+src/server/services/   one service per use case: authorize → validate → transaction → audit → side effects
+   │  uses                                   │ enqueues
+   ▼                                         ▼
+src/domain/   pure functions, no I/O         src/server/email, pdf, blob
+   (category, fees, deadlines, documents,
+    checks, flags, statuses, deemed receipt,
+    working days, gate, next action)
+   ▲
+src/server/db/  Drizzle schema, queries, numbering service, audit writer
+```
+
+- **Domain layer is pure.** Every workbook formula in `SPEC.md` becomes a pure TypeScript function taking a plain record, its related rows, settings, reference data and "today". The same functions feed screens, PDFs, the dashboard, the daily review and exports, so one rule is never written twice. Worked examples in `SPEC.md` §30 are its tests.
+- **Stored vs derived.** Stored: inputs, values set by actions, numbers, snapshots, and the deemed receipt date (frozen at save, since the holiday list can change later). Derived on read: everything green in the workbook (balances, flags, statuses of inward/outward items, SLA, counts). Volumes are small (a few thousand rows a year), so registers compute derived fields in the service layer per page; the dashboard uses SQL aggregates for counts plus domain functions where a rule is needed. If a list grows slow, a derived column is materialised and refreshed in the same transaction as its inputs.
+- **Service pattern.** Every mutation is one function: `authorize` (role + record rules, returns 403 with every reason) → Zod validation (422 with every field error) → domain checks (409 with every blocking reason) → one DB transaction (writes, numbers, audit rows) → after commit: email and Blob uploads (failures recorded on the item, never rolled back into the transaction).
+- **Numbering service** (§4).
+- **Audit writer** inside the same transaction (§5).
+- **Server-only time.** "Today" never comes from the browser.
+- **Errors.** Blocked actions return a list, shown together, as the workbook buttons do.
+
+## 3. Database schema
+
+Postgres naming: snake_case tables, `id uuid` primary keys (except reference tables keyed by code), `created_at`/`updated_at timestamptz`, `created_by`/`updated_by` user ids. Every record table that can hold EXAMPLE data has `is_example boolean not null default false`. Text for every phone, CAC, TIN and reference **[G5]**.
+
+### 3.1 Identity and access
+
+| Table | Key columns |
+| --- | --- |
+| `users` | id, name, email (unique), active, must_change_password, unit_id (for unit officers), created_by, is_seeded_unconfirmed |
+| `sessions`, `accounts`, `verifications`, `two_factors` | Better Auth tables |
+| `user_roles` | user_id, role (enum: front_desk, registry, router, unit_officer, evaluator, supervisor, approver, finance, admin, viewer); unique (user_id, role) |
+
+### 3.2 Settings and reference data
+
+| Table | Key columns |
+| --- | --- |
+| `settings` | key (pk), value jsonb, updated_by, updated_at. Typed by one Zod schema; audited on change |
+| `holidays` | date (pk), name, status (fixed, provisional, estimated, state) |
+| `signatories` | id, name, designation, signatory_role (chairman_ceo, commissioner, secretary, other), active, confirmed |
+| `divisions` | id, name (unique), email (nullable) |
+| `units` | id, name (unique), division_id, unit_group, email (nullable), active |
+| `lgas` | name (pk), in_ogun |
+| `fee_schedule` | category (A–K), version, effective_from, registration_fee, late_initial, late_daily, late_cap (kobo), description, late_tier |
+| `activities` | code (pk), name, cat_10mw_plus, cat_1_to_10mw, cat_below_1mw, capacity_based |
+| `forms` | form (pk, REG-01A…K), category, title, order_para |
+| `form_documents` | form, key, no, document, required_when (condition key, nullable); pk (form, key) |
+| `document_conditions` | key (pk), question |
+| `eval_checks` | id (pk, '1.1'…'9.7'), stage, text, rule_text, kind (auto, manual), applicability (always, ms, lic, unlic, docs, nonco, waiver, new), post_approval |
+| `correspondence_types` | id, name (unique), category, default_unit_id, order_ref, response_target_days, para_10_3_wording, filing_type (nullable), active |
+| `outgoing_document_types` | id, name, response_expected, response_days, active |
+| `file_classes` | id, name, code (unique) |
+| `list_items` | list_key, value, sort, active, meta jsonb; for simple drop-downs (modes with register channel, sender categories, actions, priorities, ack-via, security, file status, registrant types, licence statuses, payment channels and purposes, fuels, refusal grounds, filing types) |
+
+### 3.3 Numbering, audit, jobs
+
+| Table | Key columns |
+| --- | --- |
+| `counters` | series (ACK, FD, OUT, PAY, OUN, DEF, REG, FILE), year (0 for unyeared), scope ('' or file class code), last_value; pk (series, year, scope) |
+| `audit_log` | id bigserial, at, user_id, user_name, action, module, entity_type, entity_id, reference, detail, data jsonb, prev_hash, hash |
+| `daily_review_runs` | lagos_date (pk), started_at, finished_at, trigger (cron, manual), user_id, summary jsonb |
+| `email_messages` | id, kind, entity_type, entity_id, to, cc, subject, body, attachment_blob_keys, status (preview, queued, sent, failed, skipped_no_address), provider_message_id, error, created_by, sent_at |
+| `import_runs` | id, started_at, source_file, report jsonb (Phase 6) |
+
+### 3.4 Registry
+
+| Table | Key columns |
+| --- | --- |
+| `front_desk_items` | id, fd_no (unique), fd_year, received_at, sender, subject, correspondence_type_id, mode, delivered_by, phone, volumes, received_by_user_id, received_by_placeholder (import only), remarks, inward_item_id, registered_at, is_example |
+| `inward_items` | id, ack_no (unique), ack_year, received_at, mode, deemed_receipt_date, correspondence_type_id, sender, sender_category, sender_ref, document_date, subject, cac_no, related_ogserc_no, in_response_to_outward_id, lga, contact_person, phone, email, delivered_by, volumes, schedule2_count, fee_evidence, payment_reference, amount_shown_kobo, received_by_user_id, ack_issued_via, file_id, unit_override_id, action_required, priority, action_officer, response_due_override, routed_by_user_id, routed_at, forwarded_on, unit_officer_received_by, unit_received_at, closed_manual_on, ack_emailed_to, ack_emailed_at, front_desk_item_id, source (new_inward, registry_intake, register_direct, own_use_direct, import), remarks, is_example |
+| `outward_items` | id, out_no (unique), out_year, document_date, document_type_id, subject, addressee, recipient_category, recipient_contact, related_ogserc_no, in_reply_to_inward_id, file_id, originating_unit_id, prepared_by, signatory_id, signatory_name, signatory_designation, dispatch_mode, dispatched_on, dispatched_by_user_id, tracking_ref, delivery_confirmed, delivered_on, received_by_recipient, response_expected (nullable = type default), response_due_override, remarks, is_example |
+| `files` | id, file_ref (unique), title, file_class_id, owning_unit_id, opened_on, current_volume, security, status, closed_on, remarks, is_example |
+| `file_movements` | id, file_id, out_at, volume, released_by_user_id, issued_to, unit_id, purpose, return_by_override, returned_at, received_back_by_user_id, remarks, is_example |
+
+Constraint: an FD item links to at most one inward item (unique `inward_item_id`). Inward items keyed by ACK; submissions and own-use rows reference `inward_item_id` (unique), which gives "one ACK, one filing".
+
+### 3.5 Registration
+
+| Table | Key columns |
+| --- | --- |
+| `submissions` | id, inward_item_id (unique), ack_no (unique), status (nullable = draft), filing_type, form_filed, linked_submission_id, linked_registration_no, registered_name, trading_name, date_submitted, submission_channel, registrant_type, cac_no, tin, registered_address, principal_lga, other_lgas, towns_estates, primary_activity_code, installed_capacity_mw numeric, customers, licence_status, compliance_officer, phone, email, operating_on_effective_date, planned_start_date, approved_waiver_kobo, category_override, override_reason, 8 condition columns (nullable boolean; holds_any_licence derived), form_sections_not_complete, capacity_in_sections_mw, confirmed_category, category_confirmed_reason, released_on, date_submission_complete, deficiency_notice_date, show_cause_date, certificate_issue_date, registration_no (unique), certificate_needs_reissue, remarks, created_by, saved_at, priced_category, priced_fee_kobo, priced_late_initial_kobo, priced_late_daily_kobo, priced_late_cap_kobo, priced_deadline, priced_effective_date, priced_fee_version, front_desk_item_id, is_example |
+| `submission_other_activities` | submission_id, position, activity_code |
+| `submission_licences` | submission_id, position, licence_no, expiry_date |
+| `deficiency_notices` | id, submission_id, def_no (unique), issued_on, response_due, documents_outstanding, balance_kobo, checks_failed, issued_by |
+| `evaluations` | submission_id (pk), evaluating_officer_id, reviewing_supervisor_id, approving_officer_id, started_on, flag_override_reason, final_decision, reasons, review_date, approval_date, remarks |
+| `evaluation_answers` | submission_id, check_id, value (Y, N, NA), answered_by, answered_at; manual checks only |
+| `document_checklist` | id, owner_type (submission, own_use), owner_id, form, key, value (Y, N, NA, null), remarks, updated_by, updated_at; unique (owner_type, owner_id, key) |
+| `payments` | id, pay_no (unique), date_received, owner_type, owner_id, reference (ACK or OUN, denormalised), purpose, channel, amount_kobo (> 0), rrr, recorded_by, recorded_at, finance_status (pending, confirmed, rejected), verified_with_bank, decided_by, decided_at, finance_remarks, reversed, reversed_by, reversed_at, reversal_reason, is_example |
+| `own_use_notifications` | id, inward_item_id (unique), ack_no, oun_no (unique, null until saved), name, date_filed, cac_no, site_address, lga, nature_of_business, grid_connected, distribution_licensee, contact_person, phone, email, flag_override_reason, remarks, created_by, priced_fee_kobo, priced_threshold_kw, registration_no (unique), certificate_issue_date, registered_by, front_desk_item_id, is_example |
+| `own_use_units` | notification_id, position, make_model, kw numeric, fuel, avg_mwh |
+
+Database-level guards (hand-written migrations): payments cannot be updated except the Finance decision and reversal columns, and only from Pending / not reversed; numbers (`ack_no`, `fd_no`, `out_no`, `pay_no`, `oun_no`, `registration_no`, `def_no`, `file_ref`) cannot change once set; nothing in the registers can be deleted by the app role.
+
+## 4. Numbering service **[G12]**
+
+```ts
+issueNumber(tx, series, { year, scope }) → string
+  INSERT INTO counters (series, year, scope, last_value) VALUES ($1,$2,$3,0)
+    ON CONFLICT DO NOTHING;
+  UPDATE counters SET last_value = last_value + 1
+    WHERE series=$1 AND year=$2 AND scope=$3
+    RETURNING last_value;          -- row lock held until the transaction ends
+  format(series, year, scope, last_value)
+```
+
+- Always called with the transaction that saves the record, so a failed save releases nothing, and a committed number is never reissued.
+- 20 parallel saves → 20 consecutive numbers (acceptance test runs 20 concurrent transactions against real Postgres).
+- One ACK counter for New Inward, Registry Intake and direct Register / Own-Use entries.
+- A cancelled, refused or lapsed record keeps its number.
+- Typed file references (overtyped by the officer) do not move the counter; generated ones skip any reference already in use.
+
+## 5. Audit log
+
+- Written by `audit(tx, {...})` inside each service transaction.
+- `prev_hash`/`hash` (SHA-256 of the previous hash + row content) make tampering detectable; an admin "Verify audit chain" check runs in the daily review.
+- A trigger rejects `UPDATE`, `DELETE` and `TRUNCATE` on `audit_log`; the app's database role also lacks those privileges.
+- Before/after values stored in `data` give each record's history page.
+
+## 6. Auth and roles
+
+- Accounts are created by an admin (name, email, roles, unit). The user gets a one-time set-password link by email (console transport in development) or a temporary password shown once to the admin.
+- Sessions: database rows, 12-hour idle timeout, revocable by admin. Sign-in, sign-out and failed attempts audited.
+- `requireUser()` on every page and action; `authorize()` checks roles and record rules and returns every reason. The UI uses the same function to hide buttons, but the server is the gate. Route handlers (PDFs, exports, cron) apply the same checks; cron uses `CRON_SECRET` only.
+- Seed: the people named in `SPEC.md` §27.1, created inactive-until-confirmed ("flag for Kamiye to confirm"), with Kamiye as the first active admin (email from an environment variable, never hard-coded). No other names in code **[G2, G6]**.
+- Preview deployments are behind Vercel Deployment Protection in addition to app sign-in.
+
+## 7. Screens
+
+Sidebar (dark by default, collapsible; light mode available): one entry per module; entries hidden when the user has no role for them. Top bar: global search by any number (ACK, FD, OUT, PAY, OUN, REG, file ref) or name; user menu; theme toggle. Admin footer shows the deployed commit (`VERCEL_GIT_COMMIT_SHA`) **[G10]**. Effective Date placeholder banner for admins **[G1]**.
+
+| Module | Screens |
+| --- | --- |
+| Dashboard | Registry counters; registration figures by category, status, activity, LGA, month; money; work queues (awaiting payment, Finance queue, overdue deficiency responses, ready for decision, my evaluations, awaiting routing, items for my unit) |
+| Front desk | Log a document (form); Awaiting registry list; FD item page |
+| Registry intake | Intake form with "pull from front desk" and "pull acknowledged filing" pickers; list of acknowledged filings without a saved Register entry |
+| Inward | New inward (with front-desk pull); Inward Register (filters: status, unit, type, date, flags; EXAMPLE badge); item page (details, deemed receipt, status, response due, linked reply, slip, email log, history, update / forward / close actions) |
+| Routing | Routing queue (awaiting routing first); route form on the item page (Router only) |
+| Outward | New outward (get number); Outward Register; item page (dispatch, delivery, response tracking) |
+| Files | File Index; file page (movements, linked correspondence); new file; issue; return; overdue files |
+| Pending actions | List by unit with overdue flags; PDF |
+| Register | Register list (filters: status, category, filing type, SLA, flags, payment status); new submission form; submission page with tabs: Summary (category, fees, deadlines, next action, flags), Details, Documents, Payments, Evaluation, History; action bar showing allowed actions and blocking reasons |
+| Payments and Finance | Payments ledger; record payment; Finance Desk (pending, oldest first) with confirm / reject; reverse |
+| Documents | Per-submission checklist (also a tab); cross-submission outstanding-documents view |
+| Evaluation | EVAL-01 form per submission: officers, checks by stage (auto values greyed), counts, recommended outcome, approval blockers, decision buttons; my evaluations |
+| Own-use | Own-use list; notification form with generator units; notification page; register with certificate (when enabled) |
+| Reports | Acknowledgement slip (by ACK), Daily Register (by date), pending actions (by unit) as PDF |
+| Audit log | Filterable, read-only; per-record history links |
+| Admin | Settings (grouped, with notes and sources); fee table (versioned); activity map; forms and documents; evaluation checks (read-only text); correspondence and document types; units and divisions with emails (missing addresses highlighted); file classes; simple lists; holidays (with status); users and roles; signatories; run daily review now and run history; export registers (CSV / .xlsx); audit chain check; import (Phase 6) |
+
+Every number displayed is a link to its record. Every date shown is Lagos time.
+
+## 8. Project layout
+
+```
+app/
+  (auth)/sign-in
+  (app)/layout.tsx              sidebar shell
+  (app)/dashboard
+  (app)/front-desk, registry-intake, inward, routing, outward, files, pending
+  (app)/register, payments, finance, documents, evaluation, own-use
+  (app)/reports, audit, admin/...
+  api/cron/daily-review/route.ts
+  api/pdf/slip/[ack]/route.ts, api/pdf/daily-register/route.ts, api/pdf/pending/route.ts
+  api/export/[register]/route.ts
+src/
+  domain/          pure rules + tests (category.ts, fees.ts, deadlines.ts, documents.ts, checks.ts,
+                   flags.ts, workflow.ts, registry.ts, deemed.ts, workdays.ts, validators.ts, money.ts)
+  server/
+    db/            schema/*.ts, client.ts, migrations/
+    services/      one file per use case group
+    auth/          better-auth config, authorize.ts, roles.ts
+    numbering.ts, audit.ts, lagos.ts, settings.ts
+    email/         transport.ts, console.ts, resend.ts, templates/
+    pdf/           slip.tsx, daily-register.tsx, pending.tsx
+    blob.ts
+  components/      ui (shadcn), data-table, forms, shell
+seed/              reference.ts (all environments), examples.ts (dev/preview only), people.ts
+tests/             integration (Postgres), e2e (Playwright)
+```
+
+## 9. Environments and deployment
+
+- **Local**: Postgres in Docker (or a Neon dev branch), `.env.local`, `EMAIL_PROVIDER=console`, `APP_TODAY` allowed, seed with examples.
+- **Preview**: a Neon branch per preview via the Vercel–Neon integration, migrated and seeded with reference data + EXAMPLE rows; Deployment Protection on.
+- **Production**: migrations as a build step; reference data seed (idempotent); never EXAMPLE rows (guard checks `VERCEL_ENV`); cron enabled; region pinned; custom subdomain of ogserc.org.ng (DNS records prepared for whoever manages the domain).
+- **Environment variables**: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`, `CRON_SECRET`, `EMAIL_PROVIDER`, provider keys, `EMAIL_FROM`, `BLOB_READ_WRITE_TOKEN`, `BOOTSTRAP_ADMIN_EMAIL`, `APP_TODAY` (development and preview tests only).
+- **Backups**: Neon point-in-time restore; admin "Export registers" (CSV and .xlsx).
+
+## 10. Testing and acceptance
+
+| Acceptance check (brief) | Test |
+| --- | --- |
+| One Effective Date moves every deadline (as updated for Q6) | Domain + service test: change setting, assert global deadline, inward flag, unpriced record deadline, PRICING_OUT_OF_DATE on saved ones; then "Recalculate all open submissions" moves them and writes one audit entry each with the reason |
+| 20 parallel saves → 20 consecutive ACKs | Integration: 20 concurrent transactions on real Postgres |
+| Inward item and Register entry share the ACK series | Integration: interleave New Inward, Registry Intake and direct saves |
+| Phone 08021846578 kept; 8021846578 rejected clearly | Validator unit test + form round-trip |
+| Email 17:30 Fri 18 Dec 2026 → Mon 21 Dec | `deemed.ts` test |
+| Email 18:00 Thu 24 Dec 2026 → Tue 29 Dec | `deemed.ts` test |
+| Hand delivery 16:00 Fri 18 Dec 2026 → same day | `deemed.ts` test |
+| Category D, 100 days late → ₦10,000,000 (G14) | `fees.ts` test |
+| Approval refused while Commissioner empty | Service test: reason listed |
+| Finance 403 confirming own payment, incl. direct API | Service test + Playwright direct POST |
+| Non-Router 403 on routing | Service test + Playwright direct POST |
+| Daily review twice on one Lagos date runs once | Integration: two concurrent triggers |
+| Production has no EXAMPLE records; previews do | Seed guard test + check on preview |
+| Unit with no email → warning and "Not emailed: no address" | Service test |
+| Worked examples A–K | `SPEC.md` §30 tables as table-driven tests |
+
+CI: typecheck, lint, unit, integration (Postgres service), e2e against a built app; required on pull requests.
+
+## 11. Phase map
+
+| Phase | Delivers |
+| --- | --- |
+| 1 | Scaffold, Drizzle schema for identity, settings, reference data, counters, audit; migrations; Better Auth; roles and `authorize`; settings screen basics; numbering service; `lagos` and holidays; validators; audit writer; app shell with sidebar and dark mode; CI; first preview on Vercel |
+| 2 | Register, pricing, fees, documents, payments and Finance gate, evaluation and decisions, own-use, signatories |
+| 3 | Front desk, registry intake, inward, routing, update/forward/close, outward, files, pending actions |
+| 4 | Slip, Daily Register and pending PDFs; email adapter; daily review cron |
+| 5 | Combined dashboard; admin screens; exports |
+| 6 | Import of the real record with report; full test run; production setup |
+| 7 | Optional workbook export |
+
+Phase 2 needs the registry's inward item to hold the ACK. Phase 2 creates the `inward_items` table and the direct-entry path (`SPEC.md` §18.3); Phase 3 adds the registry screens on top.

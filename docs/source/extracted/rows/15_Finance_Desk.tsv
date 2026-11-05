@@ -1,0 +1,5 @@
+1|Finance Desk: payments waiting for confirmation (oldest first)
+2|Select a row and use Confirm or Reject. Confirming needs a bank/Remita check. The officer who recorded a payment cannot confirm it. Only confirmed payments count (SPEC §4.12).
+4|										Waiting	0
+5|										Amount	0
+6|Payment No.	Date Received	Reference	Registrant	Amount	RRR / Bank Reference	Recorded By	Recorded On	Days Waiting

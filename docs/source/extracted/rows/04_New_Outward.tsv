@@ -1,0 +1,22 @@
+1|	Log an Outgoing Item
+2|	Log the letter before signature to get its outward number, then quote that number on the document. Record dispatch later on "Update Item" if not sent today.
+4|	Date of document *	2026-11-03		docdate	Y	2026-11-03		SAVE & GET NUMBER
+5|	Document type *			dtype	Y
+6|	Subject *			subject	Y
+7|	Addressee / recipient *			addressee	Y
+8|	Recipient category *			rcat	Y			CLEAR FORM
+9|	Recipient address / email			rcontact
+10|	In reply to (inward no.)			inreply
+11|	Related OGSERC No.			relno				◀ REGISTRY DESK
+12|	File reference			fileref
+13|	Originating unit *			ounit	Y
+14|	Prepared by			prep
+15|	Signed by *	Oluwatoyin Sonoiki	Pick who signs (Lists, column AC). Defaults to the Secretary on the Desk; another name can be typed.	signed	Y	Oluwatoyin Sonoiki		Quote this number on the document
+16|	Signatory designation	Secretary to the Commission	Fills in from the signatory; type it if the signatory is not on the list.	desig		Secretary to the Commission
+17|	Dispatch mode *			dmode	Y
+18|	Date dispatched (blank if not yet sent)			disp
+19|	Dispatched by	Olanrewaju Oluyombo	Cleared automatically if no dispatch date is entered.	dispby		Olanrewaju Oluyombo
+20|	Tracking / email / courier ref.			track
+21|	Response expected? (Y/N)		Leave blank to use the document type default.	respexp
+22|	Response due (only to override)			respov
+23|	Remarks			remarks

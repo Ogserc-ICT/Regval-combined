@@ -1,0 +1,24 @@
+A1	'Finance Desk: payments waiting for confirmation (oldest first)'
+A2	'Select a row and use Confirm or Reject. Confirming needs a bank/Remita check. The officer who recorded a payment cannot confirm it. Only confirmed payments count (SPEC §4.12).'
+K4	'Waiting'
+L4	'=COUNTIFS(tblPayments[With Finance],"Yes")'	=> 0
+K5	'Amount'
+L5	'=SUMIFS(tblPayments[Amount],tblPayments[With Finance],"Yes")'	=> 0
+A6	'Payment No.'
+B6	'Date Received'
+C6	'Reference'
+D6	'Registrant'
+E6	'Amount'
+F6	'RRR / Bank Reference'
+G6	'Recorded By'
+H6	'Recorded On'
+I6	'Days Waiting'
+A7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE3F0>
+B7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CB367C920>	[fmt dd\-mmm\-yyyy]
+C7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE540>
+D7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE7E0>
+E7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE4E0>	[fmt "₦"#,##0.00;\-"₦"#,##0.00;"₦"0]
+F7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBD550>
+G7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE270>
+H7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE300>	[fmt dd\-mmm\-yyyy\ hh:mm]
+I7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBBFBE390>

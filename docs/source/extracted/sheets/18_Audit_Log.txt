@@ -1,0 +1,12 @@
+A1	'Audit log'
+A2	"Written by the buttons and by edits. Not tamper-proof: the web app's audit log is the record."
+A4	'Timestamp'	[fmt @]
+B4	'User'	[fmt @]
+C4	'Action'	[fmt @]
+D4	'Reference'	[fmt @]
+E4	'Detail'	[fmt @]
+A5	datetime.datetime(2026, 11, 5, 8, 56, 59)	[fmt dd\-mmm\-yyyy\ hh:mm:ss]
+B5	'Oluwafemi'	[fmt @]
+C5	'Daily review'	[fmt @]
+D5	''	[fmt @]
+E5	'Provisional today: 0; overdue deficiency responses: 0; numbers locked: 0; red: 0; amber: 0; unpaid/part-paid: 0; released for evaluation: 0'	[fmt @]

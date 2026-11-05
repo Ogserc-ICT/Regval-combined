@@ -1,0 +1,46 @@
+1|Settings
+2|Blue cells are inputs. Every change is written to the Audit Log. The fee table and activity map are on the Lists sheet.
+4|Parameter	Value	Note
+6|Order parameters (SPEC §1.7)
+7|Effective Date of the Order	2026-10-22	PLACEHOLDER (22 Oct 2026): replace with the gazetted Effective Date (para 2). Every deadline depends on it.
+8|Registration period (days)	60	Para 11(1).
+9|Extension of registration period (days)	0	Para 25: any extension granted by public notice.
+10|Registration deadline (existing operators)	2026-12-21	Calculated: Effective Date + period + extension.
+11|New operators: register at least (days) before start	30	Para 11(2).
+12|Determination period (days)	30	Para 13(1); provisional registration after this (para 13(4)).
+13|Deficiency response period (days)	14	Para 13(1)(b).
+14|Unlicensed: licence application within (days)	90	Para 18(1).
+15|Licence expiry window for the renewal flag (days)	183	Para 8(5): six months.
+16|Amber warning: days before determination due	7	Traffic light.
+17|Own-use notification threshold (kW)	200	Para 3(4): 200 kW to below 1 MW.
+18|Show-cause period before refusal (days)	14	Para 20.
+19|Annual confirmation due: month (1–12)	1	Para 16(2): 31 January.
+20|Annual confirmation due: day	31
+21|Fees revised on		Set once (SPEC §8.9).
+23|Numbers and signatories
+24|Registration number prefix	OGSERC/REG	PREFIX/YEAR/CATEGORY-ACTIVITY/SERIAL.
+25|Acknowledgement number prefix	OGSERC/ACK	Para 10(3).
+26|Own-use notification number prefix	OGSERC/OUN	Para 3(4).
+27|Payment record prefix	OGSERC/PAY
+28|Deficiency notice prefix	OGSERC/DEF	OGSERC/DEF/{year}/{ack serial}.
+29|Signatory: Chairman / Chief Executive Officer	[Name]	Approval of a new registration is blocked while this is [Name] or empty.
+30|Signatory: Commissioner	[Name]	As above.
+32|Policy settings (undecided by the Commission; SPEC §1.7, §9)
+33|Unpaid late charge blocks “submission complete”	N	§9.2. The Excel said no.
+34|Waiver also reduces the late charge	N	§9.3. The Excel said no.
+35|Unresolved data flags block approval outright	N	§9.5. N = an approver may override with a written reason. (The live app has this on.)
+36|Late charge required to release for evaluation	N	§4.12 Finance gate.
+37|Unpaid acknowledgement reminder after (days)		Blank = no reminder. Nothing is sent.
+38|Supply / retail category at 1 MW or more	K	Default K.
+39|Wrong form handling	Accept and re-categorise	§4.13.
+40|Other activities require their form's documents	N	§2.6.
+41|Own-use gets a certificate	N	§4.15.
+42|Registration fee on updates and annual confirmations	N	§2.5.
+44|Workbook
+45|Today override (testing only)		Leave blank. When set, every “today” in the workbook uses this date (like the app's APP_TODAY).
+46|Next acknowledgement serial	1	Not used in the combined workbook: Ack Nos come from the one OGSERC/ACK series shared with the Inward Register (highest number used + 1).
+47|Next payment serial	1	As above.
+48|Next own-use serial	1	As above.
+49|Daily review last run	2026-11-05 08:56	Set by the Daily review button.
+50|Rules version (git commit of src/domain)	39f98f8+local changes	Set when the workbook is built.
+51|Built on	2026-11-04 22:34	Set when the workbook is built.

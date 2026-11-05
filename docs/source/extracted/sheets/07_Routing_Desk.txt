@@ -1,0 +1,53 @@
+B1	'Route an Incoming Item'
+B2	'Secretary to the Commission and Head of Administration only. Choose the inward number, click LOAD, set routing, file and handling, choose your name and click SAVE ROUTING (your PIN or Windows sign-in is checked).'
+B4	'INCOMING ITEM'
+B5	'Inward no. ▶'
+D5	'=IF(C5="","",IF(ISNA(MATCH(C5,IN_no,0)),"Not found","Row "&MATCH(C5,IN_no,0)+5))'	=> None
+I5	'LOAD'
+B6	'Sender'
+E6	'@sender'
+B7	'Subject'
+E7	'@subject'
+B8	'Correspondence type'
+E8	'@type'
+I8	'SAVE ROUTING'
+B9	'Status'
+E9	'@status'
+B10	'Routed to unit'
+D10	'Suggested from the type until you set an override below.'
+E10	'@unit'
+B11	'Division'
+E11	'@div'
+B12	'ROUTING AND FILE'
+I12	'CLEAR FORM'
+B13	'Forward to unit (override)'
+D13	'Leave blank to keep the suggested unit.'
+E13	'unitov'
+B14	'File reference'
+D14	'=IF($C$14="","",IFERROR(INDEX(FI_title,MATCH($C$14,FI_ref,0)),"Not in the File Index — open it on the File Desk"))'	=> None
+E14	'fileref'
+B15	'HANDLING'
+B16	'Action required *'
+E16	'action'
+F16	'Y'
+B17	'Priority'
+E17	'prio'
+B18	'Action officer'
+E18	'actoff'
+I18	'◀ REGISTRY DESK'
+B19	'Response due (only to override)'
+D19	'Use when the sender sets a deadline.'
+E19	'dueov'
+B20	'Routed by *'
+D20	'Your name (Lists, Routing officers).'
+E20	'routedby'
+F20	'Y'
+B21	'Routed on'
+E21	'@routedon'
+DV C5	list	IN_no
+DV C13	list	UnitList
+DV C14	list	FI_ref
+DV C16	list	ActionList
+DV C17	list	PriorityList
+DV C19	date	DATE(2020,1,1)
+DV C20	list	RouterList

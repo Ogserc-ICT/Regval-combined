@@ -1,0 +1,17 @@
+1|	Front Desk — Log a Delivered Document
+2|	Record every document handed in. No acknowledgement is issued here: the item gets a front desk intake number and waits on the list below until the Registry registers it and issues the acknowledgement.
+4|	Date & time received *	2026-11-03 21:07	This time becomes the receipt time when the Registry registers it.	recv	Y	46329.880166435185		SAVE TO FRONT DESK LOG
+5|	Sender / organisation *			sender	Y
+6|	Subject / description *			subject	Y
+7|	Correspondence type (if known)		Leave blank if unsure — the Registry sets it.	type
+8|	Mode of receipt	Hand delivery		mode		Hand delivery		CLEAR FORM
+9|	Delivered by		Name of the person who brought it.	by
+10|	Phone			phone
+11|	No. of items / volumes			vols				◀ REGISTRY DESK
+12|	Received by (front desk) *			officer	Y
+13|	Remarks			remarks
+14|								Last intake no.
+15|								OGSERC/FD/2026/00001
+16|	AWAITING REGISTRY		1 item(s) not yet registered by the Registry
+17|	Intake no.	Sender	Subject					Received	Days waiting
+18|	OGSERC/FD/2026/00001	Verge Power Limited	Petition to the Commission	1				2026-11-03 20:50	0

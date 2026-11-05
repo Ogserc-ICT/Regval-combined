@@ -1,0 +1,650 @@
+A1	'OGSERC Registry — Dashboard'
+P1	'◀ DESK'
+A2	'Updates automatically from the Inward and Outward Registers, File Index and File Movement.'
+A4	'Incoming (Inward Register)'
+H4	'Outgoing (Outward Register)'
+M4	'Files'
+A5	'Item'
+B5	'Count'
+H5	'Item'
+I5	'Count'
+M5	'Item'
+N5	'Count'
+A6	'Items logged'
+B6	'=COUNT(IN_sn)'	=> 3
+H6	'Items logged'
+I6	'=COUNT(OUT_sn)'	=> 2
+M6	'Files in index'
+N6	'=COUNTIF(FI_ref,"?*")'	=> 2
+A7	'Received today'
+B7	'=COUNTIF(IN_rday,TODAY())'	=> 0
+H7	'Dispatched today'
+I7	'=COUNTIF(OUT_disp,TODAY())'	=> 0
+M7	'Open files'
+N7	'=COUNTIF(FI_fstatus,"Open")'	=> 2
+A8	'Received in the last 7 days'
+B8	'=COUNTIFS(IN_rday,">"&TODAY()-7,IN_rday,"<="&TODAY())'	=> 0
+H8	'Dispatched in the last 7 days'
+I8	'=COUNTIFS(OUT_disp,">"&TODAY()-7,OUT_disp,"<="&TODAY())'	=> 0
+M8	'Files out with officers'
+N8	'=COUNTIF(FM_status,"Out")+COUNTIF(FM_status,"Overdue")'	=> 1
+A9	'Awaiting routing / forwarding'
+B9	'=COUNTIF(IN_status,"Awaiting routing")+COUNTIF(IN_status,"Awaiting forwarding")'	=> 1
+H9	'Not yet dispatched'
+I9	'=COUNTIF(OUT_status,"Not yet dispatched")'	=> 0
+M9	'Files overdue for return'
+N9	'=COUNTIF(FM_status,"Overdue")'	=> 0
+A10	'Forwarding overdue (beyond target)'
+B10	'=COUNTIF(IN_flags,"*Not forwarded within target*")'	=> 0
+H10	'Dispatch overdue (beyond target)'
+I10	'=COUNTIF(OUT_flags,"*Not dispatched within target*")'	=> 0
+M10	'Movements logged'
+N10	'=COUNT(FM_sn)'	=> 2
+A11	'Open (with units)'
+B11	'=COUNTIF(IN_status,"Open")'	=> 0
+H11	'Delivery not confirmed'
+I11	'=COUNTIF(OUT_flags,"*Delivery not confirmed*")'	=> 0
+M11	'File Index rows with flags'
+N11	'=COUNTIF(FI_flags,"?*")'	=> 0
+A12	'Response overdue'
+B12	'=COUNTIF(IN_status,"Overdue")'	=> 0
+H12	'Awaiting response from recipient'
+I12	'=COUNTIF(OUT_status,"Awaiting response")'	=> 0
+A13	'Closed'
+B13	'=COUNTIF(IN_status,"Closed")'	=> 2
+H13	'Recipient response overdue'
+I13	'=COUNTIF(OUT_status,"Response overdue")'	=> 0
+A14	'Noted / filed (no response needed)'
+B14	'=COUNTIF(IN_status,"Noted / filed")'	=> 0
+H14	'Responses received'
+I14	'=COUNTIF(OUT_status,"Response received")'	=> 1
+A15	'Closed on time (%)'
+B15	'=IF(COUNT(IN_ontime)=0,"",SUM(IN_ontime)/COUNT(IN_ontime))'	=> 1
+H15	'Replies to inward items'
+I15	'=COUNTIF(OUT_inreply,"?*")'	=> 2
+A16	'Acknowledgements not yet issued'
+B16	'=COUNTIF(IN_ackvia,"Not yet issued")'	=> 0
+H16	'Rows with flags'
+I16	'=COUNTIF(OUT_flags,"?*")'	=> 0
+A17	'Received after hours / non-working day'
+B17	'=SUMPRODUCT((IN_deemed<>"")*(IN_rday<>"")*(IN_deemed<>IN_rday))'	=> 1
+A18	'REG-01 filed after the registration deadline'
+B18	'=COUNTIF(IN_late,"Yes")'	=> 0
+A19	'Rows with flags'
+B19	'=COUNTIF(IN_flags,"?*")'	=> 0
+A20	'At front desk, awaiting registry'
+B20	'=SUM(FD_pflag)'	=> 1
+A22	'By division'
+H22	'Incoming by category'
+A23	'Division'
+B23	'Inward routed'
+C23	'Open'
+D23	'Overdue'
+E23	'Closed'
+F23	'Outward originated'
+H23	'Category'
+I23	'Received'
+J23	'Open'
+K23	'Overdue'
+A24	'Office of the Chairman'
+B24	'=COUNTIF(IN_div,"Office of the Chairman")'	=> 1
+C24	'=COUNTIFS(IN_div,"Office of the Chairman",IN_status,"Open")'	=> 0
+D24	'=COUNTIFS(IN_div,"Office of the Chairman",IN_status,"Overdue")'	=> 0
+E24	'=COUNTIFS(IN_div,"Office of the Chairman",IN_status,"Closed")'	=> 1
+F24	'=COUNTIF(OUT_div,"Office of the Chairman")'	=> 1
+H24	'Regulatory filing'
+I24	'=COUNTIF(IN_cat,"Regulatory filing")'	=> 2
+J24	'=COUNTIFS(IN_cat,"Regulatory filing",IN_status,"Open")+COUNTIFS(IN_cat,"Regulatory filing",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Regulatory filing",IN_status,"Awaiting routing")'	=> 1
+K24	'=COUNTIFS(IN_cat,"Regulatory filing",IN_status,"Overdue")'	=> 0
+A25	'Engineering Services'
+B25	'=COUNTIF(IN_div,"Engineering Services")'	=> 0
+C25	'=COUNTIFS(IN_div,"Engineering Services",IN_status,"Open")'	=> 0
+D25	'=COUNTIFS(IN_div,"Engineering Services",IN_status,"Overdue")'	=> 0
+E25	'=COUNTIFS(IN_div,"Engineering Services",IN_status,"Closed")'	=> 0
+F25	'=COUNTIF(OUT_div,"Engineering Services")'	=> 0
+H25	'Consumer matters'
+I25	'=COUNTIF(IN_cat,"Consumer matters")'	=> 0
+J25	'=COUNTIFS(IN_cat,"Consumer matters",IN_status,"Open")+COUNTIFS(IN_cat,"Consumer matters",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Consumer matters",IN_status,"Awaiting routing")'	=> 0
+K25	'=COUNTIFS(IN_cat,"Consumer matters",IN_status,"Overdue")'	=> 0
+A26	'Electricity Market, Planning and Research'
+B26	'=COUNTIF(IN_div,"Electricity Market, Planning and Research")'	=> 0
+C26	'=COUNTIFS(IN_div,"Electricity Market, Planning and Research",IN_status,"Open")'	=> 0
+D26	'=COUNTIFS(IN_div,"Electricity Market, Planning and Research",IN_status,"Overdue")'	=> 0
+E26	'=COUNTIFS(IN_div,"Electricity Market, Planning and Research",IN_status,"Closed")'	=> 0
+F26	'=COUNTIF(OUT_div,"Electricity Market, Planning and Research")'	=> 0
+H26	'Licensee returns & reports'
+I26	'=COUNTIF(IN_cat,"Licensee returns & reports")'	=> 0
+J26	'=COUNTIFS(IN_cat,"Licensee returns & reports",IN_status,"Open")+COUNTIFS(IN_cat,"Licensee returns & reports",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Licensee returns & reports",IN_status,"Awaiting routing")'	=> 0
+K26	'=COUNTIFS(IN_cat,"Licensee returns & reports",IN_status,"Overdue")'	=> 0
+A27	'Financial Management Services'
+B27	'=COUNTIF(IN_div,"Financial Management Services")'	=> 0
+C27	'=COUNTIFS(IN_div,"Financial Management Services",IN_status,"Open")'	=> 0
+D27	'=COUNTIFS(IN_div,"Financial Management Services",IN_status,"Overdue")'	=> 0
+E27	'=COUNTIFS(IN_div,"Financial Management Services",IN_status,"Closed")'	=> 0
+F27	'=COUNTIF(OUT_div,"Financial Management Services")'	=> 0
+H27	'Government & legislature'
+I27	'=COUNTIF(IN_cat,"Government & legislature")'	=> 0
+J27	'=COUNTIFS(IN_cat,"Government & legislature",IN_status,"Open")+COUNTIFS(IN_cat,"Government & legislature",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Government & legislature",IN_status,"Awaiting routing")'	=> 0
+K27	'=COUNTIFS(IN_cat,"Government & legislature",IN_status,"Overdue")'	=> 0
+A28	'Legal, Licensing and Consumer Affairs'
+B28	'=COUNTIF(IN_div,"Legal, Licensing and Consumer Affairs")'	=> 2
+C28	'=COUNTIFS(IN_div,"Legal, Licensing and Consumer Affairs",IN_status,"Open")'	=> 0
+D28	'=COUNTIFS(IN_div,"Legal, Licensing and Consumer Affairs",IN_status,"Overdue")'	=> 0
+E28	'=COUNTIFS(IN_div,"Legal, Licensing and Consumer Affairs",IN_status,"Closed")'	=> 1
+F28	'=COUNTIF(OUT_div,"Legal, Licensing and Consumer Affairs")'	=> 1
+H28	'Federal & sector agencies'
+I28	'=COUNTIF(IN_cat,"Federal & sector agencies")'	=> 1
+J28	'=COUNTIFS(IN_cat,"Federal & sector agencies",IN_status,"Open")+COUNTIFS(IN_cat,"Federal & sector agencies",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Federal & sector agencies",IN_status,"Awaiting routing")'	=> 0
+K28	'=COUNTIFS(IN_cat,"Federal & sector agencies",IN_status,"Overdue")'	=> 0
+H29	'Industry & investors'
+I29	'=COUNTIF(IN_cat,"Industry & investors")'	=> 0
+J29	'=COUNTIFS(IN_cat,"Industry & investors",IN_status,"Open")+COUNTIFS(IN_cat,"Industry & investors",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Industry & investors",IN_status,"Awaiting routing")'	=> 0
+K29	'=COUNTIFS(IN_cat,"Industry & investors",IN_status,"Overdue")'	=> 0
+A30	'Not yet routed'
+B30	'=COUNTIF(IN_status,"Awaiting routing")'	=> 1
+H30	'Legal & court'
+I30	'=COUNTIF(IN_cat,"Legal & court")'	=> 0
+J30	'=COUNTIFS(IN_cat,"Legal & court",IN_status,"Open")+COUNTIFS(IN_cat,"Legal & court",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Legal & court",IN_status,"Awaiting routing")'	=> 0
+K30	'=COUNTIFS(IN_cat,"Legal & court",IN_status,"Overdue")'	=> 0
+H31	'Invitations & events'
+I31	'=COUNTIF(IN_cat,"Invitations & events")'	=> 0
+J31	'=COUNTIFS(IN_cat,"Invitations & events",IN_status,"Open")+COUNTIFS(IN_cat,"Invitations & events",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Invitations & events",IN_status,"Awaiting routing")'	=> 0
+K31	'=COUNTIFS(IN_cat,"Invitations & events",IN_status,"Overdue")'	=> 0
+H32	'Finance & procurement'
+I32	'=COUNTIF(IN_cat,"Finance & procurement")'	=> 0
+J32	'=COUNTIFS(IN_cat,"Finance & procurement",IN_status,"Open")+COUNTIFS(IN_cat,"Finance & procurement",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Finance & procurement",IN_status,"Awaiting routing")'	=> 0
+K32	'=COUNTIFS(IN_cat,"Finance & procurement",IN_status,"Overdue")'	=> 0
+H33	'Administration & HR'
+I33	'=COUNTIF(IN_cat,"Administration & HR")'	=> 0
+J33	'=COUNTIFS(IN_cat,"Administration & HR",IN_status,"Open")+COUNTIFS(IN_cat,"Administration & HR",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Administration & HR",IN_status,"Awaiting routing")'	=> 0
+K33	'=COUNTIFS(IN_cat,"Administration & HR",IN_status,"Overdue")'	=> 0
+H34	'Media & public'
+I34	'=COUNTIF(IN_cat,"Media & public")'	=> 0
+J34	'=COUNTIFS(IN_cat,"Media & public",IN_status,"Open")+COUNTIFS(IN_cat,"Media & public",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Media & public",IN_status,"Awaiting routing")'	=> 0
+K34	'=COUNTIFS(IN_cat,"Media & public",IN_status,"Overdue")'	=> 0
+H35	'Other'
+I35	'=COUNTIF(IN_cat,"Other")'	=> 0
+J35	'=COUNTIFS(IN_cat,"Other",IN_status,"Open")+COUNTIFS(IN_cat,"Other",IN_status,"Awaiting forwarding")+COUNTIFS(IN_cat,"Other",IN_status,"Awaiting routing")'	=> 0
+K35	'=COUNTIFS(IN_cat,"Other",IN_status,"Overdue")'	=> 0
+A38	'By month (inward by deemed receipt; outward by document date)'
+H38	'By correspondent'
+M38	'Outgoing by document type'
+A39	'Month'
+B39	'Inward'
+C39	'Outward'
+H39	'Sender / recipient category'
+I39	'Inward'
+J39	'Outward'
+M39	'Document type'
+N39	'Count'
+A40	'=EDATE(DashStart,0)'	=> datetime.datetime(2026, 11, 1, 0, 0)
+B40	'=COUNTIF(IN_mon,A40)'	=> 1
+C40	'=COUNTIF(OUT_mon,A40)'	=> 1
+H40	'Registrant / licensee'
+I40	'=COUNTIF(IN_scat,"Registrant / licensee")'	=> 2
+J40	'=COUNTIF(OUT_rcat,"Registrant / licensee")'	=> 1
+M40	'Acknowledgement / holding reply'
+N40	'=COUNTIF(OUT_dtype,"Acknowledgement / holding reply")'	=> 0
+A41	'=EDATE(DashStart,1)'	=> datetime.datetime(2026, 12, 1, 0, 0)
+B41	'=COUNTIF(IN_mon,A41)'	=> 2
+C41	'=COUNTIF(OUT_mon,A41)'	=> 1
+H41	'Prospective applicant'
+I41	'=COUNTIF(IN_scat,"Prospective applicant")'	=> 0
+J41	'=COUNTIF(OUT_rcat,"Prospective applicant")'	=> 0
+M41	'Reply to correspondence'
+N41	'=COUNTIF(OUT_dtype,"Reply to correspondence")'	=> 0
+A42	'=EDATE(DashStart,2)'	=> datetime.datetime(2027, 1, 1, 0, 0)
+B42	'=COUNTIF(IN_mon,A42)'	=> 0
+C42	'=COUNTIF(OUT_mon,A42)'	=> 0
+H42	'Consumer / member of public'
+I42	'=COUNTIF(IN_scat,"Consumer / member of public")'	=> 0
+J42	'=COUNTIF(OUT_rcat,"Consumer / member of public")'	=> 0
+M42	'Letter (general)'
+N42	'=COUNTIF(OUT_dtype,"Letter (general)")'	=> 0
+A43	'=EDATE(DashStart,3)'	=> datetime.datetime(2027, 2, 1, 0, 0)
+B43	'=COUNTIF(IN_mon,A43)'	=> 0
+C43	'=COUNTIF(OUT_mon,A43)'	=> 0
+H43	'Community / association'
+I43	'=COUNTIF(IN_scat,"Community / association")'	=> 0
+J43	'=COUNTIF(OUT_rcat,"Community / association")'	=> 0
+M43	'Deficiency notice'
+N43	'=COUNTIF(OUT_dtype,"Deficiency notice")'	=> 1
+A44	'=EDATE(DashStart,4)'	=> datetime.datetime(2027, 3, 1, 0, 0)
+B44	'=COUNTIF(IN_mon,A44)'	=> 0
+C44	'=COUNTIF(OUT_mon,A44)'	=> 0
+H44	"Governor's Office"
+I44	'=COUNTIF(IN_scat,"Governor\'s Office")'	=> 0
+J44	'=COUNTIF(OUT_rcat,"Governor\'s Office")'	=> 0
+M44	'Information request to licensee'
+N44	'=COUNTIF(OUT_dtype,"Information request to licensee")'	=> 0
+A45	'=EDATE(DashStart,5)'	=> datetime.datetime(2027, 4, 1, 0, 0)
+B45	'=COUNTIF(IN_mon,A45)'	=> 0
+C45	'=COUNTIF(OUT_mon,A45)'	=> 0
+H45	'State MDA'
+I45	'=COUNTIF(IN_scat,"State MDA")'	=> 0
+J45	'=COUNTIF(OUT_rcat,"State MDA")'	=> 0
+M45	'Registration certificate'
+N45	'=COUNTIF(OUT_dtype,"Registration certificate")'	=> 0
+A46	'=EDATE(DashStart,6)'	=> datetime.datetime(2027, 5, 1, 0, 0)
+B46	'=COUNTIF(IN_mon,A46)'	=> 0
+C46	'=COUNTIF(OUT_mon,A46)'	=> 0
+H46	'Ogun State House of Assembly'
+I46	'=COUNTIF(IN_scat,"Ogun State House of Assembly")'	=> 0
+J46	'=COUNTIF(OUT_rcat,"Ogun State House of Assembly")'	=> 0
+M46	'Licence / permit'
+N46	'=COUNTIF(OUT_dtype,"Licence / permit")'	=> 0
+A47	'=EDATE(DashStart,7)'	=> datetime.datetime(2027, 6, 1, 0, 0)
+B47	'=COUNTIF(IN_mon,A47)'	=> 0
+C47	'=COUNTIF(OUT_mon,A47)'	=> 0
+H47	'Local Government'
+I47	'=COUNTIF(IN_scat,"Local Government")'	=> 0
+J47	'=COUNTIF(OUT_rcat,"Local Government")'	=> 0
+M47	'Decision / determination'
+N47	'=COUNTIF(OUT_dtype,"Decision / determination")'	=> 0
+A48	'=EDATE(DashStart,8)'	=> datetime.datetime(2027, 7, 1, 0, 0)
+B48	'=COUNTIF(IN_mon,A48)'	=> 0
+C48	'=COUNTIF(OUT_mon,A48)'	=> 0
+H48	'NERC'
+I48	'=COUNTIF(IN_scat,"NERC")'	=> 1
+J48	'=COUNTIF(OUT_rcat,"NERC")'	=> 1
+M48	'Regulatory order'
+N48	'=COUNTIF(OUT_dtype,"Regulatory order")'	=> 0
+A49	'=EDATE(DashStart,9)'	=> datetime.datetime(2027, 8, 1, 0, 0)
+B49	'=COUNTIF(IN_mon,A49)'	=> 0
+C49	'=COUNTIF(OUT_mon,A49)'	=> 0
+H49	'Federal MDA (other)'
+I49	'=COUNTIF(IN_scat,"Federal MDA (other)")'	=> 0
+J49	'=COUNTIF(OUT_rcat,"Federal MDA (other)")'	=> 0
+M49	'Regulation / guideline'
+N49	'=COUNTIF(OUT_dtype,"Regulation / guideline")'	=> 0
+A50	'=EDATE(DashStart,10)'	=> datetime.datetime(2027, 9, 1, 0, 0)
+B50	'=COUNTIF(IN_mon,A50)'	=> 0
+C50	'=COUNTIF(OUT_mon,A50)'	=> 0
+H50	'DisCo / GenCo / TCN'
+I50	'=COUNTIF(IN_scat,"DisCo / GenCo / TCN")'	=> 0
+J50	'=COUNTIF(OUT_rcat,"DisCo / GenCo / TCN")'	=> 0
+M50	'Public notice / consultation paper'
+N50	'=COUNTIF(OUT_dtype,"Public notice / consultation paper")'	=> 0
+A51	'=EDATE(DashStart,11)'	=> datetime.datetime(2027, 10, 1, 0, 0)
+B51	'=COUNTIF(IN_mon,A51)'	=> 0
+C51	'=COUNTIF(OUT_mon,A51)'	=> 0
+H51	'Investor / developer'
+I51	'=COUNTIF(IN_scat,"Investor / developer")'	=> 0
+J51	'=COUNTIF(OUT_rcat,"Investor / developer")'	=> 0
+M51	'Circular to licensees'
+N51	'=COUNTIF(OUT_dtype,"Circular to licensees")'	=> 0
+A52	'=EDATE(DashStart,12)'	=> datetime.datetime(2027, 11, 1, 0, 0)
+B52	'=COUNTIF(IN_mon,A52)'	=> 0
+C52	'=COUNTIF(OUT_mon,A52)'	=> 0
+H52	'Development partner'
+I52	'=COUNTIF(IN_scat,"Development partner")'	=> 0
+J52	'=COUNTIF(OUT_rcat,"Development partner")'	=> 0
+M52	'Compliance / enforcement notice'
+N52	'=COUNTIF(OUT_dtype,"Compliance / enforcement notice")'	=> 0
+A53	'=EDATE(DashStart,13)'	=> datetime.datetime(2027, 12, 1, 0, 0)
+B53	'=COUNTIF(IN_mon,A53)'	=> 0
+C53	'=COUNTIF(OUT_mon,A53)'	=> 0
+H53	'Court / legal counsel'
+I53	'=COUNTIF(IN_scat,"Court / legal counsel")'	=> 0
+J53	'=COUNTIF(OUT_rcat,"Court / legal counsel")'	=> 0
+M53	'Fee demand / invoice'
+N53	'=COUNTIF(OUT_dtype,"Fee demand / invoice")'	=> 0
+A54	'=EDATE(DashStart,14)'	=> datetime.datetime(2028, 1, 1, 0, 0)
+B54	'=COUNTIF(IN_mon,A54)'	=> 0
+C54	'=COUNTIF(OUT_mon,A54)'	=> 0
+H54	'Media'
+I54	'=COUNTIF(IN_scat,"Media")'	=> 0
+J54	'=COUNTIF(OUT_rcat,"Media")'	=> 0
+M54	'Response to consumer complaint'
+N54	'=COUNTIF(OUT_dtype,"Response to consumer complaint")'	=> 0
+A55	'=EDATE(DashStart,15)'	=> datetime.datetime(2028, 2, 1, 0, 0)
+B55	'=COUNTIF(IN_mon,A55)'	=> 0
+C55	'=COUNTIF(OUT_mon,A55)'	=> 0
+H55	'Vendor / contractor'
+I55	'=COUNTIF(IN_scat,"Vendor / contractor")'	=> 0
+J55	'=COUNTIF(OUT_rcat,"Vendor / contractor")'	=> 0
+M55	"Letter to Governor's Office / State MDA"
+N55	'=COUNTIF(OUT_dtype,"Letter to Governor\'s Office / State MDA")'	=> 0
+A56	'=EDATE(DashStart,16)'	=> datetime.datetime(2028, 3, 1, 0, 0)
+B56	'=COUNTIF(IN_mon,A56)'	=> 0
+C56	'=COUNTIF(OUT_mon,A56)'	=> 0
+H56	'OGSERC internal'
+I56	'=COUNTIF(IN_scat,"OGSERC internal")'	=> 0
+J56	'=COUNTIF(OUT_rcat,"OGSERC internal")'	=> 0
+M56	'Letter to NERC / Federal agency'
+N56	'=COUNTIF(OUT_dtype,"Letter to NERC / Federal agency")'	=> 1
+A57	'=EDATE(DashStart,17)'	=> datetime.datetime(2028, 4, 1, 0, 0)
+B57	'=COUNTIF(IN_mon,A57)'	=> 0
+C57	'=COUNTIF(OUT_mon,A57)'	=> 0
+H57	'Other'
+I57	'=COUNTIF(IN_scat,"Other")'	=> 0
+J57	'=COUNTIF(OUT_rcat,"Other")'	=> 0
+M57	'Court filing / legal correspondence'
+N57	'=COUNTIF(OUT_dtype,"Court filing / legal correspondence")'	=> 0
+A58	'=EDATE(DashStart,18)'	=> datetime.datetime(2028, 5, 1, 0, 0)
+B58	'=COUNTIF(IN_mon,A58)'	=> 0
+C58	'=COUNTIF(OUT_mon,A58)'	=> 0
+M58	'Press release / media statement'
+N58	'=COUNTIF(OUT_dtype,"Press release / media statement")'	=> 0
+A59	'=EDATE(DashStart,19)'	=> datetime.datetime(2028, 6, 1, 0, 0)
+B59	'=COUNTIF(IN_mon,A59)'	=> 0
+C59	'=COUNTIF(OUT_mon,A59)'	=> 0
+M59	'Invitation / meeting notice'
+N59	'=COUNTIF(OUT_dtype,"Invitation / meeting notice")'	=> 0
+A60	'=EDATE(DashStart,20)'	=> datetime.datetime(2028, 7, 1, 0, 0)
+B60	'=COUNTIF(IN_mon,A60)'	=> 0
+C60	'=COUNTIF(OUT_mon,A60)'	=> 0
+M60	'Internal memo'
+N60	'=COUNTIF(OUT_dtype,"Internal memo")'	=> 0
+A61	'=EDATE(DashStart,21)'	=> datetime.datetime(2028, 8, 1, 0, 0)
+B61	'=COUNTIF(IN_mon,A61)'	=> 0
+C61	'=COUNTIF(OUT_mon,A61)'	=> 0
+M61	'Report submitted'
+N61	'=COUNTIF(OUT_dtype,"Report submitted")'	=> 0
+A62	'=EDATE(DashStart,22)'	=> datetime.datetime(2028, 9, 1, 0, 0)
+B62	'=COUNTIF(IN_mon,A62)'	=> 0
+C62	'=COUNTIF(OUT_mon,A62)'	=> 0
+M62	'Other'
+N62	'=COUNTIF(OUT_dtype,"Other")'	=> 0
+A63	'=EDATE(DashStart,23)'	=> datetime.datetime(2028, 10, 1, 0, 0)
+B63	'=COUNTIF(IN_mon,A63)'	=> 0
+C63	'=COUNTIF(OUT_mon,A63)'	=> 0
+A66	'Incoming by type'
+H66	'Incoming by principal LGA'
+M66	'By unit'
+A67	'Type'
+B67	'Count'
+H67	'LGA'
+I67	'Count'
+M67	'Unit'
+N67	'Inward routed'
+O67	'Open'
+P67	'Overdue'
+Q67	'Closed'
+R67	'Outward originated'
+A68	'REG-01 Registration (new)'
+B68	'=COUNTIF(IN_type,"REG-01 Registration (new)")'	=> 1
+H68	'Abeokuta North'
+I68	'=COUNTIF(IN_lga,"Abeokuta North")'	=> 0
+M68	'Office of the General Counsel and Secretary (Registry)'
+N68	'=COUNTIF(IN_unit,"Office of the General Counsel and Secretary (Registry)")'	=> 1
+O68	'=COUNTIFS(IN_unit,"Office of the General Counsel and Secretary (Registry)",IN_status,"Open")'	=> 0
+P68	'=COUNTIFS(IN_unit,"Office of the General Counsel and Secretary (Registry)",IN_status,"Overdue")'	=> 0
+Q68	'=COUNTIFS(IN_unit,"Office of the General Counsel and Secretary (Registry)",IN_status,"Closed")'	=> 1
+R68	'=COUNTIF(OUT_ounit,"Office of the General Counsel and Secretary (Registry)")'	=> 1
+A69	'OUN-01 Own-use notification'
+B69	'=COUNTIF(IN_type,"OUN-01 Own-use notification")'	=> 0
+H69	'Abeokuta South'
+I69	'=COUNTIF(IN_lga,"Abeokuta South")'	=> 0
+M69	'Internal Audit unit'
+N69	'=COUNTIF(IN_unit,"Internal Audit unit")'	=> 0
+O69	'=COUNTIFS(IN_unit,"Internal Audit unit",IN_status,"Open")'	=> 0
+P69	'=COUNTIFS(IN_unit,"Internal Audit unit",IN_status,"Overdue")'	=> 0
+Q69	'=COUNTIFS(IN_unit,"Internal Audit unit",IN_status,"Closed")'	=> 0
+R69	'=COUNTIF(OUT_ounit,"Internal Audit unit")'	=> 0
+A70	'Update - material change'
+B70	'=COUNTIF(IN_type,"Update - material change")'	=> 0
+H70	'Ado-Odo/Ota'
+I70	'=COUNTIF(IN_lga,"Ado-Odo/Ota")'	=> 0
+M70	'Public Affairs and Stakeholder unit: Communication'
+N70	'=COUNTIF(IN_unit,"Public Affairs and Stakeholder unit: Communication")'	=> 0
+O70	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Communication",IN_status,"Open")'	=> 0
+P70	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Communication",IN_status,"Overdue")'	=> 0
+Q70	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Communication",IN_status,"Closed")'	=> 0
+R70	'=COUNTIF(OUT_ounit,"Public Affairs and Stakeholder unit: Communication")'	=> 0
+A71	'Annual confirmation'
+B71	'=COUNTIF(IN_type,"Annual confirmation")'	=> 0
+H71	'Ewekoro'
+I71	'=COUNTIF(IN_lga,"Ewekoro")'	=> 0
+M71	'Public Affairs and Stakeholder unit: New Media'
+N71	'=COUNTIF(IN_unit,"Public Affairs and Stakeholder unit: New Media")'	=> 0
+O71	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: New Media",IN_status,"Open")'	=> 0
+P71	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: New Media",IN_status,"Overdue")'	=> 0
+Q71	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: New Media",IN_status,"Closed")'	=> 0
+R71	'=COUNTIF(OUT_ounit,"Public Affairs and Stakeholder unit: New Media")'	=> 0
+A72	'Deficiency response'
+B72	'=COUNTIF(IN_type,"Deficiency response")'	=> 1
+H72	'Ifo'
+I72	'=COUNTIF(IN_lga,"Ifo")'	=> 0
+M72	'Public Affairs and Stakeholder unit: Protocol'
+N72	'=COUNTIF(IN_unit,"Public Affairs and Stakeholder unit: Protocol")'	=> 0
+O72	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Protocol",IN_status,"Open")'	=> 0
+P72	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Protocol",IN_status,"Overdue")'	=> 0
+Q72	'=COUNTIFS(IN_unit,"Public Affairs and Stakeholder unit: Protocol",IN_status,"Closed")'	=> 0
+R72	'=COUNTIF(OUT_ounit,"Public Affairs and Stakeholder unit: Protocol")'	=> 0
+A73	'Licence / permit application'
+B73	'=COUNTIF(IN_type,"Licence / permit application")'	=> 0
+H73	'Ijebu East'
+I73	'=COUNTIF(IN_lga,"Ijebu East")'	=> 0
+M73	'Engineering Standards unit'
+N73	'=COUNTIF(IN_unit,"Engineering Standards unit")'	=> 0
+O73	'=COUNTIFS(IN_unit,"Engineering Standards unit",IN_status,"Open")'	=> 0
+P73	'=COUNTIFS(IN_unit,"Engineering Standards unit",IN_status,"Overdue")'	=> 0
+Q73	'=COUNTIFS(IN_unit,"Engineering Standards unit",IN_status,"Closed")'	=> 0
+R73	'=COUNTIF(OUT_ounit,"Engineering Standards unit")'	=> 0
+A74	'Multi-State ring-fencing plan'
+B74	'=COUNTIF(IN_type,"Multi-State ring-fencing plan")'	=> 0
+H74	'Ijebu North'
+I74	'=COUNTIF(IN_lga,"Ijebu North")'	=> 0
+M74	'Networks unit: Transmission and Distribution'
+N74	'=COUNTIF(IN_unit,"Networks unit: Transmission and Distribution")'	=> 0
+O74	'=COUNTIFS(IN_unit,"Networks unit: Transmission and Distribution",IN_status,"Open")'	=> 0
+P74	'=COUNTIFS(IN_unit,"Networks unit: Transmission and Distribution",IN_status,"Overdue")'	=> 0
+Q74	'=COUNTIFS(IN_unit,"Networks unit: Transmission and Distribution",IN_status,"Closed")'	=> 0
+R74	'=COUNTIF(OUT_ounit,"Networks unit: Transmission and Distribution")'	=> 0
+A75	'Licence renewal application'
+B75	'=COUNTIF(IN_type,"Licence renewal application")'	=> 0
+H75	'Ijebu North East'
+I75	'=COUNTIF(IN_lga,"Ijebu North East")'	=> 0
+M75	'Networks unit: Generation'
+N75	'=COUNTIF(IN_unit,"Networks unit: Generation")'	=> 0
+O75	'=COUNTIFS(IN_unit,"Networks unit: Generation",IN_status,"Open")'	=> 0
+P75	'=COUNTIFS(IN_unit,"Networks unit: Generation",IN_status,"Overdue")'	=> 0
+Q75	'=COUNTIFS(IN_unit,"Networks unit: Generation",IN_status,"Closed")'	=> 0
+R75	'=COUNTIF(OUT_ounit,"Networks unit: Generation")'	=> 0
+A76	'Fee payment evidence'
+B76	'=COUNTIF(IN_type,"Fee payment evidence")'	=> 0
+H76	'Ijebu Ode'
+I76	'=COUNTIF(IN_lga,"Ijebu Ode")'	=> 0
+M76	'Performance Monitoring unit'
+N76	'=COUNTIF(IN_unit,"Performance Monitoring unit")'	=> 0
+O76	'=COUNTIFS(IN_unit,"Performance Monitoring unit",IN_status,"Open")'	=> 0
+P76	'=COUNTIFS(IN_unit,"Performance Monitoring unit",IN_status,"Overdue")'	=> 0
+Q76	'=COUNTIFS(IN_unit,"Performance Monitoring unit",IN_status,"Closed")'	=> 0
+R76	'=COUNTIF(OUT_ounit,"Performance Monitoring unit")'	=> 0
+A77	'Confidentiality claim / representation'
+B77	'=COUNTIF(IN_type,"Confidentiality claim / representation")'	=> 0
+H77	'Ikenne'
+I77	'=COUNTIF(IN_lga,"Ikenne")'	=> 0
+M77	'Metering Standards unit'
+N77	'=COUNTIF(IN_unit,"Metering Standards unit")'	=> 0
+O77	'=COUNTIFS(IN_unit,"Metering Standards unit",IN_status,"Open")'	=> 0
+P77	'=COUNTIFS(IN_unit,"Metering Standards unit",IN_status,"Overdue")'	=> 0
+Q77	'=COUNTIFS(IN_unit,"Metering Standards unit",IN_status,"Closed")'	=> 0
+R77	'=COUNTIF(OUT_ounit,"Metering Standards unit")'	=> 0
+A78	'Application for review'
+B78	'=COUNTIF(IN_type,"Application for review")'	=> 0
+H78	'Imeko Afon'
+I78	'=COUNTIF(IN_lga,"Imeko Afon")'	=> 0
+M78	'Occupational Health, Safety and Performance Analysis unit'
+N78	'=COUNTIF(IN_unit,"Occupational Health, Safety and Performance Analysis unit")'	=> 0
+O78	'=COUNTIFS(IN_unit,"Occupational Health, Safety and Performance Analysis unit",IN_status,"Open")'	=> 0
+P78	'=COUNTIFS(IN_unit,"Occupational Health, Safety and Performance Analysis unit",IN_status,"Overdue")'	=> 0
+Q78	'=COUNTIFS(IN_unit,"Occupational Health, Safety and Performance Analysis unit",IN_status,"Closed")'	=> 0
+R78	'=COUNTIF(OUT_ounit,"Occupational Health, Safety and Performance Analysis unit")'	=> 0
+A79	'Consumer complaint'
+B79	'=COUNTIF(IN_type,"Consumer complaint")'	=> 0
+H79	'Ipokia'
+I79	'=COUNTIF(IN_lga,"Ipokia")'	=> 0
+M79	'Market Analysis unit'
+N79	'=COUNTIF(IN_unit,"Market Analysis unit")'	=> 0
+O79	'=COUNTIFS(IN_unit,"Market Analysis unit",IN_status,"Open")'	=> 0
+P79	'=COUNTIFS(IN_unit,"Market Analysis unit",IN_status,"Overdue")'	=> 0
+Q79	'=COUNTIFS(IN_unit,"Market Analysis unit",IN_status,"Closed")'	=> 0
+R79	'=COUNTIF(OUT_ounit,"Market Analysis unit")'	=> 0
+A80	'Tariff application / review'
+B80	'=COUNTIF(IN_type,"Tariff application / review")'	=> 0
+H80	'Obafemi Owode'
+I80	'=COUNTIF(IN_lga,"Obafemi Owode")'	=> 0
+M80	'Tariff and Rates unit'
+N80	'=COUNTIF(IN_unit,"Tariff and Rates unit")'	=> 0
+O80	'=COUNTIFS(IN_unit,"Tariff and Rates unit",IN_status,"Open")'	=> 0
+P80	'=COUNTIFS(IN_unit,"Tariff and Rates unit",IN_status,"Overdue")'	=> 0
+Q80	'=COUNTIFS(IN_unit,"Tariff and Rates unit",IN_status,"Closed")'	=> 0
+R80	'=COUNTIF(OUT_ounit,"Tariff and Rates unit")'	=> 0
+A81	'Licensee returns / performance report'
+B81	'=COUNTIF(IN_type,"Licensee returns / performance report")'	=> 0
+H81	'Odeda'
+I81	'=COUNTIF(IN_lga,"Odeda")'	=> 0
+M81	'Regulatory Financial Reporting Analysis (RFRA)'
+N81	'=COUNTIF(IN_unit,"Regulatory Financial Reporting Analysis (RFRA)")'	=> 0
+O81	'=COUNTIFS(IN_unit,"Regulatory Financial Reporting Analysis (RFRA)",IN_status,"Open")'	=> 0
+P81	'=COUNTIFS(IN_unit,"Regulatory Financial Reporting Analysis (RFRA)",IN_status,"Overdue")'	=> 0
+Q81	'=COUNTIFS(IN_unit,"Regulatory Financial Reporting Analysis (RFRA)",IN_status,"Closed")'	=> 0
+R81	'=COUNTIF(OUT_ounit,"Regulatory Financial Reporting Analysis (RFRA)")'	=> 0
+A82	'Incident / outage report'
+B82	'=COUNTIF(IN_type,"Incident / outage report")'	=> 0
+H82	'Odogbolu'
+I82	'=COUNTIF(IN_lga,"Odogbolu")'	=> 0
+M82	'Corporate Planning and Strategy (CPS)'
+N82	'=COUNTIF(IN_unit,"Corporate Planning and Strategy (CPS)")'	=> 0
+O82	'=COUNTIFS(IN_unit,"Corporate Planning and Strategy (CPS)",IN_status,"Open")'	=> 0
+P82	'=COUNTIFS(IN_unit,"Corporate Planning and Strategy (CPS)",IN_status,"Overdue")'	=> 0
+Q82	'=COUNTIFS(IN_unit,"Corporate Planning and Strategy (CPS)",IN_status,"Closed")'	=> 0
+R82	'=COUNTIF(OUT_ounit,"Corporate Planning and Strategy (CPS)")'	=> 0
+A83	'Consumer petition'
+B83	'=COUNTIF(IN_type,"Consumer petition")'	=> 0
+H83	'Ogun Waterside'
+I83	'=COUNTIF(IN_lga,"Ogun Waterside")'	=> 0
+M83	'Renewable Energy'
+N83	'=COUNTIF(IN_unit,"Renewable Energy")'	=> 0
+O83	'=COUNTIFS(IN_unit,"Renewable Energy",IN_status,"Open")'	=> 0
+P83	'=COUNTIFS(IN_unit,"Renewable Energy",IN_status,"Overdue")'	=> 0
+Q83	'=COUNTIFS(IN_unit,"Renewable Energy",IN_status,"Closed")'	=> 0
+R83	'=COUNTIF(OUT_ounit,"Renewable Energy")'	=> 0
+A84	'Public representation'
+B84	'=COUNTIF(IN_type,"Public representation")'	=> 0
+H84	'Remo North'
+I84	'=COUNTIF(IN_lga,"Remo North")'	=> 0
+M84	'Research unit: Research Analytics'
+N84	'=COUNTIF(IN_unit,"Research unit: Research Analytics")'	=> 0
+O84	'=COUNTIFS(IN_unit,"Research unit: Research Analytics",IN_status,"Open")'	=> 0
+P84	'=COUNTIFS(IN_unit,"Research unit: Research Analytics",IN_status,"Overdue")'	=> 0
+Q84	'=COUNTIFS(IN_unit,"Research unit: Research Analytics",IN_status,"Closed")'	=> 0
+R84	'=COUNTIF(OUT_ounit,"Research unit: Research Analytics")'	=> 0
+A85	"Letter from Governor's Office"
+B85	'=COUNTIF(IN_type,"Letter from Governor\'s Office")'	=> 0
+H85	'Sagamu'
+I85	'=COUNTIF(IN_lga,"Sagamu")'	=> 2
+M85	'Research unit: Data Aggregation Platform (DAP)'
+N85	'=COUNTIF(IN_unit,"Research unit: Data Aggregation Platform (DAP)")'	=> 0
+O85	'=COUNTIFS(IN_unit,"Research unit: Data Aggregation Platform (DAP)",IN_status,"Open")'	=> 0
+P85	'=COUNTIFS(IN_unit,"Research unit: Data Aggregation Platform (DAP)",IN_status,"Overdue")'	=> 0
+Q85	'=COUNTIFS(IN_unit,"Research unit: Data Aggregation Platform (DAP)",IN_status,"Closed")'	=> 0
+R85	'=COUNTIF(OUT_ounit,"Research unit: Data Aggregation Platform (DAP)")'	=> 0
+A86	'Letter from House of Assembly'
+B86	'=COUNTIF(IN_type,"Letter from House of Assembly")'	=> 0
+H86	'Yewa North'
+I86	'=COUNTIF(IN_lga,"Yewa North")'	=> 0
+M86	'Finance and Account unit'
+N86	'=COUNTIF(IN_unit,"Finance and Account unit")'	=> 0
+O86	'=COUNTIFS(IN_unit,"Finance and Account unit",IN_status,"Open")'	=> 0
+P86	'=COUNTIFS(IN_unit,"Finance and Account unit",IN_status,"Overdue")'	=> 0
+Q86	'=COUNTIFS(IN_unit,"Finance and Account unit",IN_status,"Closed")'	=> 0
+R86	'=COUNTIF(OUT_ounit,"Finance and Account unit")'	=> 0
+A87	'Letter from State MDA / Local Government'
+B87	'=COUNTIF(IN_type,"Letter from State MDA / Local Government")'	=> 0
+H87	'Yewa South'
+I87	'=COUNTIF(IN_lga,"Yewa South")'	=> 0
+M87	'Procurement unit'
+N87	'=COUNTIF(IN_unit,"Procurement unit")'	=> 0
+O87	'=COUNTIFS(IN_unit,"Procurement unit",IN_status,"Open")'	=> 0
+P87	'=COUNTIFS(IN_unit,"Procurement unit",IN_status,"Overdue")'	=> 0
+Q87	'=COUNTIFS(IN_unit,"Procurement unit",IN_status,"Closed")'	=> 0
+R87	'=COUNTIF(OUT_ounit,"Procurement unit")'	=> 0
+A88	'Letter from NERC / Federal agency'
+B88	'=COUNTIF(IN_type,"Letter from NERC / Federal agency")'	=> 1
+H88	'Outside Ogun State'
+I88	'=COUNTIF(IN_lga,"Outside Ogun State")'	=> 0
+M88	'ICT unit'
+N88	'=COUNTIF(IN_unit,"ICT unit")'	=> 0
+O88	'=COUNTIFS(IN_unit,"ICT unit",IN_status,"Open")'	=> 0
+P88	'=COUNTIFS(IN_unit,"ICT unit",IN_status,"Overdue")'	=> 0
+Q88	'=COUNTIFS(IN_unit,"ICT unit",IN_status,"Closed")'	=> 0
+R88	'=COUNTIF(OUT_ounit,"ICT unit")'	=> 0
+A89	'Letter from DisCo / GenCo / TCN'
+B89	'=COUNTIF(IN_type,"Letter from DisCo / GenCo / TCN")'	=> 0
+M89	'Human Resources'
+N89	'=COUNTIF(IN_unit,"Human Resources")'	=> 0
+O89	'=COUNTIFS(IN_unit,"Human Resources",IN_status,"Open")'	=> 0
+P89	'=COUNTIFS(IN_unit,"Human Resources",IN_status,"Overdue")'	=> 0
+Q89	'=COUNTIFS(IN_unit,"Human Resources",IN_status,"Closed")'	=> 0
+R89	'=COUNTIF(OUT_ounit,"Human Resources")'	=> 0
+A90	'Investor / developer enquiry'
+B90	'=COUNTIF(IN_type,"Investor / developer enquiry")'	=> 0
+M90	'Front Desk'
+N90	'=COUNTIF(IN_unit,"Front Desk")'	=> 0
+O90	'=COUNTIFS(IN_unit,"Front Desk",IN_status,"Open")'	=> 0
+P90	'=COUNTIFS(IN_unit,"Front Desk",IN_status,"Overdue")'	=> 0
+Q90	'=COUNTIFS(IN_unit,"Front Desk",IN_status,"Closed")'	=> 0
+R90	'=COUNTIF(OUT_ounit,"Front Desk")'	=> 0
+A91	'Development partner correspondence'
+B91	'=COUNTIF(IN_type,"Development partner correspondence")'	=> 0
+M91	'Administration'
+N91	'=COUNTIF(IN_unit,"Administration")'	=> 0
+O91	'=COUNTIFS(IN_unit,"Administration",IN_status,"Open")'	=> 0
+P91	'=COUNTIFS(IN_unit,"Administration",IN_status,"Overdue")'	=> 0
+Q91	'=COUNTIFS(IN_unit,"Administration",IN_status,"Closed")'	=> 0
+R91	'=COUNTIF(OUT_ounit,"Administration")'	=> 0
+A92	'Court process / legal notice'
+B92	'=COUNTIF(IN_type,"Court process / legal notice")'	=> 0
+M92	'Licensing unit'
+N92	'=COUNTIF(IN_unit,"Licensing unit")'	=> 2
+O92	'=COUNTIFS(IN_unit,"Licensing unit",IN_status,"Open")'	=> 0
+P92	'=COUNTIFS(IN_unit,"Licensing unit",IN_status,"Overdue")'	=> 0
+Q92	'=COUNTIFS(IN_unit,"Licensing unit",IN_status,"Closed")'	=> 1
+R92	'=COUNTIF(OUT_ounit,"Licensing unit")'	=> 1
+A93	'Freedom of Information request'
+B93	'=COUNTIF(IN_type,"Freedom of Information request")'	=> 0
+M93	'Compliance/Legal Services unit: Legal'
+N93	'=COUNTIF(IN_unit,"Compliance/Legal Services unit: Legal")'	=> 0
+O93	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Legal",IN_status,"Open")'	=> 0
+P93	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Legal",IN_status,"Overdue")'	=> 0
+Q93	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Legal",IN_status,"Closed")'	=> 0
+R93	'=COUNTIF(OUT_ounit,"Compliance/Legal Services unit: Legal")'	=> 0
+A94	'Invitation (meeting / event / hearing)'
+B94	'=COUNTIF(IN_type,"Invitation (meeting / event / hearing)")'	=> 0
+M94	'Compliance/Legal Services unit: Compliance and Enforcement'
+N94	'=COUNTIF(IN_unit,"Compliance/Legal Services unit: Compliance and Enforcement")'	=> 0
+O94	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Compliance and Enforcement",IN_status,"Open")'	=> 0
+P94	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Compliance and Enforcement",IN_status,"Overdue")'	=> 0
+Q94	'=COUNTIFS(IN_unit,"Compliance/Legal Services unit: Compliance and Enforcement",IN_status,"Closed")'	=> 0
+R94	'=COUNTIF(OUT_ounit,"Compliance/Legal Services unit: Compliance and Enforcement")'	=> 0
+A95	'Invoice / vendor correspondence'
+B95	'=COUNTIF(IN_type,"Invoice / vendor correspondence")'	=> 0
+M95	'Customer Complaints'
+N95	'=COUNTIF(IN_unit,"Customer Complaints")'	=> 0
+O95	'=COUNTIFS(IN_unit,"Customer Complaints",IN_status,"Open")'	=> 0
+P95	'=COUNTIFS(IN_unit,"Customer Complaints",IN_status,"Overdue")'	=> 0
+Q95	'=COUNTIFS(IN_unit,"Customer Complaints",IN_status,"Closed")'	=> 0
+R95	'=COUNTIF(OUT_ounit,"Customer Complaints")'	=> 0
+A96	'Staff / personnel matter'
+B96	'=COUNTIF(IN_type,"Staff / personnel matter")'	=> 0
+M96	'Customer Service Standards'
+N96	'=COUNTIF(IN_unit,"Customer Service Standards")'	=> 0
+O96	'=COUNTIFS(IN_unit,"Customer Service Standards",IN_status,"Open")'	=> 0
+P96	'=COUNTIFS(IN_unit,"Customer Service Standards",IN_status,"Overdue")'	=> 0
+Q96	'=COUNTIFS(IN_unit,"Customer Service Standards",IN_status,"Closed")'	=> 0
+R96	'=COUNTIF(OUT_ounit,"Customer Service Standards")'	=> 0
+A97	'Media / press enquiry'
+B97	'=COUNTIF(IN_type,"Media / press enquiry")'	=> 0
+M97	'Consumer Enlightenment and Education'
+N97	'=COUNTIF(IN_unit,"Consumer Enlightenment and Education")'	=> 0
+O97	'=COUNTIFS(IN_unit,"Consumer Enlightenment and Education",IN_status,"Open")'	=> 0
+P97	'=COUNTIFS(IN_unit,"Consumer Enlightenment and Education",IN_status,"Overdue")'	=> 0
+Q97	'=COUNTIFS(IN_unit,"Consumer Enlightenment and Education",IN_status,"Closed")'	=> 0
+R97	'=COUNTIF(OUT_ounit,"Consumer Enlightenment and Education")'	=> 0
+A98	'Circular / publication (for information)'
+B98	'=COUNTIF(IN_type,"Circular / publication (for information)")'	=> 0
+A99	'Other correspondence'
+B99	'=COUNTIF(IN_type,"Other correspondence")'	=> 0

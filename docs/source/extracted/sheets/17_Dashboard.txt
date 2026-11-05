@@ -1,0 +1,383 @@
+A1	'OGSERC Registration Dashboard'
+A2	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBD304260>
+A4	'Key dates'
+D4	'By Schedule 3 category'
+A5	'Effective Date'
+B5	'=cfgEffectiveDate'	=> datetime.datetime(2026, 10, 22, 0, 0)
+D5	'Cat.'
+E5	'Description'
+F5	'Submissions'
+G5	'Registered'
+H5	'Fees'
+I5	'Late charges'
+J5	'Waivers'
+K5	'Collected'
+L5	'Outstanding'
+A6	'Registration deadline'
+B6	'=cfgExistingDeadline'	=> datetime.datetime(2026, 12, 21, 0, 0)
+D6	'A'
+E6	'=_xlfn.XLOOKUP($D6,tblFees[Category],tblFees[Description],"")'	=> 'Successor distribution companies, including a multi-State licensee that is a successor distribution company, for all their activities in Ogun State'
+F6	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6)'	=> 0
+G6	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6,tblRegister[Status],"Registered")'	=> 0
+H6	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6)'	=> 0
+I6	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6)'	=> 0
+J6	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6)'	=> 0
+K6	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6)'	=> 0
+L6	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D6,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A7	'Days to deadline'
+B7	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF710D0>	[fmt 0]
+D7	'B'
+E7	'=_xlfn.XLOOKUP($D7,tblFees[Category],tblFees[Description],"")'	=> 'Integrated utilities, for all their activities in Ogun State'
+F7	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7)'	=> 0
+G7	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7,tblRegister[Status],"Registered")'	=> 0
+H7	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7)'	=> 0
+I7	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7)'	=> 0
+J7	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7)'	=> 0
+K7	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7)'	=> 0
+L7	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D7,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+D8	'C'
+E8	'=_xlfn.XLOOKUP($D8,tblFees[Category],tblFees[Description],"")'	=> 'Generation of 10 MW or more, whether for sale or captive use'
+F8	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8)'	=> 0
+G8	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8,tblRegister[Status],"Registered")'	=> 0
+H8	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8)'	=> 0
+I8	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8)'	=> 0
+J8	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8)'	=> 0
+K8	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8)'	=> 0
+L8	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D8,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A9	'Submissions'
+D9	'D'
+E9	'=_xlfn.XLOOKUP($D9,tblFees[Category],tblFees[Description],"")'	=> 'Generation of 1 MW to less than 10 MW, whether for sale or captive use'
+F9	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9)'	=> 0
+G9	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9,tblRegister[Status],"Registered")'	=> 0
+H9	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9)'	=> 0
+I9	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9)'	=> 0
+J9	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9)'	=> 0
+K9	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9)'	=> 0
+L9	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D9,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A10	'Total'
+B10	'=COUNTIFS(tblRegister[Ack No.],"?*")'	=> 0
+D10	'E'
+E10	'=_xlfn.XLOOKUP($D10,tblFees[Category],tblFees[Description],"")'	=> 'Mini-grids and interconnected mini-grids'
+F10	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10)'	=> 0
+G10	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10,tblRegister[Status],"Registered")'	=> 0
+H10	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10)'	=> 0
+I10	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10)'	=> 0
+J10	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10)'	=> 0
+K10	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10)'	=> 0
+L10	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D10,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A11	'Awaiting payment'
+B11	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],"Acknowledged - Awaiting Payment")'	=> 0
+D11	'F'
+E11	'=_xlfn.XLOOKUP($D11,tblFees[Category],tblFees[Description],"")'	=> 'Distribution licensees other than successor distribution companies; trading and bulk supply'
+F11	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11)'	=> 0
+G11	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11,tblRegister[Status],"Registered")'	=> 0
+H11	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11)'	=> 0
+I11	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11)'	=> 0
+J11	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11)'	=> 0
+K11	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11)'	=> 0
+L11	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D11,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A12	'Registered'
+B12	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],"Registered")'	=> 0
+D12	'G'
+E12	'=_xlfn.XLOOKUP($D12,tblFees[Category],tblFees[Description],"")'	=> 'Private, estate and industrial-park networks'
+F12	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12)'	=> 0
+G12	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12,tblRegister[Status],"Registered")'	=> 0
+H12	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12)'	=> 0
+I12	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12)'	=> 0
+J12	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12)'	=> 0
+K12	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12)'	=> 0
+L12	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D12,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A13	'Provisionally registered'
+B13	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],"Provisionally Registered")'	=> 0
+D13	'H'
+E13	'=_xlfn.XLOOKUP($D13,tblFees[Category],tblFees[Description],"")'	=> 'Metering service providers'
+F13	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13)'	=> 0
+G13	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13,tblRegister[Status],"Registered")'	=> 0
+H13	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13)'	=> 0
+I13	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13)'	=> 0
+J13	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13)'	=> 0
+K13	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13)'	=> 0
+L13	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D13,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A14	'In progress'
+B14	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],"Received - Under Review")+COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],"Deficiency Notice Issued")'	=> 0
+D14	'I'
+E14	'=_xlfn.XLOOKUP($D14,tblFees[Category],tblFees[Description],"")'	=> 'Own-use generation notification under paragraph 3(4) (200 kW to below 1 MW)'
+F14	'=COUNTIFS(tblOwnUse[OUN No.],"?*")'	=> 0
+G14	'—'
+H14	'=SUM(tblOwnUse[Fee Due])'	=> 0
+I14	0	[fmt "₦"#,##0.00;\-"₦"#,##0.00;"₦"0]
+J14	0	[fmt "₦"#,##0.00;\-"₦"#,##0.00;"₦"0]
+K14	'=SUM(tblOwnUse[Amount Paid])'	=> 0
+L14	'=SUMIFS(tblOwnUse[Balance],tblOwnUse[Balance],">0")'	=> 0
+A15	'Closed (refused, lapsed, cancelled)'
+B15	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEFA04D0>	[fmt 0]
+D15	'J'
+E15	'=_xlfn.XLOOKUP($D15,tblFees[Category],tblFees[Description],"")'	=> 'Franchisees and sub-franchisees'
+F15	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15)'	=> 0
+G15	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15,tblRegister[Status],"Registered")'	=> 0
+H15	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15)'	=> 0
+I15	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15)'	=> 0
+J15	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15)'	=> 0
+K15	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15)'	=> 0
+L15	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D15,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A16	'Own-use notifications'
+B16	'=COUNTIFS(tblOwnUse[OUN No.],"?*")'	=> 0
+D16	'K'
+E16	'=_xlfn.XLOOKUP($D16,tblFees[Category],tblFees[Description],"")'	=> 'Any other activity below 1 MW'
+F16	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16)'	=> 0
+G16	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16,tblRegister[Status],"Registered")'	=> 0
+H16	'=SUMIFS(tblRegister[Registration Fee],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16)'	=> 0
+I16	'=SUMIFS(tblRegister[Late Charge],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16)'	=> 0
+J16	'=SUMIFS(tblRegister[Approved Waiver],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16)'	=> 0
+K16	'=SUMIFS(tblRegister[Amount Paid],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16)'	=> 0
+L16	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Category Applied],$D16,tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")'	=> 0
+A17	'Late submissions'
+B17	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Days Late],">0")'	=> 0
+D18	'By status'
+H18	'By primary activity'
+K18	'By principal LGA'
+A19	'Workflow'
+K19	'LGA'
+L19	'Registrants'
+M19	'Own-use'
+A20	'Overdue (SLA red)'
+B20	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[SLA],"Red")'	=> 0
+D20	'Acknowledged - Awaiting Payment'
+F20	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D20)'	=> 0
+H20	'SDC'
+I20	'Successor distribution company (incl. multi-State)'
+J20	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H20)'	=> 0
+K20	'Abeokuta North'
+L20	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K20)'	=> 0
+M20	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K20)'	=> 0
+A21	'Due within the warning window (amber)'
+B21	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[SLA],"Amber")'	=> 0
+D21	'Received - Under Review'
+F21	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D21)'	=> 0
+H21	'INT'
+I21	'Integrated generation and distribution (integrated utility)'
+J21	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H21)'	=> 0
+K21	'Abeokuta South'
+L21	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K21)'	=> 0
+M21	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K21)'	=> 0
+A22	'Records with flags'
+B22	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Flag Count],">0")'	=> 0
+D22	'Deficiency Notice Issued'
+F22	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D22)'	=> 0
+H22	'GEN'
+I22	'Generation for sale (on-grid / off-grid / embedded)'
+J22	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H22)'	=> 0
+K22	'Ado-Odo/Ota'
+L22	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K22)'	=> 0
+M22	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K22)'	=> 0
+A23	'Average days in queue (open)'
+B23	'=IFERROR(AVERAGEIFS(tblRegister[Days in Queue],tblRegister[Ack No.],"?*",tblRegister[Closed],"No"),"")'	=> None
+D23	'Provisionally Registered'
+F23	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D23)'	=> 0
+H23	'CPT'
+I23	'Captive generation (1 MW or more)'
+J23	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H23)'	=> 0
+K23	'Ewekoro'
+L23	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K23)'	=> 0
+M23	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K23)'	=> 0
+D24	'Registered'
+F24	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D24)'	=> 0
+H24	'DIS'
+I24	'Distribution – other licensee'
+J24	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H24)'	=> 0
+K24	'Ifo'
+L24	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K24)'	=> 0
+M24	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K24)'	=> 0
+A25	'Evaluation (released submissions)'
+D25	'Lapsed'
+F25	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D25)'	=> 0
+H25	'MSL'
+I25	'Multi-State licensee – non-successor (Ogun operations)'
+J25	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H25)'	=> 0
+K25	'Ijebu East'
+L25	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K25)'	=> 0
+M25	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K25)'	=> 0
+A26	'Not assigned'
+B26	'=COUNTIFS(tblEvaluation[Evaluation Status],"Not assigned",tblEvaluation[Submission Status],"<>"&"Acknowledged - Awaiting Payment",tblEvaluation[Ack No.],"?*")'	=> 0
+D26	'Refused'
+F26	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D26)'	=> 0
+H26	'IDN'
+I26	'Independent electricity distribution network'
+J26	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H26)'	=> 0
+K26	'Ijebu North'
+L26	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K26)'	=> 0
+M26	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K26)'	=> 0
+A27	'In progress'
+B27	'=COUNTIFS(tblEvaluation[Evaluation Status],"In progress",tblEvaluation[Submission Status],"<>"&"Acknowledged - Awaiting Payment",tblEvaluation[Ack No.],"?*")'	=> 0
+D27	'Cancelled'
+F27	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D27)'	=> 0
+H27	'TRD'
+I27	'Trading / bulk supply'
+J27	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H27)'	=> 0
+K27	'Ijebu North East'
+L27	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K27)'	=> 0
+M27	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K27)'	=> 0
+A28	'Ready for decision'
+B28	'=COUNTIFS(tblEvaluation[Evaluation Status],"Ready for decision",tblEvaluation[Submission Status],"<>"&"Acknowledged - Awaiting Payment",tblEvaluation[Ack No.],"?*")'	=> 0
+D28	'Changes Applied'
+F28	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Status],$D28)'	=> 0
+H28	'SUP'
+I28	'Supply / retail'
+J28	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H28)'	=> 0
+K28	'Ijebu Ode'
+L28	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K28)'	=> 0
+M28	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K28)'	=> 0
+A29	'Decided'
+B29	'=COUNTIFS(tblEvaluation[Evaluation Status],"Decided",tblEvaluation[Submission Status],"<>"&"Acknowledged - Awaiting Payment",tblEvaluation[Ack No.],"?*")'	=> 0
+H29	'MGD'
+I29	'Mini-grid / interconnected mini-grid'
+J29	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H29)'	=> 0
+K29	'Ikenne'
+L29	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K29)'	=> 0
+M29	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K29)'	=> 0
+H30	'EST'
+I30	'Private / estate / industrial-park network'
+J30	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H30)'	=> 0
+K30	'Imeko Afon'
+L30	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K30)'	=> 0
+M30	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K30)'	=> 0
+A31	'Money (₦)'
+H31	'FRN'
+I31	'Franchise / sub-franchise'
+J31	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H31)'	=> 0
+K31	'Ipokia'
+L31	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K31)'	=> 0
+M31	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K31)'	=> 0
+A32	'Total due (fees + late charges, live records)'
+B32	'=SUMIFS(tblRegister[Total Due],tblRegister[Ack No.],"?*",tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled")+SUMIFS(tblOwnUse[Fee Due],tblOwnUse[OUN No.],"?*")'	=> 0
+H32	'MET'
+I32	'Metering services'
+J32	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H32)'	=> 0
+K32	'Obafemi Owode'
+L32	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K32)'	=> 0
+M32	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K32)'	=> 0
+A33	'Collected (Finance-confirmed)'
+B33	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes")'	=> 0
+H33	'OTH'
+I33	'Other activity'
+J33	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Primary Code],$H33)'	=> 0
+K33	'Odeda'
+L33	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K33)'	=> 0
+M33	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K33)'	=> 0
+A34	'With Finance (recorded, not confirmed)'
+B34	'=SUMIFS(tblPayments[Amount],tblPayments[With Finance],"Yes")'	=> 0
+K34	'Odogbolu'
+L34	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K34)'	=> 0
+M34	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K34)'	=> 0
+A35	'Payments with Finance'
+B35	'=COUNTIFS(tblPayments[With Finance],"Yes")'	=> 0
+K35	'Ogun Waterside'
+L35	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K35)'	=> 0
+M35	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K35)'	=> 0
+A36	'Outstanding'
+B36	'=SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Status],"<>Refused",tblRegister[Status],"<>Lapsed",tblRegister[Status],"<>Cancelled",tblRegister[Balance],">0")+SUMIFS(tblOwnUse[Balance],tblOwnUse[OUN No.],"?*",tblOwnUse[Balance],">0")'	=> 0
+K36	'Remo North'
+L36	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K36)'	=> 0
+M36	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K36)'	=> 0
+A37	'Collection rate'
+B37	'=IF(dashTotalDue>0,(dashTotalDue-dashOutstanding)/dashTotalDue,"")'	=> None
+K37	'Sagamu'
+L37	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K37)'	=> 0
+M37	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K37)'	=> 0
+A38	'Unpaid on closed submissions'
+B38	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF93890>	[fmt "₦"#,##0.00;\-"₦"#,##0.00;"₦"0]
+K38	'Yewa North'
+L38	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K38)'	=> 0
+M38	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K38)'	=> 0
+A39	'Overpaid / credits'
+B39	'=-SUMIFS(tblRegister[Balance],tblRegister[Ack No.],"?*",tblRegister[Balance],"<0")-SUMIFS(tblOwnUse[Balance],tblOwnUse[OUN No.],"?*",tblOwnUse[Balance],"<0")'	=> 0
+K39	'Yewa South'
+L39	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Principal LGA],$K39)'	=> 0
+M39	'=COUNTIFS(tblOwnUse[OUN No.],"?*",tblOwnUse[LGA],$K39)'	=> 0
+A42	'Monthly (12 months from the Effective Date month; then the last 12 months)'
+A43	'Month'
+B43	'Submissions'
+C43	'Registered'
+D43	'Collected (₦)'
+A44	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEFA0170>	[fmt mmm\ yyyy]
+B44	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A44,tblRegister[Date Submitted],"<"&EDATE($A44,1))'	=> 0
+C44	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A44,tblRegister[Certificate Issue Date],"<"&EDATE($A44,1))'	=> 0
+D44	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A44,tblPayments[Date Received],"<"&EDATE($A44,1))'	=> 0
+A45	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF93FB0>	[fmt mmm\ yyyy]
+B45	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A45,tblRegister[Date Submitted],"<"&EDATE($A45,1))'	=> 0
+C45	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A45,tblRegister[Certificate Issue Date],"<"&EDATE($A45,1))'	=> 0
+D45	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A45,tblPayments[Date Received],"<"&EDATE($A45,1))'	=> 0
+A46	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF939B0>	[fmt mmm\ yyyy]
+B46	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A46,tblRegister[Date Submitted],"<"&EDATE($A46,1))'	=> 0
+C46	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A46,tblRegister[Certificate Issue Date],"<"&EDATE($A46,1))'	=> 0
+D46	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A46,tblPayments[Date Received],"<"&EDATE($A46,1))'	=> 0
+A47	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF93470>	[fmt mmm\ yyyy]
+B47	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A47,tblRegister[Date Submitted],"<"&EDATE($A47,1))'	=> 0
+C47	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A47,tblRegister[Certificate Issue Date],"<"&EDATE($A47,1))'	=> 0
+D47	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A47,tblPayments[Date Received],"<"&EDATE($A47,1))'	=> 0
+A48	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF92F60>	[fmt mmm\ yyyy]
+B48	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A48,tblRegister[Date Submitted],"<"&EDATE($A48,1))'	=> 0
+C48	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A48,tblRegister[Certificate Issue Date],"<"&EDATE($A48,1))'	=> 0
+D48	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A48,tblPayments[Date Received],"<"&EDATE($A48,1))'	=> 0
+A49	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF929C0>	[fmt mmm\ yyyy]
+B49	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A49,tblRegister[Date Submitted],"<"&EDATE($A49,1))'	=> 0
+C49	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A49,tblRegister[Certificate Issue Date],"<"&EDATE($A49,1))'	=> 0
+D49	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A49,tblPayments[Date Received],"<"&EDATE($A49,1))'	=> 0
+A50	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF92390>	[fmt mmm\ yyyy]
+B50	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A50,tblRegister[Date Submitted],"<"&EDATE($A50,1))'	=> 0
+C50	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A50,tblRegister[Certificate Issue Date],"<"&EDATE($A50,1))'	=> 0
+D50	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A50,tblPayments[Date Received],"<"&EDATE($A50,1))'	=> 0
+A51	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF91F40>	[fmt mmm\ yyyy]
+B51	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A51,tblRegister[Date Submitted],"<"&EDATE($A51,1))'	=> 0
+C51	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A51,tblRegister[Certificate Issue Date],"<"&EDATE($A51,1))'	=> 0
+D51	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A51,tblPayments[Date Received],"<"&EDATE($A51,1))'	=> 0
+A52	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF91880>	[fmt mmm\ yyyy]
+B52	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A52,tblRegister[Date Submitted],"<"&EDATE($A52,1))'	=> 0
+C52	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A52,tblRegister[Certificate Issue Date],"<"&EDATE($A52,1))'	=> 0
+D52	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A52,tblPayments[Date Received],"<"&EDATE($A52,1))'	=> 0
+A53	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF91340>	[fmt mmm\ yyyy]
+B53	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A53,tblRegister[Date Submitted],"<"&EDATE($A53,1))'	=> 0
+C53	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A53,tblRegister[Certificate Issue Date],"<"&EDATE($A53,1))'	=> 0
+D53	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A53,tblPayments[Date Received],"<"&EDATE($A53,1))'	=> 0
+A54	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF90E00>	[fmt mmm\ yyyy]
+B54	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A54,tblRegister[Date Submitted],"<"&EDATE($A54,1))'	=> 0
+C54	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A54,tblRegister[Certificate Issue Date],"<"&EDATE($A54,1))'	=> 0
+D54	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A54,tblPayments[Date Received],"<"&EDATE($A54,1))'	=> 0
+A55	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF908C0>	[fmt mmm\ yyyy]
+B55	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Date Submitted],">="&$A55,tblRegister[Date Submitted],"<"&EDATE($A55,1))'	=> 0
+C55	'=COUNTIFS(tblRegister[Ack No.],"?*",tblRegister[Certificate Issue Date],">="&$A55,tblRegister[Certificate Issue Date],"<"&EDATE($A55,1))'	=> 0
+D55	'=SUMIFS(tblPayments[Amount],tblPayments[Counts as Paid],"Yes",tblPayments[Date Received],">="&$A55,tblPayments[Date Received],"<"&EDATE($A55,1))'	=> 0
+A58	'Awaiting payment, oldest first'
+A59	'Ack No.'
+B59	'Registered Name'
+C59	'Days since acknowledgement'
+D59	'Process stage'
+E59	'Reminder due'
+A60	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF70C50>
+B60	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF66C30>
+C60	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF66450>	[fmt 0]
+D60	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF67020>
+E60	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF66FF0>
+A85	'Overdue deficiency responses (lapse them; never automatic)'
+A86	'Ack No.'
+B86	'Registered Name'
+C86	'Days overdue'
+A87	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF72930>
+B87	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF724B0>
+C87	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF72480>	[fmt 0]
+A112	'Ready for decision (by determination date)'
+A113	'Ack No.'
+B113	'Registered Name'
+C113	'Recommended outcome'
+A114	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF925D0>
+B114	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF92C90>
+C114	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF92CF0>
+A139	'My assigned evaluations: type your name →'
+A140	'Ack No.'
+B140	'Registered Name'
+C140	'Evaluation status'
+D140	'Recommended outcome'
+A141	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF72BD0>
+B141	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF72CF0>
+C141	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF72D20>
+D141	<openpyxl.worksheet.formula.ArrayFormula object at 0x0000024CBEF730B0>

@@ -1,0 +1,33 @@
+1|	OGSERC Registry Desk
+2|	Click a green button to run each step. Macros must be enabled (see the note at the bottom).
+4|	Officer on duty ▶	Olanrewaju Oluyombo		Commission Secretary ▶	Oluwatoyin Sonoiki
+5|	The officer on duty fills "Received by", "Dispatched by" and "Released by" on the forms. The Secretary is printed on slips and the Daily Register and is the default signatory for outgoing letters.
+7|	Received today	Dispatched today		Awaiting routing / forwarding	Incoming overdue		Not yet dispatched	Replies overdue to us		Files out
+8|	0	0		1	0		0	0		1
+10|	1  RECEIVE AND SEND
+11|	LOG INCOMING ITEM
+(letter, filing, complaint, email)			LOG OUTGOING ITEM
+(letter, notice, certificate, memo)			FORWARD / DISPATCH / CLOSE
+an existing item			INTERNAL FILE DESK
+issue · return · new file
+15|	2  SLIPS AND REPORTS
+16|	Slip for inward no. ▶	OGSERC/ACK/2026/00001		Defaults to the latest item; choose another from the list.
+18|	PRINT SLIP			SAVE SLIP AS PDF
+(for email / portal filers)			PRINT TODAY'S DAILY REGISTER			SAVE DAILY REGISTER AS PDF
+21|	PRINT PENDING ACTIONS			OPEN DASHBOARD			OPEN INWARD REGISTER			OPEN OUTWARD REGISTER
+24|	3  HOUSEKEEPING
+25|	LOCK ALL NUMBERS			BACK UP WORKBOOK NOW			CLEAR EXAMPLE ROWS
+(once, before live use)			OPEN GUIDE
+28|	4  ROUTING AND ACKNOWLEDGEMENT EMAIL
+29|	ROUTE AN ITEM
+(Secretary / Head of Admin only)			RESEND ACK EMAIL
+(for the slip no. above)			Awaiting routing
+30|							1
+33|	5  FRONT DESK (documents handed in, not yet registered)
+34|	FRONT DESK
+log a delivered document			OPEN FRONT DESK LOG			Awaiting registry (front desk)
+35|							1
+38|	Enabling the buttons: save the file to your computer, right-click it > Properties > tick "Unblock" > OK, then open it and click "Enable Content" on the yellow bar. PDFs and backups are saved in an "OGSERC Registry Outputs" folder beside the workbook.
+41|	6  REGISTRATION FILINGS (Register and evaluation)
+42|	REGISTRY INTAKE
+(acknowledge a registration filing)			OPEN REGISTER			Acknowledged, not yet on the Register

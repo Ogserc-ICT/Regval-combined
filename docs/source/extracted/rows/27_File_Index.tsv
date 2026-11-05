@@ -1,0 +1,6 @@
+1|OGSERC Registry — File Index
+2|Every Commission file, its owner and where it is now. Inward and outward counts update from the registers; "Currently With" updates from File Movement.
+4|FILE								ACTIVITY (AUTOMATIC)						CHECKS			HELPER
+5|File Reference *	File Title *	File Class	Owning Unit	Date Opened	Current Volume	Security	File Status	Inward Items	Outward Items	Last Correspondence	Currently With	Out Since	Working Days Out	Checks / Flags	Date Closed / Archived	Remarks	Latest Movement Row (helper)
+6|OGSERC/RL/001	EXAMPLE — Sample Mini-Grid Ltd: registration (clear before use)	Licensee file	Licensing unit	2026-11-20	1	Restricted	Open	2	1	2026-12-01	Registry						1
+7|OGSERC/GOV/001	EXAMPLE — NERC and federal agencies (clear before use)	Government & external relations	Office of the General Counsel and Secretary (Registry)	2026-11-02	1	Open	Open	1	1	2026-12-07	PA to Chairman (Office of the General Counsel and Secretary (Registry))	2026-12-02	0				2

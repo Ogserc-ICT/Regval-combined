@@ -1,0 +1,60 @@
+1|OGSERC Registration Dashboard
+2|As of 5 November 2026  ·  The web app is the system of record.
+4|Key dates			By Schedule 3 category
+5|Effective Date	2026-10-22		Cat.	Description	Submissions	Registered	Fees	Late charges	Waivers	Collected	Outstanding
+6|Registration deadline	2026-12-21		A	Successor distribution companies, including a multi-State licensee that is a successor distribution company, for all their activities in Ogun State	0	0	0	0	0	0	0
+7|Days to deadline	46		B	Integrated utilities, for all their activities in Ogun State	0	0	0	0	0	0	0
+8|			C	Generation of 10 MW or more, whether for sale or captive use	0	0	0	0	0	0	0
+9|Submissions			D	Generation of 1 MW to less than 10 MW, whether for sale or captive use	0	0	0	0	0	0	0
+10|Total	0		E	Mini-grids and interconnected mini-grids	0	0	0	0	0	0	0
+11|Awaiting payment	0		F	Distribution licensees other than successor distribution companies; trading and bulk supply	0	0	0	0	0	0	0
+12|Registered	0		G	Private, estate and industrial-park networks	0	0	0	0	0	0	0
+13|Provisionally registered	0		H	Metering service providers	0	0	0	0	0	0	0
+14|In progress	0		I	Own-use generation notification under paragraph 3(4) (200 kW to below 1 MW)	0	—	0	0	0	0	0
+15|Closed (refused, lapsed, cancelled)	0		J	Franchisees and sub-franchisees	0	0	0	0	0	0	0
+16|Own-use notifications	0		K	Any other activity below 1 MW	0	0	0	0	0	0	0
+17|Late submissions	0
+18|			By status				By primary activity			By principal LGA
+19|Workflow										LGA	Registrants	Own-use
+20|Overdue (SLA red)	0		Acknowledged - Awaiting Payment		0		SDC	Successor distribution company (incl. multi-State)	0	Abeokuta North	0	0
+21|Due within the warning window (amber)	0		Received - Under Review		0		INT	Integrated generation and distribution (integrated utility)	0	Abeokuta South	0	0
+22|Records with flags	0		Deficiency Notice Issued		0		GEN	Generation for sale (on-grid / off-grid / embedded)	0	Ado-Odo/Ota	0	0
+23|Average days in queue (open)			Provisionally Registered		0		CPT	Captive generation (1 MW or more)	0	Ewekoro	0	0
+24|			Registered		0		DIS	Distribution – other licensee	0	Ifo	0	0
+25|Evaluation (released submissions)			Lapsed		0		MSL	Multi-State licensee – non-successor (Ogun operations)	0	Ijebu East	0	0
+26|Not assigned	0		Refused		0		IDN	Independent electricity distribution network	0	Ijebu North	0	0
+27|In progress	0		Cancelled		0		TRD	Trading / bulk supply	0	Ijebu North East	0	0
+28|Ready for decision	0		Changes Applied		0		SUP	Supply / retail	0	Ijebu Ode	0	0
+29|Decided	0						MGD	Mini-grid / interconnected mini-grid	0	Ikenne	0	0
+30|							EST	Private / estate / industrial-park network	0	Imeko Afon	0	0
+31|Money (₦)							FRN	Franchise / sub-franchise	0	Ipokia	0	0
+32|Total due (fees + late charges, live records)	0						MET	Metering services	0	Obafemi Owode	0	0
+33|Collected (Finance-confirmed)	0						OTH	Other activity	0	Odeda	0	0
+34|With Finance (recorded, not confirmed)	0									Odogbolu	0	0
+35|Payments with Finance	0									Ogun Waterside	0	0
+36|Outstanding	0									Remo North	0	0
+37|Collection rate										Sagamu	0	0
+38|Unpaid on closed submissions	0									Yewa North	0	0
+39|Overpaid / credits	0									Yewa South	0	0
+42|Monthly (12 months from the Effective Date month; then the last 12 months)
+43|Month	Submissions	Registered	Collected (₦)
+44|2026-10-01	0	0	0
+45|2026-11-01	0	0	0
+46|2026-12-01	0	0	0
+47|2027-01-01	0	0	0
+48|2027-02-01	0	0	0
+49|2027-03-01	0	0	0
+50|2027-04-01	0	0	0
+51|2027-05-01	0	0	0
+52|2027-06-01	0	0	0
+53|2027-07-01	0	0	0
+54|2027-08-01	0	0	0
+55|2027-09-01	0	0	0
+58|Awaiting payment, oldest first
+59|Ack No.	Registered Name	Days since acknowledgement	Process stage	Reminder due
+85|Overdue deficiency responses (lapse them; never automatic)
+86|Ack No.	Registered Name	Days overdue
+112|Ready for decision (by determination date)
+113|Ack No.	Registered Name	Recommended outcome
+139|My assigned evaluations: type your name →
+140|Ack No.	Registered Name	Evaluation status	Recommended outcome

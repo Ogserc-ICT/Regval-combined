@@ -1,0 +1,36 @@
+1|	Registry Intake — Acknowledge a Registration Filing
+2|	Registry officer: pull a front desk item (or a filing the Registry has already acknowledged), complete the cream cells (* = required) and click SAVE. The filing gets the next number in the shared OGSERC/ACK series, is logged in the Inward Register and gets its Register (or Own-Use) row.
+3|	Front desk intake no. ▶		▼ PULL DETAILS FROM FRONT DESK
+4|	Ack no. already issued by the Registry ▶		▼ PULL FILING ACKNOWLEDGED BY THE REGISTRY
+6|	Date & time received *			recv	Y			SAVE + ACKNOWLEDGE
+7|	Mode of receipt *	Hand delivery		mode	Y	Hand delivery
+8|	Filing type *			ftype	Y
+9|	Form filed (REG-01A to REG-01K)		Needed for new registrations, updates and annual confirmations (not own-use).	form
+10|	Registered name / applicant *			name	Y			SAVE + PRINT SLIP
+11|	Subject / brief description		e.g. Application for registration of a 1.2 MWp solar mini-grid, Sagamu	subject
+12|	Linked registration no.		Updates and annual confirmations: the OGSERC registration number.	relno
+13|	Sender's reference no.			sref
+14|	CAC No.			cac				SAVE + PDF SLIP
+(email / portal)
+15|	Principal LGA *			lga	Y
+16|	Primary activity		With licence status and operating Y/N, the Register row is saved straight away.	activity
+17|	Licence status			licence
+18|	Operating on the Effective Date (Y/N)		N = new operator: give the planned start date.	operating				CLEAR FORM
+19|	Planned start date			start
+20|	Registered / site address			address
+21|	Contact person / compliance officer			contact				◀ FRONT DESK
+22|	Phone		11 digits starting with 0, or +234 and 10 digits	phone
+23|	Email			email
+24|	Delivered / sent by			by				OPEN REGISTER
+25|	No. of files / volumes			vols
+26|	Schedule 2 documents attached		Count of the documents handed in.	sch2
+27|	Fee evidence attached? (Y/N)			fee				OPEN INWARD REGISTER
+28|	Payment reference (RRR / bank)		Finance records and confirms the payment on the Payments sheet.	payref
+29|	Amount shown (₦)			amt
+30|	Received by (registry officer) *			officer	Y			Last acknowledgement issued
+31|	Acknowledgement issued via *	Printed slip		ackvia	Y	Printed slip
+32|	Remarks			remarks
+33|								PRINT SLIP AGAIN
+34|	Saving does not record a payment or start the evaluation: Finance records and confirms payments on the Payments sheet and the Finance Desk; officers evaluate on the Evaluation sheet.
+40|	ACKNOWLEDGED — REGISTER ENTRY NOT YET SAVED
+41|	Ack No.	Registered name / applicant	Register entry					Received	Working days

@@ -1,0 +1,36 @@
+1|Settings
+2|Yellow cells are inputs.
+4|Parameter	Value		Note
+5|Inward / acknowledgement number prefix	OGSERC/ACK		Same prefix as the Registration Register and EVAL-01 workbook (PREFIX/YEAR/00001).
+6|Outward (dispatch) number prefix	OGSERC/OUT		Reference number for every letter, notice, certificate, order or memo the Commission sends out.
+7|Office closing time (electronic filings after this are received next working day)	17:00:00		Para 10(3).
+8|Registry forwarding target (working days)	2		Internal service standard — adjust as required.
+9|Dispatch target: document date to dispatch (working days)	2		Outgoing items not dispatched within this are flagged.
+10|Chase proof of delivery after (working days)	5		Dispatched items without confirmed delivery after this are flagged.
+11|Response target for Urgent items (working days)	1		Overrides the type's target when Priority = Urgent.
+12|Default response target where the type has none set (working days)	10		Used when a type is missing from Lists.
+13|File return target (working days)	3		Files not returned to the Registry within this are flagged.
+14|Effective Date of the Order	2026-11-02		PLACEHOLDER — replace with the gazetted Effective Date.
+15|Registration deadline (Effective Date + 60 days)	2027-01-01		Para 11(1). Add any para 25 extension manually.
+16|Dashboard: first month shown	2026-11-01		The monthly table shows 24 months from here.
+17|Acknowledgement email: copy to (CC)			Optional, e.g. the Secretary's mailbox. Unit and division addresses are set in Lists (AM, AP).
+18|Acknowledgement email	Display		Send = sent automatically through Outlook when the item is saved · Display = opened for review · Off.
+19|Public holidays (non-working days for para 10(3) and all working-day targets)
+20|Date	Holiday		Status
+21|2026-12-25	Christmas Day		Fixed
+22|2026-12-26	Boxing Day (Saturday)		Fixed
+23|2026-12-28	Boxing Day holiday (substitute)		Provisional — confirm FG declaration
+24|2027-01-01	New Year's Day		Fixed
+25|2027-03-10	Eid al-Fitr		Estimated — confirm FG declaration
+26|2027-03-11	Eid al-Fitr holiday		Estimated — confirm FG declaration
+27|2027-03-26	Good Friday		Fixed
+28|2027-03-29	Easter Monday		Fixed
+29|2027-05-03	Workers' Day (substitute for Sat 1 May)		Provisional — confirm FG declaration
+30|2027-05-17	Eid al-Adha		Estimated — confirm FG declaration
+31|2027-05-18	Eid al-Adha holiday		Estimated — confirm FG declaration
+32|2027-06-14	Democracy Day (substitute for Sat 12 June)		Provisional — confirm FG declaration
+33|2027-08-16	Eid al-Mawlid		Estimated — confirm FG declaration
+34|2027-10-01	Independence Day		Fixed
+35|2027-12-27	Christmas Day holiday (substitute for Sat 25 Dec)		Provisional — confirm FG declaration
+36|2027-12-28	Boxing Day holiday (substitute for Sun 26 Dec)		Provisional — confirm FG declaration
+81|Add State-declared or ad-hoc holidays in the blank rows. Muslim holiday dates are estimates until the Federal Government declares them.

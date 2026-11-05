@@ -1,0 +1,14 @@
+A1	'Schedule 2 documents checklist (per form)'
+A2	"Rows are created from the form's list (registration-forms.json) when a submission is saved, and again after Confirm category. Enter Y, N or N/A in the blue column; Status shows what counts."
+A6	'Reference'	[fmt @]
+B6	'Registrant'	[fmt @]
+C6	'Form'	[fmt @]
+D6	'Key'	[fmt @]
+E6	'Received (Y/N/N/A)'	[fmt @]
+F6	'Document'	[fmt @]
+G6	'Requirement'	[fmt @]
+H6	'Status'	[fmt @]
+I6	'On Current List'	[fmt @]
+J6	'Remarks'	[fmt @]
+K6	'Lookup Key'	[fmt @]
+DV E7:E20006	list	lstYNNA

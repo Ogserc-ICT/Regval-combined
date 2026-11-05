@@ -1,0 +1,415 @@
+B1	'Registry Intake — Acknowledge a Registration Filing'
+B2	'Registry officer: pull a front desk item (or a filing the Registry has already acknowledged), complete the cream cells (* = required) and click SAVE. The filing gets the next number in the shared OGSERC/ACK series, is logged in the Inward Register and gets its Register (or Own-Use) row.'
+B3	'Front desk intake no. ▶'
+D3	'▼ PULL DETAILS FROM FRONT DESK'
+B4	'Ack no. already issued by the Registry ▶'
+D4	'▼ PULL FILING ACKNOWLEDGED BY THE REGISTRY'
+B6	'Date & time received *'
+C6	'=NOW()'	=> None
+D6	'=IF($C$6="","",IF(ISNUMBER($C$6),"Deemed received: "&TEXT(IF(OR(WEEKDAY(INT($C$6),2)>5,COUNTIF(Hols,INT($C$6))>0,AND(OR($C$7="Email",$C$7="Online portal"),MOD($C$6,1)>=CloseTime)),WORKDAY(INT($C$6),1,Hols),INT($C$6)),"dd-mmm-yyyy"),"Enter as dd/mm/yyyy hh:mm"))'	=> None
+E6	'recv'
+F6	'Y'
+G6	'=NOW()'	=> None
+I6	'SAVE + ACKNOWLEDGE'
+B7	'Mode of receipt *'
+C7	'Hand delivery'
+E7	'mode'
+F7	'Y'
+G7	'Hand delivery'
+B8	'Filing type *'
+D8	'=IF($C$8="","Own-use notifications go to the Own-Use sheet; the others to the Register.",IFERROR("Order ref. para "&INDEX(RX_OrderRefs,MATCH($C$8,RX_FilingTypes,0))&IF($C$8="Own-use notification (REG-01I)"," · goes to the Own-Use sheet"," · goes to the Register"),"Choose from the list"))'	=> None
+E8	'ftype'
+F8	'Y'
+B9	'Form filed (REG-01A to REG-01K)'
+D9	'Needed for new registrations, updates and annual confirmations (not own-use).'
+E9	'form'
+B10	'Registered name / applicant *'
+D10	'=IF($C$10="","",IF(COUNTIF(tblRegister[Registered Name],$C$10)>0,"A registrant with this name is already on the Register: check it is not a duplicate",""))'	=> None
+E10	'name'
+F10	'Y'
+I10	'SAVE + PRINT SLIP'
+B11	'Subject / brief description'
+D11	'e.g. Application for registration of a 1.2 MWp solar mini-grid, Sagamu'
+E11	'subject'
+B12	'Linked registration no.'
+D12	'Updates and annual confirmations: the OGSERC registration number.'
+E12	'relno'
+B13	"Sender's reference no."
+E13	'sref'
+B14	'CAC No.'
+D14	'=IF($C$14="","RC, BN or IT followed by digits",IF(COUNTIF(tblRegister[CAC No.],$C$14)>0,"This CAC number is already on the Register (one registration per person, para 11(4))",""))'	=> None
+E14	'cac'
+I14	'SAVE + PDF SLIP\n(email / portal)'
+B15	'Principal LGA *'
+E15	'lga'
+F15	'Y'
+B16	'Primary activity'
+D16	'With licence status and operating Y/N, the Register row is saved straight away.'
+E16	'activity'
+B17	'Licence status'
+E17	'licence'
+B18	'Operating on the Effective Date (Y/N)'
+D18	'N = new operator: give the planned start date.'
+E18	'operating'
+I18	'CLEAR FORM'
+B19	'Planned start date'
+E19	'start'
+B20	'Registered / site address'
+E20	'address'
+B21	'Contact person / compliance officer'
+E21	'contact'
+I21	'◀ FRONT DESK'
+B22	'Phone'
+D22	'11 digits starting with 0, or +234 and 10 digits'
+E22	'phone'
+B23	'Email'
+E23	'email'
+B24	'Delivered / sent by'
+E24	'by'
+I24	'OPEN REGISTER'
+B25	'No. of files / volumes'
+E25	'vols'
+B26	'Schedule 2 documents attached'
+D26	'Count of the documents handed in.'
+E26	'sch2'
+B27	'Fee evidence attached? (Y/N)'
+E27	'fee'
+I27	'OPEN INWARD REGISTER'
+B28	'Payment reference (RRR / bank)'
+D28	'Finance records and confirms the payment on the Payments sheet.'
+E28	'payref'
+B29	'Amount shown (₦)'
+E29	'amt'
+B30	'Received by (registry officer) *'
+E30	'officer'
+F30	'Y'
+I30	'Last acknowledgement issued'
+B31	'Acknowledgement issued via *'
+C31	'Printed slip'
+E31	'ackvia'
+F31	'Y'
+G31	'Printed slip'
+B32	'Remarks'
+E32	'remarks'
+I33	'PRINT SLIP AGAIN'
+B34	'Saving does not record a payment or start the evaluation: Finance records and confirms payments on the Payments sheet and the Finance Desk; officers evaluate on the Evaluation sheet.'
+B40	'ACKNOWLEDGED — REGISTER ENTRY NOT YET SAVED'
+C40	'=SUM(RX_O_flag)&" filing(s) waiting"'	=> None
+B41	'Ack No.'
+C41	'Registered name / applicant'
+D41	'Register entry'
+I41	'Received'
+J41	'Working days'
+B42	'=IF($E42="","",INDEX(RX_O_no,$E42))'	=> None
+C42	'=IF($E42="","",INDEX(RX_O_sender,$E42))'	=> None
+D42	'=IF($E42="","",INDEX(RX_O_status,$E42))'	=> None
+E42	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I42	'=IF($E42="","",INDEX(RX_O_recv,$E42))'	=> None
+J42	'=IF($E42="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E42)),TODAY(),Hols)-1))'	=> None
+B43	'=IF($E43="","",INDEX(RX_O_no,$E43))'	=> None
+C43	'=IF($E43="","",INDEX(RX_O_sender,$E43))'	=> None
+D43	'=IF($E43="","",INDEX(RX_O_status,$E43))'	=> None
+E43	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I43	'=IF($E43="","",INDEX(RX_O_recv,$E43))'	=> None
+J43	'=IF($E43="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E43)),TODAY(),Hols)-1))'	=> None
+B44	'=IF($E44="","",INDEX(RX_O_no,$E44))'	=> None
+C44	'=IF($E44="","",INDEX(RX_O_sender,$E44))'	=> None
+D44	'=IF($E44="","",INDEX(RX_O_status,$E44))'	=> None
+E44	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I44	'=IF($E44="","",INDEX(RX_O_recv,$E44))'	=> None
+J44	'=IF($E44="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E44)),TODAY(),Hols)-1))'	=> None
+B45	'=IF($E45="","",INDEX(RX_O_no,$E45))'	=> None
+C45	'=IF($E45="","",INDEX(RX_O_sender,$E45))'	=> None
+D45	'=IF($E45="","",INDEX(RX_O_status,$E45))'	=> None
+E45	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I45	'=IF($E45="","",INDEX(RX_O_recv,$E45))'	=> None
+J45	'=IF($E45="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E45)),TODAY(),Hols)-1))'	=> None
+B46	'=IF($E46="","",INDEX(RX_O_no,$E46))'	=> None
+C46	'=IF($E46="","",INDEX(RX_O_sender,$E46))'	=> None
+D46	'=IF($E46="","",INDEX(RX_O_status,$E46))'	=> None
+E46	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I46	'=IF($E46="","",INDEX(RX_O_recv,$E46))'	=> None
+J46	'=IF($E46="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E46)),TODAY(),Hols)-1))'	=> None
+B47	'=IF($E47="","",INDEX(RX_O_no,$E47))'	=> None
+C47	'=IF($E47="","",INDEX(RX_O_sender,$E47))'	=> None
+D47	'=IF($E47="","",INDEX(RX_O_status,$E47))'	=> None
+E47	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I47	'=IF($E47="","",INDEX(RX_O_recv,$E47))'	=> None
+J47	'=IF($E47="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E47)),TODAY(),Hols)-1))'	=> None
+B48	'=IF($E48="","",INDEX(RX_O_no,$E48))'	=> None
+C48	'=IF($E48="","",INDEX(RX_O_sender,$E48))'	=> None
+D48	'=IF($E48="","",INDEX(RX_O_status,$E48))'	=> None
+E48	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I48	'=IF($E48="","",INDEX(RX_O_recv,$E48))'	=> None
+J48	'=IF($E48="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E48)),TODAY(),Hols)-1))'	=> None
+B49	'=IF($E49="","",INDEX(RX_O_no,$E49))'	=> None
+C49	'=IF($E49="","",INDEX(RX_O_sender,$E49))'	=> None
+D49	'=IF($E49="","",INDEX(RX_O_status,$E49))'	=> None
+E49	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I49	'=IF($E49="","",INDEX(RX_O_recv,$E49))'	=> None
+J49	'=IF($E49="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E49)),TODAY(),Hols)-1))'	=> None
+B50	'=IF($E50="","",INDEX(RX_O_no,$E50))'	=> None
+C50	'=IF($E50="","",INDEX(RX_O_sender,$E50))'	=> None
+D50	'=IF($E50="","",INDEX(RX_O_status,$E50))'	=> None
+E50	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I50	'=IF($E50="","",INDEX(RX_O_recv,$E50))'	=> None
+J50	'=IF($E50="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E50)),TODAY(),Hols)-1))'	=> None
+B51	'=IF($E51="","",INDEX(RX_O_no,$E51))'	=> None
+C51	'=IF($E51="","",INDEX(RX_O_sender,$E51))'	=> None
+D51	'=IF($E51="","",INDEX(RX_O_status,$E51))'	=> None
+E51	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I51	'=IF($E51="","",INDEX(RX_O_recv,$E51))'	=> None
+J51	'=IF($E51="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E51)),TODAY(),Hols)-1))'	=> None
+B52	'=IF($E52="","",INDEX(RX_O_no,$E52))'	=> None
+C52	'=IF($E52="","",INDEX(RX_O_sender,$E52))'	=> None
+D52	'=IF($E52="","",INDEX(RX_O_status,$E52))'	=> None
+E52	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I52	'=IF($E52="","",INDEX(RX_O_recv,$E52))'	=> None
+J52	'=IF($E52="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E52)),TODAY(),Hols)-1))'	=> None
+B53	'=IF($E53="","",INDEX(RX_O_no,$E53))'	=> None
+C53	'=IF($E53="","",INDEX(RX_O_sender,$E53))'	=> None
+D53	'=IF($E53="","",INDEX(RX_O_status,$E53))'	=> None
+E53	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I53	'=IF($E53="","",INDEX(RX_O_recv,$E53))'	=> None
+J53	'=IF($E53="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E53)),TODAY(),Hols)-1))'	=> None
+B54	'=IF($E54="","",INDEX(RX_O_no,$E54))'	=> None
+C54	'=IF($E54="","",INDEX(RX_O_sender,$E54))'	=> None
+D54	'=IF($E54="","",INDEX(RX_O_status,$E54))'	=> None
+E54	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I54	'=IF($E54="","",INDEX(RX_O_recv,$E54))'	=> None
+J54	'=IF($E54="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E54)),TODAY(),Hols)-1))'	=> None
+B55	'=IF($E55="","",INDEX(RX_O_no,$E55))'	=> None
+C55	'=IF($E55="","",INDEX(RX_O_sender,$E55))'	=> None
+D55	'=IF($E55="","",INDEX(RX_O_status,$E55))'	=> None
+E55	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I55	'=IF($E55="","",INDEX(RX_O_recv,$E55))'	=> None
+J55	'=IF($E55="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E55)),TODAY(),Hols)-1))'	=> None
+B56	'=IF($E56="","",INDEX(RX_O_no,$E56))'	=> None
+C56	'=IF($E56="","",INDEX(RX_O_sender,$E56))'	=> None
+D56	'=IF($E56="","",INDEX(RX_O_status,$E56))'	=> None
+E56	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I56	'=IF($E56="","",INDEX(RX_O_recv,$E56))'	=> None
+J56	'=IF($E56="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E56)),TODAY(),Hols)-1))'	=> None
+B57	'=IF($E57="","",INDEX(RX_O_no,$E57))'	=> None
+C57	'=IF($E57="","",INDEX(RX_O_sender,$E57))'	=> None
+D57	'=IF($E57="","",INDEX(RX_O_status,$E57))'	=> None
+E57	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I57	'=IF($E57="","",INDEX(RX_O_recv,$E57))'	=> None
+J57	'=IF($E57="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E57)),TODAY(),Hols)-1))'	=> None
+B58	'=IF($E58="","",INDEX(RX_O_no,$E58))'	=> None
+C58	'=IF($E58="","",INDEX(RX_O_sender,$E58))'	=> None
+D58	'=IF($E58="","",INDEX(RX_O_status,$E58))'	=> None
+E58	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I58	'=IF($E58="","",INDEX(RX_O_recv,$E58))'	=> None
+J58	'=IF($E58="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E58)),TODAY(),Hols)-1))'	=> None
+B59	'=IF($E59="","",INDEX(RX_O_no,$E59))'	=> None
+C59	'=IF($E59="","",INDEX(RX_O_sender,$E59))'	=> None
+D59	'=IF($E59="","",INDEX(RX_O_status,$E59))'	=> None
+E59	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I59	'=IF($E59="","",INDEX(RX_O_recv,$E59))'	=> None
+J59	'=IF($E59="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E59)),TODAY(),Hols)-1))'	=> None
+B60	'=IF($E60="","",INDEX(RX_O_no,$E60))'	=> None
+C60	'=IF($E60="","",INDEX(RX_O_sender,$E60))'	=> None
+D60	'=IF($E60="","",INDEX(RX_O_status,$E60))'	=> None
+E60	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I60	'=IF($E60="","",INDEX(RX_O_recv,$E60))'	=> None
+J60	'=IF($E60="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E60)),TODAY(),Hols)-1))'	=> None
+B61	'=IF($E61="","",INDEX(RX_O_no,$E61))'	=> None
+C61	'=IF($E61="","",INDEX(RX_O_sender,$E61))'	=> None
+D61	'=IF($E61="","",INDEX(RX_O_status,$E61))'	=> None
+E61	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I61	'=IF($E61="","",INDEX(RX_O_recv,$E61))'	=> None
+J61	'=IF($E61="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E61)),TODAY(),Hols)-1))'	=> None
+B62	'=IF($E62="","",INDEX(RX_O_no,$E62))'	=> None
+C62	'=IF($E62="","",INDEX(RX_O_sender,$E62))'	=> None
+D62	'=IF($E62="","",INDEX(RX_O_status,$E62))'	=> None
+E62	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I62	'=IF($E62="","",INDEX(RX_O_recv,$E62))'	=> None
+J62	'=IF($E62="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E62)),TODAY(),Hols)-1))'	=> None
+B63	'=IF($E63="","",INDEX(RX_O_no,$E63))'	=> None
+C63	'=IF($E63="","",INDEX(RX_O_sender,$E63))'	=> None
+D63	'=IF($E63="","",INDEX(RX_O_status,$E63))'	=> None
+E63	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I63	'=IF($E63="","",INDEX(RX_O_recv,$E63))'	=> None
+J63	'=IF($E63="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E63)),TODAY(),Hols)-1))'	=> None
+B64	'=IF($E64="","",INDEX(RX_O_no,$E64))'	=> None
+C64	'=IF($E64="","",INDEX(RX_O_sender,$E64))'	=> None
+D64	'=IF($E64="","",INDEX(RX_O_status,$E64))'	=> None
+E64	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I64	'=IF($E64="","",INDEX(RX_O_recv,$E64))'	=> None
+J64	'=IF($E64="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E64)),TODAY(),Hols)-1))'	=> None
+B65	'=IF($E65="","",INDEX(RX_O_no,$E65))'	=> None
+C65	'=IF($E65="","",INDEX(RX_O_sender,$E65))'	=> None
+D65	'=IF($E65="","",INDEX(RX_O_status,$E65))'	=> None
+E65	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I65	'=IF($E65="","",INDEX(RX_O_recv,$E65))'	=> None
+J65	'=IF($E65="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E65)),TODAY(),Hols)-1))'	=> None
+B66	'=IF($E66="","",INDEX(RX_O_no,$E66))'	=> None
+C66	'=IF($E66="","",INDEX(RX_O_sender,$E66))'	=> None
+D66	'=IF($E66="","",INDEX(RX_O_status,$E66))'	=> None
+E66	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I66	'=IF($E66="","",INDEX(RX_O_recv,$E66))'	=> None
+J66	'=IF($E66="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E66)),TODAY(),Hols)-1))'	=> None
+B67	'=IF($E67="","",INDEX(RX_O_no,$E67))'	=> None
+C67	'=IF($E67="","",INDEX(RX_O_sender,$E67))'	=> None
+D67	'=IF($E67="","",INDEX(RX_O_status,$E67))'	=> None
+E67	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I67	'=IF($E67="","",INDEX(RX_O_recv,$E67))'	=> None
+J67	'=IF($E67="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E67)),TODAY(),Hols)-1))'	=> None
+B68	'=IF($E68="","",INDEX(RX_O_no,$E68))'	=> None
+C68	'=IF($E68="","",INDEX(RX_O_sender,$E68))'	=> None
+D68	'=IF($E68="","",INDEX(RX_O_status,$E68))'	=> None
+E68	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I68	'=IF($E68="","",INDEX(RX_O_recv,$E68))'	=> None
+J68	'=IF($E68="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E68)),TODAY(),Hols)-1))'	=> None
+B69	'=IF($E69="","",INDEX(RX_O_no,$E69))'	=> None
+C69	'=IF($E69="","",INDEX(RX_O_sender,$E69))'	=> None
+D69	'=IF($E69="","",INDEX(RX_O_status,$E69))'	=> None
+E69	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I69	'=IF($E69="","",INDEX(RX_O_recv,$E69))'	=> None
+J69	'=IF($E69="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E69)),TODAY(),Hols)-1))'	=> None
+B70	'=IF($E70="","",INDEX(RX_O_no,$E70))'	=> None
+C70	'=IF($E70="","",INDEX(RX_O_sender,$E70))'	=> None
+D70	'=IF($E70="","",INDEX(RX_O_status,$E70))'	=> None
+E70	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I70	'=IF($E70="","",INDEX(RX_O_recv,$E70))'	=> None
+J70	'=IF($E70="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E70)),TODAY(),Hols)-1))'	=> None
+B71	'=IF($E71="","",INDEX(RX_O_no,$E71))'	=> None
+C71	'=IF($E71="","",INDEX(RX_O_sender,$E71))'	=> None
+D71	'=IF($E71="","",INDEX(RX_O_status,$E71))'	=> None
+E71	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I71	'=IF($E71="","",INDEX(RX_O_recv,$E71))'	=> None
+J71	'=IF($E71="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E71)),TODAY(),Hols)-1))'	=> None
+B72	'=IF($E72="","",INDEX(RX_O_no,$E72))'	=> None
+C72	'=IF($E72="","",INDEX(RX_O_sender,$E72))'	=> None
+D72	'=IF($E72="","",INDEX(RX_O_status,$E72))'	=> None
+E72	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I72	'=IF($E72="","",INDEX(RX_O_recv,$E72))'	=> None
+J72	'=IF($E72="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E72)),TODAY(),Hols)-1))'	=> None
+B73	'=IF($E73="","",INDEX(RX_O_no,$E73))'	=> None
+C73	'=IF($E73="","",INDEX(RX_O_sender,$E73))'	=> None
+D73	'=IF($E73="","",INDEX(RX_O_status,$E73))'	=> None
+E73	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I73	'=IF($E73="","",INDEX(RX_O_recv,$E73))'	=> None
+J73	'=IF($E73="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E73)),TODAY(),Hols)-1))'	=> None
+B74	'=IF($E74="","",INDEX(RX_O_no,$E74))'	=> None
+C74	'=IF($E74="","",INDEX(RX_O_sender,$E74))'	=> None
+D74	'=IF($E74="","",INDEX(RX_O_status,$E74))'	=> None
+E74	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I74	'=IF($E74="","",INDEX(RX_O_recv,$E74))'	=> None
+J74	'=IF($E74="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E74)),TODAY(),Hols)-1))'	=> None
+B75	'=IF($E75="","",INDEX(RX_O_no,$E75))'	=> None
+C75	'=IF($E75="","",INDEX(RX_O_sender,$E75))'	=> None
+D75	'=IF($E75="","",INDEX(RX_O_status,$E75))'	=> None
+E75	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I75	'=IF($E75="","",INDEX(RX_O_recv,$E75))'	=> None
+J75	'=IF($E75="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E75)),TODAY(),Hols)-1))'	=> None
+B76	'=IF($E76="","",INDEX(RX_O_no,$E76))'	=> None
+C76	'=IF($E76="","",INDEX(RX_O_sender,$E76))'	=> None
+D76	'=IF($E76="","",INDEX(RX_O_status,$E76))'	=> None
+E76	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I76	'=IF($E76="","",INDEX(RX_O_recv,$E76))'	=> None
+J76	'=IF($E76="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E76)),TODAY(),Hols)-1))'	=> None
+B77	'=IF($E77="","",INDEX(RX_O_no,$E77))'	=> None
+C77	'=IF($E77="","",INDEX(RX_O_sender,$E77))'	=> None
+D77	'=IF($E77="","",INDEX(RX_O_status,$E77))'	=> None
+E77	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I77	'=IF($E77="","",INDEX(RX_O_recv,$E77))'	=> None
+J77	'=IF($E77="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E77)),TODAY(),Hols)-1))'	=> None
+B78	'=IF($E78="","",INDEX(RX_O_no,$E78))'	=> None
+C78	'=IF($E78="","",INDEX(RX_O_sender,$E78))'	=> None
+D78	'=IF($E78="","",INDEX(RX_O_status,$E78))'	=> None
+E78	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I78	'=IF($E78="","",INDEX(RX_O_recv,$E78))'	=> None
+J78	'=IF($E78="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E78)),TODAY(),Hols)-1))'	=> None
+B79	'=IF($E79="","",INDEX(RX_O_no,$E79))'	=> None
+C79	'=IF($E79="","",INDEX(RX_O_sender,$E79))'	=> None
+D79	'=IF($E79="","",INDEX(RX_O_status,$E79))'	=> None
+E79	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I79	'=IF($E79="","",INDEX(RX_O_recv,$E79))'	=> None
+J79	'=IF($E79="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E79)),TODAY(),Hols)-1))'	=> None
+B80	'=IF($E80="","",INDEX(RX_O_no,$E80))'	=> None
+C80	'=IF($E80="","",INDEX(RX_O_sender,$E80))'	=> None
+D80	'=IF($E80="","",INDEX(RX_O_status,$E80))'	=> None
+E80	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I80	'=IF($E80="","",INDEX(RX_O_recv,$E80))'	=> None
+J80	'=IF($E80="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E80)),TODAY(),Hols)-1))'	=> None
+B81	'=IF($E81="","",INDEX(RX_O_no,$E81))'	=> None
+C81	'=IF($E81="","",INDEX(RX_O_sender,$E81))'	=> None
+D81	'=IF($E81="","",INDEX(RX_O_status,$E81))'	=> None
+E81	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I81	'=IF($E81="","",INDEX(RX_O_recv,$E81))'	=> None
+J81	'=IF($E81="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E81)),TODAY(),Hols)-1))'	=> None
+B82	'=IF($E82="","",INDEX(RX_O_no,$E82))'	=> None
+C82	'=IF($E82="","",INDEX(RX_O_sender,$E82))'	=> None
+D82	'=IF($E82="","",INDEX(RX_O_status,$E82))'	=> None
+E82	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I82	'=IF($E82="","",INDEX(RX_O_recv,$E82))'	=> None
+J82	'=IF($E82="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E82)),TODAY(),Hols)-1))'	=> None
+B83	'=IF($E83="","",INDEX(RX_O_no,$E83))'	=> None
+C83	'=IF($E83="","",INDEX(RX_O_sender,$E83))'	=> None
+D83	'=IF($E83="","",INDEX(RX_O_status,$E83))'	=> None
+E83	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I83	'=IF($E83="","",INDEX(RX_O_recv,$E83))'	=> None
+J83	'=IF($E83="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E83)),TODAY(),Hols)-1))'	=> None
+B84	'=IF($E84="","",INDEX(RX_O_no,$E84))'	=> None
+C84	'=IF($E84="","",INDEX(RX_O_sender,$E84))'	=> None
+D84	'=IF($E84="","",INDEX(RX_O_status,$E84))'	=> None
+E84	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I84	'=IF($E84="","",INDEX(RX_O_recv,$E84))'	=> None
+J84	'=IF($E84="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E84)),TODAY(),Hols)-1))'	=> None
+B85	'=IF($E85="","",INDEX(RX_O_no,$E85))'	=> None
+C85	'=IF($E85="","",INDEX(RX_O_sender,$E85))'	=> None
+D85	'=IF($E85="","",INDEX(RX_O_status,$E85))'	=> None
+E85	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I85	'=IF($E85="","",INDEX(RX_O_recv,$E85))'	=> None
+J85	'=IF($E85="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E85)),TODAY(),Hols)-1))'	=> None
+B86	'=IF($E86="","",INDEX(RX_O_no,$E86))'	=> None
+C86	'=IF($E86="","",INDEX(RX_O_sender,$E86))'	=> None
+D86	'=IF($E86="","",INDEX(RX_O_status,$E86))'	=> None
+E86	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I86	'=IF($E86="","",INDEX(RX_O_recv,$E86))'	=> None
+J86	'=IF($E86="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E86)),TODAY(),Hols)-1))'	=> None
+B87	'=IF($E87="","",INDEX(RX_O_no,$E87))'	=> None
+C87	'=IF($E87="","",INDEX(RX_O_sender,$E87))'	=> None
+D87	'=IF($E87="","",INDEX(RX_O_status,$E87))'	=> None
+E87	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I87	'=IF($E87="","",INDEX(RX_O_recv,$E87))'	=> None
+J87	'=IF($E87="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E87)),TODAY(),Hols)-1))'	=> None
+B88	'=IF($E88="","",INDEX(RX_O_no,$E88))'	=> None
+C88	'=IF($E88="","",INDEX(RX_O_sender,$E88))'	=> None
+D88	'=IF($E88="","",INDEX(RX_O_status,$E88))'	=> None
+E88	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I88	'=IF($E88="","",INDEX(RX_O_recv,$E88))'	=> None
+J88	'=IF($E88="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E88)),TODAY(),Hols)-1))'	=> None
+B89	'=IF($E89="","",INDEX(RX_O_no,$E89))'	=> None
+C89	'=IF($E89="","",INDEX(RX_O_sender,$E89))'	=> None
+D89	'=IF($E89="","",INDEX(RX_O_status,$E89))'	=> None
+E89	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I89	'=IF($E89="","",INDEX(RX_O_recv,$E89))'	=> None
+J89	'=IF($E89="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E89)),TODAY(),Hols)-1))'	=> None
+B90	'=IF($E90="","",INDEX(RX_O_no,$E90))'	=> None
+C90	'=IF($E90="","",INDEX(RX_O_sender,$E90))'	=> None
+D90	'=IF($E90="","",INDEX(RX_O_status,$E90))'	=> None
+E90	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I90	'=IF($E90="","",INDEX(RX_O_recv,$E90))'	=> None
+J90	'=IF($E90="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E90)),TODAY(),Hols)-1))'	=> None
+B91	'=IF($E91="","",INDEX(RX_O_no,$E91))'	=> None
+C91	'=IF($E91="","",INDEX(RX_O_sender,$E91))'	=> None
+D91	'=IF($E91="","",INDEX(RX_O_status,$E91))'	=> None
+E91	'=IF(ROW()-41>SUM(RX_O_flag),"",MATCH(ROW()-41,RX_O_seq,0))'	=> None
+I91	'=IF($E91="","",INDEX(RX_O_recv,$E91))'	=> None
+J91	'=IF($E91="","",MAX(0,NETWORKDAYS(INT(INDEX(RX_O_recv,$E91)),TODAY(),Hols)-1))'	=> None
+DV C3	list	FDPendingList
+DV C4	list	RX_PendingAckList
+DV C6 C19	date	DATE(2020,1,1)
+DV C7	list	ModeList
+DV C8	list	RX_FilingTypes
+DV C9	list	lstForms
+DV C15	list	lstLGA
+DV C16	list	lstActivity
+DV C17	list	lstLicenceStatus
+DV C18 C27	list	lstYN
+DV C25 C26 C29	decimal	0
+DV C30	list	RegistryStaff
+DV C31	list	IssueList

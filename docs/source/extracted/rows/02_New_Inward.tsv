@@ -1,0 +1,29 @@
+1|	Log an Incoming Item
+2|	Fill the cream cells (* = required) and click a button. The item is added to the Inward Register, numbered and locked, and the slip is ready.
+3|	Front desk intake no. ▶		▼ PULL DETAILS FROM FRONT DESK
+4|	Date & time received *	2026-11-03 21:07	Deemed received: 03-Nov-2026	recv	Y	2026-11-03 21:07		SAVE TO REGISTER
+5|	Mode of receipt *			mode	Y
+6|	Correspondence type *			type	Y
+7|	Sender / organisation *			sender	Y
+8|	Sender category *			scat	Y			SAVE + PRINT SLIP
+9|	Subject / brief description *			subject	Y
+10|	Sender's reference no.			sref
+11|	Date on document			docdate
+12|	Related OGSERC No.		Registration or earlier acknowledgement number — needed for updates, annual confirmations and deficiency responses.	relno				SAVE + PDF SLIP
+(email / portal)
+13|	In response to our ref. (outward no.)			ourref
+14|	CAC / Reg. No.			cac
+15|	Principal LGA			lga
+16|	Contact person			contact				CLEAR FORM
+17|	Phone			phone
+18|	Email			email
+19|	Delivered / sent by			by				◀ REGISTRY DESK
+20|	No. of files / volumes			vols
+21|	Schedule 2 documents attached		REG-01: 12 required (13 for a multi-State licensee).	sch2
+22|	Fee evidence attached? (Y/N)			fee
+23|	Payment reference			payref				Last number issued
+24|	Amount shown (₦)			amt
+25|	Received by (registry officer) *	Olanrewaju Oluyombo		officer	Y	Olanrewaju Oluyombo
+26|	Acknowledgement issued via *	Printed slip	Saving also emails the acknowledgement to the unit and its division (Settings · Lists).	ackvia	Y	Printed slip
+27|	Remarks			remarks
+29|	Routing, file reference and handling (action, priority, action officer, response due) are set by the Secretary / Head of Admin on the Routing Desk — not at registration.

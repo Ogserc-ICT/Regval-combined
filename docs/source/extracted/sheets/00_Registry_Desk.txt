@@ -1,0 +1,62 @@
+B1	'OGSERC Registry Desk'
+B2	'Click a green button to run each step. Macros must be enabled (see the note at the bottom).'
+B4	'Officer on duty ▶'
+C4	'Olanrewaju Oluyombo'
+E4	'Commission Secretary ▶'
+F4	'Oluwatoyin Sonoiki'
+B5	'The officer on duty fills "Received by", "Dispatched by" and "Released by" on the forms. The Secretary is printed on slips and the Daily Register and is the default signatory for outgoing letters.'
+B7	'Received today'
+C7	'Dispatched today'
+E7	'Awaiting routing / forwarding'
+F7	'Incoming overdue'
+H7	'Not yet dispatched'
+I7	'Replies overdue to us'
+K7	'Files out'
+B8	'=COUNTIF(IN_rday,TODAY())'	=> 0
+C8	'=COUNTIF(OUT_disp,TODAY())'	=> 0
+E8	'=COUNTIF(IN_status,"Awaiting routing")+COUNTIF(IN_status,"Awaiting forwarding")'	=> 1
+F8	'=COUNTIF(IN_status,"Overdue")'	=> 0
+H8	'=COUNTIF(OUT_status,"Not yet dispatched")'	=> 0
+I8	'=COUNTIF(OUT_status,"Response overdue")'	=> 0
+K8	'=COUNTIF(FM_status,"Out")+COUNTIF(FM_status,"Overdue")'	=> 1
+B10	'1  RECEIVE AND SEND'
+B11	'LOG INCOMING ITEM\n(letter, filing, complaint, email)'
+E11	'LOG OUTGOING ITEM\n(letter, notice, certificate, memo)'
+H11	'FORWARD / DISPATCH / CLOSE\nan existing item'
+K11	'INTERNAL FILE DESK\nissue · return · new file'
+B15	'2  SLIPS AND REPORTS'
+B16	'Slip for inward no. ▶'
+C16	'OGSERC/ACK/2026/00001'
+E16	'Defaults to the latest item; choose another from the list.'
+B18	'PRINT SLIP'
+E18	'SAVE SLIP AS PDF\n(for email / portal filers)'
+H18	"PRINT TODAY'S DAILY REGISTER"
+K18	'SAVE DAILY REGISTER AS PDF'
+B21	'PRINT PENDING ACTIONS'
+E21	'OPEN DASHBOARD'
+H21	'OPEN INWARD REGISTER'
+K21	'OPEN OUTWARD REGISTER'
+B24	'3  HOUSEKEEPING'
+B25	'LOCK ALL NUMBERS'
+E25	'BACK UP WORKBOOK NOW'
+H25	'CLEAR EXAMPLE ROWS\n(once, before live use)'
+K25	'OPEN GUIDE'
+B28	'4  ROUTING AND ACKNOWLEDGEMENT EMAIL'
+B29	'ROUTE AN ITEM\n(Secretary / Head of Admin only)'
+E29	'RESEND ACK EMAIL\n(for the slip no. above)'
+H29	'Awaiting routing'
+H30	'=COUNTIF(IN_status,"Awaiting routing")'	=> 1
+B33	'5  FRONT DESK (documents handed in, not yet registered)'
+B34	'FRONT DESK\nlog a delivered document'
+E34	'OPEN FRONT DESK LOG'
+H34	'Awaiting registry (front desk)'
+H35	'=SUM(FD_pflag)'	=> 1
+B38	'Enabling the buttons: save the file to your computer, right-click it > Properties > tick "Unblock" > OK, then open it and click "Enable Content" on the yellow bar. PDFs and backups are saved in an "OGSERC Registry Outputs" folder beside the workbook.'
+B41	'6  REGISTRATION FILINGS (Register and evaluation)'
+B42	'REGISTRY INTAKE\n(acknowledge a registration filing)'
+E42	'OPEN REGISTER'
+H42	'Acknowledged, not yet on the Register'
+H43	'=SUM(IN_eoflag)'	=> None
+DV C4	list	RegistryStaff
+DV F4	list	SecretaryList
+DV C16	list	IN_no

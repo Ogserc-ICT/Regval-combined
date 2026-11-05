@@ -72,7 +72,7 @@ The workbook is the only spec. The Guide mentions `docs/SPEC.md`, `src/domain` a
 
 ## Gap fixes
 
-Thirteen gaps were found in the workbook. Don't carry any of them into the app. The "Workbook export" notes apply only if the optional offline workbook export (Phase 7) is built.
+Fourteen gaps were found in the workbook (G14 added 6 Nov 2026 after Phase 0). Don't carry any of them into the app. The "Workbook export" notes apply only if the optional offline workbook export (Phase 7) is built.
 
 1. **G1 One Effective Date.** Settings B7 says 22 Oct 2026 (deadline 21 Dec 2026). Registry Settings B14 says 2 Nov 2026 (deadline 1 Jan 2027). Both are placeholders, but they disagree.
     - App: one `effectiveDate` setting plus `extensionDays` (para 25). Every deadline, late check and the inward "Filed after registration deadline?" flag derive from it. Show admins a banner while it is still a placeholder.
@@ -112,6 +112,9 @@ Thirteen gaps were found in the workbook. Don't carry any of them into the app. 
     - App: issue every series (ACK, FD, OUT, PAY, OUN, DEF, REG, file references) from a counters table inside a database transaction with row locking. Numbers are per year, locked once issued and never reused, even when a record is cancelled.
 13. **G13 "Today" is the computer's date.** Guide row 15 says so. Deemed receipt uses a 17:00 cut-off, weekends and the holiday list in Registry Settings rows 21–36, several marked "Estimated" or "Provisional".
     - App: compute dates in Africa/Lagos on the server. Holidays are admin-editable with a status. Keep a test-only today override (like `APP_TODAY`) that is disabled in production.
+14. **G14 The late charge exceeds the Order's cap.** The Register "Late Charge" formula is `initial + MIN(daily × days late, cap)`, so the cap limits only the daily part. The Order caps the whole late charge: `MIN(initial + daily × days late, cap)`. Category D, 100 days late: the workbook gives ₦10,500,000; the Order gives ₦10,000,000.
+    - App: late charge = `min(initial + daily × days late, cap)`. The Order overrides the workbook (`docs/SPEC.md` §8.2).
+    - Workbook export: write the Late Charge column as `MIN(initial + daily × days late, cap)`, and check it against the category D, 100-days-late case when the workbook is built.
 
 ## Modules and roles
 
@@ -183,12 +186,14 @@ Work in seven phases (0 to 6), plus an optional Phase 7. After each, stop, summa
 
 The build is done only when every check below passes as an automated test, or is shown working on a preview deployment.
 
-- [ ] Changing the Effective Date in one place moves every deadline in both modules.
+- [ ] Changing the Effective Date in one place moves the global registration deadline, the inward "Filed after registration deadline?" flag and every not-yet-priced record in both modules. Saved submissions keep their frozen pricing and are flagged "pricing out of date", and an admin's one-click "Recalculate all open submissions" (reason required, logged on each submission) moves their deadlines too. (Updated 6 Nov 2026, Q6.)
 - [ ] 20 parallel saves get 20 consecutive ACK numbers, with no duplicates.
 - [ ] A registry inward item and a direct Register entry draw from the same ACK series.
 - [ ] Phone 08021846578 is saved and shown with its zero; 8021846578 is rejected with a clear message.
-- [ ] An item received at 17:30 on Friday 18 Dec 2026 is deemed received Monday 21 Dec.
-- [ ] An item received at 18:00 on Thursday 24 Dec 2026 is deemed received Tuesday 29 Dec (25, 26 and 28 Dec are holidays).
+- [ ] An email item received at 17:30 on Friday 18 Dec 2026 is deemed received Monday 21 Dec.
+- [ ] An email item received at 18:00 on Thursday 24 Dec 2026 is deemed received Tuesday 29 Dec (25, 26 and 28 Dec are holidays).
+- [ ] A hand delivery received at 16:00 on Friday 18 Dec 2026 is deemed received that day. (The 17:00 cut-off applies to email and portal items only; Q1, 6 Nov 2026.)
+- [ ] A category D new registration 100 days late has a late charge of ₦10,000,000, not the workbook's ₦10,500,000 (G14).
 - [ ] Approving a new registration is refused while the Commissioner signatory is empty, and the reason is shown.
 - [ ] A Finance officer gets 403 confirming a payment they recorded, including through a direct API call.
 - [ ] A user without the Router role gets 403 on routing.
@@ -196,7 +201,7 @@ The build is done only when every check below passes as an automated test, or is
 - [ ] Production has no EXAMPLE records; previews do.
 - [ ] Saving an item for a unit with no email address shows a warning and logs "Not emailed: no address".
 - [ ] Worked examples of the fee, late-charge, category and deadline rules pass as tests for every category from A to K.
-- [ ] If Phase 7 is built, the generated workbook has one Effective Date, names in the staff lists, text phone cells, no EXAMPLE rows, a clean commit hash and no partner-workbook code.
+- [ ] If Phase 7 is built, the generated workbook has one Effective Date, names in the staff lists, text phone cells, no EXAMPLE rows, a clean commit hash, no partner-workbook code and the G14 late-charge formula.
 
 ## Open questions for the Commission
 
