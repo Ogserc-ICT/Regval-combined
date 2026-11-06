@@ -17,10 +17,10 @@ import type { Db, Tx } from "../../db/connect";
 import { inwardItems, ownUseNotifications, submissions } from "../../db/schema";
 import { blocked, notFound, Problems, ServiceError } from "../../errors";
 import { createInwardItem } from "../inward";
+import { deliverQueued, queueItemEmail } from "../email";
 import { listValues, loadRef } from "../reference";
-import { getSettings } from "../settings";
 import { saveDraftInTx, type SubmissionInput } from "../submissions/save";
-import { checkEmailAddress, inList, optionalDate, receivedInstant, t } from "./common";
+import { inList, optionalDate, receivedInstant, t } from "./common";
 import { markFrontDeskRegistered, takeFrontDeskItem } from "./frontdesk";
 import { checkHandling } from "./inward";
 import { loadRegistryRef } from "./ref";
@@ -73,8 +73,8 @@ export type IntakeResult = {
 export async function registryIntake(db: Db, actor: Actor | null, input: IntakeInput, opts: { confirmWarnings?: boolean } = {}): Promise<IntakeResult> {
   authorize(actor, "inward:write");
   authorize(actor, "submission:save");
-  return db.transaction(async (tx) => {
-    const [ref, settings, regRef, lgas, licenceStatuses] = [await loadRegistryRef(tx), await getSettings(tx), await loadRef(tx), await listValues(tx, "lga"), await listValues(tx, "licence_status")];
+  const r = await db.transaction(async (tx) => {
+    const [ref, regRef, lgas, licenceStatuses] = [await loadRegistryRef(tx), await loadRef(tx), await listValues(tx, "lga"), await listValues(tx, "licence_status")];
     const p = new Problems();
     if (input.frontDeskItemId && input.inwardItemId) throw blocked("Pull from the front desk or from an acknowledged item, not both.");
     const fd = input.frontDeskItemId ? await takeFrontDeskItem(tx, input.frontDeskItemId) : null;
@@ -255,9 +255,12 @@ export async function registryIntake(db: Db, actor: Actor | null, input: IntakeI
       reference: inward.ackNo,
       detail: `${label} from ${name}${form ? ` (${form})` : ""}${pulled ? "; pulled from New Inward" : fd ? `; from ${fd.fdNo}` : ""}; ${entry.saved ? "saved on the Register" : isOwnUse ? "Own-Use row started" : "Register row started"}`,
     });
-    if (!pulled) warnings.unshift(...(await checkEmailAddress(tx, actor, inward, ref.unit(type?.defaultUnitId), settings, "Acknowledgement")));
-    return { inwardId: inward.id, ackNo: inward.ackNo, entry, warnings };
+    const q = pulled ? { warnings: [], emailIds: [] } : await queueItemEmail(tx, actor, inward.id, "acknowledgement");
+    warnings.unshift(...q.warnings);
+    return { inwardId: inward.id, ackNo: inward.ackNo, entry, warnings, emailIds: q.emailIds };
   });
+  const problems = await deliverQueued(db, r.emailIds, auditActor(actor));
+  return { inwardId: r.inwardId, ackNo: r.ackNo, entry: r.entry, warnings: [...problems, ...r.warnings] };
 }
 
 /** An inward item acknowledged on New Inward, waiting for its Register / Own-Use entry (SPEC §18.2). */

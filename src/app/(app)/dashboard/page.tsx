@@ -16,9 +16,9 @@ const PHASES = [
   { n: 0, name: "Spec and plan", status: "done" },
   { n: 1, name: "Scaffold and foundations", status: "done" },
   { n: 2, name: "Registration module", status: "done" },
-  { n: 3, name: "Registry module", status: "current" },
-  { n: 4, name: "Outputs and automation", status: "next" },
-  { n: 5, name: "Dashboard and admin", status: "later" },
+  { n: 3, name: "Registry module", status: "done" },
+  { n: 4, name: "Outputs and automation", status: "current" },
+  { n: 5, name: "Dashboard and admin", status: "next" },
   { n: 6, name: "Import and go-live", status: "later" },
 ] as const;
 

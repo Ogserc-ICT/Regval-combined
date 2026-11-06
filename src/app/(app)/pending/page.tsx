@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InwardStatusBadge } from "@/components/registry-badges";
-import { Button, Card, CardHeader, PageHeader, Select, Stat, Table, Td, Th } from "@/components/ui";
+import { Button, buttonVariants, Card, CardHeader, PageHeader, Select, Stat, Table, Td, Th } from "@/components/ui";
 import { dateShort } from "@/lib/format";
 import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
@@ -22,7 +22,12 @@ export default async function PendingPage({ searchParams }: PageProps<"/pending"
     <>
       <PageHeader
         title="Pending actions"
-        description="Every inward item that is Open, Overdue, or awaiting routing or forwarding, in the order received. The PDF version arrives in Phase 4."
+        description="Every inward item that is Open, Overdue, or awaiting routing or forwarding, in the order received."
+        actions={
+          <a href={`/api/pdf/pending?unit=${unit}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "secondary", size: "sm" })}>
+            PDF
+          </a>
+        }
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Pending" value={totals.pending} hint={unitName ?? "All units"} />

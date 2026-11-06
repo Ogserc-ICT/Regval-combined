@@ -11,9 +11,9 @@ import type { Db, Tx } from "../../db/connect";
 import { files, inwardItems, outwardItems } from "../../db/schema";
 import { blocked, forbidden, needsConfirmation, notFound, Problems } from "../../errors";
 import { lagosToday } from "../../time";
+import { deliverQueued, queueItemEmail } from "../email";
 import { createInwardItem } from "../inward";
-import { getSettings } from "../settings";
-import { checkEmailAddress, inList, optionalCount, optionalDate, optionalEmail, optionalPhone, receivedInstant, t } from "./common";
+import { inList, optionalCount, optionalDate, optionalEmail, optionalPhone, receivedInstant, t } from "./common";
 import { markFrontDeskRegistered, takeFrontDeskItem } from "./frontdesk";
 import { effectiveUnitId, loadRegistryRef, type RegistryRef } from "./ref";
 
@@ -73,8 +73,8 @@ export function checkHandling(p: Problems, ref: RegistryRef, input: Pick<InwardI
 /** New Inward: issues the ACK and logs the item. The Registry does not route at registration. */
 export async function saveInward(db: Db, actor: Actor | null, input: InwardInput): Promise<SavedInward> {
   authorize(actor, "inward:write");
-  return db.transaction(async (tx) => {
-    const [ref, settings] = [await loadRegistryRef(tx), await getSettings(tx)];
+  const r = await db.transaction(async (tx) => {
+    const ref = await loadRegistryRef(tx);
     const p = new Problems();
     const fd = input.frontDeskItemId ? await takeFrontDeskItem(tx, input.frontDeskItemId) : null;
     // The front desk time becomes the receipt time (SPEC §17).
@@ -129,11 +129,13 @@ export async function saveInward(db: Db, actor: Actor | null, input: InwardInput
       reference: inward.ackNo,
       detail: `${type!.name} from ${sender} - ${subject}; deemed received ${inward.deemed}${fd ? `; from ${fd.fdNo}` : ""}`,
     });
-    const unit = ref.unit(type!.defaultUnitId);
-    const warnings = await checkEmailAddress(tx, actor, { id: inward.id, ackNo: inward.ackNo }, unit, settings, "Acknowledgement");
+    const q = await queueItemEmail(tx, actor, inward.id, "acknowledgement");
+    const warnings = [...q.warnings];
     if (type!.filingType) warnings.push(`This is a registration filing: complete its ${type!.filingType === "OWNUSE" ? "Own-Use" : "Register"} entry on Registry Intake.`);
-    return { id: inward.id, ackNo: inward.ackNo, warnings };
+    return { id: inward.id, ackNo: inward.ackNo, warnings, emailIds: q.emailIds };
   });
+  const problems = await deliverQueued(db, r.emailIds, auditActor(actor));
+  return { id: r.id, ackNo: r.ackNo, warnings: [...problems, ...r.warnings] };
 }
 
 async function lockInward(tx: Tx, id: string) {
@@ -248,9 +250,9 @@ export type RouteInput = {
 /** Route / re-route (Router only, [G7]; RegistryDesk.SaveRoute). */
 export async function routeInward(db: Db, actor: Actor | null, id: string, input: RouteInput): Promise<{ warnings: string[] }> {
   authorize(actor, "inward:route");
-  return db.transaction(async (tx) => {
+  const r = await db.transaction(async (tx) => {
     const row = await lockInward(tx, id);
-    const [ref, settings] = [await loadRegistryRef(tx), await getSettings(tx)];
+    const ref = await loadRegistryRef(tx);
     const p = new Problems();
     const unitId = t(input.unitId);
     if (unitId && !ref.unit(unitId)) p.field("unitId", "Choose the unit from the list.");
@@ -289,9 +291,10 @@ export async function routeInward(db: Db, actor: Actor | null, id: string, input
       `${row.routedAt ? "Re-routed" : "Routed"} to ${unit?.name ?? "no unit"}; ${action}; priority ${priority}${set.actionOfficer ? `; officer ${set.actionOfficer}` : ""}${fileRef ? `; file ${fileRef}` : ""}${due ? `; response due ${due}` : ""}`,
       { before: { unitId: beforeUnit, actionRequired: row.actionRequired, priority: row.priority, fileId: row.fileId }, after: { unitId: unit?.id ?? null, actionRequired: action, priority, fileId } },
     );
-    const warnings = unit?.id !== beforeUnit || !row.routedAt ? await checkEmailAddress(tx, actor, row, unit, settings, "Routing") : [];
-    return { warnings };
+    return unit?.id !== beforeUnit || !row.routedAt ? queueItemEmail(tx, actor, id, "routing") : { warnings: [], emailIds: [] };
   });
+  const problems = await deliverQueued(db, r.emailIds, auditActor(actor));
+  return { warnings: [...problems, ...r.warnings] };
 }
 
 /** Forward (Registry officer; ForwardToday). Warns when the item is not routed yet. */

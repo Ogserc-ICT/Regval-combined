@@ -10,6 +10,7 @@ import { parseNairaToKobo } from "@/lib/format";
 import { getCurrentActor } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { toResult, type ActionResult } from "@/server/errors";
+import { discardEmail, resendAcknowledgement, sendEmailNow } from "@/server/services/email";
 import { saveDraftOwnUse } from "@/server/services/ownuse";
 import { issueFile, openFile, returnFile, updateFile } from "@/server/services/registry/files";
 import { logFrontDesk } from "@/server/services/registry/frontdesk";
@@ -407,6 +408,41 @@ export async function returnFileAction(_p: R | undefined, f: FormData) {
   if (res.ok) {
     res.message = `Returned by ${res.data.from}.`;
     refresh(`/files/${id}`);
+  }
+  return res;
+}
+
+// ---------------------------------------------------------------- emails (Phase 4)
+
+export async function sendEmailAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  const res = await toResult(async () => {
+    const problem = await sendEmailNow(db, actor, s(f, "messageId"));
+    return problem ?? "Email sent.";
+  });
+  if (res.ok) {
+    res.message = String(res.data);
+    refresh(`/inward/${id}`);
+  }
+  return res;
+}
+
+export async function discardEmailAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  const res = await toResult(() => discardEmail(db, actor, s(f, "messageId")), "Discarded.");
+  if (res.ok) refresh(`/inward/${id}`);
+  return res;
+}
+
+export async function resendAckAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  const res = await toResult(() => resendAcknowledgement(db, actor, id, { confirm: confirmed(f) }));
+  if (res.ok) {
+    res.message = String(res.data);
+    refresh(`/inward/${id}`);
   }
   return res;
 }

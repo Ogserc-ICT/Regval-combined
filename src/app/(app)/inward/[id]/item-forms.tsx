@@ -2,7 +2,16 @@
 
 import { ActionForm } from "@/components/action-form";
 import { Field, Input, Select, Textarea } from "@/components/ui";
-import { closeInwardAction, confirmReceiptAction, forwardInwardAction, routeInwardAction, updateInwardAction } from "../../_registry/actions";
+import {
+  closeInwardAction,
+  confirmReceiptAction,
+  discardEmailAction,
+  forwardInwardAction,
+  resendAckAction,
+  routeInwardAction,
+  sendEmailAction,
+  updateInwardAction,
+} from "../../_registry/actions";
 
 const Opts = ({ items, blank = "—" }: { items: string[]; blank?: string | null }) => (
   <>
@@ -157,4 +166,16 @@ export function UpdateInwardForm({ id, v, lists }: { id: string; v: InwardEditVa
       )}
     </ActionForm>
   );
+}
+
+export function SendEmailForm({ id, messageId, label }: { id: string; messageId: string; label: string }) {
+  return <ActionForm action={sendEmailAction} submitLabel={label} size="sm" inline hidden={{ id, messageId }} />;
+}
+
+export function DiscardEmailForm({ id, messageId }: { id: string; messageId: string }) {
+  return <ActionForm action={discardEmailAction} submitLabel="Discard" size="sm" variant="ghost" inline hidden={{ id, messageId }} />;
+}
+
+export function ResendAckForm({ id }: { id: string }) {
+  return <ActionForm action={resendAckAction} submitLabel="Email the acknowledgement again" size="sm" variant="secondary" hidden={{ id }} />;
 }

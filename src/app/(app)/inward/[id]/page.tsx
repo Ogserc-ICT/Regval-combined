@@ -13,6 +13,9 @@ import { db } from "@/server/db/client";
 import { ServiceError } from "@/server/errors";
 import { loadInward, registryCtx, type InwardView } from "@/server/services/registry/load";
 import { lagosToday } from "@/server/time";
+import { Printer } from "lucide-react";
+import { emailsFor } from "@/server/services/email";
+import { EmailsCard } from "./emails-card";
 import { CloseForm, ConfirmReceiptForm, ForwardForm, RouteForm, UpdateInwardForm } from "./item-forms";
 
 export const metadata: Metadata = { title: "Inward item" };
@@ -48,6 +51,8 @@ export default async function InwardItemPage({ params, searchParams }: PageProps
   const closed = a.status === "Closed";
   const isMyUnit = actor.roles.includes("unit_officer") && !!actor.unitId && actor.unitId === v.unit?.id;
   const canClose = !closed && (can(actor, "inward:write") || isMyUnit);
+  const canPrint = can(actor, "reports:print");
+  const emails = await emailsFor(db, "inward_item", row.id);
 
   return (
     <>
@@ -62,14 +67,26 @@ export default async function InwardItemPage({ params, searchParams }: PageProps
         }
         description={`${row.sender} · ${row.subject}`}
         actions={
-          <Link href="/inward" className="text-sm text-info hover:underline">
-            Back to the Inward Register
-          </Link>
+          <>
+            {canPrint ? (
+              <a href={`/api/pdf/slip/${row.id}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "secondary", size: "sm" })}>
+                <Printer className="h-4 w-4" /> Slip (PDF)
+              </a>
+            ) : null}
+            <Link href="/inward" className="self-center text-sm text-info hover:underline">
+              Back to the Inward Register
+            </Link>
+          </>
         }
       />
       {sp.saved ? (
         <Notice tone="accent" className="mb-4" title={`Acknowledged as ${row.ackNo}`}>
-          Deemed received {dateLong(row.deemedReceiptDate)}. The acknowledgement slip PDF arrives in Phase 4.
+          Deemed received {dateLong(row.deemedReceiptDate)}.{" "}
+          {canPrint ? (
+            <a href={`/api/pdf/slip/${row.id}`} target="_blank" rel="noopener" className="text-info hover:underline">
+              Print the acknowledgement slip
+            </a>
+          ) : null}
         </Notice>
       ) : null}
       {warn.length ? (
@@ -265,6 +282,8 @@ export default async function InwardItemPage({ params, searchParams }: PageProps
           </CardBody>
         </Card>
       ) : null}
+
+      <EmailsCard id={row.id} emails={emails} canSend={can(actor, "inward:write")} ackEmailedAt={row.ackEmailedAt} />
 
       <div className="mt-6">
         <EntityHistory entityType="inward_item" entityId={row.id} reference={row.ackNo} description="Every action and change on this item, newest first (including its Register entry under the same ACK)." />

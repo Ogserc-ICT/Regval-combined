@@ -106,3 +106,45 @@ export const auditChainHead = pgTable(
   },
   (t) => [check("audit_chain_head_single_row", sql`${t.id} = 1`)],
 );
+
+/** One row per Lagos date: the daily review runs at most once a day (SPEC §26). */
+export const dailyReviewRuns = pgTable("daily_review_runs", {
+  lagosDate: date("lagos_date", { mode: "string" }).primaryKey(),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+  finishedAt: timestamp("finished_at", { withTimezone: true }),
+  trigger: text("trigger").$type<"cron" | "manual">().notNull(),
+  userId: uuid("user_id"),
+  userName: text("user_name"),
+  summary: jsonb("summary"),
+});
+
+export const EMAIL_STATUSES = ["preview", "queued", "sent", "failed", "discarded"] as const;
+export type EmailStatus = (typeof EMAIL_STATUSES)[number];
+
+/** Every acknowledgement / routing email, previewed, sent or failed (SPEC §25, [G9]). */
+export const emailMessages = pgTable(
+  "email_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    kind: text("kind").$type<"acknowledgement" | "routing">().notNull(),
+    entityType: text("entity_type").notNull(),
+    entityId: uuid("entity_id").notNull(),
+    reference: text("reference"),
+    to: text("to").array().notNull(),
+    cc: text("cc").array().notNull().default(sql`'{}'::text[]`),
+    subject: text("subject").notNull(),
+    body: text("body").notNull(),
+    attachSlip: integer("attach_slip").notNull().default(1),
+    blobPathname: text("blob_pathname"),
+    status: text("status").$type<EmailStatus>().notNull(),
+    provider: text("provider"),
+    providerMessageId: text("provider_message_id"),
+    error: text("error"),
+    createdBy: uuid("created_by"),
+    createdByName: text("created_by_name"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    sentByName: text("sent_by_name"),
+  },
+  (t) => [index("email_messages_entity_idx").on(t.entityType, t.entityId), index("email_messages_status_idx").on(t.status)],
+);

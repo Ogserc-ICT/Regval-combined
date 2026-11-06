@@ -578,7 +578,7 @@ export async function cancel(db: Db, actor: Actor | null, id: string, reason: st
   });
 }
 
-/** For the daily review (Phase 4): new registrations past determination → provisional. */
+/** New registrations past determination (the daily review applies the same rule). */
 export async function overdueForProvisional(db: Db, today = lagosToday()) {
   const settings = await getSettings(db);
   const rows = await db

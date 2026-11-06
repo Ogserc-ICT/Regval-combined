@@ -261,6 +261,15 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - File references: generated per class (`OGSERC/{code}/{nnn}`), never yearly (Q5 default); a typed reference must be unique, and the generator skips any number already typed in.
 - Not built yet (Phase 4): acknowledgement slip, Daily Register and Pending actions PDFs; sending emails; the daily review.
 
+## 11b. As built in Phase 4
+
+- Tables (migration 0006): `daily_review_runs` (one row per Lagos date) and `email_messages` (every acknowledgement and routing email: preview, queued, sent, failed, discarded).
+- PDFs: `@react-pdf/renderer` in Node route handlers, rendered on request: `/api/pdf/slip/[id]` and `/api/pdf/daily-register?date=` (Registry officer, admin), `/api/pdf/pending?unit=` (anyone signed in; unit officers default to their unit). Built-in Helvetica has no naira sign, so PDFs print "NGN".
+- Email adapter (`src/server/email/transport.ts`): `console`, `resend` (HTTP API, no SDK) and `memory` (tests), chosen by `EMAIL_PROVIDER`. Emails are queued in the save's transaction and delivered after commit; the slip PDF is attached and kept in Vercel Blob (private) when `BLOB_READ_WRITE_TOKEN` is set. A failed send is recorded on the message and in the item history and never undoes the save. `ackEmailMode`: Send (deliver at once), Preview (officer reviews on the item page, then Send now / Discard), Off.
+- Routing emails go to the routed unit and division unless every address was already emailed for the item. Resend asks to confirm when the acknowledgement was emailed before.
+- Daily review (`src/server/services/daily-review.ts`): one transaction that first claims the date's row in `daily_review_runs` (a second trigger waits on it, then finds it taken and does nothing). Releases cleared submissions, makes past-determination new registrations provisional, lists overdue deficiency responses (never lapses), counts SLA red/amber, unpaid and reminders. "Registered without a number" is reported, not repaired: approval always issues the number in the app.
+- Cron: `vercel.json` `0 6 * * *` → `/api/cron/daily-review`, Bearer `CRON_SECRET` checked in constant time. Admin › Daily review has "Run now" and the run history.
+
 ## 12. Phase map
 
 | Phase | Delivers |

@@ -131,7 +131,9 @@ describe("New Inward (SPEC §19)", () => {
     expect(log.detail).toContain("Licensing unit");
     // Tariff and Rates sits in a division that has an address
     const ok = await saveInward(db, p.registry, await inward());
-    expect(ok.warnings).toEqual([]);
+    // Default mode is Preview: the email waits for review instead of a no-address warning
+    expect(ok.warnings.join(" ")).toContain("ready for review");
+    expect(ok.warnings.join(" ")).not.toContain("no email address");
   });
 
   it("REG-01 waits for its Register entry, then Registry Intake pulls it without a new ACK", async () => {
