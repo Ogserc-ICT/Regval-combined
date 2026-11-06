@@ -190,7 +190,7 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
               ackVia: ctx.ref.ackVia,
               lgas: regLists.lga,
               licenceStatuses: regLists.licenceStatus,
-              activities: regLists.ref.activities.map((a) => ({ code: a.code, name: a.name })),
+              activities: regLists.ref.activities.filter((a) => a.active !== false).map((a) => ({ code: a.code, name: a.name })),
               forms: regLists.ref.forms.map((f) => ({ form: f.form, title: f.title })),
             }}
           />

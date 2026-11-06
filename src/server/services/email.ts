@@ -99,7 +99,7 @@ export async function queueItemEmail(tx: Tx, actor: Actor, inwardId: string, kin
       reference: c.ackNo,
       detail: `${what} email not sent: no address for unit ${unitName}, division ${divisionName}`,
     });
-    return { warnings: [`${what} not emailed: unit ${unitName} and division ${divisionName} have no email address. Ask an admin to add one.`], emailIds: [] };
+    return { warnings: [`${what} not emailed: unit ${unitName} and division ${divisionName} have no email address. An admin adds it under Admin › Reference data › Units & emails.`], emailIds: [] };
   }
   if (kind === "routing") {
     const done = await emailedAddresses(tx, inwardId);

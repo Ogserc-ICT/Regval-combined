@@ -11,7 +11,7 @@ export async function formLists(db: DbOrTx): Promise<SubmissionFormLists> {
     registrantType: l.registrantType,
     licenceStatus: l.licenceStatus,
     channel: l.channel,
-    activities: l.ref.activities.map((a) => ({ code: a.code, name: a.name })),
+    activities: l.ref.activities.filter((a) => a.active !== false).map((a) => ({ code: a.code, name: a.name })),
     forms: l.ref.forms.map((f) => ({ form: f.form, title: f.title, category: f.category })),
     categories: l.ref.fees.filter((f) => f.category !== "I").map((f) => f.category),
     conditions: l.ref.conditions,

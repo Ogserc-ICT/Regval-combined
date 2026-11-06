@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
     },
   },
   poweredByHeader: false,
+  // Generated in Node route handlers only (register exports).
+  serverExternalPackages: ["exceljs"],
 };
 
 export default nextConfig;

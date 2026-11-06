@@ -43,7 +43,7 @@ Update this list as each phase finishes.
 - Phase 1, scaffold and foundations: done 6 Nov 2026; deployed on Vercel with a Neon database and signed in successfully
 - Phase 2, Registration module: done 6 Nov 2026 (Q9, Q15 on defaults; logo added)
 - Phase 3, Registry module: done 6 Nov 2026
-- Phase 4, outputs and automation: done 6 Nov 2026, awaiting review (email provider Q19 open: console until chosen)
-- Phase 5, dashboard and admin: not started
+- Phase 4, outputs and automation: done 6 Nov 2026 (email provider Q19 open: console until chosen; CRON_SECRET and Blob set up)
+- Phase 5, dashboard and admin: done 6 Nov 2026, awaiting review
 - Phase 6, import and go-live: not started
 - Phase 7, offline workbook export (optional): not requested

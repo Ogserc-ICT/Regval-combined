@@ -41,11 +41,11 @@ The first build step (`tsx scripts/migrate.ts`) needs the database URL **at buil
 1. **Cron secret.** Project › Settings › Environment Variables: add `CRON_SECRET` (a long random string) for Production and Preview. Vercel sends it to `/api/cron/daily-review`; without it the endpoint answers 401. The schedule (`0 6 * * *`, 07:00 Lagos) is in `vercel.json` and Vercel runs cron jobs on **production** deployments only. Check it under Project › Settings › Cron Jobs after the next production deploy.
 2. **Blob store for kept slips.** Project › Storage › Create › Blob, connect it to Production and Preview. Vercel adds `BLOB_READ_WRITE_TOKEN`. Without it slips are still attached to emails, just not kept.
 3. **Email.** Until a provider is chosen (Q19), leave `EMAIL_PROVIDER=console` (emails are written to the function log, nothing is sent) and keep **Admin › Settings › Acknowledgement email** on Preview. To send for real with Resend: verify the ogserc.org.ng sending domain in Resend, then set `EMAIL_PROVIDER=resend`, `RESEND_API_KEY` and `EMAIL_FROM` (e.g. `registry@ogserc.org.ng`), redeploy, and switch the setting to Send.
-4. **Unit emails.** Only the ICT unit and two divisions have addresses; every other item records "Not emailed: no address" until they are added (Phase 5 admin screen, or ask for a one-off update).
+4. **Unit emails.** Only the ICT unit and two divisions have addresses; every other item records "Not emailed: no address" until an admin adds them under Admin › Reference data › Units & emails.
 
 ## Production (Phase 6)
 
 - Promote after the import of the real record.
 - Cron (`0 6 * * *` → `/api/cron/daily-review`, 07:00 Lagos) runs on production only; confirm `CRON_SECRET` is set there.
 - Custom domain: a subdomain of ogserc.org.ng. Vercel shows the DNS record (usually a `CNAME` to `cname.vercel-dns.com`); send it to whoever manages the ogserc.org.ng zone.
-- Backups: Neon point-in-time restore, plus the admin "Export registers" button (Phase 5).
+- Backups: Neon point-in-time restore, plus Admin › Export registers (CSV or Excel, any register).

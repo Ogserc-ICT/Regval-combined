@@ -7,7 +7,7 @@ import type { Permission } from "@/domain/roles";
 export type NavIcon =
   | "dashboard" | "frontdesk" | "intake" | "inward" | "routing" | "outward" | "files" | "pending"
   | "register" | "payments" | "documents" | "evaluation" | "ownuse" | "reports" | "audit"
-  | "settings" | "holidays" | "users" | "signatories" | "review";
+  | "settings" | "holidays" | "users" | "signatories" | "review" | "reference" | "exports";
 
 export type NavItem = {
   label: string;
@@ -58,10 +58,12 @@ export const NAV: NavGroup[] = [
     label: "Admin",
     items: [
       { label: "Settings", href: "/admin/settings", icon: "settings", permission: "registers:read" },
+      { label: "Reference data", href: "/admin/reference", icon: "reference", permission: "registers:read" },
       { label: "Holidays", href: "/admin/holidays", icon: "holidays", permission: "registers:read" },
       { label: "Signatories", href: "/admin/signatories", icon: "signatories", permission: "registers:read" },
       { label: "Staff & roles", href: "/admin/users", icon: "users", permission: "users:manage" },
       { label: "Daily review", href: "/admin/daily-review", icon: "review", permission: "registers:read" },
+      { label: "Export registers", href: "/admin/exports", icon: "exports", permission: "registers:export" },
     ],
   },
 ];

@@ -2,7 +2,7 @@
 
 import {
   Archive, BookOpenCheck, CalendarDays, ClipboardCheck, FileInput, FileOutput, FileStack,
-  FolderOpen, Gauge, History, PenLine, Inbox, ListTodo, PanelLeftClose, PanelLeftOpen, Printer, Route, Settings, Sunrise,
+  FolderOpen, Gauge, History, PenLine, Inbox, ListTodo, PanelLeftClose, PanelLeftOpen, Printer, Route, Settings, Sunrise, Database, Download,
   Users, Wallet, Zap, type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +16,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   dashboard: Gauge, frontdesk: Inbox, intake: FileInput, inward: Archive, routing: Route, outward: FileOutput,
   files: FolderOpen, pending: ListTodo, register: BookOpenCheck, payments: Wallet, documents: FileStack,
   evaluation: ClipboardCheck, ownuse: Zap, reports: Printer, audit: History, settings: Settings,
-  holidays: CalendarDays, users: Users, signatories: PenLine, review: Sunrise,
+  holidays: CalendarDays, users: Users, signatories: PenLine, review: Sunrise, reference: Database, exports: Download,
 };
 
 export function Sidebar({ groups }: { groups: NavGroup[] }) {

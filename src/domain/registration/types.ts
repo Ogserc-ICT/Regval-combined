@@ -21,6 +21,8 @@ export type Activity = {
   cat1To10Mw: string;
   catBelow1Mw: string;
   capacityBased: boolean;
+  /** Switched off by an admin: hidden from new entries; existing records keep it. */
+  active?: boolean;
 };
 
 export type FormDef = { form: string; category: string; title: string; orderPara: string };

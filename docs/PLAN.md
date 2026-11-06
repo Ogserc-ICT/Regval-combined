@@ -270,6 +270,13 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - Daily review (`src/server/services/daily-review.ts`): one transaction that first claims the date's row in `daily_review_runs` (a second trigger waits on it, then finds it taken and does nothing). Releases cleared submissions, makes past-determination new registrations provisional, lists overdue deficiency responses (never lapses), counts SLA red/amber, unpaid and reminders. "Registered without a number" is reported, not repaired: approval always issues the number in the app.
 - Cron: `vercel.json` `0 6 * * *` → `/api/cron/daily-review`, Bearer `CRON_SECRET` checked in constant time. Admin › Daily review has "Run now" and the run history.
 
+## 11c. As built in Phase 5
+
+- Dashboard (`src/server/services/dashboard.ts`): headline tiles, work queues for the signed-in user (my evaluations, items for my unit, awaiting routing, awaiting payment with reminder, Finance Desk, ready for decision, overdue deficiency responses), Registry counters, Registration money, status, service levels, monthly submissions (12 months from the Effective Date month), by category with money, by activity and by LGA. Charts are single-series bars in the accent colour with values as text and hover titles (no chart library).
+- Admin › Reference data: fee table (audited; sets "Fees revised on"; saved submissions keep frozen pricing and are flagged), activity map, divisions and units with email addresses (validated; units that cannot be emailed are listed), correspondence types (registration filing types cannot be switched off and keep their filing mapping), and 18 drop-down lists (add and switch off; never rename; values the rules rely on are locked; file class codes unique and fixed). Forms, Schedule 2 documents, conditions and EVAL-01 checks are shown read-only.
+- Admin › Export registers: Register, payments, own-use, inward, outward, front desk, files, movements and the audit log as .xlsx (exceljs, text columns kept as text) or CSV (UTF-8 BOM, formula-injection guard). Admin only; each export is audited.
+- Not built: a "versioned" fee table with history rows. The audit log keeps every old → new value and the saved pricing snapshots keep what each submission was charged, which covers the need; say if separate fee versions are wanted.
+
 ## 12. Phase map
 
 | Phase | Delivers |
