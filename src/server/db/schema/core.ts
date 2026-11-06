@@ -148,3 +148,16 @@ export const emailMessages = pgTable(
   },
   (t) => [index("email_messages_entity_idx").on(t.entityType, t.entityId), index("email_messages_status_idx").on(t.status)],
 );
+
+/** One row per workbook import (Phase 6): what was read, what was imported, every note. */
+export const importRuns = pgTable("import_runs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  userId: uuid("user_id"),
+  userName: text("user_name").notNull(),
+  sourceName: text("source_name").notNull(),
+  sha256: text("sha256").notNull(),
+  mode: text("mode").$type<"real" | "examples">().notNull(),
+  dryRun: integer("dry_run").notNull(),
+  report: jsonb("report").notNull(),
+});

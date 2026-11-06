@@ -15,6 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx seed/seed.ts",
+    "import:workbook": "tsx scripts/import-workbook.ts",
     "vercel-build": "tsx scripts/migrate.ts && tsx seed/seed.ts && next build"
   },
   "dependencies": {

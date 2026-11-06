@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Generated in Node route handlers only (register exports).
   serverExternalPackages: ["exceljs"],
+  // Workbook import (Admin › Import) uploads the .xlsm (2.7 MB); Vercel allows 4.5 MB.
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
 };
 
 export default nextConfig;

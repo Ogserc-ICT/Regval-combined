@@ -34,6 +34,7 @@ This Next.js version (16.4) differs from older ones; read `node_modules/next/dis
 - `docs/SPEC.md`: the rules for both modules (written in Phase 0)
 - `docs/PLAN.md`: architecture, schema, ORM, auth, screens (written in Phase 0)
 - `docs/QUESTIONS.md`: open questions for Kamiye and the Commission (written in Phase 0)
+- `docs/GO-LIVE.md`: production checklist; `docs/ACCEPTANCE.md`: acceptance check → test
 
 ## Status
 
@@ -44,6 +45,6 @@ Update this list as each phase finishes.
 - Phase 2, Registration module: done 6 Nov 2026 (Q9, Q15 on defaults; logo added)
 - Phase 3, Registry module: done 6 Nov 2026
 - Phase 4, outputs and automation: done 6 Nov 2026 (email provider Q19 open: console until chosen; CRON_SECRET and Blob set up)
-- Phase 5, dashboard and admin: done 6 Nov 2026, awaiting review
-- Phase 6, import and go-live: not started
+- Phase 5, dashboard and admin: done 6 Nov 2026
+- Phase 6, import and go-live: built 6 Nov 2026, awaiting review; production steps in docs/GO-LIVE.md are for Kamiye
 - Phase 7, offline workbook export (optional): not requested

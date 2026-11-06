@@ -45,6 +45,9 @@ The first build step (`tsx scripts/migrate.ts`) needs the database URL **at buil
 
 ## Production (Phase 6)
 
+The full go-live checklist is in [GO-LIVE.md](GO-LIVE.md). In short:
+
+
 - Promote after the import of the real record.
 - Cron (`0 6 * * *` → `/api/cron/daily-review`, 07:00 Lagos) runs on production only; confirm `CRON_SECRET` is set there.
 - Custom domain: a subdomain of ogserc.org.ng. Vercel shows the DNS record (usually a `CNAME` to `cname.vercel-dns.com`); send it to whoever manages the ogserc.org.ng zone.

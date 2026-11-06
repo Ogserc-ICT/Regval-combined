@@ -277,6 +277,14 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - Admin › Export registers: Register, payments, own-use, inward, outward, front desk, files, movements and the audit log as .xlsx (exceljs, text columns kept as text) or CSV (UTF-8 BOM, formula-injection guard). Admin only; each export is audited.
 - Not built: a "versioned" fee table with history rows. The audit log keeps every old → new value and the saved pricing snapshots keep what each submission was charged, which covers the need; say if separate fee versions are wanted.
 
+## 11d. As built in Phase 6
+
+- Workbook import (`src/server/services/import.ts`): reads the .xlsm with exceljs, finds each sheet's header row and maps columns by header text, then imports in one transaction (files → front desk → inward → outward → "in response to" links → movements). Numbers keep the workbook's value and the counters move past them. Re-running is safe: a record already there is counted; a number the app already gave a different item is reported as an error and left alone. Phones that lost their leading zero are restored and listed; names that are not user accounts are kept as written and listed. Registration sheets are checked and any rows listed for entry through the app (they are empty today). Dry run by default; every run is kept in `import_runs`.
+- Admin › Import (upload, 4 MB limit) and `pnpm import:workbook <file> [--commit]` run the same import.
+- EXAMPLE rows for development and preview are the workbook's own EXAMPLE rows, loaded by the same importer in "examples" mode by the seed, flagged `is_example`; refused in production [G4].
+- Admin › Go-live checks: live readiness (EXAMPLE rows, records present, import done, Effective Date, signatories, holidays, roles, seeded staff, unit emails, email provider, Blob, cron secret, daily review, public address, audit chain).
+- `docs/GO-LIVE.md` holds the platform steps; `docs/ACCEPTANCE.md` maps each acceptance check to its test.
+
 ## 12. Phase map
 
 | Phase | Delivers |
