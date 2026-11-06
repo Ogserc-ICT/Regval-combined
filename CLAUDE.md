@@ -24,7 +24,7 @@ This project started from an empty folder. It shares no code, database, number s
 
 ## Commands
 
-`pnpm db:up` (local Postgres in Docker) · `pnpm db:migrate` · `pnpm db:seed` · `pnpm dev` · `pnpm typecheck` · `pnpm lint` · `pnpm test:unit` · `pnpm test:integration` · `pnpm build`. Schema changes: edit `src/server/db/schema/*`, then `pnpm db:generate`.
+`pnpm db:up` (local Postgres in Docker) · `pnpm import:workbook <file>` · `pnpm export:workbook` · `pnpm db:migrate` · `pnpm db:seed` · `pnpm dev` · `pnpm typecheck` · `pnpm lint` · `pnpm test:unit` · `pnpm test:integration` · `pnpm build`. Schema changes: edit `src/server/db/schema/*`, then `pnpm db:generate`.
 
 This Next.js version (16.4) differs from older ones; read `node_modules/next/dist/docs/` before using an unfamiliar API (see AGENTS.md).
 
@@ -46,5 +46,5 @@ Update this list as each phase finishes.
 - Phase 3, Registry module: done 6 Nov 2026
 - Phase 4, outputs and automation: done 6 Nov 2026 (email provider Q19 open: console until chosen; CRON_SECRET and Blob set up)
 - Phase 5, dashboard and admin: done 6 Nov 2026
-- Phase 6, import and go-live: built 6 Nov 2026, awaiting review; production steps in docs/GO-LIVE.md are for Kamiye
-- Phase 7, offline workbook export (optional): not requested
+- Phase 6, import and go-live: done 6 Nov 2026; production steps in docs/GO-LIVE.md are for Kamiye
+- Phase 7, offline workbook export: built 6 Nov 2026, awaiting review (`pnpm export:workbook`)

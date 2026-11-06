@@ -1,6 +1,6 @@
 # Acceptance checks: where each one is proved
 
-The brief's acceptance checks (`docs/COMBINED_BUILD.md`) and the automated test that proves each one. Unit tests run with `pnpm test:unit`; integration tests run against a real PostgreSQL with `pnpm test:integration`. All pass as of Phase 6 (6 Nov 2026): 126 unit, 88 integration.
+The brief's acceptance checks (`docs/COMBINED_BUILD.md`) and the automated test that proves each one. Unit tests run with `pnpm test:unit`; integration tests run against a real PostgreSQL with `pnpm test:integration`. All pass as of Phase 7 (6 Nov 2026).
 
 | # | Check | Test |
 | --- | --- | --- |
@@ -19,4 +19,4 @@ The brief's acceptance checks (`docs/COMBINED_BUILD.md`) and the automated test 
 | 13 | Production has no EXAMPLE records; previews do | `tests/integration/import.test.ts` › "acceptance: production has no EXAMPLE records …"; live on **Admin › Go-live checks** |
 | 14 | Unit with no email → warning and "Not emailed: no address" | `tests/integration/outputs.test.ts` › "acceptance: a unit with no email …" |
 | 15 | Worked examples of fees, late charges, categories and deadlines, A to K | `src/domain/registration/pricing.test.ts` › "fees and late charges, categories A–K (SPEC §30.2)", "category (SPEC §7, §30.1)" |
-| 16 | Workbook export (Phase 7) | Not requested |
+| 16 | Workbook export: one Effective Date, names in the staff lists, text phone cells, no EXAMPLE rows, a clean commit hash, no partner-workbook code, the G14 formula | `scripts/workbook/build.test.ts` (every item, no Excel needed); in Excel: `scripts/workbook/verify-excel.ps1`, which also saves a filing through the macros |

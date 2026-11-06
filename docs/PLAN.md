@@ -285,6 +285,15 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - Admin › Go-live checks: live readiness (EXAMPLE rows, records present, import done, Effective Date, signatories, holidays, roles, seeded staff, unit emails, email provider, Blob, cron secret, daily review, public address, audit chain).
 - `docs/GO-LIVE.md` holds the platform steps; `docs/ACCEPTANCE.md` maps each acceptance check to its test.
 
+## 11e. As built in Phase 7 (optional offline workbook)
+
+- `pnpm export:workbook [--with-examples] [--out <folder>]` writes `OGSERC_Registry_and_Evaluation_<commit>.xlsm` (or `..._TRAINING.xlsm`) into `exports/` (git-ignored), from the reference workbook in `docs/source` and the database in `DATABASE_URL`. Run it against production for the real staff, signatories and settings. It refuses to build from uncommitted changes.
+- The workbook is patched, not regenerated: sheets, formulas, buttons and VBA stay as the Registry knows them. Cells are rewritten in the sheet XML (`scripts/workbook/xlsx.ts`); everything else is copied byte for byte.
+- Gap fixes: G1 Registry Settings reads the one Effective Date and the deadline with the extension; G2 officer lists hold names from the accounts with each role; G3 one signatory list feeds the certificate signatories (no Commissioner → approvals blocked, as in the app); G4 registers empty (EXAMPLE rows, the real Verge Power row and the test audit entry removed; cached formula results cleared), or a TRAINING copy that keeps the EXAMPLE rows; G5 every phone, CAC, TIN and reference column and form input formatted as Text; G10 commit and build time stamped; G14 Late Charge = `MIN(initial + daily × days, cap)`, checked against the app for category D, 100 days late (₦10,000,000).
+- G11: the VBA is edited without Excel (`scripts/workbook/vba.ts`, MS-CFB + MS-OVBA): the partner-workbook procedures are deleted, and the two paths that did real work in the combined workbook become direct calls (`RX_LogInward` → `RegistryDesk.RX_LogFiling`; `RX_NextAck` reads the Register, Own-Use and Inward Register here). The compiled-code caches are reset, so Excel recompiles the macros from the edited source on open. Every edit asserts a single match.
+- Also from the app: settings and policies, Registry service targets, holidays, the fee table, unit and division emails.
+- Checks: `scripts/workbook/build.test.ts` (no Excel needed; runs in CI) and `scripts/workbook/verify-excel.ps1`, which opens the export in desktop Excel, checks every gap fix and runs a real Registry Intake save through the macros in test mode. Both pass for the clean and the TRAINING copy (6 Nov 2026).
+
 ## 12. Phase map
 
 | Phase | Delivers |

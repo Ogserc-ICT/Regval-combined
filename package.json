@@ -16,6 +16,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx seed/seed.ts",
     "import:workbook": "tsx scripts/import-workbook.ts",
+    "export:workbook": "tsx scripts/export-workbook.ts",
     "vercel-build": "tsx scripts/migrate.ts && tsx seed/seed.ts && next build"
   },
   "dependencies": {
@@ -44,10 +45,12 @@
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cfb": "^1.2.2",
     "dotenv": "^18.0.9",
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "jszip": "^3.10.2",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5",
