@@ -43,7 +43,7 @@ export default async function AuditPage({ searchParams }: PageProps<"/audit">) {
         <CardHeader
           title="Entries"
           actions={
-            <form className="flex flex-wrap gap-2" role="search">
+            <form className="flex flex-wrap gap-2 max-sm:w-full max-sm:*:w-full" role="search">
               <Input name="q" defaultValue={q} placeholder="Number, name, action…" className="w-56" aria-label="Search" />
               <Select name="module" defaultValue={mod} className="w-40" aria-label="Module">
                 <option value="">All modules</option>

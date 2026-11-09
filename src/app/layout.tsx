@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
@@ -10,6 +10,13 @@ export const metadata: Metadata = {
   title: { default: "OGSERC Registry & Evaluation", template: "%s · OGSERC" },
   description: "Ogun State Electricity Regulatory Commission: registry, registration and evaluation (staff only).",
   robots: { index: false, follow: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Dark is the app's default whatever the phone's setting, so the browser bar matches it.
+  themeColor: "#0b0f17",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

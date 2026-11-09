@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: "Outward item" };
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="grid grid-cols-[10rem_1fr] gap-3 py-1 text-sm">
+    <div className="grid gap-0.5 py-1.5 text-sm sm:grid-cols-[10rem_1fr] sm:gap-3 sm:py-1">
       <dt className="text-muted">{label}</dt>
       <dd className="min-w-0 wrap-break-word">{children ?? "—"}</dd>
     </div>

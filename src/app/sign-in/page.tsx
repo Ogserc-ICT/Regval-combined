@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Sign in" };
 export default async function SignInPage() {
   if (await getCurrentActor()) redirect("/dashboard");
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-10">
+    <main className="flex min-h-dvh items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <Logo height={44} priority className="px-4 py-3" />

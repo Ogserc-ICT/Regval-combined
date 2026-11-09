@@ -90,7 +90,7 @@ export default async function FilesPage({ searchParams }: PageProps<"/files">) {
         <CardHeader
           title={`File Index (${list.length})`}
           actions={
-            <form className="flex flex-wrap gap-2" role="search">
+            <form className="flex flex-wrap gap-2 max-sm:w-full max-sm:*:w-full" role="search">
               <Input name="q" defaultValue={get("q")} placeholder="Reference, title, holder" className="w-52" aria-label="Search" />
               <Select name="class" defaultValue={cls} className="w-52" aria-label="Class">
                 <option value="">All classes</option>

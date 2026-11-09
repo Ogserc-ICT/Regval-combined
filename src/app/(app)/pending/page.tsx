@@ -39,8 +39,8 @@ export default async function PendingPage({ searchParams }: PageProps<"/pending"
         <CardHeader
           title={unitName ?? "All units"}
           actions={
-            <form className="flex gap-2">
-              <Select name="unit" defaultValue={unit} className="w-64" aria-label="Unit">
+            <form className="flex gap-2 max-sm:w-full">
+              <Select name="unit" defaultValue={unit} className="w-64 max-sm:w-auto max-sm:min-w-0 max-sm:flex-1" aria-label="Unit">
                 <option value="">All units</option>
                 {ctx.ref.units.map((u) => (
                   <option key={u.id} value={u.id}>

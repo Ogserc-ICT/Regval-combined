@@ -59,7 +59,7 @@ export default async function InwardPage({ searchParams }: PageProps<"/inward">)
         <CardHeader
           title={`${list.length} item(s)`}
           actions={
-            <form className="flex flex-wrap gap-2" role="search">
+            <form className="flex flex-wrap gap-2 max-sm:w-full max-sm:*:w-full" role="search">
               <Input name="q" defaultValue={get("q")} placeholder="ACK, sender, subject, CAC" className="w-52" aria-label="Search" />
               <Select name="status" defaultValue={status} className="w-44" aria-label="Status">
                 <option value="">All statuses</option>
@@ -148,7 +148,7 @@ export default async function InwardPage({ searchParams }: PageProps<"/inward">)
           </tbody>
         </Table>
         {pages > 1 ? (
-          <div className="flex items-center justify-between px-5 py-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm sm:px-5">
             <span className="text-muted">
               Page {page} of {pages}
             </span>

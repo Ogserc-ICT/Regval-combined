@@ -1,23 +1,13 @@
 "use client";
 
-import {
-  Archive, BookOpenCheck, CalendarDays, ClipboardCheck, FileInput, FileOutput, FileStack,
-  FolderOpen, Gauge, History, PenLine, Inbox, ListTodo, PanelLeftClose, PanelLeftOpen, Printer, Route, Settings, Sunrise, Database, Download, Upload, Rocket,
-  Users, Wallet, Zap, type LucideIcon,
-} from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo, LogoMark } from "@/components/logo";
 import { cn } from "@/lib/cn";
-import type { NavGroup, NavIcon } from "./nav";
-
-const ICONS: Record<NavIcon, LucideIcon> = {
-  dashboard: Gauge, frontdesk: Inbox, intake: FileInput, inward: Archive, routing: Route, outward: FileOutput,
-  files: FolderOpen, pending: ListTodo, register: BookOpenCheck, payments: Wallet, documents: FileStack,
-  evaluation: ClipboardCheck, ownuse: Zap, reports: Printer, audit: History, settings: Settings,
-  holidays: CalendarDays, users: Users, signatories: PenLine, review: Sunrise, reference: Database, exports: Download, import: Upload, golive: Rocket,
-};
+import type { NavGroup } from "./nav";
+import { isActive, NAV_ICONS } from "./nav-icons";
 
 export function Sidebar({ groups }: { groups: NavGroup[] }) {
   const pathname = usePathname();
@@ -51,8 +41,8 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
             {!collapsed && <p className="px-3 pb-1.5 text-[11px] font-medium uppercase tracking-wider text-faint">{g.label}</p>}
             <ul className="space-y-0.5">
               {g.items.map((item) => {
-                const Icon = ICONS[item.icon];
-                const active = pathname === item.href || pathname.startsWith(item.href + "/");
+                const Icon = NAV_ICONS[item.icon];
+                const active = isActive(pathname, item.href);
                 const base = cn(
                   "group flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition-colors",
                   collapsed && "justify-center px-0",

@@ -6,7 +6,7 @@ function Row({ label, children, strong }: { label: string; children: React.React
   return (
     <div className="flex items-baseline justify-between gap-4 py-1.5 text-sm">
       <dt className="text-muted">{label}</dt>
-      <dd className={strong ? "tabular font-semibold" : "tabular text-right"}>{children}</dd>
+      <dd className={strong ? "tabular min-w-0 text-right font-semibold wrap-break-word" : "tabular min-w-0 text-right wrap-break-word"}>{children}</dd>
     </div>
   );
 }

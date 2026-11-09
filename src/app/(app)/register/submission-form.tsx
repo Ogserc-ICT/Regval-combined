@@ -209,9 +209,9 @@ export function SubmissionForm<T>({
               <div className="flex flex-col gap-2 md:col-span-2 xl:col-span-3">
                 <span className="text-sm font-medium">Licences held (number and expiry)</span>
                 {licences.map((l, i) => (
-                  <div key={i} className="grid grid-cols-[1fr_11rem_auto] gap-2">
+                  <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:grid-cols-[minmax(0,1fr)_11rem_auto]">
                     <Input name="licenceNo" defaultValue={l.licenceNo} placeholder="Licence / permit number" aria-label={`Licence ${i + 1} number`} />
-                    <Input name="licenceExpiry" type="date" defaultValue={l.expiryDate} aria-label={`Licence ${i + 1} expiry`} />
+                    <Input name="licenceExpiry" type="date" className="max-sm:col-start-1 max-sm:row-start-2" defaultValue={l.expiryDate} aria-label={`Licence ${i + 1} expiry`} />
                     <Button type="button" variant="ghost" size="icon" onClick={() => setLicences(licences.filter((_, j) => j !== i))} aria-label="Remove licence">
                       <Trash2 className="h-4 w-4" />
                     </Button>
