@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { eq } from "drizzle-orm";
@@ -20,6 +21,11 @@ const hhmm = (d: Date) => {
   const m = lagosMinuteOfDay(d);
   return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
 };
+/** Long lists scroll inside their card, so every item stays reachable without a very long page. */
+function ScrollList({ children }: { children: ReactNode }) {
+  return <div className="max-h-[28rem] overflow-y-auto overscroll-contain">{children}</div>;
+}
+
 const uuid = (v: unknown) => (typeof v === "string" && /^[0-9a-f-]{36}$/i.test(v) ? v : null);
 
 export default async function RegistryIntakePage({ searchParams }: PageProps<"/registry-intake">) {
@@ -97,6 +103,7 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
       <div className="mb-6 grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader title={`At the front desk (${fdList.length})`} description="Pull one to fill the form." />
+          <ScrollList>
           <Table>
             <tbody>
               {fdList.length === 0 ? (
@@ -104,7 +111,7 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
                   <Td className="py-6 text-center text-muted">Nothing waiting.</Td>
                 </tr>
               ) : (
-                fdList.slice(0, 8).map((x) => (
+                fdList.map((x) => (
                   <tr key={x.row.id}>
                     <Td className="whitespace-nowrap font-mono text-xs">{x.row.fdNo}</Td>
                     <Td>
@@ -125,9 +132,11 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
               )}
             </tbody>
           </Table>
+          </ScrollList>
         </Card>
         <Card>
           <CardHeader title={`Acknowledged: Register entry not yet saved (${awaiting.length})`} description="Filings logged on New Inward, or started here and not completed." />
+          <ScrollList>
           <Table>
             <tbody>
               {awaiting.length === 0 ? (
@@ -135,7 +144,7 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
                   <Td className="py-6 text-center text-muted">None.</Td>
                 </tr>
               ) : (
-                awaiting.slice(0, 12).map((x) => (
+                awaiting.map((x) => (
                   <tr key={x.row.id}>
                     <Td className="whitespace-nowrap font-mono text-xs">
                       <Link href={`/inward/${x.row.id}`} className="text-info hover:underline">
@@ -165,6 +174,7 @@ export default async function RegistryIntakePage({ searchParams }: PageProps<"/r
               )}
             </tbody>
           </Table>
+          </ScrollList>
         </Card>
       </div>
 
