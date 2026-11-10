@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { and, desc, eq } from "drizzle-orm";
-import { Card, CardHeader, Notice, PageHeader, Table, Td, Th } from "@/components/ui";
+import { HistoryTable } from "@/components/history-table";
+import { Card, CardHeader, Notice, PageHeader } from "@/components/ui";
 import { lagosDateTime } from "@/domain/dates";
 import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
@@ -51,26 +52,7 @@ export default async function UserPage({ params }: PageProps<"/admin/users/[id]"
       )}
       <Card className="mt-6">
         <CardHeader title="History" />
-        <Table>
-          <thead>
-            <tr>
-              <Th>When</Th>
-              <Th>By</Th>
-              <Th>Action</Th>
-              <Th>Detail</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.map((h) => (
-              <tr key={h.seq}>
-                <Td className="tabular whitespace-nowrap text-muted">{lagosDateTime(h.at)}</Td>
-                <Td>{h.userName}</Td>
-                <Td>{h.action}</Td>
-                <Td className="text-muted">{h.detail}</Td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        <HistoryTable rows={history.map((h) => ({ seq: h.seq, when: lagosDateTime(h.at), by: h.userName, action: h.action, detail: h.detail }))} />
       </Card>
     </>
   );
