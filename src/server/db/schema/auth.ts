@@ -21,6 +21,8 @@ export const users = pgTable("users", {
   notes: text("notes"),
   /** Unit officers see and act on items routed to this unit (SPEC §20, §23). */
   unitId: uuid("unit_id").references(() => units.id),
+  /** Play a chime when a notification arrives (each person can mute it). */
+  notifySound: boolean("notify_sound").notNull().default(true),
 });
 
 export const sessions = pgTable(

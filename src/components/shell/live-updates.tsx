@@ -3,11 +3,14 @@
 import { RefreshCw } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { PULSE_EVENT, type Pulse } from "@/lib/pulse";
 
 const POLL_MS = 5000;
+const HIDDEN_POLL_MS = 30_000;
 
 /**
- * Keeps the open page current (docs/PLAN.md §11f, 8a). Polls /api/pulse while the tab is visible;
+ * Keeps the open page current (docs/PLAN.md §11f, 8a). Polls /api/pulse every 5s while the tab is
+ * visible (every 30s while hidden, for notifications; the page itself refreshes on return);
  * when the app's change number moves, the page re-renders from the server. If the person has typed
  * into a form on this page, the page is left alone and a "Refresh" button is offered instead, so
  * nothing they typed is redrawn under them.
@@ -40,10 +43,26 @@ export function LiveUpdates() {
   useEffect(() => {
     let busy = false;
     let stopped = false;
+    let lastPoll = 0;
+    // A change seen while the tab was hidden is applied when the person comes back.
+    let pendingRefresh = false;
+
+    const apply = () => {
+      const here = window.location.pathname;
+      if (dirtyOn.current === here) setStaleOn(here);
+      else router.refresh();
+    };
 
     async function tick() {
-      if (busy || stopped || document.visibilityState !== "visible") return;
+      const visible = document.visibilityState === "visible";
+      if (visible && pendingRefresh) {
+        pendingRefresh = false;
+        apply();
+      }
+      // Hidden tabs still poll, slowly, so notifications can pop up while the app is minimised.
+      if (busy || stopped || (!visible && Date.now() - lastPoll < HIDDEN_POLL_MS)) return;
       busy = true;
+      lastPoll = Date.now();
       try {
         const res = await fetch("/api/pulse", { cache: "no-store", headers: { accept: "application/json" } });
         if (res.status === 401) {
@@ -53,13 +72,13 @@ export function LiveUpdates() {
           return;
         }
         if (!res.ok) return;
-        const { v } = (await res.json()) as { v: number };
-        if (version.current !== null && v !== version.current) {
-          const here = window.location.pathname;
-          if (dirtyOn.current === here) setStaleOn(here);
-          else router.refresh();
+        const pulse = (await res.json()) as Pulse;
+        window.dispatchEvent(new CustomEvent<Pulse>(PULSE_EVENT, { detail: pulse }));
+        if (version.current !== null && pulse.v !== version.current) {
+          if (document.visibilityState === "visible") apply();
+          else pendingRefresh = true;
         }
-        version.current = v;
+        version.current = pulse.v;
       } catch {
         // Offline or a deploy in progress: try again on the next tick.
       } finally {

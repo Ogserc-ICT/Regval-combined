@@ -17,6 +17,7 @@ import type { Db, Tx } from "../../db/connect";
 import { inwardItems, ownUseNotifications, submissions } from "../../db/schema";
 import { blocked, notFound, Problems, ServiceError } from "../../errors";
 import { createInwardItem } from "../inward";
+import { notify } from "../notifications";
 import { deliverQueued, queueItemEmail } from "../email";
 import { listValues, loadRef } from "../reference";
 import { saveDraftInTx, type SubmissionInput } from "../submissions/save";
@@ -255,6 +256,17 @@ export async function registryIntake(db: Db, actor: Actor | null, input: IntakeI
       reference: inward.ackNo,
       detail: `${label} from ${name}${form ? ` (${form})` : ""}${pulled ? "; pulled from New Inward" : fd ? `; from ${fd.fdNo}` : ""}; ${entry.saved ? "saved on the Register" : isOwnUse ? "Own-Use row started" : "Register row started"}`,
     });
+    // A pulled item was announced to the routers when New Inward saved it.
+    if (!pulled) {
+      await notify(tx, actor, {
+        kind: "inward:awaiting-routing",
+        title: `To route: ${inward.ackNo}`,
+        body: `${label} from ${name}${form ? ` (${form})` : ""}`,
+        reference: inward.ackNo,
+        href: `/inward/${inward.id}`,
+        to: { roles: ["router"] },
+      });
+    }
     const q = pulled ? { warnings: [], emailIds: [] } : await queueItemEmail(tx, actor, inward.id, "acknowledgement");
     warnings.unshift(...q.warnings);
     return { inwardId: inward.id, ackNo: inward.ackNo, entry, warnings, emailIds: q.emailIds };

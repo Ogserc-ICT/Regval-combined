@@ -12,6 +12,7 @@ import { ownUseNotifications, payments, submissions } from "../db/schema";
 import { blocked, forbidden, needsConfirmation, notFound, Problems } from "../errors";
 import { issueNumber } from "../numbering";
 import { lagosToday, serverNow } from "../time";
+import { notify, submissionHref } from "./notifications";
 import { listValues } from "./reference";
 import { tryRelease } from "./submissions/workflow";
 
@@ -87,6 +88,14 @@ export async function recordPayment(db: Db, actor: Actor | null, input: PaymentI
       })
       .returning();
     await pAudit(tx, actor, row, "Payment recorded", `${formatNaira(input.amount)} - ref ${rrr ?? "(none)"} - ${number}`);
+    await notify(tx, actor, {
+      kind: "payment:recorded",
+      title: `Payment to confirm: ${number}`,
+      body: `${formatNaira(input.amount)} for ${owner!.reference}`,
+      reference: number,
+      href: "/payments",
+      to: { roles: ["finance"] },
+    });
     return number;
   });
 }
@@ -134,6 +143,14 @@ export async function rejectPayment(db: Db, actor: Actor | null, id: string, rea
       .set({ financeStatus: "Rejected", decidedBy: actor.id, decidedByName: actor.name, decidedAt: serverNow(), financeRemarks: reason.trim() })
       .where(eq(payments.id, id));
     await pAudit(tx, actor, p, "Payment rejected", `${formatNaira(p.amount)} - ${p.payNo}: ${reason.trim()}`);
+    await notify(tx, actor, {
+      kind: "payment:rejected",
+      title: `Payment rejected: ${p.payNo}`,
+      body: `${formatNaira(p.amount)} for ${p.reference}: ${reason.trim()}`,
+      reference: p.payNo,
+      href: p.ownerType === "submission" ? submissionHref(p.ownerId, "payments") : `/own-use/${p.ownerId}`,
+      to: { users: [p.recordedBy] },
+    });
   });
 }
 

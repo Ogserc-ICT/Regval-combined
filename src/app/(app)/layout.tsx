@@ -4,6 +4,7 @@ import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-provider";
 import { LiveUpdates } from "@/components/shell/live-updates";
 import { MobileNav } from "@/components/shell/mobile-nav";
+import { NotificationBell } from "@/components/shell/notification-bell";
 import { NAV } from "@/components/shell/nav";
 import { Sidebar } from "@/components/shell/sidebar";
 import { shortDate } from "@/domain/dates";
@@ -11,14 +12,16 @@ import { ROLE_LABELS } from "@/domain/roles";
 import { registrationDeadline } from "@/domain/settings";
 import { can } from "@/server/auth/actor";
 import { requireActor } from "@/server/auth/session";
+import { all } from "@/server/db/connect";
 import { db } from "@/server/db/client";
+import { getSoundPreference, unreadSummary } from "@/server/services/notifications";
 import { getSettings } from "@/server/services/settings";
 import { lagosToday } from "@/server/time";
 import { signOutAction } from "../auth-actions";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const actor = await requireActor();
-  const settings = await getSettings(db);
+  const [settings, notes, sound] = await all(db, [() => getSettings(db), () => unreadSummary(db, actor.id), () => getSoundPreference(db, actor.id)]);
   const isAdmin = actor.roles.includes("admin");
   const groups = NAV.map((g) => ({ ...g, items: g.items.filter((i) => can(actor, i.permission)) })).filter((g) => g.items.length);
   const commit = process.env.VERCEL_GIT_COMMIT_SHA;
@@ -39,6 +42,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <span className="text-faint"> · Africa/Lagos</span>
           </p>
           <div className="ml-auto flex items-center gap-1">
+            <NotificationBell initialUnread={notes.unread} initialNewestAt={notes.newest?.createdAt ?? null} initialSound={sound} />
             <ThemeToggle />
             <div className="ml-2 hidden text-right leading-tight sm:block">
               <p className="text-sm font-medium">{actor.name}</p>

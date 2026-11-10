@@ -13,6 +13,7 @@ import { blocked, forbidden, needsConfirmation, notFound, Problems } from "../..
 import { lagosToday } from "../../time";
 import { deliverQueued, queueItemEmail } from "../email";
 import { createInwardItem } from "../inward";
+import { notify } from "../notifications";
 import { inList, optionalCount, optionalDate, optionalEmail, optionalPhone, receivedInstant, t } from "./common";
 import { markFrontDeskRegistered, takeFrontDeskItem } from "./frontdesk";
 import { effectiveUnitId, loadRegistryRef, type RegistryRef } from "./ref";
@@ -128,6 +129,14 @@ export async function saveInward(db: Db, actor: Actor | null, input: InwardInput
       entityId: inward.id,
       reference: inward.ackNo,
       detail: `${type!.name} from ${sender} - ${subject}; deemed received ${inward.deemed}${fd ? `; from ${fd.fdNo}` : ""}`,
+    });
+    await notify(tx, actor, {
+      kind: "inward:awaiting-routing",
+      title: `To route: ${inward.ackNo}`,
+      body: `${type!.name} from ${sender} - ${subject}`,
+      reference: inward.ackNo,
+      href: `/inward/${inward.id}`,
+      to: { roles: ["router"] },
     });
     const q = await queueItemEmail(tx, actor, inward.id, "acknowledgement");
     const warnings = [...q.warnings];
@@ -291,6 +300,16 @@ export async function routeInward(db: Db, actor: Actor | null, id: string, input
       `${row.routedAt ? "Re-routed" : "Routed"} to ${unit?.name ?? "no unit"}; ${action}; priority ${priority}${set.actionOfficer ? `; officer ${set.actionOfficer}` : ""}${fileRef ? `; file ${fileRef}` : ""}${due ? `; response due ${due}` : ""}`,
       { before: { unitId: beforeUnit, actionRequired: row.actionRequired, priority: row.priority, fileId: row.fileId }, after: { unitId: unit?.id ?? null, actionRequired: action, priority, fileId } },
     );
+    if (unit) {
+      await notify(tx, actor, {
+        kind: "inward:routed",
+        title: `${row.routedAt ? "Re-routed" : "Routed"} to ${unit.name}: ${row.ackNo}`,
+        body: `${row.sender} - ${row.subject}. ${action}; priority ${priority}${due ? `; response due ${due}` : ""}`,
+        reference: row.ackNo,
+        href: `/inward/${id}`,
+        to: { unitOfficersOf: unit.id },
+      });
+    }
     return unit?.id !== beforeUnit || !row.routedAt ? queueItemEmail(tx, actor, id, "routing") : { warnings: [], emailIds: [] };
   });
   const problems = await deliverQueued(db, r.emailIds, auditActor(actor));
@@ -314,6 +333,18 @@ export async function forwardInward(db: Db, actor: Actor | null, id: string, inp
     const officer = t(input.unitOfficer);
     await tx.update(inwardItems).set({ forwardedOn: date, unitOfficerReceivedBy: officer ?? row.unitOfficerReceivedBy, updatedAt: new Date() }).where(eq(inwardItems.id, id));
     await audit(tx, actor, row, "Forwarded", `Forwarded on ${date}${officer ? ` to ${officer}` : ""}${row.routedAt ? "" : " (not routed)"}`);
+    const ref = await loadRegistryRef(tx);
+    const unit = ref.unit(effectiveUnitId(row, ref));
+    if (unit) {
+      await notify(tx, actor, {
+        kind: "inward:forwarded",
+        title: `Forwarded to ${unit.name}: ${row.ackNo}`,
+        body: `${row.sender} - ${row.subject}`,
+        reference: row.ackNo,
+        href: `/inward/${id}`,
+        to: { unitOfficersOf: unit.id },
+      });
+    }
   });
 }
 
@@ -358,6 +389,17 @@ export async function closeInward(db: Db, actor: Actor | null, id: string, opts:
     const today = lagosToday();
     await tx.update(inwardItems).set({ closedManualOn: today, forwardedOn: row.forwardedOn ?? today, updatedAt: new Date() }).where(eq(inwardItems.id, id));
     await audit(tx, actor, row, "Closed", `Closed on ${today} without an outgoing letter`);
+    // The Registry closes items itself; it hears when a unit closes one.
+    if (!can(actor, "inward:write")) {
+      await notify(tx, actor, {
+        kind: "inward:closed-by-unit",
+        title: `Closed by ${ref.unit(unitId)?.name ?? "the unit"}: ${row.ackNo}`,
+        body: `${row.sender} - ${row.subject}`,
+        reference: row.ackNo,
+        href: `/inward/${id}`,
+        to: { roles: ["registry"] },
+      });
+    }
     return today;
   });
 }

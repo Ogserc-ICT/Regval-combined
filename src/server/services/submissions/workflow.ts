@@ -26,6 +26,7 @@ import {
 import { blocked, forbidden, needsConfirmation, notFound, Problems, ServiceError } from "../../errors";
 import { issueNumber } from "../../numbering";
 import { lagosToday } from "../../time";
+import { evaluationOfficers, notify, submissionHref } from "../notifications";
 import { listValues } from "../reference";
 import { getSettings } from "../settings";
 import { loadSubmission, type LoadedSubmission } from "./load";
@@ -69,6 +70,15 @@ export async function tryRelease(tx: Tx, actor: Actor | null, id: string): Promi
     reference: l.row.ackNo,
     detail: `Confirmed payments ${formatNaira(l.a.payments.amountPaid)} cover ${formatNaira(l.a.releaseRequires)}`,
   });
+  const evaluator = l.evaluation?.evaluatingOfficerId;
+  await notify(tx, actor, {
+    kind: "submission:released",
+    title: evaluator ? `Ready to evaluate: ${l.row.ackNo}` : `Released, officers to assign: ${l.row.ackNo}`,
+    body: `${l.row.registeredName ?? "Submission"} is cleared by Finance and released for evaluation`,
+    reference: l.row.ackNo,
+    href: submissionHref(id, "evaluation"),
+    to: evaluator ? { users: [evaluator] } : { roles: ["supervisor"] },
+  });
   return true;
 }
 
@@ -110,6 +120,12 @@ async function gated<T>(db: Db, actor: Actor, id: string, actionName: string, fn
   }
 }
 
+/** A final decision: the Registry acts on it, and the evaluating officer hears the outcome. */
+export async function notifyDecision(tx: Tx, actor: Actor | null, id: string, ack: string, title: string, body: string | null) {
+  const { evaluator } = await evaluationOfficers(tx, id);
+  await notify(tx, actor, { kind: "submission:decision", title, body, reference: ack, href: submissionHref(id), to: { roles: ["registry"], users: [evaluator] } });
+}
+
 function requireEvaluatorOrSupervisor(actor: Actor, l: LoadedSubmission) {
   const ev = l.evaluation;
   if (actor.id !== ev?.evaluatingOfficerId && actor.id !== ev?.reviewingSupervisorId) {
@@ -148,6 +164,22 @@ export async function assignOfficers(db: Db, actor: Actor | null, id: string, in
       .values({ submissionId: id, ...next, startedOn })
       .onConflictDoUpdate({ target: evaluations.submissionId, set: { ...next, startedOn, updatedAt: new Date() } });
     await audit(tx, actor, l, "Officers assigned", "Evaluating officer, reviewing supervisor and approving officer updated", next);
+    const assigned = [
+      [next.evaluatingOfficerId, l.evaluation?.evaluatingOfficerId, "evaluating officer"],
+      [next.reviewingSupervisorId, l.evaluation?.reviewingSupervisorId, "reviewing supervisor"],
+      [next.approvingOfficerId, l.evaluation?.approvingOfficerId, "approving officer"],
+    ] as const;
+    for (const [now, before, as] of assigned) {
+      if (!now || now === before) continue;
+      await notify(tx, actor, {
+        kind: "submission:assigned",
+        title: `You are the ${as}: ${l.row.ackNo}`,
+        body: l.row.registeredName,
+        reference: l.row.ackNo,
+        href: submissionHref(id, "evaluation"),
+        to: { users: [now] },
+      });
+    }
   });
 }
 
@@ -355,6 +387,14 @@ export async function markComplete(db: Db, actor: Actor | null, id: string): Pro
       "Submission complete",
       `Determination due ${longDate(due)}${reopens ? `; response to the deficiency notice received ${longDate(l.ctx.today)}, back to Received - Under Review` : ""}`,
     );
+    await notify(tx, actor, {
+      kind: "submission:complete",
+      title: `Ready for decision: ${l.row.ackNo}`,
+      body: `${l.row.registeredName ?? "Submission"} is complete; determination due ${longDate(due)}`,
+      reference: l.row.ackNo,
+      href: submissionHref(id, "evaluation"),
+      to: { users: [l.evaluation?.reviewingSupervisorId, l.evaluation?.approvingOfficerId] },
+    });
     return `Marked complete. Determination due ${longDate(due)} (para 13(1)).`;
   });
 }
@@ -393,6 +433,14 @@ export async function issueDeficiency(db: Db, actor: Actor | null, id: string, o
       "Deficiency notice issued",
       `${number}; response due ${longDate(due)}; ${docsOut} document(s) outstanding; balance ${formatNaira(Math.max(0, l.a.balance))}; ${l.a.checks.failed} check(s) failed`,
     );
+    await notify(tx, actor, {
+      kind: "submission:deficiency",
+      title: `Deficiency notice ${number}: ${l.row.ackNo}`,
+      body: `${l.row.registeredName ?? "Submission"}; response due ${longDate(due)}`,
+      reference: l.row.ackNo,
+      href: submissionHref(id),
+      to: { roles: ["registry"], users: [ev.evaluatingOfficerId] },
+    });
     return `Deficiency notice ${number} recorded; response due ${longDate(due)}.`;
   });
 }
@@ -488,6 +536,7 @@ export async function approve(db: Db, actor: Actor | null, id: string): Promise<
         detail: `${l.row.ackNo}: ${changes.length ? changes.join("; ") : "no changes"}${reissue ? "; certificate needs reissue" : ""}`,
       });
       await audit(tx, actor, l, "Changes applied", `Approved by ${actor.name}; changes applied to ${parentRegNo}: ${changes.length} change(s)${reissue ? "; certificate needs reissue" : ""}${overridden}`);
+      await notifyDecision(tx, actor, id, l.row.ackNo, `Changes applied: ${l.row.ackNo}`, `${parentRegNo}: ${changes.length} change(s)${reissue ? "; certificate needs reissue" : ""}`);
       return `Changes applied to ${parentRegNo} (${changes.length} change(s)).${reissue ? " The certificate needs reissue." : ""}`;
     }
     const scope = `${l.a.categoryApplied}-${l.a.primaryCode}`;
@@ -498,6 +547,7 @@ export async function approve(db: Db, actor: Actor | null, id: string): Promise<
       .where(eq(submissions.id, id));
     await tx.update(evaluations).set({ finalDecision: OUTCOMES.REGISTER }).where(eq(evaluations.submissionId, id));
     await audit(tx, actor, l, "Registered", `${number} - approved by ${actor.name}${overridden}`);
+    await notifyDecision(tx, actor, id, l.row.ackNo, `Registered: ${l.row.ackNo} as ${number}`, l.row.registeredName);
     return `Registered as ${number}.`;
   });
 }
@@ -516,6 +566,7 @@ export async function lapse(db: Db, actor: Actor | null, id: string): Promise<st
     await tx.update(submissions).set({ status: ST.LAPSED, updatedAt: new Date() }).where(eq(submissions.id, id));
     await tx.update(evaluations).set({ finalDecision: OUTCOMES.LAPSE, approvalDate: l.ctx.today, updatedAt: new Date() }).where(eq(evaluations.submissionId, id));
     await audit(tx, actor, l, "Lapsed", `No complete response by ${longDate(l.a.deficiencyResponseDue!)} (para 13(2))`);
+    await notifyDecision(tx, actor, id, l.row.ackNo, `Lapsed: ${l.row.ackNo}`, l.row.registeredName);
     return `${l.row.ackNo} has lapsed (para 13(2)). A fresh application is needed.`;
   });
 }
@@ -559,6 +610,7 @@ export async function refuse(db: Db, actor: Actor | null, id: string, ground: st
       .set({ finalDecision: OUTCOMES.REFUSE, reasons, approvalDate: l.ctx.today, updatedAt: new Date() })
       .where(eq(evaluations.submissionId, id));
     await audit(tx, actor, l, "Refused", reasons);
+    await notifyDecision(tx, actor, id, l.row.ackNo, `Refused: ${l.row.ackNo}`, l.row.registeredName ? `${l.row.registeredName}: ${reasons}` : reasons);
     return `${l.row.ackNo} refused: ${reasons}`;
   });
 }

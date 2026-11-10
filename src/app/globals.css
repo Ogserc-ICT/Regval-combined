@@ -119,11 +119,21 @@ body {
     from { opacity: 0; }
     to { opacity: 1; }
   }
+  --animate-bell-ring: bell-ring 900ms ease-in-out;
+  @keyframes bell-ring {
+    0%, 100% { transform: rotate(0); }
+    15% { transform: rotate(16deg); }
+    30% { transform: rotate(-14deg); }
+    45% { transform: rotate(10deg); }
+    60% { transform: rotate(-6deg); }
+    75% { transform: rotate(3deg); }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-slide-in,
-  .animate-fade-in {
+  .animate-fade-in,
+  .animate-bell-ring {
     animation: none;
   }
 }

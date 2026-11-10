@@ -11,6 +11,7 @@ import type { Db, Tx } from "../../db/connect";
 import { frontDeskItems } from "../../db/schema";
 import { blocked, notFound, Problems } from "../../errors";
 import { issueNumber } from "../../numbering";
+import { notify } from "../notifications";
 import { inList, optionalCount, optionalPhone, receivedInstant, t } from "./common";
 import { loadRegistryRef } from "./ref";
 
@@ -71,6 +72,14 @@ export async function logFrontDesk(db: Db, actor: Actor | null, input: FrontDesk
       entityId: row.id,
       reference: number,
       detail: `${sender} - ${subject}${mode ? ` - ${mode}` : ""}`,
+    });
+    await notify(tx, actor, {
+      kind: "frontdesk:logged",
+      title: `New at the front desk: ${number}`,
+      body: `${sender} - ${subject}`,
+      reference: number,
+      href: "/registry-intake",
+      to: { roles: ["registry"] },
     });
     return { id: row.id, fdNo: number };
   });

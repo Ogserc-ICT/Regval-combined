@@ -15,7 +15,7 @@ import { dailyReviewRuns, submissions } from "../db/schema";
 import { lagosToday } from "../time";
 import { getSettings } from "./settings";
 import { assessMany } from "./submissions/load";
-import { tryRelease } from "./submissions/workflow";
+import { notifyDecision, tryRelease } from "./submissions/workflow";
 
 export type ReviewSummary = {
   released: string[];
@@ -80,6 +80,7 @@ export async function runDailyReview(db: Db, trigger: "cron" | "manual", actor: 
         reference: x.row.ackNo,
         detail: `Determination due ${longDate(x.a.determinationDue!)} has passed: provisionally registered (para 13(4)); the Ack No. serves as the registration number`,
       });
+      await notifyDecision(tx, actor, x.row.id, x.row.ackNo, `Provisionally registered: ${x.row.ackNo}`, x.row.registeredName);
     }
     // Deficiency responses past due are listed only: never lapsed automatically.
 
