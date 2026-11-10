@@ -64,6 +64,8 @@ export const PERMISSIONS = {
   "users:manage": ["admin"],
   "dailyreview:run": ["admin"],
   "registers:export": ["admin"],
+  /** Admin › Data management: clear registers (up to a factory reset) and delete entries. */
+  "data:clear": ["admin"],
 } as const satisfies Record<string, readonly Role[]>;
 
 export type Permission = keyof typeof PERMISSIONS;

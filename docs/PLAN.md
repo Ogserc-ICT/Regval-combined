@@ -312,6 +312,13 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 - **Workbook export**: left as it was (Q27); its Registry officer list takes the Registration officers, its router and front-desk lists are empty, and its Registry service targets, acknowledgement-email cells and unit emails keep the workbook's own values.
 - **Not changed**: the dashboard never had a "first month" setting (its months start at the Effective Date month); the 17:00 closing time and holidays stay, for deemed receipt.
 
+## 11h. Admin data tools (10 Nov 2026)
+
+- **Admin › Data management** (`src/server/services/data-admin.ts`, permission `data:clear`, admin only). "Clear data" is a checklist: entries (Register entries with their payments, checklists, evaluations and deficiency notices; own-use notifications with their units, payments and checklists; notifications; saved drafts; daily review history) and setup (settings, fee table and activity map, lists, holidays, signatories) back to the workbook's defaults. Entries are ticked by default; ticking everything is a factory reset, audited as "Factory reset". The admin's password is checked. One transaction, all or nothing. Staff, roles and the audit log are always kept. Every series nothing holds any more restarts at 1.
+- **Delete one entry**: a Register entry (refused while an update or annual confirmation links to it; the reasons name them) or an own-use notification, confirmed by typing its ACK, with everything recorded against it; a payment that is pending, rejected or reversed (a confirmed one must be reversed first). Their numbers are not reused. Audited ("Submission deleted", "Own-use notification deleted", "Payment deleted").
+- **Database** (migration 0013): `reject_delete()` and `counters_no_delete()` stand aside only when the transaction has set `ogserc.allow_delete` to 'on' (`set_config(..., true)`), which only this service does. Ordinary deletes are still refused; the audit log's guards are unchanged.
+- Tests: `tests/integration/data-admin.test.ts`. The end-to-end walk-through for staff is `docs/END-TO-END.md`.
+
 ## 12. Phase map
 
 | Phase | Delivers |

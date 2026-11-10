@@ -1,6 +1,6 @@
 import {
   BookOpenCheck, CalendarDays, ClipboardCheck, Database, Download, FileStack, Gauge, History, PenLine, Printer, Rocket,
-  Settings, Sunrise, Users, Wallet, Zap, type LucideIcon,
+  Eraser, Settings, Sunrise, Users, Wallet, Zap, type LucideIcon,
 } from "lucide-react";
 import type { NavIcon } from "./nav";
 
@@ -8,7 +8,7 @@ import type { NavIcon } from "./nav";
 export const NAV_ICONS: Record<NavIcon, LucideIcon> = {
   dashboard: Gauge, register: BookOpenCheck, payments: Wallet, documents: FileStack, evaluation: ClipboardCheck,
   ownuse: Zap, reports: Printer, audit: History, settings: Settings, holidays: CalendarDays, users: Users,
-  signatories: PenLine, review: Sunrise, reference: Database, exports: Download, golive: Rocket,
+  signatories: PenLine, review: Sunrise, reference: Database, exports: Download, data: Eraser, golive: Rocket,
 };
 
 /** Active when on the item's page or one of its sub-pages (so /register does not light up for /register-x). */

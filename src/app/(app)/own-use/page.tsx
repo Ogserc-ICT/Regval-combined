@@ -3,7 +3,7 @@ import Link from "next/link";
 import { desc, isNotNull } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import { PaymentBadge } from "@/components/badges";
-import { Badge, buttonVariants, Card, CardHeader, PageHeader, Table, Td, Th } from "@/components/ui";
+import { Badge, buttonVariants, Card, CardHeader, Notice, PageHeader, Table, Td, Th } from "@/components/ui";
 import { dateShort, naira } from "@/lib/format";
 import { can } from "@/server/auth/actor";
 import { requirePermission } from "@/server/auth/session";
@@ -13,8 +13,9 @@ import { loadOwnUse } from "@/server/services/ownuse";
 
 export const metadata: Metadata = { title: "Own-use" };
 
-export default async function OwnUsePage() {
+export default async function OwnUsePage({ searchParams }: PageProps<"/own-use">) {
   const actor = await requirePermission("registers:read");
+  const sp = await searchParams;
   const rows = await db.select({ id: ownUseNotifications.id }).from(ownUseNotifications).where(isNotNull(ownUseNotifications.ounNo)).orderBy(desc(ownUseNotifications.ounNo));
   const list = await Promise.all(rows.map((r) => loadOwnUse(db, r.id)));
   return (
@@ -30,6 +31,11 @@ export default async function OwnUsePage() {
           ) : null
         }
       />
+      {typeof sp.deleted === "string" ? (
+        <Notice tone="accent" className="mb-4">
+          {sp.deleted} was deleted, with its units, payments and documents. It is recorded in the audit log.
+        </Notice>
+      ) : null}
       <Card>
         <CardHeader title={`${list.length} notification(s)`} />
         <Table>

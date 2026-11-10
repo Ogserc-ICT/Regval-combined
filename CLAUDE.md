@@ -34,7 +34,7 @@ This Next.js version (16.4) differs from older ones; read `node_modules/next/dis
 - `docs/SPEC.md`: the registration rules (written in Phase 0; registry sections marked not applicable in Phase 9)
 - `docs/PLAN.md`: architecture, schema, ORM, auth, screens (written in Phase 0)
 - `docs/QUESTIONS.md`: open questions for Kamiye and the Commission (written in Phase 0)
-- `docs/GO-LIVE.md`: production checklist; `docs/ACCEPTANCE.md`: acceptance check → test
+- `docs/GO-LIVE.md`: production checklist; `docs/ACCEPTANCE.md`: acceptance check → test; `docs/END-TO-END.md`: walk-through of the whole app
 
 ## Status
 
@@ -49,5 +49,6 @@ Update this list as each phase finishes.
 - Phase 6, go-live: done 6 Nov 2026; production steps in docs/GO-LIVE.md are for Kamiye (workbook import removed in Phase 9)
 - Phase 7, offline workbook export: done 6 Nov 2026; reviewed in Excel and accepted (`pnpm export:workbook`); its Registry sheets left as they were (Q27)
 - Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications done 10 Nov 2026; 8c idle sign-out with resume built 10 Nov 2026, awaiting Kamiye's test
-- Phase 9, re-scope (Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register): done 10 Nov 2026, committed for Kamiye to push
+- Phase 9, re-scope (Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register): done 10 Nov 2026, pushed
+- Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
 - Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): next, once the Commission's templates arrive (Q26); not started

@@ -6,6 +6,7 @@ import { dateShort, naira } from "@/lib/format";
 import { lagosDateTime } from "@/domain/dates";
 import { can, type Actor } from "@/server/auth/actor";
 import type { payments } from "@/server/db/schema";
+import { deletePaymentAction } from "@/app/(app)/admin/data/actions";
 import { confirmPaymentAction, rejectPaymentAction, reversePaymentAction } from "@/app/(app)/register/actions";
 
 type Payment = typeof payments.$inferSelect;
@@ -25,6 +26,7 @@ export function PaymentsTable({
 }) {
   const canDecide = can(actor, "payment:decide");
   const canReverse = can(actor, "payment:reverse");
+  const canDelete = can(actor, "data:clear");
   return (
     <Table>
       <thead>
@@ -109,6 +111,14 @@ export function PaymentsTable({
                         <summary className="cursor-pointer text-xs text-muted">Reverse…</summary>
                         <ActionForm action={reversePaymentAction} submitLabel="Reverse payment" size="sm" variant="secondary" hidden={{ id: revalidateId, paymentId: p.id }} className="mt-2">
                           <Input name="reason" placeholder="Reason (required)" className="h-8" required />
+                        </ActionForm>
+                      </details>
+                    ) : null}
+                    {canDelete && (p.financeStatus !== "Confirmed" || p.reversed) ? (
+                      <details>
+                        <summary className="cursor-pointer text-xs text-danger">Delete…</summary>
+                        <ActionForm action={deletePaymentAction} submitLabel={`Delete ${p.payNo}`} size="sm" variant="danger" hidden={{ paymentId: p.id }} className="mt-2">
+                          <p className="text-xs text-muted">Admin only. Deletes this payment record for good; its number is not reused. Recorded in the audit log.</p>
                         </ActionForm>
                       </details>
                     ) : null}

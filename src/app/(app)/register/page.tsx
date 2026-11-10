@@ -3,7 +3,7 @@ import Link from "next/link";
 import { desc, isNotNull } from "drizzle-orm";
 import { Plus } from "lucide-react";
 import { PaymentBadge, SlaBadge, StatusBadge } from "@/components/badges";
-import { Badge, Button, buttonVariants, Card, CardHeader, Input, PageHeader, Select, Table, Td, Th } from "@/components/ui";
+import { Badge, Button, buttonVariants, Card, CardHeader, Input, Notice, PageHeader, Select, Table, Td, Th } from "@/components/ui";
 import { STATUSES } from "@/server/db/schema";
 import { FILING_LABELS } from "@/domain/registration/types";
 import { can } from "@/server/auth/actor";
@@ -54,6 +54,11 @@ export default async function RegisterPage({ searchParams }: PageProps<"/registe
           ) : null
         }
       />
+      {typeof sp.deleted === "string" ? (
+        <Notice tone="accent" className="mb-4">
+          {sp.deleted} was deleted, with its payments, documents and evaluation. It is recorded in the audit log.
+        </Notice>
+      ) : null}
       <Card>
         <CardHeader
           title={`${list.length} submission(s)`}

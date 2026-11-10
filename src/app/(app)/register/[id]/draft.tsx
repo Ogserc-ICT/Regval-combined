@@ -7,6 +7,8 @@ import { submissionLicences, submissionOtherActivities, type submissions } from 
 import { saveDraftSubmissionAction } from "../actions";
 import { formLists, valuesFromParts } from "../data";
 import { SubmissionForm } from "../submission-form";
+import { DeleteEntryCard } from "@/components/delete-entry-card";
+import { deleteSubmissionAction } from "../../admin/data/actions";
 
 /** A Register row started before Phase 9 by the old Registry intake: complete it and save it under its ACK. */
 export async function DraftSubmission({ row, actor }: { row: typeof submissions.$inferSelect; actor: Actor }) {
@@ -36,6 +38,9 @@ export async function DraftSubmission({ row, actor }: { row: typeof submissions.
       ) : (
         <Notice tone="info">A Registration officer completes this entry and saves it on the Register.</Notice>
       )}
+      {can(actor, "data:clear") ? (
+        <DeleteEntryCard action={deleteSubmissionAction} id={row.id} ack={row.ackNo} what="unsaved Register row" withIt="anything recorded against it" />
+      ) : null}
     </>
   );
 }

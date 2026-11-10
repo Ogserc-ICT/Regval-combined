@@ -651,8 +651,8 @@ Enforced on the server for each record, returning every reason at once:
 ## 28. Audit log
 
 - Append-only, one log: timestamp (UTC, shown in Lagos time), user (id and name at the time), action, module, entity type and id, reference (ACK, OUN, PAY, DEF, REG), detail text, and structured before/after data. Entries written by the Registry before Phase 9 stay, with module "registry".
-- Written in the same transaction as the change it records. No update or delete, enforced in the database.
-- Action names follow the workbook: New submission, Filing received, Payment recorded / confirmed / rejected / reversed, Released for evaluation, Blocked - awaiting Finance confirmation, Category confirmed, Pricing recalculated, Submission complete, Deficiency notice issued, Registered, Changes applied, Annual confirmation accepted, Provisional registration, Lapsed, Refused, Cancelled, Own-use notification, Daily review, Setting changed, Edited (field old → new), Deficiency notice sent, Certificate sent, Show-cause date, User created / changed / deleted, and sign-in events (Signed in, Signed out, Signed out: inactive).
+- Written in the same transaction as the change it records. No update or delete, enforced in the database. It is never cleared, not even by a factory reset (Admin › Data management, docs/PLAN.md §11h), which records itself in it.
+- Action names follow the workbook: New submission, Filing received, Payment recorded / confirmed / rejected / reversed, Released for evaluation, Blocked - awaiting Finance confirmation, Category confirmed, Pricing recalculated, Submission complete, Deficiency notice issued, Registered, Changes applied, Annual confirmation accepted, Provisional registration, Lapsed, Refused, Cancelled, Own-use notification, Daily review, Setting changed, Edited (field old → new), Deficiency notice sent, Certificate sent, Show-cause date, User created / changed / deleted, Data cleared, Factory reset, Submission deleted, Own-use notification deleted, Payment deleted, and sign-in events (Signed in, Signed out, Signed out: inactive).
 
 ## 29. Workbook records: real and EXAMPLE
 

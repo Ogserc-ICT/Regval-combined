@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/action-form";
 import { DocBadge, PaymentBadge } from "@/components/badges";
+import { DeleteEntryCard } from "@/components/delete-entry-card";
 import { PaymentsTable } from "@/components/payments-table";
 import { RecordPaymentForm } from "@/components/record-payment-form";
 import { Badge, Card, CardBody, CardHeader, FormErrors, Notice, PageHeader, Select, Table, Td, Th, Textarea } from "@/components/ui";
@@ -21,6 +22,7 @@ const hhmm = (d: Date) => {
 };
 import { lagosToday } from "@/server/time";
 import { getSettings } from "@/server/services/settings";
+import { deleteOwnUseAction } from "../../admin/data/actions";
 import { ownUseDocumentAction, ownUseFlagAction, registerOwnUseAction, saveDraftOwnUseAction } from "../actions";
 import { OwnUseForm } from "../own-use-form";
 
@@ -214,6 +216,9 @@ export default async function OwnUseDetailPage({ params, searchParams }: PagePro
           </CardBody>
         ) : null}
       </Card>
+      {can(actor, "data:clear") ? (
+        <DeleteEntryCard action={deleteOwnUseAction} id={row.id} ack={row.ackNo} what="own-use notification" withIt="its generator units, payments and documents checklist" />
+      ) : null}
     </>
   );
 }

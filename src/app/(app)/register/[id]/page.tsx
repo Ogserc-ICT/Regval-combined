@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/badges";
+import { DeleteEntryCard } from "@/components/delete-entry-card";
 import { Badge, Notice, PageHeader } from "@/components/ui";
 import { FILING_LABELS } from "@/domain/registration/types";
 import { cn } from "@/lib/cn";
+import { can } from "@/server/auth/actor";
 import { requirePermission } from "@/server/auth/session";
+import { deleteSubmissionAction } from "../../admin/data/actions";
 import { db } from "@/server/db/client";
 import { ServiceError } from "@/server/errors";
 import { loadSubmission, type LoadedSubmission } from "@/server/services/submissions/load";
@@ -109,6 +112,9 @@ export default async function SubmissionPage({ params, searchParams }: PageProps
       {tab === "payments" ? <PaymentsTab l={l} actor={actor} /> : null}
       {tab === "evaluation" ? <EvaluationTab l={l} actor={actor} /> : null}
       {tab === "history" ? <HistoryTab l={l} /> : null}
+      {tab === "summary" && can(actor, "data:clear") ? (
+        <DeleteEntryCard action={deleteSubmissionAction} id={row.id} ack={row.ackNo} what="Register entry" withIt="its payments, documents checklist, evaluation and deficiency notices" />
+      ) : null}
     </>
   );
 }
