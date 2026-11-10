@@ -38,6 +38,11 @@ export const sessions = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    /**
+     * Last real activity (mouse, keyboard, touch, scroll), reported by the browser (Phase 8c).
+     * Background polling never moves it. A session idle past the limit is ended.
+     */
+    lastActivityAt: timestamp("last_activity_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("sessions_user_idx").on(t.userId)],
 );

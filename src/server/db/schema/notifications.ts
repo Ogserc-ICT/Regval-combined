@@ -1,9 +1,9 @@
 /**
- * In-app notifications (docs/PLAN.md §11f, 8b). Written in the same transaction
- * as the action that causes them, one row per recipient.
+ * In-app notifications (docs/PLAN.md §11f, 8b) and the form work kept when an
+ * idle session is signed out (8c).
  */
 import { sql } from "drizzle-orm";
-import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 export const notifications = pgTable(
@@ -29,4 +29,24 @@ export const notifications = pgTable(
     index("notifications_user_created_idx").on(t.userId, t.createdAt),
     index("notifications_user_unread_idx").on(t.userId).where(sql`${t.readAt} is null`),
   ],
+);
+
+/**
+ * What a person had typed on a page when they were signed out for inactivity
+ * (8c). One per person and page; restored to the same person only, then
+ * deleted. Kept at most 24 hours. Password and file fields are never saved.
+ */
+export const formDrafts = pgTable(
+  "form_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    /** Path and query of the page, e.g. /register/<id>?tab=details. */
+    path: text("path").notNull(),
+    data: jsonb("data").notNull(),
+    savedAt: timestamp("saved_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("form_drafts_user_path_uq").on(t.userId, t.path)],
 );

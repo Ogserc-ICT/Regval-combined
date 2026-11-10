@@ -2,6 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { useDraftRows } from "@/lib/drafts-client";
 import { ActionForm, type FormAction } from "@/components/action-form";
 import { Button, Card, CardBody, CardHeader, Field, Input, Select, Textarea } from "@/components/ui";
 
@@ -97,6 +98,13 @@ export function SubmissionForm<T>({
   const [operating, setOperating] = useState(values.operatingOnEffectiveDate);
   const [others, setOthers] = useState<string[]>(values.otherActivities);
   const [licences, setLicences] = useState(values.licences.length ? values.licences : [{ licenceNo: "", expiryDate: "" }]);
+  // After an idle sign-out, make room for every row the person had added (Phase 8c).
+  useDraftRows(({ counts, values: typed }) => {
+    if (typed.otherActivities) setOthers(Array.from({ length: counts.otherActivities ?? 0 }, (_, i) => typed.otherActivities[i] ?? ""));
+    if (counts.licenceNo && counts.licenceNo > licences.length) {
+      setLicences([...licences, ...Array.from({ length: counts.licenceNo - licences.length }, () => ({ licenceNo: "", expiryDate: "" }))]);
+    }
+  });
   const activityOptions = lists.activities.map((a) => ({ value: a.code, label: `${a.name} (${a.code})` }));
 
   return (

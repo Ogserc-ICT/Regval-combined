@@ -2,6 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { useDraftRows } from "@/lib/drafts-client";
 import { ActionForm, type FormAction } from "@/components/action-form";
 import { Button, Card, CardBody, CardHeader, Field, Input, Select, Textarea } from "@/components/ui";
 import { createOwnUseAction } from "./actions";
@@ -25,6 +26,11 @@ export function OwnUseForm({
   values?: OwnUseDraftValues;
 }) {
   const [units, setUnits] = useState([0]);
+  // After an idle sign-out, make room for every unit the person had added (Phase 8c).
+  useDraftRows(({ counts }) => {
+    const n = counts.unitKw ?? 0;
+    if (n > units.length) setUnits([...units, ...Array.from({ length: n - units.length }, (_, i) => Math.max(...units) + 1 + i)]);
+  });
   const v = values;
   return (
     <ActionForm action={action} submitLabel="Save notification" pendingLabel="Saving…" hidden={v ? { id: v.id } : undefined}>

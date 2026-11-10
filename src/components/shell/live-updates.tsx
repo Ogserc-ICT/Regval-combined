@@ -66,9 +66,12 @@ export function LiveUpdates() {
       try {
         const res = await fetch("/api/pulse", { cache: "no-store", headers: { accept: "application/json" } });
         if (res.status === 401) {
-          // Signed out elsewhere (or revoked): re-render, and the server sends us to sign in.
+          // Signed out elsewhere, ended for inactivity, or revoked: go to sign in, then come back here.
           stopped = true;
-          router.refresh();
+          const qs = new URLSearchParams({ next: window.location.pathname + window.location.search });
+          // A full load on purpose: nothing from the signed-out session stays in the browser's memory.
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.assign(`/sign-in?${qs}`);
           return;
         }
         if (!res.ok) return;

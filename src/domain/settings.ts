@@ -51,6 +51,8 @@ export const settingsSchema = z.object({
   ackEmailMode: z.enum(["Send", "Preview", "Off"]),
   ackEmailCc: z.string().max(500),
   registryAddress: z.string().min(1).max(300),
+  // Security (Phase 8c)
+  idleMinutes: z.number().int().min(1).max(240),
 });
 
 export type Settings = z.infer<typeof settingsSchema>;
@@ -92,13 +94,14 @@ export const DEFAULT_SETTINGS: Settings = {
   ackEmailMode: "Preview",
   ackEmailCc: "",
   registryAddress: "Registry · 5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta",
+  idleMinutes: 4,
 };
 
 export type SettingKind = "date" | "boolean" | "days" | "number" | "yn" | "choice" | "time" | "text";
 
 export type SettingMeta = {
   label: string;
-  group: "Order parameters" | "Policy settings" | "Registry" | "Acknowledgement email";
+  group: "Order parameters" | "Policy settings" | "Registry" | "Acknowledgement email" | "Security";
   kind: SettingKind;
   note: string;
   source: string;
@@ -142,6 +145,13 @@ export const SETTING_META: Record<SettingKey, SettingMeta> = {
   ackEmailMode: { label: "Acknowledgement email", group: "Acknowledgement email", kind: "choice", note: "Send = sent on save · Preview = the officer reviews before sending · Off.", source: "Registry Settings B18 (G9)", choices: ["Send", "Preview", "Off"] },
   ackEmailCc: { label: "Acknowledgement email: copy to (CC)", group: "Acknowledgement email", kind: "text", note: "Optional, e.g. the Secretary's mailbox. Separate addresses with ;", source: "Registry Settings B17" },
   registryAddress: { label: "Registry address on slips", group: "Registry", kind: "text", note: "Printed under the Commission's name.", source: "Acknowledgement Slip B4" },
+  idleMinutes: {
+    label: "Sign out after inactivity (minutes)",
+    group: "Security",
+    kind: "number",
+    note: "No mouse, keyboard, touch or scroll for this long signs the person out, with a 30-second warning first. What they were typing is kept and comes back when they sign in again. 1 to 240.",
+    source: "Phase 8c (not in the workbook)",
+  },
 };
 
 /** Merge stored values over the defaults; a stored value that no longer validates falls back to its default. */

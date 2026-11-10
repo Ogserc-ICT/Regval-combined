@@ -9,9 +9,15 @@ import { getCurrentActor } from "@/server/auth/session";
 import { writeAudit } from "@/server/audit";
 import { db } from "@/server/db/client";
 import { users } from "@/server/db/schema";
+import { isDraftPath } from "@/server/services/drafts";
 import { markPasswordChanged, MIN_PASSWORD_LENGTH } from "@/server/services/users";
 
 export type FormState = { error?: string; fieldErrors?: Record<string, string> } | undefined;
+
+/** Only an in-app path is followed after signing in (never another site). */
+function safeNext(v: FormDataEntryValue | null): string | null {
+  return isDraftPath(v) && !v.startsWith("/sign-in") ? v : null;
+}
 
 export async function signInAction(_prev: FormState, form: FormData): Promise<FormState> {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
@@ -47,7 +53,7 @@ export async function signInAction(_prev: FormState, form: FormData): Promise<Fo
   await db.transaction((tx) =>
     writeAudit(tx, { actor: { id: u!.id, name: u!.name }, action: "Signed in", module: "auth", entityType: "user", entityId: u!.id }),
   );
-  redirect(u!.mustChangePassword ? "/account/password" : "/dashboard");
+  redirect(u!.mustChangePassword ? "/account/password" : (safeNext(form.get("next")) ?? "/dashboard"));
 }
 
 export async function signOutAction(): Promise<void> {
@@ -59,6 +65,20 @@ export async function signOutAction(): Promise<void> {
     );
   }
   redirect("/sign-in");
+}
+
+/**
+ * The browser's idle sign-out (docs/PLAN.md §11f, 8c). The browser has already
+ * saved the person's form work; it then goes to the sign-in page itself.
+ */
+export async function idleSignOutAction(minutes: number): Promise<void> {
+  const actor = await getCurrentActor();
+  if (!actor) return; // already ended (by the server, or by another tab)
+  await auth.api.signOut({ headers: await headers() });
+  const m = Number.isFinite(minutes) ? Math.round(minutes) : 0;
+  await db.transaction((tx) =>
+    writeAudit(tx, { actor: { id: actor.id, name: actor.name }, action: "Signed out: inactive", module: "auth", entityType: "user", entityId: actor.id, detail: `No activity for ${m} minute(s)` }),
+  );
 }
 
 export async function changePasswordAction(_prev: FormState, form: FormData): Promise<FormState> {

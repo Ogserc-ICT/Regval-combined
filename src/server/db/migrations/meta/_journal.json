@@ -64,6 +64,13 @@
       "when": 1794298181967,
       "tag": "0008_notifications",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794300411942,
+      "tag": "0009_idle_sessions",
+      "breakpoints": true
     }
   ]
 }

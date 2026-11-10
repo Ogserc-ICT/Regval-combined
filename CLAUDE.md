@@ -48,4 +48,4 @@ Update this list as each phase finishes.
 - Phase 5, dashboard and admin: done 6 Nov 2026
 - Phase 6, import and go-live: done 6 Nov 2026; production steps in docs/GO-LIVE.md are for Kamiye
 - Phase 7, offline workbook export: done 6 Nov 2026; reviewed in Excel and accepted (`pnpm export:workbook`)
-- Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications built 10 Nov 2026, awaiting Kamiye's test; 8c not started
+- Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications done 10 Nov 2026; 8c idle sign-out with resume built 10 Nov 2026, awaiting Kamiye's test

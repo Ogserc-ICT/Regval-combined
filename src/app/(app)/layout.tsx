@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { LogOut } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-provider";
 import { LiveUpdates } from "@/components/shell/live-updates";
 import { MobileNav } from "@/components/shell/mobile-nav";
 import { NotificationBell } from "@/components/shell/notification-bell";
+import { SessionGuard } from "@/components/shell/session-guard";
 import { NAV } from "@/components/shell/nav";
 import { Sidebar } from "@/components/shell/sidebar";
 import { shortDate } from "@/domain/dates";
@@ -14,6 +16,7 @@ import { can } from "@/server/auth/actor";
 import { requireActor } from "@/server/auth/session";
 import { all } from "@/server/db/connect";
 import { db } from "@/server/db/client";
+import { draftPaths } from "@/server/services/drafts";
 import { getSoundPreference, unreadSummary } from "@/server/services/notifications";
 import { getSettings } from "@/server/services/settings";
 import { lagosToday } from "@/server/time";
@@ -21,7 +24,12 @@ import { signOutAction } from "../auth-actions";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const actor = await requireActor();
-  const [settings, notes, sound] = await all(db, [() => getSettings(db), () => unreadSummary(db, actor.id), () => getSoundPreference(db, actor.id)]);
+  const [settings, notes, sound, drafts] = await all(db, [
+    () => getSettings(db),
+    () => unreadSummary(db, actor.id),
+    () => getSoundPreference(db, actor.id),
+    () => draftPaths(db, actor.id),
+  ]);
   const isAdmin = actor.roles.includes("admin");
   const groups = NAV.map((g) => ({ ...g, items: g.items.filter((i) => can(actor, i.permission)) })).filter((g) => g.items.length);
   const commit = process.env.VERCEL_GIT_COMMIT_SHA;
@@ -78,6 +86,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto w-full min-w-0 max-w-7xl flex-1 px-4 py-5 md:px-6 md:py-8">{children}</main>
 
         <LiveUpdates />
+        {/* useSearchParams needs a Suspense boundary. */}
+        <Suspense fallback={null}>
+          <SessionGuard idleMinutes={settings.idleMinutes} draftPaths={drafts} />
+        </Suspense>
 
         <footer className="border-t border-border px-4 py-3 text-xs text-faint md:px-6">
           OGSERC Registry &amp; Evaluation · staff only

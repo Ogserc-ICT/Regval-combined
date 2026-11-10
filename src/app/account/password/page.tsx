@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Logo } from "@/components/logo";
+import { SessionGuard } from "@/components/shell/session-guard";
 import { requireActor } from "@/server/auth/session";
+import { db } from "@/server/db/client";
+import { idleMinutes } from "@/server/services/idle";
 import { PasswordForm } from "./password-form";
 
 export const metadata: Metadata = { title: "Change password" };
 
 export default async function PasswordPage() {
   const actor = await requireActor({ allowPasswordChange: true });
+  const minutes = await idleMinutes(db);
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-10">
+      {/* The same idle limit applies here; password fields are never kept. */}
+      <Suspense fallback={null}>
+        <SessionGuard idleMinutes={minutes} draftPaths={[]} />
+      </Suspense>
       <div className="w-full max-w-sm">
       <div className="mb-6 flex justify-center">
         <Logo height={36} priority />
