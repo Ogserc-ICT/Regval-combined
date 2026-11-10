@@ -294,6 +294,30 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 - Also from the app: settings and policies, Registry service targets, holidays, the fee table, unit and division emails.
 - Checks: `scripts/workbook/build.test.ts` (no Excel needed; runs in CI) and `scripts/workbook/verify-excel.ps1`, which opens the export in desktop Excel, checks every gap fix and runs a real Registry Intake save through the macros in test mode. Both pass for the clean and the TRAINING copy (6 Nov 2026).
 
+## 11f. Phase 8 plan: live updates, notifications, idle sign-out (agreed 9 Nov 2026)
+
+Requested by Kamiye after go-live. Built in three stages, each stopped for testing.
+
+**8a. Live updates.** Vercel functions cannot hold open sockets, so each visible tab polls `GET /api/pulse` every 5 seconds (paused while the tab is hidden, immediate when it comes back). The pulse returns the audit chain's `seq`: every change in the app writes an audit row, so a new `seq` means something changed. On a change the page re-renders from the server (`router.refresh()`). If the person has typed into a form on the page, nothing is redrawn; a "New changes · Refresh" button appears instead. Polling never counts as activity for 8c. A push service (Pusher, Ably) was considered and not chosen: one more account, keys and plan for a gain of a few seconds.
+
+**8b. Notifications.** A `notifications` table (recipient, title, reference, link, read time), written in the same transaction as the action, so a notification exists exactly when the action committed. Never sent to the person who acted. The pulse also returns the unread count. Header bell: amber with a red count when unread, a short Web Audio chime on arrival (browsers allow sound only after the person has clicked the page once since it loaded), a list with "mark all read", a per-person mute, and optional system pop-ups (Notification API, permission asked once; title and reference only). Recipients:
+
+| Action | Notified |
+| --- | --- |
+| Front desk item logged | Registry officers |
+| Inward saved, registry intake (ACK issued) | Routers |
+| Item routed or re-routed; forwarded | Unit officers of that unit |
+| Unit closes an item | Registry officers |
+| Payment recorded | Finance officers |
+| Payment rejected | Whoever recorded it |
+| Payment confirmed (released for evaluation) | Assigned evaluator, else supervisors (to assign) |
+| Officers assigned | Each newly assigned officer |
+| Submission marked complete | Assigned reviewing supervisor and approving officer |
+| Deficiency notice issued | Registry officers and the assigned evaluator |
+| Approved, refused, lapsed, provisional | Registry officers and the assigned evaluator |
+
+**8c. Idle sign-out and resume.** After `idleMinutes` (admin setting, default 4) with no mouse, keyboard, touch or scroll, every tab signs out; a 30-second warning comes first. Enforced on the server as well: sessions carry `last_activity_at`, refreshed only by real activity (page loads, actions, a throttled activity ping), never by the pulse; a session idle longer than the limit is refused and revoked. Before sign-out, the page's form fields are saved to a `form_drafts` table against the person (not the browser, so nothing is left on a shared PC). After the same person signs in again they return to the same page with the fields refilled. Drafts are deleted once restored or after 24 hours. Password fields and file inputs are never saved. Forms with added rows (licences, other activities) are restored row by row. This replaces the 12-hour idle rule in §6; the 12-hour absolute session limit stays.
+
 ## 12. Phase map
 
 | Phase | Delivers |
@@ -305,5 +329,6 @@ CI: typecheck, lint, unit, integration (Postgres service), e2e against a built a
 | 5 | Combined dashboard; admin screens; exports |
 | 6 | Import of the real record with report; full test run; production setup |
 | 7 | Optional workbook export |
+| 8 | Live updates (8a), notifications (8b), idle sign-out with resume (8c) |
 
 Phase 2 needs the registry's inward item to hold the ACK. Phase 2 creates the `inward_items` table and the direct-entry path (`SPEC.md` §18.3); Phase 3 adds the registry screens on top.

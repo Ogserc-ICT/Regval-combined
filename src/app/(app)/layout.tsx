@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-provider";
+import { LiveUpdates } from "@/components/shell/live-updates";
 import { MobileNav } from "@/components/shell/mobile-nav";
 import { NAV } from "@/components/shell/nav";
 import { Sidebar } from "@/components/shell/sidebar";
@@ -71,6 +72,8 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         ) : null}
 
         <main className="mx-auto w-full min-w-0 max-w-7xl flex-1 px-4 py-5 md:px-6 md:py-8">{children}</main>
+
+        <LiveUpdates />
 
         <footer className="border-t border-border px-4 py-3 text-xs text-faint md:px-6">
           OGSERC Registry &amp; Evaluation · staff only
