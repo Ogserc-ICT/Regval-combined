@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Card, CardHeader, PageHeader, Table, Td, Th } from "@/components/ui";
+import { Badge, Card, CardHeader, Notice, PageHeader, Table, Td, Th } from "@/components/ui";
+import { lagosDateTime } from "@/domain/dates";
 import { ROLE_LABELS } from "@/domain/roles";
 import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
@@ -10,9 +11,13 @@ import { unitOptions } from "./units";
 
 export const metadata: Metadata = { title: "Staff & roles" };
 
-export default async function UsersPage() {
+export default async function UsersPage({ searchParams }: PageProps<"/admin/users">) {
   await requirePermission("users:manage");
-  const users = await listUsers(db);
+  const sp = await searchParams;
+  const deletedName = typeof sp.deleted === "string" ? sp.deleted : null;
+  const all = await listUsers(db);
+  const users = all.filter((u) => !u.removedAt);
+  const removed = all.filter((u) => u.removedAt);
   const pending = users.filter((u) => u.pendingConfirmation).length;
   return (
     <>
@@ -20,6 +25,11 @@ export default async function UsersPage() {
         title="Staff & roles"
         description="Every officer field (received, released, dispatched, recorded by) comes from these accounts. A person can hold several roles; separation of duties is still checked on each record."
       />
+      {deletedName ? (
+        <Notice tone="accent" className="mb-6">
+          {deletedName} was deleted. Their name stays on the records they worked on.
+        </Notice>
+      ) : null}
       <NewUserForm units={await unitOptions()} />
       <Card className="mt-6">
         <CardHeader
@@ -61,6 +71,31 @@ export default async function UsersPage() {
           </tbody>
         </Table>
       </Card>
+      {removed.length ? (
+        <Card className="mt-6">
+          <CardHeader title={`Deleted staff (${removed.length})`} description="They cannot sign in and are on no officer list. Kept so the records they worked on still show their name." />
+          <Table>
+            <thead>
+              <tr>
+                <Th>Name</Th>
+                <Th>Deleted</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {removed.map((u) => (
+                <tr key={u.id}>
+                  <Td>
+                    <Link href={`/admin/users/${u.id}`} className="text-muted hover:text-text hover:underline">
+                      {u.name}
+                    </Link>
+                  </Td>
+                  <Td className="tabular whitespace-nowrap text-muted">{lagosDateTime(u.removedAt!)}</Td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card>
+      ) : null}
     </>
   );
 }

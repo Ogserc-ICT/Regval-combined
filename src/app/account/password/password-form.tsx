@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button, Field, Input, Notice } from "@/components/ui";
+import { PasswordInput } from "@/components/password-input";
+import { Button, Field, Notice } from "@/components/ui";
 import { changePasswordAction } from "../../auth-actions";
 
 export function PasswordForm() {
@@ -11,13 +12,13 @@ export function PasswordForm() {
     <form action={action} className="mt-6 flex flex-col gap-4">
       {state?.error ? <Notice tone="danger">{state.error}</Notice> : null}
       <Field label="Current password" htmlFor="current" errors={fe.current ? [fe.current] : undefined}>
-        <Input id="current" name="current" type="password" autoComplete="current-password" required aria-invalid={!!fe.current} />
+        <PasswordInput id="current" name="current" autoComplete="current-password" required aria-invalid={!!fe.current} />
       </Field>
       <Field label="New password" htmlFor="next" hint="At least 10 characters." errors={fe.next ? [fe.next] : undefined}>
-        <Input id="next" name="next" type="password" autoComplete="new-password" required aria-invalid={!!fe.next} />
+        <PasswordInput id="next" name="next" autoComplete="new-password" required aria-invalid={!!fe.next} />
       </Field>
       <Field label="New password again" htmlFor="confirm" errors={fe.confirm ? [fe.confirm] : undefined}>
-        <Input id="confirm" name="confirm" type="password" autoComplete="new-password" required aria-invalid={!!fe.confirm} />
+        <PasswordInput id="confirm" name="confirm" autoComplete="new-password" required aria-invalid={!!fe.confirm} />
       </Field>
       <Button type="submit" disabled={pending} className="mt-2">
         {pending ? "Saving…" : "Save new password"}

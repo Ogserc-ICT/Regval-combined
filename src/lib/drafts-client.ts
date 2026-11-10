@@ -24,7 +24,9 @@ function isField(el: Element): el is FieldEl {
 function keep(el: FieldEl): boolean {
   if (!el.name || el.disabled) return false;
   if (el instanceof HTMLInputElement && SKIP_TYPES.has(el.type)) return false;
-  return el.autocomplete !== "one-time-code";
+  // A password stays private even while its show/hide button shows it as text.
+  if (el.hasAttribute("data-private") || /password|one-time-code/.test(el.autocomplete)) return false;
+  return true;
 }
 
 /** Work forms on the page (search and filter boxes are not work). */

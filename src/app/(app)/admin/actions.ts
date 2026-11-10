@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { DEFAULT_SETTINGS, SETTING_META, type SettingKey } from "@/domain/settings";
 import { getCurrentActor } from "@/server/auth/session";
 import { verifyAuditChain, type ChainCheck } from "@/server/audit";
@@ -10,7 +11,7 @@ import { toResult, type ActionResult } from "@/server/errors";
 import { deleteHoliday, saveHoliday } from "@/server/services/holidays";
 import { updateSettings, type SettingsChange } from "@/server/services/settings";
 import { saveSignatory } from "@/server/services/signatories";
-import { createUser, resetPassword, updateUser } from "@/server/services/users";
+import { createUser, removeUser, resetPassword, updateUser } from "@/server/services/users";
 
 /** Turn a submitted form field into the setting's value type. */
 function readSetting(key: SettingKey, form: FormData): unknown {
@@ -91,6 +92,16 @@ export async function updateUserAction(_prev: ActionResult | undefined, form: Fo
   if (res.ok) {
     revalidatePath("/admin/users");
     revalidatePath(`/admin/users/${id}`);
+  }
+  return res;
+}
+
+export async function removeUserAction(_prev: ActionResult<string> | undefined, form: FormData) {
+  const actor = await getCurrentActor();
+  const res = await toResult(() => removeUser(db, actor, String(form.get("id") ?? "")));
+  if (res.ok) {
+    revalidatePath("/admin/users");
+    redirect(`/admin/users?deleted=${encodeURIComponent(res.data)}`);
   }
   return res;
 }

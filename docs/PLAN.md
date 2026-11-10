@@ -151,6 +151,8 @@ issueNumber(tx, series, { year, scope }) → string
 - Sessions: database rows, 12-hour limit, signed out after `idleMinutes` without activity (default 4; Phase 8c, §11f), revocable by admin. Sign-in, sign-out and failed attempts audited.
 - `requireUser()` on every page and action; `authorize()` checks roles and record rules and returns every reason. The UI uses the same function to hide buttons, but the server is the gate. Route handlers (PDFs, exports, cron) apply the same checks; cron uses `CRON_SECRET` only.
 - Seed: the people named in `SPEC.md` §27.1, created inactive-until-confirmed ("flag for Kamiye to confirm"), with Kamiye as the first active admin (email from an environment variable, never hard-coded). No other names in code **[G2, G6]**.
+- Deleting staff (added 10 Nov 2026; migration 0010): an admin can delete an account from its page. The person leaves the staff list and every officer list, is signed out everywhere and loses their password, and their email is freed for a new account. The row stays, marked `removed_at`, because records keep the name of who did the work and the workbook seed would otherwise re-create seeded people on the next deploy. Refused for your own account, for the last active admin, and while the person is an assigned officer on an open evaluation (the reasons name each ACK). Audited as "User deleted". Not reversible: create a new account instead.
+- Password fields have a show/hide button; shown or hidden, they are never kept by the idle sign-out (8c).
 - Preview deployments are behind Vercel Deployment Protection in addition to app sign-in.
 
 ## 7. Screens

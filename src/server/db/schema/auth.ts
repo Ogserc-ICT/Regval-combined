@@ -23,6 +23,13 @@ export const users = pgTable("users", {
   unitId: uuid("unit_id").references(() => units.id),
   /** Play a chime when a notification arrives (each person can mute it). */
   notifySound: boolean("notify_sound").notNull().default(true),
+  /**
+   * Deleted by an admin. The row stays as a marker so the records the person
+   * worked on keep their name and the workbook seed does not re-create them;
+   * the account itself can never sign in again.
+   */
+  removedAt: timestamp("removed_at", { withTimezone: true }),
+  removedBy: uuid("removed_by"),
 });
 
 export const sessions = pgTable(

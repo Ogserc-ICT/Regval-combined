@@ -25,6 +25,8 @@ describe("capture", () => {
         <select name="lga"><option value="">-</option><option value="Sagamu" selected>Sagamu</option></select>
         <textarea name="remarks">Call back</textarea>
         <input name="locked" value="x" disabled>
+        <input type="text" name="shown" value="revealed-secret" data-private>
+        <input type="text" name="next" value="new-secret" autocomplete="new-password">
       </form>`);
     expect(forms).toHaveLength(1);
     const d = captureForms(forms)!;
@@ -32,7 +34,7 @@ describe("capture", () => {
     expect(d.forms[0].key).toBe("#sub");
     const names = d.forms[0].fields.map((f) => `${f.name}[${f.i}]`);
     expect(names).toEqual(["registeredName[0]", "licenceNo[0]", "licenceNo[1]", "confirm[0]", "lga[0]", "remarks[0]"]);
-    expect(JSON.stringify(d)).not.toContain("secret");
+    expect(JSON.stringify(d)).not.toContain("secret"); // hidden, shown (data-private) and new-password fields alike
     expect(JSON.stringify(d)).not.toContain("abc");
   });
 

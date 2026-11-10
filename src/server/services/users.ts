@@ -5,13 +5,14 @@
  */
 import { randomBytes } from "node:crypto";
 import { hashPassword } from "better-auth/crypto";
-import { and, asc, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, ne, notInArray, or, sql } from "drizzle-orm";
 import { validateEmail } from "@/domain/validators";
 import { isRole, ROLE_LABELS, type Role } from "@/domain/roles";
+import { CLOSED_STATUSES } from "@/domain/registration/types";
 import { auditActor, authorize, type Actor } from "../auth/actor";
 import { writeAudit, type AuditActor } from "../audit";
 import type { Db, DbOrTx, Tx } from "../db/connect";
-import { accounts, sessions, units, userRoles, users } from "../db/schema";
+import { accounts, evaluations, formDrafts, notifications, sessions, submissions, units, userRoles, users } from "../db/schema";
 import { blocked, notFound, Problems } from "../errors";
 
 export const MIN_PASSWORD_LENGTH = 10;
@@ -173,6 +174,7 @@ export async function updateUser(db: Db, actor: Actor | null, userId: string, in
   await db.transaction(async (tx) => {
     const [u] = await tx.select().from(users).where(eq(users.id, userId)).for("update");
     if (!u) throw notFound("User");
+    if (u.removedAt) throw blocked("This account was deleted and cannot be changed.");
     const before = await tx.select({ role: userRoles.role }).from(userRoles).where(eq(userRoles.userId, userId));
     const beforeRoles = before.map((r) => r.role).filter(isRole);
 
@@ -231,6 +233,7 @@ export async function resetPassword(db: Db, actor: Actor | null, userId: string)
   await db.transaction(async (tx) => {
     const [u] = await tx.select().from(users).where(eq(users.id, userId));
     if (!u) throw notFound("User");
+    if (u.removedAt) throw blocked("This account was deleted; create a new account instead.");
     const updated = await tx
       .update(accounts)
       .set({ password: hash, updatedAt: new Date() })
@@ -265,5 +268,74 @@ export async function markPasswordChanged(db: Db, actor: Actor): Promise<void> {
       entityId: actor.id,
       detail: actor.name,
     });
+  });
+}
+
+/** Where a person is still needed: open evaluations they are assigned to. */
+async function openAssignments(tx: DbOrTx, userId: string): Promise<string[]> {
+  const rows = await tx
+    .select({ ack: submissions.ackNo, ev: evaluations.evaluatingOfficerId, sup: evaluations.reviewingSupervisorId, app: evaluations.approvingOfficerId })
+    .from(evaluations)
+    .innerJoin(submissions, eq(submissions.id, evaluations.submissionId))
+    .where(
+      and(
+        isNull(evaluations.finalDecision),
+        or(isNull(submissions.status), notInArray(submissions.status, [...CLOSED_STATUSES])),
+        or(eq(evaluations.evaluatingOfficerId, userId), eq(evaluations.reviewingSupervisorId, userId), eq(evaluations.approvingOfficerId, userId)),
+      ),
+    );
+  return rows.map((r) => {
+    const as = [r.ev === userId && "evaluating officer", r.sup === userId && "reviewing supervisor", r.app === userId && "approving officer"].filter(Boolean).join(", ");
+    return `Assign another ${as} for ${r.ack} first.`;
+  });
+}
+
+/**
+ * Delete a staff account (admin). The person disappears from the staff list
+ * and every officer list, is signed out everywhere and can never sign in
+ * again; their email is freed for a new account. Records they worked on keep
+ * their name (the app is the system of record), so the row stays as a marker,
+ * which also stops the workbook seed from re-creating them.
+ */
+export async function removeUser(db: Db, actor: Actor | null, userId: string): Promise<string> {
+  authorize(actor, "users:manage");
+  return db.transaction(async (tx) => {
+    const [u] = await tx.select().from(users).where(eq(users.id, userId)).for("update");
+    if (!u) throw notFound("User");
+    if (u.removedAt) throw blocked(`${u.name} was already deleted.`);
+    const p = new Problems();
+    if (u.id === actor.id) p.reason("You cannot delete your own account. Ask another admin.");
+    const roles = (await tx.select({ role: userRoles.role }).from(userRoles).where(eq(userRoles.userId, userId))).map((r) => r.role).filter(isRole);
+    if (roles.includes("admin") && u.active && (await activeAdminCount(tx, userId)) === 0) p.reason("There must always be at least one active admin.");
+    for (const r of await openAssignments(tx, userId)) p.reason(r);
+    p.throwIfAny("blocked");
+
+    const now = new Date();
+    await tx
+      .update(users)
+      .set({
+        active: false,
+        pendingConfirmation: false,
+        email: `removed.${u.id}@invalid.ogserc.local`,
+        unitId: null,
+        removedAt: now,
+        removedBy: actor.id,
+        updatedAt: now,
+      })
+      .where(eq(users.id, userId));
+    await tx.delete(userRoles).where(eq(userRoles.userId, userId));
+    await tx.delete(sessions).where(eq(sessions.userId, userId));
+    await tx.delete(accounts).where(eq(accounts.userId, userId));
+    await tx.delete(notifications).where(eq(notifications.userId, userId));
+    await tx.delete(formDrafts).where(eq(formDrafts.userId, userId));
+    await writeAudit(tx, {
+      actor: auditActor(actor),
+      action: "User deleted",
+      module: "admin",
+      entityType: "user",
+      entityId: userId,
+      detail: `${u.name} <${u.email}>; roles were: ${roles.map((r) => ROLE_LABELS[r]).join(", ") || "none"}. The name stays on the records they worked on.`,
+    });
+    return u.name;
   });
 }

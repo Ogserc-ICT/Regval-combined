@@ -71,6 +71,13 @@
       "when": 1794300411942,
       "tag": "0009_idle_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794304074092,
+      "tag": "0010_staff_removal",
+      "breakpoints": true
     }
   ]
 }
