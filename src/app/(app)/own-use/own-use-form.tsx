@@ -3,15 +3,17 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDraftRows } from "@/lib/drafts-client";
+import { ReceiptFields } from "@/components/receipt-fields";
 import { ActionForm, type FormAction } from "@/components/action-form";
 import { Button, Card, CardBody, CardHeader, Field, Input, Select, Textarea } from "@/components/ui";
 import { createOwnUseAction } from "./actions";
 
-export type OwnUseDraftValues = { id: string; name: string; dateFiled: string; cacNo: string; siteAddress: string; lga: string; contactPerson: string; phone: string; email: string; remarks: string };
+export type OwnUseDraftValues = { id: string; name: string; dateFiled: string; timeReceived: string; channel: string; deemed: string; cacNo: string; siteAddress: string; lga: string; contactPerson: string; phone: string; email: string; remarks: string };
 
 export function OwnUseForm({
   lgas,
   fuels,
+  channels,
   today,
   thresholdKw,
   action = createOwnUseAction,
@@ -19,10 +21,11 @@ export function OwnUseForm({
 }: {
   lgas: string[];
   fuels: string[];
+  channels: string[];
   today: string;
   thresholdKw: number;
   action?: FormAction<unknown>;
-  /** A row started by Registry Intake. */
+  /** A row started before Phase 9 by the Registry's intake, not yet saved. */
   values?: OwnUseDraftValues;
 }) {
   const [units, setUnits] = useState([0]);
@@ -37,14 +40,18 @@ export function OwnUseForm({
       {(fe) => (
         <div className="flex flex-col gap-6">
           <Card>
-            <CardHeader title="Notifier and site" description={v ? "Started by Registry Intake under its ACK. Saving issues the OUN number." : "One notification per site. Saving issues the ACK (shared series) and the OUN number."} />
+            <CardHeader title="Notifier and site" description={v ? "Started before the Registry left this app, under its ACK. Saving issues the OUN number." : "One notification per site. Saving works out the deemed receipt date (para 10(3)) and issues the ACK and the OUN number."} />
             <CardBody className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               <Field label="Name *" htmlFor="name" errors={fe.name} className="md:col-span-2">
                 <Input id="name" name="name" defaultValue={v?.name} />
               </Field>
-              <Field label="Date filed *" htmlFor="dateFiled" errors={fe.dateFiled}>
-                <Input id="dateFiled" name="dateFiled" type="date" defaultValue={v?.dateFiled ?? today} />
-              </Field>
+              <ReceiptFields
+                channels={channels}
+                dateName="dateFiled"
+                today={today}
+                errors={fe}
+                saved={v ? { date: v.dateFiled, time: v.timeReceived, channel: v.channel, deemed: v.deemed } : undefined}
+              />
               <Field label="CAC no." htmlFor="cacNo" errors={fe.cacNo}>
                 <Input id="cacNo" name="cacNo" defaultValue={v?.cacNo} />
               </Field>

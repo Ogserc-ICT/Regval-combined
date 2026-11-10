@@ -92,7 +92,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         </Suspense>
 
         <footer className="border-t border-border px-4 py-3 text-xs text-faint md:px-6">
-          OGSERC Registry &amp; Evaluation · staff only
+          OGSERC Registration &amp; Evaluation · staff only
           {isAdmin ? (
             <span className="tabular">
               {" "}

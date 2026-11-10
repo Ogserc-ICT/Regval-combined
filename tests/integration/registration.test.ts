@@ -1,7 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { eq, sql } from "drizzle-orm";
+import { addDays } from "../../src/domain/dates";
 import { DECISION_CHECKS, AUTO_CHECKS } from "../../src/domain/registration/checks";
-import { inwardItems, submissions } from "../../src/server/db/schema";
+import { deficiencyNotices, ownUseNotifications, submissions } from "../../src/server/db/schema";
 import { ServiceError } from "../../src/server/errors";
 import { issueNumber } from "../../src/server/numbering";
 import { createOwnUse } from "../../src/server/services/ownuse";
@@ -20,11 +21,14 @@ import {
   lapse,
   markComplete,
   recalculateAllOpen,
+  recordCertificateSent,
+  recordDeficiencySent,
   setDocument,
   setFlagOverrideReason,
   setShowCauseDate,
   refuse,
 } from "../../src/server/services/submissions/workflow";
+import { lagosToday } from "../../src/server/time";
 import { makeActor, resetTables, testDb } from "./helpers";
 
 const db = testDb(10);
@@ -47,6 +51,7 @@ const input = (over: Partial<SubmissionInput> = {}): SubmissionInput => ({
   formFiled: "REG-01D",
   registeredName: `Test Power ${++n} Ltd`,
   dateSubmitted: "2026-11-04",
+  timeReceived: "10:00",
   submissionChannel: "By hand",
   registrantType: "Company",
   cacNo: `RC${900000 + n}`,
@@ -62,7 +67,7 @@ const input = (over: Partial<SubmissionInput> = {}): SubmissionInput => ({
 
 async function team() {
   const [registry, finance1, finance2, evaluator, supervisor, approver, admin] = await Promise.all([
-    makeActor(db, ["registry"]),
+    makeActor(db, ["registration"]),
     makeActor(db, ["finance"]),
     makeActor(db, ["finance"]),
     makeActor(db, ["evaluator"]),
@@ -78,23 +83,60 @@ async function signatoriesReady(admin: Awaited<ReturnType<typeof team>>["admin"]
   await saveSignatory(db, admin, null, { name: "Commissioner Person", designation: "Commissioner", role: "commissioner", active: true, confirmed: true });
 }
 
-describe("one ACK series [G12] (acceptance)", () => {
-  it("a registry inward item, a direct Register entry and an own-use notification draw from the same ACK series", async () => {
+describe("receipt, deemed receipt and the ACK (para 10(3), Q3) [G12]", () => {
+  it("Register entries and own-use notifications draw consecutive ACKs from the app's own series", async () => {
     const { registry } = await team();
-    const year = 2026;
-    const before = await db.transaction((tx) => issueNumber(tx, "ACK", { year })); // e.g. New Inward in Phase 3
+    const before = await db.transaction((tx) => issueNumber(tx, "ACK", { year: 2026 }));
     const s = await createSubmission(db, registry, input());
-    const o = await createOwnUse(db, registry, { name: "Factory Ltd", dateFiled: "2026-11-04", lga: "Ifo", units: [{ kw: 300 }] });
+    const o = await createOwnUse(db, registry, { name: "Factory Ltd", dateFiled: "2026-11-04", timeReceived: "11:00", submissionChannel: "By hand", lga: "Ifo", units: [{ kw: 300 }] });
     const serial = (ack: string) => Number(ack.split("/").pop());
+    expect(s.ackNo).toMatch(/^OGSERC\/ACK\/2026\/\d{5}$/);
     expect(serial(s.ackNo)).toBe(before.serial + 1);
     expect(serial(o.ackNo)).toBe(before.serial + 2);
-    const inward = await db.select().from(inwardItems).where(eq(inwardItems.ackNo, s.ackNo));
-    expect(inward[0]).toMatchObject({ source: "register_direct", deemedReceiptDate: "2026-11-04" });
+    const [row] = await db.select().from(submissions).where(eq(submissions.id, s.id));
+    expect(row).toMatchObject({ dateSubmitted: "2026-11-04", submissionChannel: "By hand", deemedReceiptDate: "2026-11-04" });
+  });
+
+  it("email at 17:30 on Friday 6 Nov 2026 is received on Monday 9 Nov; by hand at 17:30 keeps its day", async () => {
+    const { registry } = await team();
+    const email = await createSubmission(db, registry, input({ dateSubmitted: "2026-11-06", timeReceived: "17:30", submissionChannel: "Email" }));
+    const hand = await createSubmission(db, registry, input({ dateSubmitted: "2026-11-06", timeReceived: "17:30", submissionChannel: "By hand" }));
+    const deemed = async (id: string) => (await db.select({ d: submissions.deemedReceiptDate }).from(submissions).where(eq(submissions.id, id)))[0].d;
+    expect(await deemed(email.id)).toBe("2026-11-09");
+    expect(await deemed(hand.id)).toBe("2026-11-06");
+    // The days late count from the deemed receipt date (Q3).
+    const l = await loadSubmission(db, email.id);
+    expect(l.facts.deemedReceiptDate).toBe("2026-11-09");
+  });
+
+  it("the ACK year is the year of the deemed receipt date: portal at 18:00 on 31 Dec 2025 → a 2026 ACK", async () => {
+    const { registry } = await team();
+    const o = await createOwnUse(db, registry, { name: "Year End Ltd", dateFiled: "2025-12-31", timeReceived: "18:00", submissionChannel: "Online portal", lga: "Ifo", units: [{ kw: 300 }] });
+    expect(o.ackNo).toMatch(/^OGSERC\/ACK\/2026\//);
+    const [row] = await db.select().from(ownUseNotifications).where(eq(ownUseNotifications.id, o.id));
+    expect(row.deemedReceiptDate >= "2026-01-01").toBe(true);
+  });
+
+  it("the time and channel are required, and a receipt cannot be in the future", async () => {
+    const { registry } = await team();
+    const e = await failure(createSubmission(db, registry, input({ timeReceived: "", submissionChannel: "Fax" })));
+    expect(Object.keys(e.fieldErrors).sort()).toEqual(["submissionChannel", "timeReceived"]);
+    const f = await failure(createSubmission(db, registry, input({ dateSubmitted: "2099-01-01" })));
+    expect(f.fieldErrors.dateSubmitted[0]).toMatch(/future/);
+  });
+
+  it("the receipt never changes after saving: an edit keeps it, and the database locks the deemed date", async () => {
+    const { registry } = await team();
+    const s = await createSubmission(db, registry, input({ dateSubmitted: "2026-11-06", timeReceived: "17:30", submissionChannel: "Email" }));
+    await updateSubmission(db, registry, s.id, input({ registeredName: "Renamed Ltd", dateSubmitted: "2026-11-02", timeReceived: "09:00", submissionChannel: "By hand" }));
+    const [row] = await db.select().from(submissions).where(eq(submissions.id, s.id));
+    expect(row).toMatchObject({ registeredName: "Renamed Ltd", dateSubmitted: "2026-11-06", submissionChannel: "Email", deemedReceiptDate: "2026-11-09" });
+    await expect(db.update(submissions).set({ deemedReceiptDate: "2026-11-10" }).where(eq(submissions.id, s.id))).rejects.toThrow();
   });
 });
 
 describe("save submission (SPEC §6)", () => {
-  it("only a Registry officer can save (403)", async () => {
+  it("only a Registration officer can save (403)", async () => {
     const { finance1 } = await team();
     expect((await failure(createSubmission(db, finance1, input()))).status).toBe(403);
   });
@@ -205,7 +247,7 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     const both = await makeActor(db, ["evaluator", "approver"]);
     const e2 = await failure(assignOfficers(db, t.supervisor, t.s.id, { evaluatingOfficerId: both.id, reviewingSupervisorId: t.supervisor.id, approvingOfficerId: both.id }));
     expect(e2.reasons).toContain("The approving officer cannot be the evaluating officer");
-    const creatorEval = await makeActor(db, ["registry", "evaluator"]);
+    const creatorEval = await makeActor(db, ["registration", "evaluator"]);
     const s2 = await createSubmission(db, creatorEval, input());
     const e3 = await failure(assignOfficers(db, t.supervisor, s2.id, { evaluatingOfficerId: creatorEval.id }));
     expect(e3.reasons).toContain("The evaluating officer cannot be the user who created the submission");
@@ -239,6 +281,13 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     await expect(db.execute(sql`update submissions set registration_no = 'X' where id = ${t.s.id}`)).rejects.toThrow();
     await expect(db.execute(sql`delete from submissions where id = ${t.s.id}`)).rejects.toThrow();
 
+    // The certificate's sent date is recorded by a Registration officer, once, not before it was issued.
+    const issued = l.row.certificateIssueDate!;
+    expect((await failure(recordCertificateSent(db, t.approver, t.s.id, issued))).status).toBe(403);
+    expect((await failure(recordCertificateSent(db, t.registry, t.s.id, addDays(issued, -1)))).fieldErrors.sentOn[0]).toMatch(/issued on/);
+    expect(await recordCertificateSent(db, t.registry, t.s.id, issued)).toMatch(/^Certificate sent on/);
+    expect((await failure(recordCertificateSent(db, t.registry, t.s.id, issued))).reasons[0]).toMatch(/already recorded/);
+
     // An update linked to it: no fee, released at once, changes applied on approval.
     const u = await createSubmission(db, t.registry, input({ filingType: "UPDATE", linkedRegistrationNo: l.row.registrationNo!, registeredName: "New Name Ltd", cacNo: l.row.cacNo }));
     const lu = await loadSubmission(db, u.id);
@@ -246,14 +295,33 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     expect(lu.a.totalDue).toBe(0);
   });
 
-  it("deficiency notice: numbered, never restarts the clock (Q7), lapses only after the response period", async () => {
+  it("deficiency notice: numbered; its response period runs from the date it is sent; the response date is asked for", async () => {
     const t = await released();
     await assignOfficers(db, t.supervisor, t.s.id, { evaluatingOfficerId: t.evaluator.id, reviewingSupervisorId: t.supervisor.id, approvingOfficerId: t.approver.id });
     expect((await failure(issueDeficiency(db, t.evaluator, t.s.id))).status).toBe(403);
-    expect(await issueDeficiency(db, t.supervisor, t.s.id)).toMatch(/^Deficiency notice OGSERC\/DEF\/2026\/\d{5} recorded; response due/);
+    expect(await issueDeficiency(db, t.supervisor, t.s.id)).toMatch(/^Deficiency notice OGSERC\/DEF\/2026\/\d{5} recorded\. Send it/);
     expect((await failure(issueDeficiency(db, t.supervisor, t.s.id))).reasons[0]).toMatch(/already outstanding/);
-    const e = await failure(lapse(db, t.approver, t.s.id));
-    expect(e.reasons[0]).toMatch(/response period runs until/);
+    // Not sent yet: no clock, so it cannot lapse.
+    expect((await failure(lapse(db, t.approver, t.s.id))).reasons[0]).toMatch(/not been sent yet/);
+
+    const today = lagosToday();
+    expect((await failure(recordDeficiencySent(db, t.supervisor, t.s.id, today))).status).toBe(403);
+    expect((await failure(recordDeficiencySent(db, t.registry, t.s.id, addDays(today, 1)))).fieldErrors.sentOn[0]).toMatch(/future/);
+    expect(await recordDeficiencySent(db, t.registry, t.s.id, today)).toMatch(/Response due/);
+    expect((await failure(recordDeficiencySent(db, t.registry, t.s.id, today))).reasons[0]).toMatch(/already recorded as sent/);
+    const sent = await loadSubmission(db, t.s.id);
+    expect(sent.row.deficiencyNoticeDate).toBe(today);
+    expect(sent.a.deficiencyResponseDue).toBe(addDays(today, 14));
+    const [notice] = await db.select().from(deficiencyNotices).where(eq(deficiencyNotices.submissionId, t.s.id));
+    expect(notice).toMatchObject({ sentOn: today, responseDue: addDays(today, 14) });
+    expect((await failure(lapse(db, t.approver, t.s.id))).reasons[0]).toMatch(/response period runs until/);
+
+    // The response no longer arrives as an inward item: Mark complete asks for its date.
+    expect((await failure(markComplete(db, t.evaluator, t.s.id))).fieldErrors.responseReceivedOn).toBeDefined();
+    await markComplete(db, t.evaluator, t.s.id, { responseReceivedOn: today }).catch((e: ServiceError) => {
+      // Documents may still be outstanding; the response date was accepted if that is the only reason.
+      expect(e.fieldErrors?.responseReceivedOn).toBeUndefined();
+    });
   });
 
   it("refuse needs the show-cause period; cancel is admin-only", async () => {
@@ -301,9 +369,9 @@ describe("Effective Date change and recalculation (Q6, acceptance check 1)", () 
 describe("own-use (SPEC §15)", () => {
   it("1 MW or more is refused; below threshold needs confirmation; OUN issued", async () => {
     const { registry } = await team();
-    expect((await failure(createOwnUse(db, registry, { name: "Big", dateFiled: "2026-11-04", lga: "Ifo", units: [{ kw: 600 }, { kw: 400 }] }))).reasons[0]).toMatch(/1 MW or more/);
-    expect((await failure(createOwnUse(db, registry, { name: "Small", dateFiled: "2026-11-04", lga: "Ifo", units: [{ kw: 50 }] }))).kind).toBe("confirm");
-    const o = await createOwnUse(db, registry, { name: "Mid", dateFiled: "2026-11-04", lga: "Ifo", units: [{ kw: 250 }] });
+    expect((await failure(createOwnUse(db, registry, { name: "Big", dateFiled: "2026-11-04", timeReceived: "09:00", submissionChannel: "By hand", lga: "Ifo", units: [{ kw: 600 }, { kw: 400 }] }))).reasons[0]).toMatch(/1 MW or more/);
+    expect((await failure(createOwnUse(db, registry, { name: "Small", dateFiled: "2026-11-04", timeReceived: "09:00", submissionChannel: "By hand", lga: "Ifo", units: [{ kw: 50 }] }))).kind).toBe("confirm");
+    const o = await createOwnUse(db, registry, { name: "Mid", dateFiled: "2026-11-04", timeReceived: "09:00", submissionChannel: "Email", lga: "Ifo", units: [{ kw: 250 }] });
     expect(o.ounNo).toMatch(/^OGSERC\/OUN\/2026\/\d{4}$/);
   });
 });

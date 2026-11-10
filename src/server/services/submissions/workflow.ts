@@ -3,7 +3,7 @@
  * modIntake.ConfirmCategoryFor/RecalculatePricingFor). Every action lists all
  * its blocking reasons at once and is audited.
  */
-import { and, eq, inArray, isNotNull, isNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, isNull } from "drizzle-orm";
 import { addDays, diffDays, longDate, yearOf } from "@/domain/dates";
 import { formatNaira } from "@/domain/money";
 import { OUTCOMES, AUTO_CHECKS, DECISION_CHECKS, POST_APPROVAL_CHECKS } from "@/domain/registration/checks";
@@ -120,10 +120,10 @@ async function gated<T>(db: Db, actor: Actor, id: string, actionName: string, fn
   }
 }
 
-/** A final decision: the Registry acts on it, and the evaluating officer hears the outcome. */
+/** A final decision: the Registration officers act on it, and the evaluating officer hears the outcome. */
 export async function notifyDecision(tx: Tx, actor: Actor | null, id: string, ack: string, title: string, body: string | null) {
   const { evaluator } = await evaluationOfficers(tx, id);
-  await notify(tx, actor, { kind: "submission:decision", title, body, reference: ack, href: submissionHref(id), to: { roles: ["registry"], users: [evaluator] } });
+  await notify(tx, actor, { kind: "submission:decision", title, body, reference: ack, href: submissionHref(id), to: { roles: ["registration"], users: [evaluator] } });
 }
 
 function requireEvaluatorOrSupervisor(actor: Actor, l: LoadedSubmission) {
@@ -355,11 +355,24 @@ export async function recalculateAllOpen(db: Db, actor: Actor | null, reason: st
 // ---------------------------------------------------------------- decisions
 
 /** Mark complete (SPEC §13.3; Q7: the date is set once and never reset). */
-export async function markComplete(db: Db, actor: Actor | null, id: string): Promise<string> {
+export async function markComplete(db: Db, actor: Actor | null, id: string, opts: { responseReceivedOn?: string | null } = {}): Promise<string> {
   authorize(actor, "evaluation:check");
   return gated(db, actor, id, "Mark complete", async (tx, l) => {
     requireEvaluatorOrSupervisor(actor, l);
     if (l.a.closed) throw blocked(`Cannot mark complete: submission is closed (${l.row.status}).`);
+    const reopens = l.row.status === ST.DEFICIENCY;
+    // With a deficiency notice outstanding, the response no longer arrives as an inward item: ask for its date first.
+    let responseOn: string | null = null;
+    if (reopens) {
+      responseOn = (opts.responseReceivedOn ?? "").trim() || null;
+      const p = new Problems();
+      if (!responseOn || !/^\d{4}-\d{2}-\d{2}$/.test(responseOn)) p.field("responseReceivedOn", "Enter the date the response to the deficiency notice was received.");
+      else if (responseOn > l.ctx.today) p.field("responseReceivedOn", "The response date cannot be in the future.");
+      else if (l.row.deficiencyNoticeDate && responseOn < l.row.deficiencyNoticeDate) {
+        p.field("responseReceivedOn", `The response cannot be before the notice was sent (${longDate(l.row.deficiencyNoticeDate)}).`);
+      }
+      p.throwIfAny();
+    }
     if (!l.a.submissionComplete) {
       const required = l.settings.lateBlocksComplete === "Y" ? l.a.totalDue : l.a.netFee;
       const shortfall = Math.max(0, required - l.a.payments.amountPaid);
@@ -370,11 +383,19 @@ export async function markComplete(db: Db, actor: Actor | null, id: string): Pro
         "Obtain these, or issue a deficiency notice (para 13(1)(b)).",
       );
     }
-    const reopens = l.row.status === ST.DEFICIENCY;
     if (l.row.dateSubmissionComplete && !reopens) {
       throw blocked(`Already complete; determination due ${longDate(l.a.determinationDue!)}.`);
     }
-    const date = l.row.dateSubmissionComplete ?? l.ctx.today;
+    if (reopens) {
+      const [notice] = await tx
+        .select({ id: deficiencyNotices.id })
+        .from(deficiencyNotices)
+        .where(and(eq(deficiencyNotices.submissionId, id), isNull(deficiencyNotices.responseReceivedOn)))
+        .orderBy(desc(deficiencyNotices.issuedAt))
+        .limit(1);
+      if (notice) await tx.update(deficiencyNotices).set({ responseReceivedOn: responseOn }).where(eq(deficiencyNotices.id, notice.id));
+    }
+    const date = l.row.dateSubmissionComplete ?? responseOn ?? l.ctx.today;
     await tx
       .update(submissions)
       .set({ dateSubmissionComplete: date, ...(reopens ? { status: ST.RECEIVED } : {}), updatedAt: new Date() })
@@ -385,7 +406,7 @@ export async function markComplete(db: Db, actor: Actor | null, id: string): Pro
       actor,
       l,
       "Submission complete",
-      `Determination due ${longDate(due)}${reopens ? `; response to the deficiency notice received ${longDate(l.ctx.today)}, back to Received - Under Review` : ""}`,
+      `Determination due ${longDate(due)}${responseOn ? `; response to the deficiency notice received ${longDate(responseOn)}, back to Received - Under Review` : ""}`,
     );
     await notify(tx, actor, {
       kind: "submission:complete",
@@ -413,14 +434,14 @@ export async function issueDeficiency(db: Db, actor: Actor | null, id: string, o
     }
     const today = l.ctx.today;
     const { number } = await issueNumber(tx, "DEF", { year: yearOf(today) });
-    const due = addDays(today, l.settings.deficiencyResponseDays);
     const docsOut = l.a.documents.outstanding + l.a.documents.pending;
-    await tx.update(submissions).set({ status: ST.DEFICIENCY, deficiencyNoticeDate: today, updatedAt: new Date() }).where(eq(submissions.id, id));
+    // The response period starts when the notice is sent (recordDeficiencySent), not when it is issued.
+    await tx.update(submissions).set({ status: ST.DEFICIENCY, deficiencyNoticeDate: null, updatedAt: new Date() }).where(eq(submissions.id, id));
     await tx.insert(deficiencyNotices).values({
       submissionId: id,
       defNo: number,
       issuedOn: today,
-      responseDue: due,
+      responseDue: null,
       documentsOutstanding: docsOut,
       balance: Math.max(0, l.a.balance),
       checksFailed: l.a.checks.failed,
@@ -431,17 +452,64 @@ export async function issueDeficiency(db: Db, actor: Actor | null, id: string, o
       actor,
       l,
       "Deficiency notice issued",
-      `${number}; response due ${longDate(due)}; ${docsOut} document(s) outstanding; balance ${formatNaira(Math.max(0, l.a.balance))}; ${l.a.checks.failed} check(s) failed`,
+      `${number}; ${docsOut} document(s) outstanding; balance ${formatNaira(Math.max(0, l.a.balance))}; ${l.a.checks.failed} check(s) failed`,
     );
     await notify(tx, actor, {
       kind: "submission:deficiency",
-      title: `Deficiency notice ${number}: ${l.row.ackNo}`,
-      body: `${l.row.registeredName ?? "Submission"}; response due ${longDate(due)}`,
+      title: `Deficiency notice ${number} to send: ${l.row.ackNo}`,
+      body: `${l.row.registeredName ?? "Submission"}: send the notice, then record the date it was sent`,
       reference: l.row.ackNo,
-      href: submissionHref(id),
-      to: { roles: ["registry"], users: [ev.evaluatingOfficerId] },
+      href: submissionHref(id, "evaluation"),
+      to: { roles: ["registration"], users: [ev.evaluatingOfficerId] },
     });
-    return `Deficiency notice ${number} recorded; response due ${longDate(due)}.`;
+    return `Deficiency notice ${number} recorded. Send it, then record the date it was sent: the ${l.settings.deficiencyResponseDays}-day response period runs from that date.`;
+  });
+}
+
+const isDate = (v: string | null | undefined): v is string => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v);
+
+/** The date the outstanding deficiency notice was sent; starts its response period (para 13(1)(b)). */
+export async function recordDeficiencySent(db: Db, actor: Actor | null, id: string, sentOn: string): Promise<string> {
+  authorize(actor, "letters:record-sent");
+  return db.transaction(async (tx) => {
+    const l = await lockAndLoad(tx, id);
+    if (l.row.status !== ST.DEFICIENCY) throw blocked("No deficiency notice is outstanding.");
+    const [notice] = await tx
+      .select()
+      .from(deficiencyNotices)
+      .where(eq(deficiencyNotices.submissionId, id))
+      .orderBy(desc(deficiencyNotices.issuedAt))
+      .limit(1);
+    if (!notice) throw blocked("No deficiency notice is recorded.");
+    if (notice.sentOn) throw blocked(`${notice.defNo} was already recorded as sent on ${longDate(notice.sentOn)}.`);
+    const p = new Problems();
+    if (!isDate(sentOn)) p.field("sentOn", "Enter the date the notice was sent (YYYY-MM-DD).");
+    else if (sentOn > l.ctx.today) p.field("sentOn", "The sent date cannot be in the future.");
+    else if (sentOn < notice.issuedOn) p.field("sentOn", `The notice was issued on ${longDate(notice.issuedOn)}; it cannot have been sent before that.`);
+    p.throwIfAny();
+    const due = addDays(sentOn, l.settings.deficiencyResponseDays);
+    await tx.update(deficiencyNotices).set({ sentOn, responseDue: due }).where(eq(deficiencyNotices.id, notice.id));
+    await tx.update(submissions).set({ deficiencyNoticeDate: sentOn, updatedAt: new Date() }).where(eq(submissions.id, id));
+    await audit(tx, actor, l, "Deficiency notice sent", `${notice.defNo} sent on ${longDate(sentOn)}; response due ${longDate(due)}`);
+    return `${notice.defNo} sent on ${longDate(sentOn)}. Response due ${longDate(due)}.`;
+  });
+}
+
+/** The date the registration certificate was actually sent to the registrant. */
+export async function recordCertificateSent(db: Db, actor: Actor | null, id: string, sentOn: string): Promise<string> {
+  authorize(actor, "letters:record-sent");
+  return db.transaction(async (tx) => {
+    const l = await lockAndLoad(tx, id);
+    if (!l.row.certificateIssueDate) throw blocked("No certificate has been issued for this submission.");
+    if (l.row.certificateSentOn) throw blocked(`The certificate was already recorded as sent on ${longDate(l.row.certificateSentOn)}.`);
+    const p = new Problems();
+    if (!isDate(sentOn)) p.field("sentOn", "Enter the date the certificate was sent (YYYY-MM-DD).");
+    else if (sentOn > l.ctx.today) p.field("sentOn", "The sent date cannot be in the future.");
+    else if (sentOn < l.row.certificateIssueDate) p.field("sentOn", `The certificate was issued on ${longDate(l.row.certificateIssueDate)}; it cannot have been sent before that.`);
+    p.throwIfAny();
+    await tx.update(submissions).set({ certificateSentOn: sentOn, updatedAt: new Date() }).where(eq(submissions.id, id));
+    await audit(tx, actor, l, "Certificate sent", `${l.row.registrationNo ?? l.row.ackNo}: certificate sent on ${longDate(sentOn)}`);
+    return `Certificate sent on ${longDate(sentOn)}.`;
   });
 }
 
@@ -560,7 +628,7 @@ export async function lapse(db: Db, actor: Actor | null, id: string): Promise<st
     const p = new Problems();
     if (l.evaluation?.approvingOfficerId !== actor.id) p.reason("Only the assigned approving officer can lapse a submission");
     if (l.row.status !== ST.DEFICIENCY) p.reason("Only a submission with a deficiency notice issued can lapse");
-    else if (!l.a.deficiencyResponseDue) p.reason("No deficiency notice date recorded");
+    else if (!l.a.deficiencyResponseDue) p.reason("The deficiency notice has not been sent yet: record the date it was sent");
     else if (!(l.ctx.today > l.a.deficiencyResponseDue)) p.reason(`The response period runs until ${longDate(l.a.deficiencyResponseDue)}`);
     p.throwIfAny("blocked");
     await tx.update(submissions).set({ status: ST.LAPSED, updatedAt: new Date() }).where(eq(submissions.id, id));

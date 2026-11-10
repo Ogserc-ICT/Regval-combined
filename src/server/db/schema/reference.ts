@@ -1,7 +1,7 @@
 /**
- * Reference data (docs/PLAN.md §3.2), seeded from the workbook's Lists and
- * Registry Lists sheets. Admin-editable (screens in Phase 5); rows are
- * deactivated, not deleted, once used.
+ * Reference data (docs/PLAN.md §3.2), seeded from the workbook (its Lists sheet
+ * and the signatory list). Admin-editable; rows are deactivated, not deleted,
+ * once used.
  */
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
@@ -101,37 +101,3 @@ export const signatories = pgTable(
   },
   (t) => [check("signatories_role_check", sql`${t.role} in ('chairman_ceo', 'commissioner', 'secretary', 'other')`)],
 );
-
-/** Divisions (Registry Lists AO:AP). Emails are mostly missing ([G9]). */
-export const divisions = pgTable("divisions", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull().unique(),
-  email: text("email"),
-  sort: integer("sort").notNull(),
-});
-
-/** Units (Registry Lists AJ:AM). */
-export const units = pgTable("units", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull().unique(),
-  divisionId: uuid("division_id").references(() => divisions.id),
-  unitGroup: text("unit_group"),
-  email: text("email"),
-  sort: integer("sort").notNull(),
-  active: boolean("active").notNull().default(true),
-});
-
-/** Incoming correspondence types (Registry Lists A4:J35). */
-export const correspondenceTypes = pgTable("correspondence_types", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull().unique(),
-  category: text("category").notNull(),
-  defaultUnitId: uuid("default_unit_id").references(() => units.id),
-  orderRef: text("order_ref"),
-  responseTargetDays: integer("response_target_days").notNull().default(0),
-  para103Wording: boolean("para_10_3_wording").notNull().default(false),
-  /** NEW | UPDATE | ANNUAL | OWNUSE when the type is a registration filing. */
-  filingType: text("filing_type"),
-  sort: integer("sort").notNull(),
-  active: boolean("active").notNull().default(true),
-});

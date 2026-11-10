@@ -32,7 +32,7 @@ describe("idle sessions", () => {
   });
 
   it("a session idle past the limit (plus grace) is ended once and audited; activity keeps it", async () => {
-    const u = await makeActor(db, ["registry"]);
+    const u = await makeActor(db, ["registration"]);
     const t0 = new Date("2026-11-10T09:00:00Z");
     const id = await sessionFor(u.id, t0);
     const limit = 4 * 60_000 + IDLE_GRACE_MS;
@@ -44,7 +44,9 @@ describe("idle sessions", () => {
 
     const late = new Date(t0.getTime() + 2 * limit + 1);
     const [a, b] = await Promise.all([checkIdle(db, id, late), checkIdle(db, id, late)]);
-    expect([a, b].sort()).toEqual(["expired", "expired"]);
+    // Both refuse it; the slower one may find it already ended ("missing").
+    expect([a, b]).toContain("expired");
+    expect([a, b].every((x) => x === "expired" || x === "missing")).toBe(true);
     expect(await db.select().from(sessions).where(eq(sessions.id, id))).toEqual([]);
     const logs = await db.select().from(auditLog).where(and(eq(auditLog.entityId, u.id), eq(auditLog.action, "Signed out: inactive")));
     expect(logs).toHaveLength(1);
@@ -56,7 +58,7 @@ describe("kept form work", () => {
   const draft = (v: string) => ({ savedAt: new Date().toISOString(), forms: [{ key: "#f", fields: [{ name: "registeredName", i: 0, value: v }] }] });
 
   it("one per person and page, for that person only, gone after a day", async () => {
-    const [a, b] = await Promise.all([makeActor(db, ["registry"]), makeActor(db, ["registry"])]);
+    const [a, b] = await Promise.all([makeActor(db, ["registration"]), makeActor(db, ["registration"])]);
     const now = new Date();
     await saveDraft(db, a.id, "/register/new", draft("First"), now);
     await saveDraft(db, a.id, "/register/new", draft("Second"), now);

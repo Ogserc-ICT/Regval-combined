@@ -68,11 +68,11 @@ function Item({ href, ack, name, note }: { href: string; ack: string; name: stri
 export default async function DashboardPage() {
   const actor = await requireActor();
   const [d, holidays] = await Promise.all([dashboardData(db, actor), listHolidays(db)]);
-  const { registry: r, registration: g, queues: q, settings, today } = d;
+  const { registration: g, queues: q, settings, today } = d;
   const daysLeft = diffDays(today, g.deadline);
   const upcoming = holidays.filter((h) => h.date >= today).slice(0, 4);
   const naira = (k: number) => formatNaira(k);
-  const showRegistry = actor.roles.some((x) => ["front_desk", "registry", "router", "unit_officer", "admin", "viewer"].includes(x));
+  const sendsLetters = can(actor, "letters:record-sent");
   const showFinance = can(actor, "payment:decide") || can(actor, "payment:record");
 
   return (
@@ -91,12 +91,11 @@ export default async function DashboardPage() {
         </Notice>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <Stat label="Received today" value={r.receivedToday} hint={`${r.receivedLast7} in the last 7 days`} />
-        <Stat label="Dispatched today" value={r.dispatchedToday} hint={`${r.dispatchedLast7} in the last 7 days`} />
-        <Stat label="Awaiting routing" value={r.awaitingRouting} hint={`${r.awaitingForwarding} awaiting forwarding`} />
-        <Stat label="Incoming overdue" value={r.incomingOverdue} hint={`${r.repliesOverdueToUs} replies overdue to us`} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Stat label="Submissions" value={g.total} hint={`${g.registered} registered · ${g.ownUse} own-use`} />
+        <Stat label="Awaiting payment" value={g.awaitingPayment} hint="Acknowledged, not yet cleared by Finance" />
+        <Stat label="In evaluation" value={g.inProgress} hint={`${g.provisional} provisional`} />
+        <Stat label="Filed late" value={g.late} hint="Deemed receipt after the deadline" />
         <Stat label="Days to deadline" value={daysLeft >= 0 ? daysLeft : `${-daysLeft} past`} hint={longDate(g.deadline)} />
       </div>
 
@@ -109,17 +108,17 @@ export default async function DashboardPage() {
             ))}
           </Queue>
         ) : null}
-        {q.myUnit ? (
-          <Queue title="Items for my unit" href="/pending" count={q.myUnit.length} empty="Nothing open for your unit.">
-            {q.myUnit.slice(0, 8).map((x) => (
-              <Item key={x.id} href={`/inward/${x.id}`} ack={x.ack} name={x.name} note={x.status === "Overdue" ? <Badge tone="danger">Overdue</Badge> : x.due ? `due ${dateShort(x.due)}` : x.status} />
+        {sendsLetters || q.deficiencyToSend.length ? (
+          <Queue title="Deficiency notices to send" href="/register?status=Deficiency+Notice+Issued" count={q.deficiencyToSend.length} empty="Every deficiency notice is recorded as sent.">
+            {q.deficiencyToSend.slice(0, 8).map((x) => (
+              <Item key={x.id} href={`/register/${x.id}?tab=evaluation`} ack={x.ack} name={x.name} note="record the sent date" />
             ))}
           </Queue>
         ) : null}
-        {showRegistry ? (
-          <Queue title="Awaiting routing" href="/routing" count={r.awaitingRouting} empty="Nothing to route.">
-            {q.awaitingRouting.map((x) => (
-              <Item key={x.id} href={`/inward/${x.id}`} ack={x.ack} name={x.name} note={`${x.days} wd`} />
+        {sendsLetters || q.certificatesToSend.length ? (
+          <Queue title="Certificates to send" href="/register?status=Registered" count={q.certificatesToSend.length} empty="Every certificate is recorded as sent.">
+            {q.certificatesToSend.slice(0, 8).map((x) => (
+              <Item key={x.id} href={`/register/${x.id}?tab=evaluation`} ack={x.ack} name={x.name} note={`issued ${dateShort(x.issued)}`} />
             ))}
           </Queue>
         ) : null}
@@ -144,47 +143,6 @@ export default async function DashboardPage() {
           ))}
         </Queue>
       </div>
-
-      {showRegistry ? (
-        <>
-          <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-faint">Registry</h2>
-          <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
-              <CardHeader title="Correspondence" />
-              <CardBody>
-                <Figures
-                  items={[
-                    ["Items logged", r.itemsLogged, "/inward"],
-                    ["Open", r.open, "/pending"],
-                    ["Closed", r.closed],
-                    ["Noted / filed", r.noted],
-                    ["Closed on time", r.closedOnTimePct === null ? "—" : `${r.closedOnTimePct}%`],
-                    ["Acknowledgement not yet issued", r.ackNotIssued],
-                    ["Received after hours / non-working day", r.afterHours],
-                    ["REG-01 filed after the deadline", r.reg01AfterDeadline, "/inward?view=late"],
-                    ["Items with flags", r.withFlags, "/inward?view=flags"],
-                    ["At the front desk", r.atFrontDesk, "/front-desk"],
-                    ["Awaiting Register entry", r.awaitingRegisterEntry, "/registry-intake"],
-                    ["Outgoing logged", r.outLogged, "/outward"],
-                    ["Not yet dispatched", r.notYetDispatched, "/outward?status=Not+yet+dispatched"],
-                    ["Delivery not confirmed", r.deliveryNotConfirmed],
-                    ["Awaiting response", r.awaitingResponse],
-                    ["Responses received", r.responsesReceived],
-                    ["Files out", r.filesOut, "/files?view=out"],
-                    ["Files overdue back", r.filesOverdue, "/files?view=overdue"],
-                  ]}
-                />
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader title="Open items by unit" />
-              <CardBody>
-                <BarList bars={r.byUnit} caption="Open inward items by unit" empty="Nothing open." />
-              </CardBody>
-            </Card>
-          </div>
-        </>
-      ) : null}
 
       <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-faint">Registration</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

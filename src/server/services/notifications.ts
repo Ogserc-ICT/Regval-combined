@@ -13,8 +13,6 @@ import { evaluations, notifications, userRoles, users } from "../db/schema";
 export type Recipients = {
   /** Everyone holding any of these roles. */
   roles?: Role[];
-  /** Unit officers whose unit is this one. */
-  unitOfficersOf?: string | null;
   /** These people (blanks are ignored). */
   users?: (string | null | undefined)[];
 };
@@ -33,11 +31,6 @@ export async function resolveRecipients(tx: DbOrTx, to: Recipients, exclude: str
   const conds: SQL[] = [];
   if (to.roles?.length) {
     conds.push(sql`exists (select 1 from ${userRoles} where ${userRoles.userId} = ${users.id} and ${inArray(userRoles.role, to.roles)})`);
-  }
-  if (to.unitOfficersOf) {
-    conds.push(
-      sql`(${users.unitId} = ${to.unitOfficersOf} and exists (select 1 from ${userRoles} where ${userRoles.userId} = ${users.id} and ${userRoles.role} = 'unit_officer'))`,
-    );
   }
   const ids = [...new Set((to.users ?? []).filter((x): x is string => !!x))];
   if (ids.length) conds.push(inArray(users.id, ids));

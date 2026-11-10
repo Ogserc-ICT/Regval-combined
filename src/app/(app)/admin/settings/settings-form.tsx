@@ -5,7 +5,7 @@ import { Button, Card, CardBody, CardHeader, FormErrors, Input, Notice, Select }
 import { SETTING_META, type SettingKey, type SettingMeta, type Settings } from "@/domain/settings";
 import { saveSettingsAction } from "../actions";
 
-const GROUPS: SettingMeta["group"][] = ["Order parameters", "Policy settings", "Registry", "Acknowledgement email", "Security"];
+const GROUPS: SettingMeta["group"][] = ["Order parameters", "Policy settings", "Receipt and letters", "Security"];
 
 function Control({ k, meta, value, disabled, invalid }: { k: SettingKey; meta: SettingMeta; value: unknown; disabled: boolean; invalid: boolean }) {
   const common = { id: k, name: k, disabled, "aria-invalid": invalid || undefined };

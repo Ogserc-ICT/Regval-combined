@@ -7,7 +7,6 @@ import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { listUsers } from "@/server/services/users";
 import { NewUserForm } from "./new-user-form";
-import { unitOptions } from "./units";
 
 export const metadata: Metadata = { title: "Staff & roles" };
 
@@ -30,7 +29,7 @@ export default async function UsersPage({ searchParams }: PageProps<"/admin/user
           {deletedName} was deleted. Their name stays on the records they worked on.
         </Notice>
       ) : null}
-      <NewUserForm units={await unitOptions()} />
+      <NewUserForm />
       <Card className="mt-6">
         <CardHeader
           title={`${users.length} account(s)`}

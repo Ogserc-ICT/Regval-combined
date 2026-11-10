@@ -18,7 +18,6 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
-import { inwardItems } from "./registry";
 
 export const FILING_CODES = ["NEW", "UPDATE", "ANNUAL"] as const;
 export type FilingCode = (typeof FILING_CODES)[number];
@@ -40,9 +39,8 @@ export const submissions = pgTable(
   "submissions",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    inwardItemId: uuid("inward_item_id").notNull().unique().references(() => inwardItems.id),
     ackNo: text("ack_no").notNull().unique(),
-    /** null = Register entry started (Registry Intake) but not yet saved. */
+    /** null = not yet saved (kept for rows created before Phase 9; every save sets it now). */
     status: text("status").$type<SubmissionStatus>(),
     filingType: text("filing_type").$type<FilingCode>().notNull(),
     formFiled: text("form_filed"),
@@ -50,8 +48,13 @@ export const submissions = pgTable(
     linkedRegistrationNo: text("linked_registration_no"),
     registeredName: text("registered_name").notNull(),
     tradingName: text("trading_name"),
+    /** The Lagos date received (the date part of receivedAt). */
     dateSubmitted: date("date_submitted", { mode: "string" }).notNull(),
-    submissionChannel: text("submission_channel"),
+    /** When the filing was received, and how (By hand, Email, Online portal). */
+    receivedAt: timestamp("received_at", { withTimezone: true }).notNull(),
+    submissionChannel: text("submission_channel").notNull(),
+    /** Para 10(3), computed on first save and then fixed: sets the ACK year and the days late (Q3). */
+    deemedReceiptDate: date("deemed_receipt_date", { mode: "string" }).notNull(),
     registrantType: text("registrant_type"),
     cacNo: text("cac_no"),
     tin: text("tin"),
@@ -90,6 +93,8 @@ export const submissions = pgTable(
     deficiencyNoticeDate: date("deficiency_notice_date", { mode: "string" }),
     showCauseDate: date("show_cause_date", { mode: "string" }),
     certificateIssueDate: date("certificate_issue_date", { mode: "string" }),
+    /** The date the certificate was actually sent to the registrant. */
+    certificateSentOn: date("certificate_sent_on", { mode: "string" }),
     registrationNo: text("registration_no").unique(),
     certificateNeedsReissue: boolean("certificate_needs_reissue").notNull().default(false),
     remarks: text("remarks"),
@@ -101,7 +106,6 @@ export const submissions = pgTable(
     pricedLateCap: bigint("priced_late_cap", { mode: "number" }),
     pricedDeadline: date("priced_deadline", { mode: "string" }),
     pricedEffectiveDate: date("priced_effective_date", { mode: "string" }),
-    frontDeskItemId: uuid("front_desk_item_id"),
     createdBy: uuid("created_by").references(() => users.id),
     createdByName: text("created_by_name"),
     savedAt: timestamp("saved_at", { withTimezone: true }),
@@ -232,24 +236,33 @@ export const deficiencyNotices = pgTable("deficiency_notices", {
   submissionId: uuid("submission_id").notNull().references(() => submissions.id),
   defNo: text("def_no").notNull().unique(),
   issuedOn: date("issued_on", { mode: "string" }).notNull(),
-  responseDue: date("response_due", { mode: "string" }).notNull(),
+  /** Sent date + the deficiency response period; empty until the notice is sent. */
+  responseDue: date("response_due", { mode: "string" }),
   documentsOutstanding: integer("documents_outstanding").notNull(),
   balance: bigint("balance", { mode: "number" }).notNull(),
   checksFailed: integer("checks_failed").notNull(),
   issuedBy: uuid("issued_by").references(() => users.id),
   issuedAt: timestamp("issued_at", { withTimezone: true }).notNull().defaultNow(),
+  /** The date the notice was actually sent; the response period runs from it. */
+  sentOn: date("sent_on", { mode: "string" }),
+  /** The date the registrant's response arrived (asked for by "Mark complete"). */
+  responseReceivedOn: date("response_received_on", { mode: "string" }),
 });
 
 export const ownUseNotifications = pgTable(
   "own_use_notifications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    inwardItemId: uuid("inward_item_id").notNull().unique().references(() => inwardItems.id),
     ackNo: text("ack_no").notNull().unique(),
-    /** null until saved (Registry Intake can start the row). */
+    /** null until saved. */
     ounNo: text("oun_no").unique(),
     name: text("name").notNull(),
+    /** The Lagos date received (the date part of receivedAt). */
     dateFiled: date("date_filed", { mode: "string" }).notNull(),
+    receivedAt: timestamp("received_at", { withTimezone: true }).notNull(),
+    submissionChannel: text("submission_channel").notNull(),
+    /** Para 10(3), computed on first save and then fixed: sets the ACK year. */
+    deemedReceiptDate: date("deemed_receipt_date", { mode: "string" }).notNull(),
     cacNo: text("cac_no"),
     siteAddress: text("site_address"),
     lga: text("lga"),
@@ -268,7 +281,6 @@ export const ownUseNotifications = pgTable(
     registrationNo: text("registration_no").unique(),
     certificateIssueDate: date("certificate_issue_date", { mode: "string" }),
     registeredBy: uuid("registered_by").references(() => users.id),
-    frontDeskItemId: uuid("front_desk_item_id"),
     savedAt: timestamp("saved_at", { withTimezone: true }),
     isExample: boolean("is_example").notNull().default(false),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

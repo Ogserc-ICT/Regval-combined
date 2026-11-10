@@ -9,8 +9,6 @@ import { eq } from "drizzle-orm";
 import type { Db } from "../src/server/db/connect";
 import {
   activities,
-  correspondenceTypes,
-  divisions,
   documentConditions,
   evalChecks,
   feeSchedule,
@@ -18,7 +16,6 @@ import {
   forms,
   listItems,
   signatories,
-  units,
 } from "../src/server/db/schema";
 import { writeAudit, type AuditActor } from "../src/server/audit";
 
@@ -29,10 +26,7 @@ type Ref = {
   formDocuments: { form: string; no: number; key: string; document: string; requiredWhen: string | null }[];
   conditions: { key: string; question: string; sort: number }[];
   checks: { id: string; stage: string; text: string; ruleText: string; sort: number }[];
-  lists: { listKey: string; value: string; sort: number; meta?: string | null }[];
-  divisions: { name: string; email: string | null; sort: number }[];
-  units: { name: string; division: string; unitGroup: string | null; email: string | null; sort: number }[];
-  correspondenceTypes: { name: string; category: string; defaultUnit: string | null; orderRef: string | null; responseTargetDays: number; para103Wording: boolean; filingType: string | null; sort: number }[];
+  lists: { listKey: string; value: string; sort: number }[];
   signatories: { name: string; designation: string }[];
 };
 
@@ -57,41 +51,9 @@ export async function seedReference(db: Db, actor: AuditActor): Promise<Record<s
       "lists",
       await tx
         .insert(listItems)
-        .values(r.lists.map((l) => ({ listKey: l.listKey, value: l.value, sort: l.sort, meta: l.meta ?? null })))
+        .values(r.lists.map((l) => ({ listKey: l.listKey, value: l.value, sort: l.sort })))
         .onConflictDoNothing()
         .returning({ k: listItems.value }),
-    );
-    await count("divisions", await tx.insert(divisions).values(r.divisions).onConflictDoNothing().returning({ k: divisions.id }));
-    const divs = await tx.select().from(divisions);
-    const divId = (n: string) => divs.find((d) => d.name === n)?.id ?? null;
-    await count(
-      "units",
-      await tx
-        .insert(units)
-        .values(r.units.map((u) => ({ name: u.name, divisionId: divId(u.division), unitGroup: u.unitGroup, email: u.email, sort: u.sort })))
-        .onConflictDoNothing()
-        .returning({ k: units.id }),
-    );
-    const us = await tx.select().from(units);
-    const unitId = (n: string | null) => (n ? (us.find((u) => u.name === n)?.id ?? null) : null);
-    await count(
-      "correspondenceTypes",
-      await tx
-        .insert(correspondenceTypes)
-        .values(
-          r.correspondenceTypes.map((c) => ({
-            name: c.name,
-            category: c.category,
-            defaultUnitId: unitId(c.defaultUnit),
-            orderRef: c.orderRef,
-            responseTargetDays: c.responseTargetDays,
-            para103Wording: c.para103Wording,
-            filingType: c.filingType,
-            sort: c.sort,
-          })),
-        )
-        .onConflictDoNothing()
-        .returning({ k: correspondenceTypes.id }),
     );
     // [G3] One signatory list. Seed the workbook's names unconfirmed; never invent the Commissioner.
     let sig = 0;
@@ -104,7 +66,7 @@ export async function seedReference(db: Db, actor: AuditActor): Promise<Record<s
         designation: role === "chairman_ceo" ? "Chairman / Chief Executive Officer" : s.designation,
         role,
         confirmed: false,
-        note: `From Registry Lists (designation “${s.designation}”). Confirm before use (Q12).`,
+        note: `From the workbook (designation “${s.designation}”). Confirm before use (Q12).`,
       });
       sig += 1;
     }

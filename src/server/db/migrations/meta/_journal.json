@@ -78,6 +78,20 @@
       "when": 1794304074092,
       "tag": "0010_staff_removal",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794311558612,
+      "tag": "0011_registration_receipt",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794311631193,
+      "tag": "0012_remove_registry",
+      "breakpoints": true
     }
   ]
 }

@@ -23,14 +23,14 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
       <Link
         href="/dashboard"
         className={cn("flex h-16 items-center gap-3 border-b border-border px-4", collapsed && "justify-center px-0")}
-        aria-label="OGSERC Registry & Evaluation: dashboard"
+        aria-label="OGSERC Registration & Evaluation: dashboard"
       >
         {collapsed ? (
           <LogoMark size={36} />
         ) : (
           <div className="min-w-0">
             <Logo height={22} />
-            <p className="mt-1 truncate text-[11px] text-faint">Registry &amp; Evaluation</p>
+            <p className="mt-1 truncate text-[11px] text-faint">Registration &amp; Evaluation</p>
           </div>
         )}
       </Link>

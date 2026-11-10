@@ -11,7 +11,6 @@ import {
   documentChecklist,
   evaluationAnswers,
   evaluations,
-  inwardItems,
   payments,
   submissionLicences,
   submissionOtherActivities,
@@ -26,7 +25,6 @@ export type SubmissionRow = typeof submissions.$inferSelect;
 
 export type LoadedSubmission = {
   row: SubmissionRow;
-  inward: typeof inwardItems.$inferSelect;
   otherActivities: string[];
   licences: { licenceNo: string | null; expiryDate: string | null }[];
   evaluation: typeof evaluations.$inferSelect | null;
@@ -139,8 +137,7 @@ export type ListedSubmission = { row: SubmissionRow; deemed: string | null; a: A
 export async function assessMany(db: DbOrTx, rows: SubmissionRow[], today = lagosToday()): Promise<ListedSubmission[]> {
   if (!rows.length) return [];
   const ids = rows.map((r) => r.id);
-  const [inw, others, lics, evs, answers, pays, checks, settings, ref, sigs, allSaved] = await all(db, [
-    () => db.select({ id: inwardItems.id, deemed: inwardItems.deemedReceiptDate }).from(inwardItems).where(inArray(inwardItems.id, rows.map((r) => r.inwardItemId))),
+  const [others, lics, evs, answers, pays, checks, settings, ref, sigs, allSaved] = await all(db, [
     () => db.select().from(submissionOtherActivities).where(inArray(submissionOtherActivities.submissionId, ids)),
     () => db.select().from(submissionLicences).where(inArray(submissionLicences.submissionId, ids)),
     () => db.select().from(evaluations).where(inArray(evaluations.submissionId, ids)),
@@ -165,7 +162,6 @@ export async function assessMany(db: DbOrTx, rows: SubmissionRow[], today = lago
       .from(submissions)
       .where(isNotNull(submissions.status)),
   ]);
-  const deemedBy = new Map(inw.map((i) => [i.id, i.deemed]));
   const byId = new Map(allSaved.map((s) => [s.id, s]));
   const fam = (s: { id: string; linked: string | null }) => s.linked ?? s.id;
   const norm = (v: string | null) => v?.trim().toLowerCase() || null;
@@ -193,7 +189,7 @@ export async function assessMany(db: DbOrTx, rows: SubmissionRow[], today = lago
     const l = lics.filter((x) => x.submissionId === row.id).sort((a, b) => a.position - b.position).map((x) => ({ licenceNo: x.licenceNo, expiryDate: x.expiryDate }));
     const ev = evs.find((e) => e.submissionId === row.id) ?? null;
     const ans = Object.fromEntries(answers.filter((x) => x.submissionId === row.id).map((x) => [x.checkId, x.value]));
-    const deemed = deemedBy.get(row.inwardItemId) ?? null;
+    const deemed = row.deemedReceiptDate;
     const facts = toFacts(row, deemed, o, l);
     const parent = row.linkedSubmissionId ? byId.get(row.linkedSubmissionId) : undefined;
     const family = row.linkedSubmissionId ?? row.id;
@@ -232,8 +228,7 @@ export async function assessMany(db: DbOrTx, rows: SubmissionRow[], today = lago
 export async function loadSubmission(db: DbOrTx, id: string, today = lagosToday()): Promise<LoadedSubmission> {
   const [row] = await db.select().from(submissions).where(eq(submissions.id, id));
   if (!row) throw notFound("Submission");
-  const [[inward], others, lics, [evaluation], answerRows, pays, checklistRows, settings, ref, sigs] = await all(db, [
-    () => db.select().from(inwardItems).where(eq(inwardItems.id, row.inwardItemId)),
+  const [others, lics, [evaluation], answerRows, pays, checklistRows, settings, ref, sigs] = await all(db, [
     () => db.select().from(submissionOtherActivities).where(eq(submissionOtherActivities.submissionId, id)).orderBy(asc(submissionOtherActivities.position)),
     () => db.select().from(submissionLicences).where(eq(submissionLicences.submissionId, id)).orderBy(asc(submissionLicences.position)),
     () => db.select().from(evaluations).where(eq(evaluations.submissionId, id)),
@@ -245,7 +240,7 @@ export async function loadSubmission(db: DbOrTx, id: string, today = lagosToday(
     () => signatoriesReady(db),
   ]);
   const licences = lics.map((l) => ({ licenceNo: l.licenceNo, expiryDate: l.expiryDate }));
-  const facts = toFacts(row, inward?.deemedReceiptDate ?? null, others.map((o) => o.activity), licences);
+  const facts = toFacts(row, row.deemedReceiptDate, others.map((o) => o.activity), licences);
 
   let linked: AssessContext["linked"] = null;
   if (row.linkedSubmissionId) {
@@ -297,7 +292,6 @@ export async function loadSubmission(db: DbOrTx, id: string, today = lagosToday(
   };
   return {
     row,
-    inward,
     otherActivities: facts.otherActivities,
     licences,
     evaluation: evaluation ?? null,

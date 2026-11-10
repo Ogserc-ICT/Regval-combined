@@ -20,6 +20,8 @@ import {
   lapse,
   markComplete,
   recalculateAllOpen,
+  recordCertificateSent,
+  recordDeficiencySent,
   recalculatePricing,
   refuse,
   setDocument,
@@ -52,15 +54,13 @@ export async function createSubmissionAction(_p: ActionResult<{ id: string; ackN
   return res;
 }
 
-/** Saves a Register row started by Registry Intake (it keeps its ACK). */
+/** Saves a Register row started before Phase 9 by the old Registry intake (it keeps its ACK and receipt). */
 export async function saveDraftSubmissionAction(_p: ActionResult<{ id: string; ackNo: string }> | undefined, f: FormData) {
   const actor = await getCurrentActor();
   const id = s(f, "id");
   const res = await toResult(() => saveDraftSubmission(db, actor, id, parseSubmission(f), { confirmWarnings: confirmed(f) }));
   if (res.ok) {
     refresh(id);
-    revalidatePath("/registry-intake");
-    revalidatePath("/inward");
     redirect(`/register/${id}?saved=1`);
   }
   return res;
@@ -123,7 +123,17 @@ export async function confirmCategoryAction(_p: R | undefined, f: FormData) {
 
 export async function markCompleteAction(_p: R | undefined, f: FormData) {
   const actor = await getCurrentActor();
-  return run(s(f, "id"), () => markComplete(db, actor, s(f, "id")));
+  return run(s(f, "id"), () => markComplete(db, actor, s(f, "id"), { responseReceivedOn: s(f, "responseReceivedOn") || null }));
+}
+
+export async function deficiencySentAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  return run(s(f, "id"), () => recordDeficiencySent(db, actor, s(f, "id"), s(f, "sentOn")));
+}
+
+export async function certificateSentAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  return run(s(f, "id"), () => recordCertificateSent(db, actor, s(f, "id"), s(f, "sentOn")));
 }
 
 export async function deficiencyAction(_p: R | undefined, f: FormData) {

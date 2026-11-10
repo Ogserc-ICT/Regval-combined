@@ -1,5 +1,5 @@
 /**
- * Roles and permissions (SPEC §27; [G6], [G7], [G8]).
+ * Roles and permissions (SPEC §27; [G6], [G8]). [G7] no longer applies: the Registry was removed.
  *
  * A user can hold several roles. A permission names one kind of action; the
  * server checks it before every action. Record-level rules (separation of
@@ -7,10 +7,7 @@
  */
 
 export const ROLES = [
-  "front_desk",
-  "registry",
-  "router",
-  "unit_officer",
+  "registration",
   "evaluator",
   "supervisor",
   "approver",
@@ -21,10 +18,7 @@ export const ROLES = [
 export type Role = (typeof ROLES)[number];
 
 export const ROLE_LABELS: Record<Role, string> = {
-  front_desk: "Front desk officer",
-  registry: "Registry officer",
-  router: "Router",
-  unit_officer: "Unit officer",
+  registration: "Registration officer",
   evaluator: "Evaluating officer",
   supervisor: "Reviewing supervisor",
   approver: "Approving officer",
@@ -34,10 +28,7 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_DESCRIPTIONS: Record<Role, string> = {
-  front_desk: "Log delivered documents",
-  registry: "Intake, inward, outward, update, dispatch, files, slips, Daily Register, record payments",
-  router: "Route incoming items",
-  unit_officer: "See items routed to their unit, confirm receipt, close",
+  registration: "Enter filings and own-use notifications, record payments, keep the document checklist, record when letters and certificates are sent",
   evaluator: "Complete EVAL-01 checks",
   supervisor: "Review evaluations, assign officers, issue deficiency notices",
   approver: "Approve, refuse, lapse",
@@ -48,25 +39,18 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
 
 export const PERMISSIONS = {
   // Everyone signed in
-  "registers:read": ["front_desk", "registry", "router", "unit_officer", "evaluator", "supervisor", "approver", "finance", "admin", "viewer"],
-  "audit:read": ["admin", "viewer", "registry", "supervisor", "approver", "finance"],
-  // Registry
-  "frontdesk:log": ["front_desk", "registry"],
-  "inward:write": ["registry"],
-  "inward:route": ["router"],
-  "inward:forward": ["registry"],
-  "inward:confirm-receipt": ["unit_officer"],
-  "inward:close": ["registry", "unit_officer"],
-  "outward:write": ["registry"],
-  "files:write": ["registry"],
-  "reports:print": ["registry", "admin"],
+  "registers:read": ["registration", "evaluator", "supervisor", "approver", "finance", "admin", "viewer"],
+  "audit:read": ["admin", "viewer", "registration", "supervisor", "approver", "finance"],
   // Registration
-  "submission:save": ["registry"],
-  "ownuse:save": ["registry"],
-  "payment:record": ["registry", "finance"],
+  "submission:save": ["registration"],
+  "ownuse:save": ["registration"],
+  /** The date a deficiency notice or certificate was actually sent (no Registry numbers them now). */
+  "letters:record-sent": ["registration"],
+  "reports:print": ["registration", "admin"],
+  "payment:record": ["registration", "finance"],
   "payment:decide": ["finance"],
   "payment:reverse": ["finance", "admin"],
-  "documents:update": ["registry", "evaluator", "supervisor"],
+  "documents:update": ["registration", "evaluator", "supervisor"],
   "evaluation:assign": ["supervisor", "admin"],
   "signatories:manage": ["admin"],
   "evaluation:check": ["evaluator", "supervisor"],

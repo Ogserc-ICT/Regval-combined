@@ -8,6 +8,7 @@ import { asc, eq, sql } from "drizzle-orm";
 import type { DbOrTx, Tx } from "./db/connect";
 import { auditChainHead, auditLog } from "./db/schema";
 
+/** "registry" is kept only so entries written before the Registry left this app (Phase 9) still read. */
 export const AUDIT_MODULES = ["registry", "registration", "admin", "auth", "system"] as const;
 export type AuditModule = (typeof AUDIT_MODULES)[number];
 
@@ -20,7 +21,7 @@ export type AuditEntry = {
   module: AuditModule;
   entityType?: string | null;
   entityId?: string | null;
-  /** The business number shown to staff: ACK, FD, OUT, PAY, OUN, REG, file ref … */
+  /** The business number shown to staff: ACK, PAY, OUN, DEF, REG … */
   reference?: string | null;
   detail?: string;
   /** Structured before/after values or other data. */

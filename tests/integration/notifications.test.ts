@@ -6,30 +6,19 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { and, eq, sql } from "drizzle-orm";
 import type { Actor } from "../../src/server/auth/actor";
-import { correspondenceTypes, notifications, units, users } from "../../src/server/db/schema";
+import { notifications, users } from "../../src/server/db/schema";
 import { listNotifications, markRead, resolveRecipients, unreadSummary } from "../../src/server/services/notifications";
 import { confirmPayment, recordPayment, rejectPayment } from "../../src/server/services/payments";
-import { logFrontDesk } from "../../src/server/services/registry/frontdesk";
-import { closeInward, routeInward, saveInward } from "../../src/server/services/registry/inward";
 import { createSubmission } from "../../src/server/services/submissions/save";
-import { assignOfficers } from "../../src/server/services/submissions/workflow";
-import { lagosToday } from "../../src/server/time";
+import { assignOfficers, issueDeficiency } from "../../src/server/services/submissions/workflow";
 import { makeActor, resetTables, testDb } from "./helpers";
 
 const db = testDb(10);
 afterAll(() => db.$client.end());
 beforeEach(() => resetTables(db));
 
-const today = () => lagosToday();
-const typeId = async (name: string) => (await db.select({ id: correspondenceTypes.id }).from(correspondenceTypes).where(eq(correspondenceTypes.name, name)))[0].id;
-const unitId = async (name: string) => (await db.select({ id: units.id }).from(units).where(eq(units.name, name)))[0].id;
-
-async function inUnit(actor: Actor, unit: string): Promise<Actor> {
-  await db.update(users).set({ unitId: unit }).where(eq(users.id, actor.id));
-  return { ...actor, unitId: unit };
-}
-
 const titlesFor = async (a: Actor) => (await listNotifications(db, a.id)).map((n) => n.title);
+const payId = async (payNo: string) => (await db.execute<{ id: string }>(sql`select id from payments where pay_no = ${payNo}`)).rows[0].id;
 
 let n = 0;
 const submission = () => ({
@@ -37,6 +26,8 @@ const submission = () => ({
   formFiled: "REG-01D",
   registeredName: `Notify Power ${++n} Ltd`,
   dateSubmitted: "2026-11-04",
+  timeReceived: "10:00",
+  submissionChannel: "By hand",
   principalLga: "Sagamu",
   primaryActivity: "GEN",
   installedCapacityMw: 5,
@@ -46,113 +37,78 @@ const submission = () => ({
 });
 
 describe("recipients", () => {
-  it("roles, unit officers and named people; never the actor, inactive or unconfirmed accounts", async () => {
-    const ict = await unitId("ICT unit");
-    const other = await unitId("Internal Audit unit");
-    const [r1, r2, uo, uoOther, plain] = await Promise.all([
-      makeActor(db, ["registry"]),
-      makeActor(db, ["registry"]),
-      makeActor(db, ["unit_officer"]),
-      makeActor(db, ["unit_officer"]),
-      makeActor(db, ["viewer"]),
-    ]);
-    await inUnit(uo, ict);
-    await inUnit(uoOther, other);
-    const off = await makeActor(db, ["registry"]);
+  it("roles and named people; never the actor, inactive or unconfirmed accounts", async () => {
+    const [r1, r2, plain] = await Promise.all([makeActor(db, ["registration"]), makeActor(db, ["registration"]), makeActor(db, ["viewer"])]);
+    const off = await makeActor(db, ["registration"]);
     await db.update(users).set({ active: false }).where(eq(users.id, off.id));
-    const seeded = await makeActor(db, ["registry"]);
+    const seeded = await makeActor(db, ["registration"]);
     await db.update(users).set({ pendingConfirmation: true }).where(eq(users.id, seeded.id));
 
-    expect(await resolveRecipients(db, { roles: ["registry"] }, r1.id)).toEqual([r2.id]);
-    expect(await resolveRecipients(db, { unitOfficersOf: ict }, null)).toEqual([uo.id]);
+    expect(await resolveRecipients(db, { roles: ["registration"] }, r1.id)).toEqual([r2.id]);
     expect(await resolveRecipients(db, { users: [plain.id, null, plain.id] }, null)).toEqual([plain.id]);
     expect(await resolveRecipients(db, {}, null)).toEqual([]);
   });
 });
 
-describe("registry hand-offs", () => {
-  it("front desk → Registry; New Inward → Routers; routing → that unit; a unit closing → Registry", async () => {
-    const ict = await unitId("ICT unit");
-    const [frontDesk, registry, registry2, router, uo, uoElsewhere] = await Promise.all([
-      makeActor(db, ["front_desk"]),
-      makeActor(db, ["registry"]),
-      makeActor(db, ["registry"]),
-      makeActor(db, ["router"]),
-      makeActor(db, ["unit_officer"]),
-      makeActor(db, ["unit_officer"]),
-    ]);
-    const unitOfficer = await inUnit(uo, ict);
-    await inUnit(uoElsewhere, await unitId("Internal Audit unit"));
-
-    const fd = await logFrontDesk(db, frontDesk, { receivedDate: today(), receivedTime: "00:01", sender: "Walk-in", subject: "Letter" });
-    expect(await titlesFor(registry)).toEqual([`New at the front desk: ${fd.fdNo}`]);
-    expect(await titlesFor(frontDesk)).toEqual([]);
-
-    const item = await saveInward(db, registry, {
-      receivedDate: today(),
-      receivedTime: "00:05",
-      mode: "Hand delivery",
-      correspondenceTypeId: await typeId("Tariff application / review"),
-      sender: "Ogun Power Ltd",
-      senderCategory: "Registrant / licensee",
-      subject: "Tariff review",
-      ackIssuedVia: "Printed slip",
-    });
-    expect(await titlesFor(router)).toEqual([`To route: ${item.ackNo}`]);
-    expect(await titlesFor(registry)).toEqual([`New at the front desk: ${fd.fdNo}`]); // not told about their own save
-
-    await routeInward(db, router, item.id, { unitId: ict, actionRequired: "Reply required" });
-    const [routed] = await listNotifications(db, unitOfficer.id);
-    expect(routed.title).toBe(`Routed to ICT unit: ${item.ackNo}`);
-    expect(routed.href).toBe(`/inward/${item.id}`);
-    expect(await titlesFor(uoElsewhere)).toEqual([]);
-
-    await closeInward(db, unitOfficer, item.id, { confirm: true });
-    expect((await titlesFor(registry2))[0]).toBe(`Closed by ICT unit: ${item.ackNo}`);
-  });
-});
-
-describe("payments and evaluation hand-offs", () => {
+describe("hand-offs", () => {
   it("recorded → Finance; rejected → the recorder; released → the assigned evaluator; assigned → each officer", async () => {
-    const [registry, finance1, finance2, evaluator, supervisor, approver] = await Promise.all([
-      makeActor(db, ["registry"]),
+    const [registration, finance1, finance2, evaluator, supervisor, approver] = await Promise.all([
+      makeActor(db, ["registration"]),
       makeActor(db, ["finance"]),
       makeActor(db, ["finance"]),
       makeActor(db, ["evaluator"]),
       makeActor(db, ["supervisor"]),
       makeActor(db, ["approver"]),
     ]);
-    const s = await createSubmission(db, registry, submission());
+    const s = await createSubmission(db, registration, submission());
 
     await assignOfficers(db, supervisor, s.id, { evaluatingOfficerId: evaluator.id, reviewingSupervisorId: supervisor.id, approvingOfficerId: approver.id });
     expect(await titlesFor(evaluator)).toEqual([`You are the evaluating officer: ${s.ackNo}`]);
     expect(await titlesFor(approver)).toEqual([`You are the approving officer: ${s.ackNo}`]);
     expect(await titlesFor(supervisor)).toEqual([]); // assigned themselves
 
-    const bad = await recordPayment(db, registry, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 100, rrr: `BAD${n}` });
+    const bad = await recordPayment(db, registration, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 100, rrr: `BAD${n}` });
     expect(await titlesFor(finance1)).toEqual([`Payment to confirm: ${bad}`]);
-    const [badRow] = (await db.execute<{ id: string }>(sql`select id from payments where pay_no = ${bad}`)).rows;
-    await rejectPayment(db, finance1, badRow.id, "Not in the bank statement");
-    expect((await titlesFor(registry))[0]).toBe(`Payment rejected: ${bad}`);
+    await rejectPayment(db, finance1, await payId(bad), "Not in the bank statement");
+    expect((await titlesFor(registration))[0]).toBe(`Payment rejected: ${bad}`);
 
-    const good = await recordPayment(db, registry, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 30_000_000, rrr: `GOOD${n}` });
-    const [goodRow] = (await db.execute<{ id: string }>(sql`select id from payments where pay_no = ${good}`)).rows;
-    await confirmPayment(db, finance2, goodRow.id, { verifiedWithBank: true });
+    const good = await recordPayment(db, registration, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 30_000_000, rrr: `GOOD${n}` });
+    await confirmPayment(db, finance2, await payId(good), { verifiedWithBank: true });
     const [released] = await listNotifications(db, evaluator.id);
     expect(released.title).toBe(`Ready to evaluate: ${s.ackNo}`);
     expect(released.href).toBe(`/register/${s.id}?tab=evaluation`);
+  });
+
+  it("a deficiency notice goes to the Registration officers to send, and to the evaluator", async () => {
+    const [registration, registration2, finance, evaluator, supervisor, approver] = await Promise.all([
+      makeActor(db, ["registration"]),
+      makeActor(db, ["registration"]),
+      makeActor(db, ["finance"]),
+      makeActor(db, ["evaluator"]),
+      makeActor(db, ["supervisor"]),
+      makeActor(db, ["approver"]),
+    ]);
+    const s = await createSubmission(db, registration, submission());
+    await assignOfficers(db, supervisor, s.id, { evaluatingOfficerId: evaluator.id, reviewingSupervisorId: supervisor.id, approvingOfficerId: approver.id });
+    const pay = await recordPayment(db, registration, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 30_000_000, rrr: `DEF${n}` });
+    await confirmPayment(db, finance, await payId(pay), { verifiedWithBank: true });
+    await issueDeficiency(db, supervisor, s.id, { confirm: true });
+    for (const who of [registration, registration2, evaluator]) {
+      expect((await titlesFor(who))[0]).toMatch(/^Deficiency notice OGSERC\/DEF\/\d{4}\/\d{5} to send: /);
+    }
   });
 });
 
 describe("reading", () => {
   it("unread count and newest; marking read only touches the person's own", async () => {
-    const [frontDesk, a, b] = await Promise.all([makeActor(db, ["front_desk"]), makeActor(db, ["registry"]), makeActor(db, ["registry"])]);
-    await logFrontDesk(db, frontDesk, { receivedDate: today(), receivedTime: "00:01", sender: "One", subject: "First" });
-    const second = await logFrontDesk(db, frontDesk, { receivedDate: today(), receivedTime: "00:02", sender: "Two", subject: "Second" });
+    const [registration, a, b] = await Promise.all([makeActor(db, ["registration"]), makeActor(db, ["finance"]), makeActor(db, ["finance"])]);
+    const s = await createSubmission(db, registration, submission());
+    await recordPayment(db, registration, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 100, rrr: `R1-${n}` });
+    const second = await recordPayment(db, registration, { dateReceived: "2026-11-04", reference: s.ackNo, amount: 200, rrr: `R2-${n}` });
 
-    const s = await unreadSummary(db, a.id);
-    expect(s.unread).toBe(2);
-    expect(s.newest?.title).toBe(`New at the front desk: ${second.fdNo}`);
+    const sum = await unreadSummary(db, a.id);
+    expect(sum.unread).toBe(2);
+    expect(sum.newest?.title).toBe(`Payment to confirm: ${second}`);
 
     // b cannot clear a's notifications, even by id
     const aIds = (await listNotifications(db, a.id)).map((x) => x.id);

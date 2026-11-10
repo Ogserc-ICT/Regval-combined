@@ -40,17 +40,10 @@ export const settingsSchema = z.object({
   otherActivityDocs: yn,
   ownUseCertificate: yn,
   feeOnUpdates: yn,
-  // Registry
+  // Receipt and letters
   officeClosingTime: time,
-  forwardingTargetDays: days(365),
-  dispatchTargetDays: days(365),
-  podChaseDays: days(365),
-  urgentResponseDays: days(365),
-  defaultResponseDays: days(365),
-  fileReturnDays: days(365),
-  ackEmailMode: z.enum(["Send", "Preview", "Off"]),
-  ackEmailCc: z.string().max(500),
-  registryAddress: z.string().min(1).max(300),
+  ackPrefix: z.string().regex(/^[A-Z0-9]+(?:[/-][A-Z0-9]+)*$/, "Capital letters and digits, parts separated by / or -").max(40),
+  letterAddress: z.string().min(1).max(300),
   // Security (Phase 8c)
   idleMinutes: z.number().int().min(1).max(240),
 });
@@ -85,15 +78,8 @@ export const DEFAULT_SETTINGS: Settings = {
   ownUseCertificate: "N",
   feeOnUpdates: "N",
   officeClosingTime: "17:00",
-  forwardingTargetDays: 2,
-  dispatchTargetDays: 2,
-  podChaseDays: 5,
-  urgentResponseDays: 1,
-  defaultResponseDays: 10,
-  fileReturnDays: 3,
-  ackEmailMode: "Preview",
-  ackEmailCc: "",
-  registryAddress: "Registry · 5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta",
+  ackPrefix: "OGSERC/ACK",
+  letterAddress: "5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta",
   idleMinutes: 4,
 };
 
@@ -101,7 +87,7 @@ export type SettingKind = "date" | "boolean" | "days" | "number" | "yn" | "choic
 
 export type SettingMeta = {
   label: string;
-  group: "Order parameters" | "Policy settings" | "Registry" | "Acknowledgement email" | "Security";
+  group: "Order parameters" | "Policy settings" | "Receipt and letters" | "Security";
   kind: SettingKind;
   note: string;
   source: string;
@@ -110,7 +96,7 @@ export type SettingMeta = {
 };
 
 export const SETTING_META: Record<SettingKey, SettingMeta> = {
-  effectiveDate: { label: "Effective Date of the Order", group: "Order parameters", kind: "date", note: "Para 2. Every deadline in both modules derives from this one date.", source: "Settings B7 (Registry Settings B14 dropped, G1)" },
+  effectiveDate: { label: "Effective Date of the Order", group: "Order parameters", kind: "date", note: "Para 2. Every deadline derives from this one date.", source: "Settings B7 (Registry Settings B14 dropped, G1)" },
   effectiveDatePlaceholder: { label: "Effective Date is a placeholder", group: "Order parameters", kind: "boolean", note: "Untick once the gazetted Effective Date is entered.", source: "Settings C7" },
   registrationPeriodDays: { label: "Registration period (days)", group: "Order parameters", kind: "days", note: "Para 11(1).", source: "Settings B8" },
   extensionDays: { label: "Extension of registration period (days)", group: "Order parameters", kind: "days", note: "Para 25: any extension granted by public notice.", source: "Settings B9" },
@@ -135,16 +121,9 @@ export const SETTING_META: Record<SettingKey, SettingMeta> = {
   otherActivityDocs: { label: "Other activities require their form's documents", group: "Policy settings", kind: "yn", note: "Q11.", source: "Settings B40" },
   ownUseCertificate: { label: "Own-use gets a certificate", group: "Policy settings", kind: "yn", note: "Q11.", source: "Settings B41" },
   feeOnUpdates: { label: "Registration fee on updates and annual confirmations", group: "Policy settings", kind: "yn", note: "Q11.", source: "Settings B42" },
-  officeClosingTime: { label: "Office closing time", group: "Registry", kind: "time", note: "Para 10(3): email and portal items at or after this time are received the next working day.", source: "Registry Settings B7" },
-  forwardingTargetDays: { label: "Registry forwarding target (working days)", group: "Registry", kind: "days", note: "Internal service standard.", source: "Registry Settings B8" },
-  dispatchTargetDays: { label: "Dispatch target: document date to dispatch (working days)", group: "Registry", kind: "days", note: "Outgoing items not dispatched within this are flagged.", source: "Registry Settings B9" },
-  podChaseDays: { label: "Chase proof of delivery after (working days)", group: "Registry", kind: "days", note: "Dispatched items without confirmed delivery after this are flagged.", source: "Registry Settings B10" },
-  urgentResponseDays: { label: "Response target for Urgent items (working days)", group: "Registry", kind: "days", note: "Overrides the type's target when Priority = Urgent.", source: "Registry Settings B11" },
-  defaultResponseDays: { label: "Default response target (working days)", group: "Registry", kind: "days", note: "Used when a type has no target set.", source: "Registry Settings B12" },
-  fileReturnDays: { label: "File return target (working days)", group: "Registry", kind: "days", note: "Files not returned within this are flagged.", source: "Registry Settings B13" },
-  ackEmailMode: { label: "Acknowledgement email", group: "Acknowledgement email", kind: "choice", note: "Send = sent on save · Preview = the officer reviews before sending · Off.", source: "Registry Settings B18 (G9)", choices: ["Send", "Preview", "Off"] },
-  ackEmailCc: { label: "Acknowledgement email: copy to (CC)", group: "Acknowledgement email", kind: "text", note: "Optional, e.g. the Secretary's mailbox. Separate addresses with ;", source: "Registry Settings B17" },
-  registryAddress: { label: "Registry address on slips", group: "Registry", kind: "text", note: "Printed under the Commission's name.", source: "Acknowledgement Slip B4" },
+  officeClosingTime: { label: "Office closing time", group: "Receipt and letters", kind: "time", note: "Para 10(3): filings by email or online portal at or after this time are received the next working day. Hand deliveries are not cut off.", source: "Registry Settings B7" },
+  ackPrefix: { label: "ACK number prefix", group: "Receipt and letters", kind: "text", note: "ACK numbers read <prefix>/<year>/<serial>, e.g. OGSERC/ACK/2026/00001. The separate registry app also issues OGSERC/ACK numbers: see QUESTIONS.md Q25.", source: "Phase 9 (was fixed in the combined workbook)" },
+  letterAddress: { label: "Commission address on letters", group: "Receipt and letters", kind: "text", note: "Printed under the Commission's name on the acknowledgement letter, deficiency notice and certificate.", source: "Acknowledgement Slip B4" },
   idleMinutes: {
     label: "Sign out after inactivity (minutes)",
     group: "Security",
@@ -170,7 +149,7 @@ export function resolveSettings(stored: Partial<Record<string, unknown>>): Setti
 /**
  * Registration deadline for existing operators:
  * Effective Date + registration period + extension (Settings B10; [G1]).
- * The one deadline used by the Register, the inward "filed after deadline"
+ * The one deadline used by the Register, the own-use "filed after deadline"
  * flag and the dashboard.
  */
 export function registrationDeadline(s: Pick<Settings, "effectiveDate" | "registrationPeriodDays" | "extensionDays">): LocalDate {

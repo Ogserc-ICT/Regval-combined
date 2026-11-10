@@ -1,6 +1,6 @@
-# OGSERC Registry & Evaluation
+# OGSERC Registration & Evaluation
 
-Staff-only web app for the Ogun State Electricity Regulatory Commission: operator registration and evaluation (Order No. OGSERC/ORD/2026/001) and the Registry, in one app with one database and one OGSERC/ACK series.
+Staff-only web app for the Ogun State Electricity Regulatory Commission: operator registration and evaluation under Order No. OGSERC/ORD/2026/001 (forms REG-01A to REG-01K, payments and the Finance gate, the EVAL-01 evaluation, own-use notifications). The Registry was removed on 10 Nov 2026 and lives in the separate registry app; the repo keeps its original name.
 
 - Build brief: [docs/COMBINED_BUILD.md](docs/COMBINED_BUILD.md)
 - Rules: [docs/SPEC.md](docs/SPEC.md) · Plan: [docs/PLAN.md](docs/PLAN.md) · Open questions: [docs/QUESTIONS.md](docs/QUESTIONS.md)
@@ -15,7 +15,7 @@ pnpm install
 cp .env.example .env.local        # then set AUTH_SECRET and the BOOTSTRAP_ADMIN_* values
 pnpm db:up                        # PostgreSQL on localhost:5433 (dev + test databases)
 pnpm db:migrate
-pnpm db:seed                      # holidays, seeded staff (inactive), first admin
+pnpm db:seed                      # reference data, holidays, first admin
 pnpm dev                          # http://localhost:3000
 ```
 

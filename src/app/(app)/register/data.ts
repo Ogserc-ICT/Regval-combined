@@ -1,4 +1,5 @@
 import "server-only";
+import { lagosMinuteOfDay } from "@/domain/dates";
 import type { LoadedSubmission } from "@/server/services/submissions/load";
 import { registrationLists } from "@/server/services/reference";
 import type { DbOrTx } from "@/server/db/connect";
@@ -18,6 +19,11 @@ export async function formLists(db: DbOrTx): Promise<SubmissionFormLists> {
   };
 }
 
+const hhmm = (d: Date) => {
+  const m = lagosMinuteOfDay(d);
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+};
+
 export function blankValues(today: string): SubmissionFormValues {
   return {
     filingType: "NEW",
@@ -26,7 +32,7 @@ export function blankValues(today: string): SubmissionFormValues {
     registeredName: "",
     tradingName: "",
     dateSubmitted: today,
-    submissionChannel: "By hand",
+    received: null,
     registrantType: "",
     cacNo: "",
     tin: "",
@@ -75,7 +81,7 @@ export function valuesFromParts(
     registeredName: r.registeredName,
     tradingName: str(r.tradingName),
     dateSubmitted: r.dateSubmitted,
-    submissionChannel: str(r.submissionChannel),
+    received: { time: hhmm(r.receivedAt), channel: r.submissionChannel, deemed: r.deemedReceiptDate },
     registrantType: str(r.registrantType),
     cacNo: str(r.cacNo),
     tin: str(r.tin),

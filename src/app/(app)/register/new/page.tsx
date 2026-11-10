@@ -17,7 +17,7 @@ export default async function NewSubmissionPage() {
     <>
       <PageHeader
         title="New submission"
-        description="Direct entry on the Register. For a filing handed in at the front desk, use Registry Intake instead: it starts the entry with its acknowledgement."
+        description="Enter a filing received by hand, email or the online portal. Saving works out its deemed receipt date (para 10(3)) and issues its ACK."
         actions={
           <Link href="/register" className="text-sm text-info hover:underline">
             Back to the Register

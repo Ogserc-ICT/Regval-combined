@@ -6,7 +6,6 @@ import type { RefData } from "@/domain/registration/types";
 import { all, type DbOrTx } from "../db/connect";
 import {
   activities,
-  correspondenceTypes,
   documentConditions,
   evalChecks,
   feeSchedule,
@@ -63,12 +62,6 @@ export async function listWithMeta(db: DbOrTx, key: string): Promise<{ value: st
 export async function signatoriesReady(db: DbOrTx): Promise<{ chairman: boolean; commissioner: boolean }> {
   const rows = await db.select({ role: signatories.role }).from(signatories).where(eq(signatories.active, true));
   return { chairman: rows.some((r) => r.role === "chairman_ceo"), commissioner: rows.some((r) => r.role === "commissioner") };
-}
-
-/** The correspondence type the Registry logs a filing under (Registry Lists G). */
-export async function correspondenceTypeForFiling(db: DbOrTx, filing: "NEW" | "UPDATE" | "ANNUAL" | "OWNUSE") {
-  const [t] = await db.select().from(correspondenceTypes).where(eq(correspondenceTypes.filingType, filing)).limit(1);
-  return t ?? null;
 }
 
 /** All the drop-down lists the registration forms need, in one load. */

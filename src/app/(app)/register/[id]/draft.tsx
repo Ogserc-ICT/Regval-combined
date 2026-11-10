@@ -8,7 +8,7 @@ import { saveDraftSubmissionAction } from "../actions";
 import { formLists, valuesFromParts } from "../data";
 import { SubmissionForm } from "../submission-form";
 
-/** A Register row started by Registry Intake: complete it and save it under its ACK (SPEC §18.1). */
+/** A Register row started before Phase 9 by the old Registry intake: complete it and save it under its ACK. */
 export async function DraftSubmission({ row, actor }: { row: typeof submissions.$inferSelect; actor: Actor }) {
   const [others, licences, lists] = await Promise.all([
     db.select().from(submissionOtherActivities).where(eq(submissionOtherActivities.submissionId, row.id)).orderBy(asc(submissionOtherActivities.position)),
@@ -19,10 +19,10 @@ export async function DraftSubmission({ row, actor }: { row: typeof submissions.
     <>
       <PageHeader
         title={row.registeredName}
-        description={<span className="font-mono text-text">{row.ackNo} · Register row started by Registry Intake</span>}
+        description={<span className="font-mono text-text">{row.ackNo} · Register row not yet saved</span>}
         actions={
-          <Link href="/registry-intake" className="text-sm text-info hover:underline">
-            Back to Registry intake
+          <Link href="/register" className="text-sm text-info hover:underline">
+            Back to the Register
           </Link>
         }
       />
@@ -34,7 +34,7 @@ export async function DraftSubmission({ row, actor }: { row: typeof submissions.
           <SubmissionForm action={saveDraftSubmissionAction} lists={lists} values={valuesFromParts(row, others.map((o) => o.activity), licences)} mode="draft" />
         </>
       ) : (
-        <Notice tone="info">A Registry officer completes this entry and saves it on the Register.</Notice>
+        <Notice tone="info">A Registration officer completes this entry and saves it on the Register.</Notice>
       )}
     </>
   );

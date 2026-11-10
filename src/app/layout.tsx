@@ -7,8 +7,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "OGSERC Registry & Evaluation", template: "%s · OGSERC" },
-  description: "Ogun State Electricity Regulatory Commission: registry, registration and evaluation (staff only).",
+  title: { default: "OGSERC Registration & Evaluation", template: "%s · OGSERC" },
+  description: "Ogun State Electricity Regulatory Commission: operator registration and evaluation (staff only).",
   robots: { index: false, follow: false },
 };
 

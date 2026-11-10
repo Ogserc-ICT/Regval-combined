@@ -23,7 +23,7 @@ function origins(): string[] {
  * cannot start a session.
  */
 export const auth = betterAuth({
-  appName: "OGSERC Registry & Evaluation",
+  appName: "OGSERC Registration & Evaluation",
   secret: process.env.AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
   trustedOrigins: origins(),

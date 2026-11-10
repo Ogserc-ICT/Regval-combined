@@ -3,6 +3,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useDraftRows } from "@/lib/drafts-client";
+import { ReceiptFields } from "@/components/receipt-fields";
 import { ActionForm, type FormAction } from "@/components/action-form";
 import { Button, Card, CardBody, CardHeader, Field, Input, Select, Textarea } from "@/components/ui";
 
@@ -25,7 +26,8 @@ export type SubmissionFormValues = {
   registeredName: string;
   tradingName: string;
   dateSubmitted: string;
-  submissionChannel: string;
+  /** Set once saved: the receipt is then fixed (para 10(3)). */
+  received?: { time: string; channel: string; deemed: string } | null;
   registrantType: string;
   cacNo: string;
   tin: string;
@@ -90,7 +92,7 @@ export function SubmissionForm<T>({
   action: FormAction<T>;
   lists: SubmissionFormLists;
   values: SubmissionFormValues;
-  /** draft: a Register row started by Registry Intake, saved under its existing ACK. */
+  /** draft: a Register row started before Phase 9 by the old Registry intake, saved under its existing ACK. */
   mode: "new" | "edit" | "draft";
 }) {
   const locked = mode !== "new";
@@ -113,7 +115,7 @@ export function SubmissionForm<T>({
         const err = (k: string) => fe[k];
         return (
           <div className="flex flex-col gap-6">
-            <Section title="Submission" description={mode === "new" ? "Saving issues the next OGSERC/ACK number from the shared series and logs the filing in the Inward Register." : mode === "draft" ? "Started by Registry Intake under its ACK. Saving prices it and opens the payment step." : undefined}>
+            <Section title="Submission" description={mode === "new" ? "Saving issues the next ACK number in the year of the deemed receipt date." : mode === "draft" ? "Started before the Registry left this app, under its ACK. Saving prices it and opens the payment step." : undefined}>
               <Field label="Filing type *" htmlFor="filingType" errors={err("filingType")}>
                 <Select id="filingType" name="filingType" value={filing} onChange={(e) => setFiling(e.target.value)} disabled={locked}>
                   <option value="NEW">New registration</option>
@@ -132,15 +134,14 @@ export function SubmissionForm<T>({
                   <Input id="linkedRegistrationNo" name="linkedRegistrationNo" defaultValue={values.linkedRegistrationNo} placeholder="OGSERC/REG/2026/D-GEN/0001" />
                 </Field>
               ) : null}
-              <Field label="Date submitted *" htmlFor="dateSubmitted" hint="Its deemed receipt date sets the ACK year and the days late." errors={err("dateSubmitted")}>
-                <Input id="dateSubmitted" name="dateSubmitted" type="date" defaultValue={values.dateSubmitted} disabled={locked} />
-                {locked ? <input type="hidden" name="dateSubmitted" value={values.dateSubmitted} /> : null}
-              </Field>
-              <Field label="Submission channel" htmlFor="submissionChannel" errors={err("submissionChannel")}>
-                <Select id="submissionChannel" name="submissionChannel" defaultValue={values.submissionChannel}>
-                  <Options items={lists.channel} />
-                </Select>
-              </Field>
+              {/* The deemed receipt date (para 10(3)) sets the ACK year and the days late. */}
+              <ReceiptFields
+                channels={lists.channel}
+                dateName="dateSubmitted"
+                today={values.dateSubmitted}
+                errors={fe}
+                saved={values.received ? { date: values.dateSubmitted, time: values.received.time, channel: values.received.channel, deemed: values.received.deemed } : undefined}
+              />
             </Section>
 
             <Section title="Identity and service area">

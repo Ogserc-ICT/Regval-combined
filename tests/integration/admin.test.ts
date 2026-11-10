@@ -1,11 +1,10 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { and, desc, eq } from "drizzle-orm";
-import { auditLog, correspondenceTypes, feeSchedule, listItems, units } from "../../src/server/db/schema";
+import { auditLog, feeSchedule, listItems } from "../../src/server/db/schema";
 import { ServiceError } from "../../src/server/errors";
 import { dashboardData } from "../../src/server/services/dashboard";
 import { buildRegisterSheet, exportRegister, toCsv } from "../../src/server/services/exports";
-import { addListItem, saveCorrespondenceType, saveUnit, updateActivity, updateFee, updateListItem } from "../../src/server/services/reference-admin";
-import { saveInward } from "../../src/server/services/registry/inward";
+import { addListItem, listEditable, updateActivity, updateFee, updateListItem } from "../../src/server/services/reference-admin";
 import { getSettings } from "../../src/server/services/settings";
 import { createSubmission } from "../../src/server/services/submissions/save";
 import { loadSubmission } from "../../src/server/services/submissions/load";
@@ -35,6 +34,8 @@ const submission = (registry: Awaited<ReturnType<typeof makeActor>>, over = {}) 
       formFiled: "REG-01D",
       registeredName: "Fee Test Ltd",
       dateSubmitted: lagosToday(),
+      timeReceived: "00:05",
+      submissionChannel: "By hand",
       principalLga: "Sagamu",
       primaryActivity: "GEN",
       installedCapacityMw: 5,
@@ -49,7 +50,7 @@ const submission = (registry: Awaited<ReturnType<typeof makeActor>>, over = {}) 
 describe("fee table (admin)", () => {
   it("a change is audited, sets 'fees revised on' and flags saved submissions instead of repricing them", async () => {
     const admin = await makeActor(db, ["admin"]);
-    const registry = await makeActor(db, ["registry"]);
+    const registry = await makeActor(db, ["registration"]);
     const s = await submission(registry);
     const before = await loadSubmission(db, s.id);
     const [d] = await db.select().from(feeSchedule).where(eq(feeSchedule.category, before.a.categoryApplied!));
@@ -68,7 +69,7 @@ describe("fee table (admin)", () => {
   });
 
   it("only an admin can change reference data", async () => {
-    const registry = await makeActor(db, ["registry"]);
+    const registry = await makeActor(db, ["registration"]);
     expect((await failure(updateFee(db, registry, "A", { registrationFee: 1, lateInitial: 1, lateDaily: 1, lateCap: 1, description: "x" }))).status).toBe(403);
   });
 
@@ -79,50 +80,14 @@ describe("fee table (admin)", () => {
   });
 });
 
-describe("units, emails and types (admin)", () => {
-  it("unit emails are validated; an added address ends the 'no address' warning", async () => {
-    const admin = await makeActor(db, ["admin"]);
-    const registry = await makeActor(db, ["registry"]);
-    const [lic] = await db.select().from(units).where(eq(units.name, "Licensing unit"));
-    const bad = await failure(saveUnit(db, admin, lic.id, { name: lic.name, divisionId: lic.divisionId, unitGroup: lic.unitGroup, email: "licensing@; ok@ogserc.org.ng", active: true }));
-    expect(bad.fieldErrors.email[0]).toContain("licensing@");
-    try {
-      await saveUnit(db, admin, lic.id, { name: lic.name, divisionId: lic.divisionId, unitGroup: lic.unitGroup, email: "licensing@ogserc.org.ng", active: true });
-      const [t] = await db.select().from(correspondenceTypes).where(eq(correspondenceTypes.name, "REG-01 Registration (new)"));
-      const s = await saveInward(db, registry, {
-        receivedDate: lagosToday(),
-        receivedTime: "00:05",
-        mode: "Hand delivery",
-        correspondenceTypeId: t.id,
-        sender: "A",
-        senderCategory: "Registrant / licensee",
-        subject: "REG-01",
-        ackIssuedVia: "Printed slip",
-      });
-      expect(s.warnings.join(" ")).not.toContain("no email address");
-    } finally {
-      await db.update(units).set({ email: null }).where(eq(units.id, lic.id));
-    }
-  });
-
-  it("registration filing types cannot be switched off; a new type can be added", async () => {
-    const admin = await makeActor(db, ["admin"]);
-    const [t] = await db.select().from(correspondenceTypes).where(eq(correspondenceTypes.filingType, "NEW"));
-    const e = await failure(saveCorrespondenceType(db, admin, t.id, { ...t, active: false }));
-    expect(e.reasons[0]).toContain("registration filing type");
-    const name = `Test type ${Date.now()}`;
-    const id = await saveCorrespondenceType(db, admin, null, { name, category: "Other", defaultUnitId: null, orderRef: null, responseTargetDays: 5, para103Wording: false, active: true });
-    const [row] = await db.select().from(correspondenceTypes).where(eq(correspondenceTypes.id, id));
-    expect(row.filingType).toBeNull();
-  });
-});
-
 describe("lists (admin)", () => {
-  it("values used by the rules cannot be switched off; file class codes are unique and fixed", async () => {
+  it("the submission channels the deemed-receipt rule relies on cannot be switched off; registry lists are gone", async () => {
     const admin = await makeActor(db, ["admin"]);
-    expect((await failure(updateListItem(db, admin, "action_required", "File only", { value: "File only", active: false }))).reasons[0]).toContain("used by the rules");
-    expect((await failure(addListItem(db, admin, "file_class", { value: `Test class ${Date.now()}`, code: "LEG" }))).fieldErrors.code[0]).toContain("already used");
-    expect((await failure(updateListItem(db, admin, "file_class", "Legal", { value: "Legal", code: "LGL", active: true }))).reasons[0]).toContain("cannot change");
+    expect((await failure(updateListItem(db, admin, "submission_channel", "Email", { value: "Email", active: false }))).reasons[0]).toContain("used by the rules");
+    expect((await failure(addListItem(db, admin, "file_class", { value: "Legal" }))).status).toBe(404);
+    expect(new Set((await listEditable(db)).map((r) => r.listKey))).toEqual(
+      new Set(["lga", "registrant_type", "licence_status", "submission_channel", "payment_channel", "payment_purpose", "fuel", "refusal_ground"]),
+    );
     const v = `Test fuel ${Date.now()}`;
     await addListItem(db, admin, "fuel", { value: v });
     await updateListItem(db, admin, "fuel", v, { value: v, active: false });
@@ -134,7 +99,7 @@ describe("lists (admin)", () => {
 describe("register exports", () => {
   it("CSV keeps the phone's leading zero and neutralises formulas; admin only; audited", async () => {
     const admin = await makeActor(db, ["admin"]);
-    const registry = await makeActor(db, ["registry"]);
+    const registry = await makeActor(db, ["registration"]);
     await submission(registry, { registeredName: "=HYPERLINK(\"x\")" });
     const sheet = await buildRegisterSheet(db, "register");
     const csv = toCsv(sheet);
@@ -150,7 +115,7 @@ describe("register exports", () => {
   });
 
   it("every register builds", async () => {
-    for (const key of ["register", "payments", "own-use", "inward", "outward", "front-desk", "files", "movements", "audit"] as const) {
+    for (const key of ["register", "payments", "own-use", "audit"] as const) {
       const sheet = await buildRegisterSheet(db, key);
       expect(sheet.columns.length).toBeGreaterThan(3);
       for (const r of sheet.rows) expect(r).toHaveLength(sheet.columns.length);
@@ -159,13 +124,13 @@ describe("register exports", () => {
 });
 
 describe("dashboard", () => {
-  it("counts both modules", async () => {
-    const registry = await makeActor(db, ["registry"]);
+  it("counts registrations only", async () => {
+    const registry = await makeActor(db, ["registration"]);
     await submission(registry);
     const d = await dashboardData(db, registry);
     expect(d.registration.total).toBe(1);
     expect(d.registration.awaitingPayment).toBe(1);
-    expect(d.registry.itemsLogged).toBe(1);
+    expect("registry" in d).toBe(false);
     expect(d.registration.byCategory.reduce((n, c) => n + c.submissions, 0)).toBe(1);
     expect(d.queues.awaitingPayment).toHaveLength(1);
   });

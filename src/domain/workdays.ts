@@ -1,7 +1,7 @@
 /**
  * Working days (SPEC §4): Monday–Friday and not a holiday. Every holiday
  * counts as non-working whatever its status (Fixed / Provisional / Estimated).
- * These mirror Excel's WORKDAY and NETWORKDAYS used across the Registry sheets.
+ * These mirror Excel's WORKDAY and NETWORKDAYS used in the workbook.
  */
 import { addDays, compareDates, isoWeekday, type LocalDate } from "./dates";
 

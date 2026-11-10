@@ -18,7 +18,7 @@ export async function DetailsTab({ l, actor }: { l: LoadedSubmission; actor: Act
         </Notice>
       ) : (
         <Notice tone="info">
-          {l.a.closed || l.evaluation?.finalDecision ? "The submission is decided; its details are read-only." : "Only a Registry officer can change these details."}
+          {l.a.closed || l.evaluation?.finalDecision ? "The submission is decided; its details are read-only." : "Only a Registration officer can change these details."}
         </Notice>
       )}
       <fieldset disabled={!editable} className="contents">

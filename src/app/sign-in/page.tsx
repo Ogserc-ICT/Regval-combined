@@ -18,7 +18,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/sign-in">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center text-center">
           <Logo height={44} priority className="px-4 py-3" />
-          <p className="mt-4 font-semibold">Registry &amp; Evaluation</p>
+          <p className="mt-4 font-semibold">Registration &amp; Evaluation</p>
           <p className="text-sm text-faint">Ogun State Electricity Regulatory Commission</p>
         </div>
         <div className="rounded-xl border border-border bg-surface p-6 shadow-card">

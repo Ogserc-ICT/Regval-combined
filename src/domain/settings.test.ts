@@ -31,24 +31,32 @@ describe("settings [G1]", () => {
 describe("number formats (SPEC §3)", () => {
   it("formats each series", () => {
     expect(formatNumber({ series: "ACK", year: 2026, serial: 1 })).toBe("OGSERC/ACK/2026/00001");
-    expect(formatNumber({ series: "FD", year: 2026, serial: 1 })).toBe("OGSERC/FD/2026/00001");
-    expect(formatNumber({ series: "OUT", year: 2026, serial: 12 })).toBe("OGSERC/OUT/2026/00012");
     expect(formatNumber({ series: "PAY", year: 2027, serial: 3 })).toBe("OGSERC/PAY/2027/00003");
     expect(formatNumber({ series: "OUN", year: 2026, serial: 7 })).toBe("OGSERC/OUN/2026/0007");
     expect(formatNumber({ series: "DEF", year: 2027, serial: 1 })).toBe("OGSERC/DEF/2027/00001");
     expect(formatNumber({ series: "REG", year: 2026, serial: 1, scope: "D-GEN" })).toBe("OGSERC/REG/2026/D-GEN/0001");
-    expect(formatNumber({ series: "FILE", serial: 1, scope: "RL" })).toBe("OGSERC/RL/001");
+  });
+  it("the ACK prefix comes from the settings (Q25)", () => {
+    expect(DEFAULT_SETTINGS.ackPrefix).toBe("OGSERC/ACK");
+    expect(formatNumber({ series: "ACK", year: 2026, serial: 2, ackPrefix: "OGSERC/REG-ACK" })).toBe("OGSERC/REG-ACK/2026/00002");
+    expect(settingsSchema.shape.ackPrefix.safeParse("OGSERC/RE-ACK").success).toBe(true);
+    for (const bad of ["", "ogserc/ack", "OGSERC//ACK", "/ACK", "ACK/", "OGSERC ACK"]) expect(settingsSchema.shape.ackPrefix.safeParse(bad).success).toBe(false);
   });
   it("refuses incomplete parts", () => {
-    expect(() => formatNumber({ series: "ACK", serial: 1 })).toThrow();
+    expect(() => formatNumber({ series: "ACK", year: 0, serial: 1 })).toThrow();
     expect(() => formatNumber({ series: "REG", year: 2026, serial: 1 })).toThrow();
     expect(() => formatNumber({ series: "ACK", year: 2026, serial: 0 })).toThrow();
   });
 });
 
-describe("roles [G7]", () => {
-  it("only the Router role can route", () => {
-    for (const r of ROLES) expect(hasPermission([r], "inward:route")).toBe(r === "router");
+describe("roles [G6], [G8]", () => {
+  it("seven roles; the Registration officer enters filings and records payments, Finance decides them", () => {
+    expect([...ROLES]).toEqual(["registration", "evaluator", "supervisor", "approver", "finance", "admin", "viewer"]);
+    expect(hasPermission(["registration"], "submission:save")).toBe(true);
+    expect(hasPermission(["registration"], "payment:record")).toBe(true);
+    expect(hasPermission(["registration"], "documents:update")).toBe(true);
+    expect(hasPermission(["registration"], "payment:decide")).toBe(false);
+    expect(hasPermission(["viewer"], "submission:save")).toBe(false);
   });
   it("every permission names known roles", () => {
     for (const roles of Object.values(PERMISSIONS)) for (const r of roles) expect(ROLES).toContain(r);

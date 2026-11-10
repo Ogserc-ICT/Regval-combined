@@ -30,6 +30,7 @@ export function parseSubmission(f: FormData): SubmissionInput {
     registeredName: s(f, "registeredName"),
     tradingName: s(f, "tradingName"),
     dateSubmitted: s(f, "dateSubmitted"),
+    timeReceived: s(f, "timeReceived"),
     submissionChannel: s(f, "submissionChannel"),
     registrantType: s(f, "registrantType"),
     cacNo: s(f, "cacNo"),

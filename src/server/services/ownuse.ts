@@ -2,7 +2,7 @@
  * Own-use notifications, REG-01I (SPEC §15; modIntake.SaveOwnUseAt, RegisterOwnUseFor).
  */
 import { and, asc, eq, ne, sql } from "drizzle-orm";
-import { isLocalDate, lagosInstant, yearOf } from "@/domain/dates";
+import { yearOf } from "@/domain/dates";
 import { formatNaira } from "@/domain/money";
 import { assessOwnUse, installedKw, ownUseFee, type OwnUseAssessment } from "@/domain/registration/ownuse";
 import { registrationDeadline } from "@/domain/settings";
@@ -14,13 +14,16 @@ import { documentChecklist, ownUseNotifications, ownUseUnits, payments, submissi
 import { blocked, forbidden, needsConfirmation, notFound, Problems, ServiceError } from "../errors";
 import { issueNumber } from "../numbering";
 import { lagosToday } from "../time";
-import { createInwardItem } from "./inward";
-import { correspondenceTypeForFiling, listValues, loadRef, signatoriesReady } from "./reference";
+import { checkReceipt, deemedFor, issueAck, type Receipt } from "./receipt";
+import { listValues, loadRef, signatoriesReady } from "./reference";
 import { getSettings } from "./settings";
 
 export type OwnUseInput = {
   name: string;
+  /** Date received (YYYY-MM-DD), time received (HH:MM) and channel: para 10(3). */
   dateFiled: string;
+  timeReceived?: string | null;
+  submissionChannel?: string | null;
   cacNo?: string | null;
   siteAddress?: string | null;
   lga?: string | null;
@@ -36,12 +39,15 @@ export type OwnUseInput = {
 
 const t = (v: string | null | undefined) => (v ?? "").trim() || null;
 
-async function validate(tx: Tx, input: OwnUseInput, today: string) {
+async function validate(tx: Tx, input: OwnUseInput) {
   const p = new Problems();
-  const lgas = await listValues(tx, "lga");
+  const [lgas, channels] = await all(tx, [() => listValues(tx, "lga"), () => listValues(tx, "submission_channel")]);
   if (!t(input.name)) p.field("name", "Name is required.");
-  if (!isLocalDate(input.dateFiled)) p.field("dateFiled", "Date filed is required (YYYY-MM-DD).");
-  else if (input.dateFiled > today) p.field("dateFiled", "Date filed cannot be in the future.");
+  const receipt = checkReceipt(p, { date: input.dateFiled, time: input.timeReceived, channel: input.submissionChannel }, channels, {
+    date: "dateFiled",
+    time: "timeReceived",
+    channel: "submissionChannel",
+  });
   if (!input.lga || !lgas.includes(input.lga)) p.field("lga", "LGA is required (from the list).");
   const units = input.units.filter((u) => Number.isFinite(u.kw) && u.kw > 0);
   if (!units.length) p.field("units", "At least one generator unit (kW) is required.");
@@ -59,57 +65,44 @@ async function validate(tx: Tx, input: OwnUseInput, today: string) {
     else phone = v.value;
   }
   if (t(input.email) && !validateEmail(input.email!).ok) p.field("email", "Email address is not valid.");
-  return { p, cac, phone, units };
+  return { p, cac, phone, units, receipt };
 }
 
-/** Save a notification (direct entry): ACK from the shared series, then the OUN. */
+/** Save a notification: deemed receipt date (para 10(3)), the ACK, then the OUN. */
 export async function createOwnUse(db: Db, actor: Actor | null, input: OwnUseInput, opts: { confirmWarnings?: boolean } = {}): Promise<{ id: string; ounNo: string; ackNo: string }> {
   authorize(actor, "ownuse:save");
-  const today = lagosToday();
   return db.transaction(async (tx) => {
     const settings = await getSettings(tx);
-    const { p, cac, phone, units } = await validate(tx, input, today);
+    const { p, cac, phone, units, receipt } = await validate(tx, input);
     p.throwIfAny();
+    const r = receipt as Receipt;
     const kw = await checkOwnUse(tx, null, input, cac, units, settings, opts);
-
-    const type = await correspondenceTypeForFiling(tx, "OWNUSE");
-    const inward = await createInwardItem(tx, {
-      receivedAt: lagosInstant(input.dateFiled, "00:00"),
-      mode: "Hand delivery",
-      correspondenceTypeId: type?.id ?? null,
-      sender: t(input.name)!,
-      subject: "Own-use notification (REG-01I)",
-      cacNo: cac,
-      lga: input.lga,
-      contactPerson: t(input.contactPerson),
-      phone,
-      email: t(input.email),
-      receivedByUserId: actor.id,
-      source: "own_use_direct",
-      remarks: "Saved directly on the Own-Use sheet",
-    });
+    const deemed = await deemedFor(tx, r);
+    const ackNo = await issueAck(tx, deemed);
     const [row] = await tx
       .insert(ownUseNotifications)
-      .values({ inwardItemId: inward.id, ackNo: inward.ackNo, name: t(input.name)!, dateFiled: input.dateFiled })
+      .values({ ackNo, name: t(input.name)!, dateFiled: r.date, receivedAt: r.receivedAt, submissionChannel: r.channel, deemedReceiptDate: deemed })
       .returning({ id: ownUseNotifications.id });
-    const oun = await persistOwnUse(tx, actor, row.id, inward.ackNo, input, cac, phone, units, kw, settings);
-    return { id: row.id, ounNo: oun, ackNo: inward.ackNo };
+    const oun = await persistOwnUse(tx, actor, row.id, ackNo, yearOf(deemed), input, cac, phone, units, kw, settings);
+    return { id: row.id, ounNo: oun, ackNo };
   });
 }
 
-/** Completes an Own-Use row started by Registry Intake: issues the OUN under its existing ACK. */
+/**
+ * Completes a row created before Phase 9 by the Registry's intake and never saved: it keeps the
+ * ACK and receipt facts it was given then, and issues the OUN.
+ */
 export async function saveDraftOwnUse(db: Db, actor: Actor | null, id: string, input: OwnUseInput, opts: { confirmWarnings?: boolean } = {}): Promise<{ id: string; ounNo: string; ackNo: string }> {
   authorize(actor, "ownuse:save");
-  const today = lagosToday();
   return db.transaction(async (tx) => {
     const [draft] = await tx.select().from(ownUseNotifications).where(eq(ownUseNotifications.id, id)).for("update");
     if (!draft) throw notFound("Own-use notification");
     if (draft.ounNo) throw blocked(`This notification is already saved as ${draft.ounNo}.`);
     const settings = await getSettings(tx);
-    const { p, cac, phone, units } = await validate(tx, input, today);
+    const { p, cac, phone, units } = await validate(tx, { ...input, dateFiled: draft.dateFiled, timeReceived: "00:00", submissionChannel: draft.submissionChannel });
     p.throwIfAny();
     const kw = await checkOwnUse(tx, id, input, cac, units, settings, opts);
-    const oun = await persistOwnUse(tx, actor, id, draft.ackNo, input, cac, phone, units, kw, settings);
+    const oun = await persistOwnUse(tx, actor, id, draft.ackNo, yearOf(draft.deemedReceiptDate), input, cac, phone, units, kw, settings);
     return { id, ounNo: oun, ackNo: draft.ackNo };
   });
 }
@@ -144,6 +137,7 @@ async function persistOwnUse(
   actor: Actor,
   id: string,
   ackNo: string,
+  ounYear: number,
   input: OwnUseInput,
   cac: string | null,
   phone: string | null,
@@ -153,13 +147,12 @@ async function persistOwnUse(
 ): Promise<string> {
   const ref = await loadRef(tx);
   const fee = ownUseFee(kw, settings.ownUseThresholdKw, ref.fees);
-  const { number: oun } = await issueNumber(tx, "OUN", { year: yearOf(input.dateFiled) });
+  const { number: oun } = await issueNumber(tx, "OUN", { year: ounYear });
   await tx
     .update(ownUseNotifications)
     .set({
       ounNo: oun,
       name: t(input.name)!,
-      dateFiled: input.dateFiled,
       cacNo: cac,
       siteAddress: t(input.siteAddress),
       lga: input.lga,
@@ -190,7 +183,7 @@ async function persistOwnUse(
     entityType: "own_use",
     entityId: id,
     reference: oun,
-    detail: `${t(input.name)} - ${kw} kW - ${elig} - fee ${formatNaira(fee)} - registry ack ${ackNo}`,
+    detail: `${t(input.name)} - ${kw} kW - ${elig} - fee ${formatNaira(fee)} - ACK ${ackNo}`,
   });
   return oun;
 }
@@ -229,6 +222,7 @@ export async function loadOwnUse(db: DbOrTx, id: string): Promise<LoadedOwnUse> 
       ounNo: row.ounNo,
       name: row.name,
       dateFiled: row.dateFiled,
+      deemedReceiptDate: row.deemedReceiptDate,
       cacNo: row.cacNo,
       siteAddress: row.siteAddress,
       lga: row.lga,
@@ -256,7 +250,7 @@ export async function setOwnUseDocument(db: Db, actor: Actor | null, id: string,
   authorize(actor, "documents:update");
   await db.transaction(async (tx) => {
     const l = await loadOwnUse(tx, id);
-    if (!l.row.ounNo) throw blocked('Save the notification first (it was started by Registry Intake).');
+    if (!l.row.ounNo) throw blocked("Save the notification first: it was started but never saved.");
     const item = l.a.documents.items.find((i) => i.key === key);
     if (!item) throw blocked("That document is not on the REG-01I list.");
     if (item.automatic) throw blocked("This document is set automatically.");
@@ -296,7 +290,7 @@ export async function registerOwnUse(db: Db, actor: Actor | null, id: string): P
   return db.transaction(async (tx) => {
     await tx.select({ id: ownUseNotifications.id }).from(ownUseNotifications).where(eq(ownUseNotifications.id, id)).for("update");
     const l = await loadOwnUse(tx, id);
-    if (!l.row.ounNo) throw blocked('Save the notification first (it was started by Registry Intake).');
+    if (!l.row.ounNo) throw blocked("Save the notification first: it was started but never saved.");
     const reasons = [...l.a.registrationBlockers];
     if (l.row.createdBy === actor.id) reasons.push("The approving officer cannot be the user who created the submission");
     if (reasons.length) {

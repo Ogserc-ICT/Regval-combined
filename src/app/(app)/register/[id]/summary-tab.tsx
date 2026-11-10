@@ -1,4 +1,5 @@
 import { Badge, Card, CardBody, CardHeader, Notice } from "@/components/ui";
+import { lagosDateTime } from "@/domain/dates";
 import { dateLong, naira } from "@/lib/format";
 import type { LoadedSubmission } from "@/server/services/submissions/load";
 
@@ -63,8 +64,10 @@ export function SummaryTab({ l }: { l: LoadedSubmission }) {
         <CardHeader title="Dates and clocks" description="Calendar days, Africa/Lagos" />
         <CardBody>
           <dl className="divide-y divide-border/60">
-            <Row label="Date submitted">{dateLong(row.dateSubmitted)}</Row>
-            <Row label="Deemed received (para 10(3))">{dateLong(l.inward?.deemedReceiptDate)}</Row>
+            <Row label="Received">
+              {lagosDateTime(row.receivedAt)} · {row.submissionChannel}
+            </Row>
+            <Row label="Deemed received (para 10(3))">{dateLong(row.deemedReceiptDate)}</Row>
             <Row label="Registration deadline">{dateLong(a.deadline)}</Row>
             <Row label="Released for evaluation">{dateLong(row.releasedOn)}</Row>
             <Row label="Submission complete">{dateLong(row.dateSubmissionComplete)}</Row>

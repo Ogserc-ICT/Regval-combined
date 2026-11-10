@@ -1,8 +1,10 @@
-# OGSERC Registry & Evaluation — Specification
+# OGSERC Registration & Evaluation — Specification
 
 Phase 0 · 5 Nov 2026 · derived from `docs/source/OGSERC_Registry_and_Evaluation_Combined.xlsm` (31 sheets, 7 standard modules + sheet modules of VBA) and `docs/COMBINED_BUILD.md`.
 
-This is the rule book for both modules. Every rule cites where it comes from in the workbook (sheet!cell, table column, or `Module.Procedure`). Where the workbook is unclear or contradicts itself, the rule says **Open: Qn** and points to `docs/QUESTIONS.md`; the app implements the stated default behind a setting until the question is answered. **Decided: Qn** marks a question Kamiye has answered (6 Nov 2026). Gap fixes G1–G14 from the build brief are applied throughout and marked **[Gn]**.
+Re-scoped 10 Nov 2026 (Phase 9): **the Registry is no longer part of this app**, which is now a standalone Registration & Evaluation app. The registry flows (§17 to §23, §25) are not applicable; the deemed-receipt rule moved onto the Register (§4.1, §6).
+
+This is the rule book for the registration rules. Every rule cites where it comes from in the workbook (sheet!cell, table column, or `Module.Procedure`). Where the workbook is unclear or contradicts itself, the rule says **Open: Qn** and points to `docs/QUESTIONS.md`; the app implements the stated default behind a setting until the question is answered. **Decided: Qn** marks a question Kamiye has answered (6 Nov 2026). Gap fixes G1–G14 from the build brief are applied throughout and marked **[Gn]**.
 
 **Where to check a citation.** The text extracted from the workbook is in [`docs/source/extracted/`](source/extracted/):
 
@@ -17,7 +19,7 @@ This is the rule book for both modules. Every rule cites where it comes from in 
 Contents
 
 1. Scope, principles and terms
-2. Settings (one set for both modules)
+2. Settings
 3. Number series
 4. Dates, time and working days
 5. Reference data
@@ -32,15 +34,9 @@ Contents
 14. Registration: data flags
 15. Own-use notifications (REG-01I)
 16. Updates and annual confirmations (para 16)
-17. Registry: front desk
-18. Registry: intake of registration filings
-19. Registry: inward items
-20. Registry: routing, forwarding and closing
-21. Registry: outward items
-22. Registry: files and file movements
-23. Registry: pending actions
-24. Outputs: acknowledgement slip, Daily Register, dashboards
-25. Acknowledgement email
+17–23. Registry flows (not applicable: registry removed)
+24. Outputs: registration documents and the dashboard
+25. Acknowledgement email (not applicable: registry removed)
 26. Daily review
 27. Roles and separation of duties
 28. Audit log
@@ -51,8 +47,8 @@ Contents
 
 ## 1. Scope, principles and terms
 
-- The app is the **system of record** for the Register and the Registry (Guide A5). It replaces every sheet listed in the brief.
-- **One OGSERC/ACK series** covers every acknowledgement, whether issued by New Inward, Registry Intake or a direct Register / Own-Use entry (Guide B46–B50, Registry Guide B62). Every acknowledgement has an Inward Register entry.
+- The app is the **system of record** for the Register (Guide A5). It replaces the workbook's registration sheets; the registry sheets belong to the separate registry app.
+- **The ACK series is this app's own.** Every submission and own-use notification gets its acknowledgement number from this app's counter when it is first saved (§3). The separate registry app also issues OGSERC/ACK numbers (Open: Q25).
 - **Server-enforced.** Every rule the workbook only reminds about (logins, separation of duties, audit integrity, locked numbers; Guide A8–A12) is enforced on the server.
 - **Every blocked action returns all its reasons at once**, as the workbook buttons do (`modWorkflow` header comment).
 - **No workbook limits.** The workbook caps a record at 3 other activities, 3 licences and 4 generator units (Guide B15). The app stores these as child rows with no fixed limit. Category and document rules apply to every activity listed.
@@ -62,12 +58,12 @@ Terms
 | Term | Meaning |
 | --- | --- |
 | Submission | One row of the Register: a new registration, an update (para 16(1)) or an annual confirmation (para 16(2)). |
-| Filing | Any registration document received by the Registry: a submission or an own-use notification. |
-| Inward item | One row of the Inward Register: any incoming item, filing or not. Its number is the ACK number. |
+| Filing | Any registration document received: a submission or an own-use notification. |
+| Receipt | When a filing was received (date and time, Lagos) and by which channel: By hand, Email or Online portal. |
 | Family | A new registration plus the updates and annual confirmations linked to it (`tblRegister[Family]`). |
 | Lagos date | The calendar date in Africa/Lagos. |
 
-## 2. Settings (one set for both modules)
+## 2. Settings
 
 All settings are admin-editable, audited on change (`modCommon.LogEdit` writes "Setting changed" with old → new), and validated. **[G1]** There is one Effective Date; the Registry Settings copy (Registry Settings B14) is dropped.
 
@@ -76,7 +72,7 @@ All settings are admin-editable, audited on change (`modCommon.LogEdit` writes "
 | `effectiveDate` | 22 Oct 2026 (placeholder) | Settings B7 vs Registry Settings B14 | **[G1]** One value. Admins see a banner while `effectiveDatePlaceholder = true`. Open: Q2. |
 | `effectiveDatePlaceholder` | true | Settings C7 | Cleared by an admin when the gazetted date is entered. |
 | `registrationPeriodDays` | 60 | Settings B8 | Para 11(1). |
-| `extensionDays` | 0 | Settings B9 | Para 25. **[G1]** Applied everywhere, including the inward "filed after deadline" flag (Registry Settings B15 ignored it). |
+| `extensionDays` | 0 | Settings B9 | Para 25. **[G1]** Applied everywhere, including the own-use "filed after deadline" flag. |
 | `newOperatorLeadDays` | 30 | Settings B11 | Para 11(2). |
 | `determinationDays` | 30 | Settings B12 | Para 13(1). |
 | `deficiencyResponseDays` | 14 | Settings B13 | Para 13(1)(b). |
@@ -97,19 +93,14 @@ All settings are admin-editable, audited on change (`modCommon.LogEdit` writes "
 | Policy: `otherActivityDocs` | N | Settings B40 | Other activities add their form's documents. |
 | Policy: `ownUseCertificate` | N | Settings B41 | Own-use notifications can be registered with a certificate. |
 | Policy: `feeOnUpdates` | N | Settings B42 | Registration fee charged on updates and annual confirmations. |
-| `officeClosingTime` | 17:00 | Registry Settings B7 | Para 10(3). |
-| `forwardingTargetDays` | 2 working days | Registry Settings B8 | |
-| `dispatchTargetDays` | 2 working days | Registry Settings B9 | |
-| `podChaseDays` | 5 working days | Registry Settings B10 | Chase proof of delivery. |
-| `urgentResponseDays` | 1 working day | Registry Settings B11 | |
-| `defaultResponseDays` | 10 working days | Registry Settings B12 | When a type has no target. |
-| `fileReturnDays` | 3 working days | Registry Settings B13 | |
-| `ackEmailMode` | Preview | Registry Settings B18 ("Display") | Send / Preview / Off. **[G9]** |
-| `ackEmailCc` | blank | Registry Settings B17 | |
-| `registryAddress` | "Registry · 5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta" | Acknowledgement Slip B4 | Printed on slips. |
-| `seedExamples` | false in production | **[G4]** | Only development and preview may seed. |
+| `officeClosingTime` | 17:00 | Registry Settings B7 | Para 10(3): the cut-off for Email and Online portal filings (§4.1). |
+| `ackPrefix` | `OGSERC/ACK` | Phase 9 | The prefix of ACK numbers (§3). Open: Q25. |
+| `letterAddress` | "5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta" | Acknowledgement Slip B4 | Printed under the Commission's name on the registration documents (§24.1). |
+| `idleMinutes` | 4 | Phase 8c | Sign-out after inactivity (docs/PLAN.md §11f). |
 
-Number prefixes (Settings B24–B28, Registry Settings B5–B6) are fixed constants in code, not settings, so a number's format can never change after issue.
+The registry service targets and acknowledgement-email settings (Registry Settings B8–B13, B17–B18) were removed with the Registry. No example data is ever seeded in production.
+
+The ACK prefix is a setting; the other number prefixes (Settings B24–B28) are fixed constants in code, so their format can never change after issue.
 
 Signatories are not settings; see §5.6 **[G3]**. Staff names are not settings or lists; they are user accounts **[G2, G6]**.
 
@@ -117,25 +108,23 @@ Signatories are not settings; see §5.6 **[G3]**. Staff names are not settings o
 
 ## 3. Number series
 
-**[G11, G12]** Every number is issued by one numbering service from a `counters` table, inside the same database transaction that saves the record, with a row lock on the counter. A number is never reused, even if the record is later cancelled, refused or lapsed, and never changes once issued (the workbook's "Issued No. / paste value to lock" column and the LOCK ALL NUMBERS button become unnecessary).
+**[G12]** Every number is issued by one numbering service from a `counters` table, inside the same database transaction that saves the record, with a row lock on the counter. A number is never reused, even if the record is later cancelled, refused or lapsed, and never changes once issued (the workbook's "Issued No. / paste value to lock" column and the LOCK ALL NUMBERS button become unnecessary).
 
 | Series | Format | Serial | Resets | Year taken from | Source |
 | --- | --- | --- | --- | --- | --- |
-| Acknowledgement | `OGSERC/ACK/2026/00001` | 5 digits | Yearly | Deemed receipt date (Decided: Q3) | Registry Guide B35; Inward Register B (`AZ = YEAR(G)`). Overrides `modRegistry.RX_SaveIntakeCore` (date received) and `modIntake.SaveSubmissionAt` (Date Submitted) |
-| Front desk intake | `OGSERC/FD/2026/00001` | 5 digits | Yearly | Date received | Front Desk Log B, S |
-| Outward | `OGSERC/OUT/2026/00001` | 5 digits | Yearly | Date of document | Outward Register B, AI |
+| Acknowledgement | `{ackPrefix}/2026/00001`, default `OGSERC/ACK/2026/00001` | 5 digits | Yearly | Deemed receipt date (Decided: Q3) | Registry Guide B35; Inward Register B (`AZ = YEAR(G)`). Overrides `modIntake.SaveSubmissionAt` (Date Submitted). Issued by this app on the first save of a submission or own-use notification |
 | Payment | `OGSERC/PAY/2026/00001` | 5 digits | Yearly | Date received | `modPayments.RecordPaymentAt` |
-| Own-use notification | `OGSERC/OUN/2026/0001` | 4 digits | Yearly | Date filed | `modIntake.SaveOwnUseAt` |
+| Own-use notification | `OGSERC/OUN/2026/0001` | 4 digits | Yearly | Deemed receipt date | `modIntake.SaveOwnUseAt` |
 | Registration | `OGSERC/REG/2026/D-GEN/0001` | 4 digits | Yearly | Approval date | `modWorkflow.ApproveFor`; `modIntake.NextRegistrationSerial` |
 | Own-use registration | `OGSERC/REG/2026/I-CPT/0001` | 4 digits | Shares the REG serial | Approval date | `modIntake.RegisterOwnUseFor` |
 | Deficiency notice | `OGSERC/DEF/2027/00001` | 5 digits | Yearly | Issue date | Own counter (Q4); replaces `modWorkflow.IssueDeficiencyFor` |
-| File reference | `OGSERC/REG/001` | 3 digits | Never (per file class) | n/a | `RegistryDesk.NextFileRef` (Open: Q5) |
+
+The front desk (FD), outward (OUT) and file reference series were removed with the Registry.
 
 - **REG serial** is one sequence per year across all categories and own-use, in issue order (`NextRegistrationSerial` takes the max over both tables). The middle part is `{Category Applied}-{Primary Code}`.
 - **Provisional registration** issues no number: the ACK number serves as the registration number while provisional (`tblRegister[Registration No. in Use]`; daily review audit text).
 - **Deficiency notice.** The workbook builds `OGSERC/DEF/{issue year}/{ACK serial}` plus `-2`, `-3` for later notices on the same submission. That can collide: ACK/2026/00005 and ACK/2027/00005 both noticed in 2027 give the same DEF number. The app uses its own yearly counter, `OGSERC/DEF/2027/00001` (5 digits, year of issue), and prints the ACK on the notice. Decided: Q4.
-- **File references** are generated per file class code (`OGSERC/{code}/{nnn}`) and can be overtyped by the officer (File Desk C18). A typed reference must be unique in the File Index. The brief says every series is per year; the workbook's file series is not. Open: Q5.
-- **Registry Intake on a pulled item** keeps the existing ACK number and issues no new one (`modRegistry.RX_PullAck`).
+- **Changing the ACK prefix** affects new numbers only; the serial keeps counting, so no number is ever issued twice.
 
 ## 4. Dates, time and working days
 
@@ -145,22 +134,22 @@ Signatories are not settings; see §5.6 **[G3]**. Staff names are not settings o
 - **Holidays** (Registry Settings A21:D36 and A81) are admin-editable rows: date, name, status (Fixed / Provisional / Estimated / State-declared). Every holiday counts as non-working whatever its status; the status is shown so staff know which to confirm (Registry Guide B39). Seeded with the 16 rows in the workbook (25 Dec 2026 to 28 Dec 2027). Open: Q13.
 - **Add working days** = Excel `WORKDAY(start, n, Hols)`: the nth working day after `start`.
 - **Working days elapsed** = `NETWORKDAYS(a, b, Hols) − 1`, floored at 0.
-- **Calendar days** are used for every Order clock in the Register (para 11, 13, 18, 20): fees, late days, determination, deficiency response, licence application, show-cause (all `+ cfg…Days` on dates in `tblRegister`). Working days are used for every Registry service target. Open: Q8.
+- **Calendar days** are used for every Order clock in the Register (para 11, 13, 18, 20): fees, late days, determination, deficiency response, licence application, show-cause (all `+ cfg…Days` on dates in `tblRegister`). Working days are used only by deemed receipt (§4.1).
 
 ### 4.1 Deemed receipt (para 10(3))
 
-Inward Register G (formula, row 9):
+In the workbook only the Registry calculated this (Inward Register G, row 9); the Register used "Date Submitted" as typed. Since Phase 9 every **submission and own-use notification** records the date and time received and the **channel** (By hand, Email, Online portal), and the deemed receipt date is computed when it is first saved:
 
 ```
 if received date is Sat/Sun or a holiday            → next working day
-else if mode ∈ {Email, Online portal}
+else if channel ∈ {Email, Online portal}
         and received time ≥ officeClosingTime       → next working day
 else                                                → received date
 ```
 
-The cut-off applies only to **Email** and **Online portal** items. Hand delivery, courier, registered post, internal mail and publication keep their actual date unless it is a weekend or holiday. The slip text says the same ("Where you file electronically after 5:00 p.m. or on a non-working day", Acknowledgement Slip B22). Decided: Q1 (workbook rule kept). The two deemed-receipt acceptance checks use email items, and a hand delivery at 16:00 on Friday 18 Dec 2026 stays on that day (§30.4).
+The cut-off applies only to **Email** and **Online portal**. A filing **By hand** keeps its actual date unless it is a weekend or holiday. The slip text says the same ("Where you file electronically after 5:00 p.m. or on a non-working day", Acknowledgement Slip B22). Decided: Q1 (workbook rule kept).
 
-The deemed receipt date is the filing's legal date of receipt. It sets the ACK year (§3) and the days late (§8.2) (Decided: Q3).
+The deemed receipt date is the filing's legal date of receipt. It is **stored and fixed** once saved (a database guard locks it, as it locked the inward item's), and it sets the ACK year (§3) and the days late (§8.2) (Decided: Q3). The date, time and channel received cannot be edited after saving either. Rows saved before Phase 9 took these facts from the inward item they were logged under.
 
 ## 5. Reference data
 
@@ -177,35 +166,30 @@ All admin-editable. Seeded from the workbook. Rows are deactivated, not deleted,
 - **Drop-downs**: filing types (3), statuses (9), LGAs (20 Ogun LGAs), registrant types (7), licence statuses (6), submission channels (3), payment channels (4), payment purposes (3), fuels (7), final decisions (7), refusal grounds (3), Finance statuses (3), wrong-form handling (2), months.
 - **Staff lists** (Lists BK–BO) are **not** carried over **[G2]**: BK6 = 69, BM6 = 82, BO6 = 65 are the character codes of E, R and A. Officers come from user accounts with the matching role.
 
-### 5.2 Registry lists (Registry Lists sheet)
+### 5.2 Registry lists
 
-- **Incoming correspondence types** (A4:J35, 32 types): name, category, default unit, Order reference, response target (working days; 0 = none), para 10(3) slip wording Y/N, and the registration filing type it maps to (4 of them: REG-01 Registration (new) → New registration; OUN-01 → Own-use notification; Update - material change; Annual confirmation).
-- **Outgoing document types** (H4:J29, 26 types): name, response expected Y/N, response window (working days).
-- **Units** (AJ:AM, 30 units): name, division, unit group, email. **Divisions** (AO:AP, 5): name, email. **[G9]** Only one unit email (ICT unit: it@ogserc.org.ng) and two division emails (Engineering Services: engineeringstandards@ogserc.org.ng; Electricity Market, Planning and Research: empr@ogserc.org.ng) are filled.
-- **Modes of receipt** (L, 7) with the Register channel each maps to (Lists BU:BV): Email → Email, Online portal → Online portal, everything else → By hand.
-- **Sender / recipient categories** (Q, 18), **actions required** (R, 4: Reply required, Action required, For information, File only), **priorities** (S, 4: Urgent, High, Normal, Low; blank = Normal), **acknowledgement issued via** (O, 5: Printed slip, Email, Portal, Not yet issued, Not required), **file classes** (T, 12, with code in W: REG, RL, TM, TS, CA, LEG, FIN, ADM, PF, GOV, POL, GEN), **security** (U: Open, Restricted, Confidential), **file status** (V: Open, Closed, Archived), **LGAs** (N, 20 + "Outside Ogun State").
-- **Staff lists** (registry staff Z, Secretary AA, routing officers AF:AI, front desk AR) become users with roles **[G2, G6, G7]**; see §27.
+Not applicable: registry removed. Correspondence types, outgoing document types, units, divisions, modes of receipt and the other Registry Lists were removed with the Registry (Phase 9).
 
 ### 5.3 Signatories **[G3]**
 
-One table: name, designation, signatory role (Chairman / CEO, Commissioner, Secretary to the Commission, Other), active, confirmed-by-admin flag. Used for CERT-01 certificates and outgoing letters.
+One table: name, designation, signatory role (Chairman / CEO, Commissioner, Secretary to the Commission, Other), active, confirmed-by-admin flag. Used for CERT-01 certificates and the other registration documents.
 
-- Seed: Jide Onakoya, Chairman, role Chairman / CEO, **unconfirmed** (from Registry Lists AC4; flag for Kamiye). Oluwatoyin Sonoiki, Secretary to the Commission, role Secretary, unconfirmed (Registry Lists AC5).
+- Seed: Jide Onakoya, Chairman, role Chairman / CEO, **unconfirmed** (from Registry Lists AC4; flag for Kamiye). The Secretary (Registry Lists AC5) was Registry staff and is no longer seeded (Phase 9).
 - Commissioner: no row. Never invent a name.
 - Approval of a new registration and own-use registration is blocked while there is no active Chairman / CEO **or** no active Commissioner, with the message "Certificate signatory not set: Commissioner. An admin must add it under Admin › Signatories." (`tblEvaluation[Approval Blockers]`; `tblOwnUse[Registration Blockers]`). Open: Q12.
-- The Secretary signatory is printed on slips and the Daily Register (Acknowledgement Slip B27, Daily Register A142) and is the default signer of outgoing letters (Registry Desk B5).
+- Which signatory signs which registration document comes with the templates (Open: Q26).
 
 ## 6. Registration: data model
 
 One **submission** per Register row (`tblRegister`, 165 columns). Inputs (blue), button-set fields (gold) and calculated fields (green) map to the app as follows. Calculated fields are pure functions of the stored record, its payments, its checklist, settings and the reference data. They are computed on the server, never stored as editable values.
 
-**Inputs**: filing type, form filed, linked registration no., registered name, trading name, date submitted, submission channel, registrant type, CAC no., TIN, registered address, principal LGA, other LGAs served, towns / estates served, primary activity, other activities (0..n), installed capacity (MW), customers, licence status, licences (0..n: number, expiry), compliance officer, phone, email, operating on Effective Date (Y/N), planned start date, approved waiver, category override + reason, the 9 document conditions (blank = applies), form sections not complete (text), capacity stated in sections (MW), show-cause date, remarks.
+**Inputs**: filing type, form filed, linked registration no., registered name, trading name, **date and time received, submission channel** (fixed once saved, §4.1), registrant type, CAC no., TIN, registered address, principal LGA, other LGAs served, towns / estates served, primary activity, other activities (0..n), installed capacity (MW), customers, licence status, licences (0..n: number, expiry), compliance officer, phone, email, operating on Effective Date (Y/N), planned start date, approved waiver, category override + reason, the 9 document conditions (blank = applies), form sections not complete (text), capacity stated in sections (MW), show-cause letter sent on, remarks.
 
-**Set by actions**: ACK number, confirmed category + reason, status, released-for-evaluation date, date submission complete, deficiency notice date, certificate issue date, registration number, certificate needs reissue, created by, pricing snapshot (priced category, fee, late initial, late daily, late cap, deadline, Effective Date), front desk intake no.
+**Set by actions**: ACK number, deemed receipt date (§4.1), confirmed category + reason, status, released-for-evaluation date, date submission complete, deficiency notice sent on, certificate issue date, certificate sent on, registration number, certificate needs reissue, created by, pricing snapshot (priced category, fee, late initial, late daily, late cap, deadline, Effective Date). The workbook's "Registry Ack No." and "Front Desk Intake No." fields are gone (Phase 9).
 
 **Validation at save** (`modIntake.SaveSubmissionAt`): every failure is listed at once.
 
-- Registered name required. Date submitted required and not in the future (Lagos).
+- Registered name required. Date received, time received (HH:MM) and channel (By hand, Email, Online portal) required; the receipt cannot be in the future (Lagos).
 - Filing type from the list. Form filed REG-01A–K; REG-01I is refused ("record it as an own-use notification").
 - Principal LGA, primary activity, licence status from the lists; other activities from the list.
 - Operating on Effective Date Y or N; N requires a planned start date.
@@ -218,7 +202,7 @@ One **submission** per Register row (`tblRegister`, 165 columns). Inputs (blue),
 - **Warning, confirmable:** the CAC number is already on a submission of another family ("One registration per person (para 11(4)). Save anyway?").
 - TIN format is not checked (Guide B15; Open: Q10).
 
-**On save**: issue the ACK (or use the one already issued by Registry Intake), freeze the pricing snapshot (§8.3), set status "Acknowledged - Awaiting Payment", record Created By, create the evaluation record and the document checklist, write audit entries ("New submission"; for linked filings also "Filing received" on the parent), add the Inward Register entry if the ACK is new (§18.3), then try the Finance gate (§11.3), which releases at once when nothing is payable.
+**On save**: compute and store the deemed receipt date (§4.1), issue the ACK in its year (§3), freeze the pricing snapshot (§8.3), set status "Acknowledged - Awaiting Payment", record Created By, create the evaluation record and the document checklist, write audit entries ("New submission"; for linked filings also "Filing received" on the parent), then try the Finance gate (§11.3), which releases at once when nothing is payable. (A row started before Phase 9 by the old Registry intake keeps the ACK and receipt it was given then.)
 
 ## 7. Registration: category and the activity map
 
@@ -293,7 +277,7 @@ Money is held as whole kobo (integers) and shown as ₦ with thousands separator
 - **Current fee** = fee of current category if filing type is New registration, or if `feeOnUpdates = Y`; else 0.
 - **Current late initial / daily / cap** = from the table for a New registration; 0 for updates and annual confirmations.
 - **Registration deadline** (snapshot if saved, else current; §9.1).
-- **Days late** = `max(0, deemed receipt date − registration deadline)` in calendar days; 0 if either is blank. The deemed receipt date is that of the submission's inward item (§4.1). The workbook used Date Submitted, the calendar date received; the app uses the deemed date (Decided: Q3).
+- **Days late** = `max(0, deemed receipt date − registration deadline)` in calendar days; 0 if either is blank. The deemed receipt date is stored on the submission (§4.1). The workbook used Date Submitted, the calendar date received; the app uses the deemed date (Decided: Q3).
 - **Late charge** = 0 if days late ≤ 0, else `min(late initial + late daily × days late, late cap)`. **[G14]** The Order caps the whole late charge. **The Order overrides the workbook here.** The workbook's `tblRegister[Late Charge]` computes `late initial + MIN(late daily × days late, late cap)`, which caps only the daily part and can exceed the cap by the initial charge (category D, 100 days late: workbook ₦10,500,000, Order ₦10,000,000).
 - **Net fee** = `max(0, registration fee − approved waiver)`.
 - **Total due** = if `waiverReducesLate = Y`: `max(0, fee + late − waiver)`; else `net fee + late`.
@@ -307,7 +291,7 @@ On save, freeze: priced category (= current), fee, late initial, late daily, lat
 
 **Recalculate pricing** (admin only, reason required; `RecalculatePricingFor`): refused once a registration number exists; re-takes the snapshot; audits before → after; then tries the Finance gate.
 
-**Changing the Effective Date** (Decided: Q6) moves at once: the global registration deadline, the inward "filed after deadline" flag, the dashboard key dates, and every record not yet priced (Register drafts, unsaved forms). Saved submissions keep their frozen deadline and show PRICING_OUT_OF_DATE. The settings page then offers admins **"Recalculate all open submissions"**: one reason, required, applied to every open submission without a registration number. Each recalculated submission gets its own "Pricing recalculated" audit entry carrying that reason and its before → after values. Submissions with a registration number are listed as skipped.
+**Changing the Effective Date** (Decided: Q6) moves at once: the global registration deadline, the own-use "filed after deadline" flag, the dashboard key dates, and every record not yet priced (Register drafts, unsaved forms). Saved submissions keep their frozen deadline and show PRICING_OUT_OF_DATE. The settings page then offers admins **"Recalculate all open submissions"**: one reason, required, applied to every open submission without a registration number. Each recalculated submission gets its own "Pricing recalculated" audit entry carrying that reason and its before → after values. Submissions with a registration number are listed as skipped.
 
 ## 9. Registration: deadlines and clocks
 
@@ -319,11 +303,11 @@ All in calendar days from Lagos dates.
 | Registration deadline, new operator | `planned start date − newOperatorLeadDays` | `Current Deadline` |
 | Registration deadline, update / annual | none | `Current Deadline` |
 | Determination due | `date submission complete + determinationDays` | `Determination Due` |
-| Deficiency response due | `deficiency notice date + deficiencyResponseDays` | `Deficiency Response Due` |
+| Deficiency response due | `date the notice was sent + deficiencyResponseDays`; none until the sent date is recorded (Phase 9) | `Deficiency Response Due` |
 | Licence application due (Unlicensed only) | `Effective Date used + licenceApplicationDays` | `Licence Application Due` |
 | Nearest licence expiry | earliest licence expiry | `Nearest Licence Expiry` |
 | Days in queue (open only) | `today − date submitted` | `Days in Queue` |
-| Show-cause period | refusal allowed when `today − show-cause date ≥ showCauseDays` | `RefuseFor` |
+| Show-cause period | refusal allowed when `today − date the show-cause letter was sent ≥ showCauseDays` | `RefuseFor` |
 | Annual confirmation due | each year on `annualConfirmationDue` | §16 |
 
 **SLA traffic light** (`SLA`): blank when closed, Provisionally Registered or Acknowledged - Awaiting Payment. **Red** if today > determination due, or (Deficiency Notice Issued and today > deficiency response due). **Amber** if determination due is set and `determination due − today ≤ amberWarningDays`, or determination due is not set and days in queue > determinationDays. Else **Green**.
@@ -390,7 +374,7 @@ Fields: payment no., date received, reference (an ACK of a submission or an OUN)
 
 | Action | Who | Rules |
 | --- | --- | --- |
-| Record | Registry officer, Finance officer | Date received required, not future. Reference must be an existing ACK (submission) or OUN. Amount > 0. Duplicate RRR / bank reference is a confirmable warning. Issues PAY number; status Pending. |
+| Record | Registration officer, Finance officer | Date received required, not future. Reference must be an existing ACK (submission) or OUN. Amount > 0. Duplicate RRR / bank reference is a confirmable warning. Issues PAY number; status Pending. |
 | Confirm | Finance officer | Must be Pending and not reversed. **[G8]** Refused (403) if the user recorded it. Requires the officer to tick "verified against the bank / Remita". Optional remarks. Final. Then try the gate. |
 | Reject | Finance officer | Pending and not reversed; reason required. **[G8]** A Finance officer cannot reject a payment they recorded. Final. |
 | Reverse | Finance officer, Admin | Not already reversed; not Rejected; reason required. Final. A released submission stays released, but its gate shows closed again. |
@@ -494,7 +478,7 @@ Counts over the 56 decision checks (1.1–7.6): satisfied (Y), failed (N), N/A, 
 | Refused | Yes | Refuse |
 | Cancelled | Yes | Cancel |
 
-A draft state "Register entry started" exists before save for rows created by Registry Intake (§18); it has an ACK but no status in the Register.
+A draft state "Register entry started" (an ACK but no status) exists only for rows created before Phase 9 by the old Registry intake; they keep that ACK when completed and saved. New entries are created whole.
 
 ### 13.2 Transitions
 
@@ -515,20 +499,22 @@ Each action lists every blocking reason at once and writes an audit entry.
 
 | Action | Who | Preconditions | Effect | Source |
 | --- | --- | --- | --- | --- |
-| **Save submission** | Registry officer | §6 validation | §6 "On save" | `SaveSubmissionAt` |
+| **Save submission** | Registration officer | §6 validation | §6 "On save" | `SaveSubmissionAt` |
 | **Assign officers** | Reviewing supervisor, Admin | Users hold the role; §27.2 | Sets evaluator / supervisor / approver | Evaluation sheet |
 | **Answer checks** | Assigned evaluating officer, reviewing supervisor | Gate cleared; not decided | Y/N/N/A per manual check | Evaluation sheet |
 | **Confirm category** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; no final decision; category A–K (not I) | Sets confirmed category; reason required if it differs from the form's category; refreshes documents; audit notes re-categorisation and any charge mismatch | `ConfirmCategoryFor` |
-| **Mark complete** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; submission complete (else lists outstanding documents and unpaid amount and suggests a deficiency notice) | Sets Date Submission Complete if blank; it is never reset, so a deficiency notice or response does not restart the 30-day clock (Decided: Q7); if status was Deficiency Notice Issued → Under Review. Determination due follows. Already complete and not reopening → message only. | `MarkCompleteFor` |
-| **Issue deficiency notice** | Reviewing supervisor (assigned) | Gate; not closed; not already Deficiency Notice Issued; if nothing failed and submission complete → confirm "anyway?" | Issues DEF number; status Deficiency Notice Issued; notice date = today; response due = today + 14; audit with counts of documents outstanding, balance, checks failed | `IssueDeficiencyFor` |
+| **Mark complete** | Assigned evaluating officer or reviewing supervisor | Gate; not closed; submission complete (else lists outstanding documents and unpaid amount and suggests a deficiency notice) | Sets Date Submission Complete if blank; it is never reset, so a deficiency notice or response does not restart the 30-day clock (Decided: Q7); if status was Deficiency Notice Issued → Under Review, and the **date the response was received** is required (not in the future, not before the notice was sent), stored on the notice and logged; it is the date complete when none was set (Phase 9: responses no longer arrive as inward items). Determination due follows. Already complete and not reopening → message only. | `MarkCompleteFor` |
+| **Issue deficiency notice** | Reviewing supervisor (assigned) | Gate; not closed; not already Deficiency Notice Issued; if nothing failed and submission complete → confirm "anyway?" | Issues DEF number; status Deficiency Notice Issued; audit with counts of documents outstanding, balance, checks failed. The response period does not start yet: it runs from the date the notice is sent (next row) | `IssueDeficiencyFor` |
+| **Record deficiency notice sent** | Registration officer | Status Deficiency Notice Issued; not already recorded; not before the issue date, not in the future | Sets the sent date on the notice and the Register; response due = sent date + 14; both then locked; audited | Phase 9 (no Registry dispatches it) |
 | **Approve and register** | Assigned approving officer | No approval blockers (§12.3) | New: certificate date = today, REG number, status Registered, final decision "Register (13(1)(a))". Update / annual: apply changes (§16), status Changes Applied, final decision "Accept filing and apply changes (para 16)". Sets date complete and review date if blank, approval date = today. Records overridden flags. | `ApproveFor` |
-| **Lapse** | Assigned approving officer (Open: Q9) | Status Deficiency Notice Issued; today > response due | Status Lapsed; final decision "Treat as lapsed (13(2))"; approval date = today | `LapseFor` |
+| **Lapse** | Assigned approving officer (Open: Q9) | Status Deficiency Notice Issued; the notice has been sent; today > response due | Status Lapsed; final decision "Treat as lapsed (13(2))"; approval date = today | `LapseFor` |
 | **Refuse** | Assigned approving officer | Not closed; show-cause date set and ≥ 14 days ago; §27.2 separation; ground is one of the three allowed | Status Refused; final decision "Refuse (13(3)) - after show-cause"; reasons = ground + details | `RefuseFor` |
 | **Cancel** | Admin | Not Cancelled, Refused, Lapsed or Changes Applied | Status Cancelled; reason required; audit "(was {status})" | `CancelFor` (para 14) |
 | **Recalculate pricing** | Admin | No registration number yet; reason | §8.3 | `RecalculatePricingFor` |
-| **Record show-cause date** | Approving officer, Reviewing supervisor | Not closed | Sets date (input in the workbook) | `tblRegister[Show-Cause Date]` |
+| **Record show-cause letter sent on** | Approving officer, Reviewing supervisor | Not closed; not in the future | Sets the date the show-cause letter was sent; the 14-day period runs from it | `tblRegister[Show-Cause Date]` |
+| **Record certificate sent** | Registration officer | A certificate was issued; not already recorded; not before the issue date, not in the future | Sets the date the certificate was sent; audited | Phase 9 (no Registry dispatches it) |
 
-The deficiency notice, acknowledgement letter, EVAL-01 form and CERT-01 certificate are documents the workbook expects "the app" to generate (Guide B13). Open: Q14.
+The deficiency notice, acknowledgement letter, EVAL-01 form and CERT-01 certificate are documents the workbook expects "the app" to generate (Guide B13); see §24.1. Open: Q14, Q26.
 
 ## 14. Registration: data flags
 
@@ -573,15 +559,15 @@ In the app the last three are mostly impossible because the server enforces the 
 
 Source: `tblOwnUse`, `modIntake.SaveOwnUseAt`, `RegisterOwnUseFor`.
 
-- **Fields**: OUN no., registry ACK no., name, date filed, CAC, site address, LGA, nature of business, grid connected Y/N, distribution licensee, contact, phone, email, generator units (make/model, kW, fuel, average MWh; 1..n), flag override reason, remarks, created by, priced fee, priced threshold, registration no., certificate issue date, registered by, front desk intake no.
+- **Fields**: OUN no., ACK no., name, date and time received, channel, deemed receipt date (§4.1), CAC, site address, LGA, nature of business, grid connected Y/N, distribution licensee, contact, phone, email, generator units (make/model, kW, fuel, average MWh; 1..n), flag override reason, remarks, created by, priced fee, priced threshold, registration no., certificate issue date, registered by.
 - **Installed capacity (kW)** = sum of unit kW (rounded to 0.001).
 - **Eligibility**: ≥ 1000 kW → "Register as operator"; < threshold → "Not required"; else "Notification required".
 - **Fee** = category I fee (₦100,000) when threshold ≤ kW < 1000, else 0; frozen on save with the threshold.
-- **Save**: name, date filed (not future), LGA, at least one unit required; CAC/phone/email formats as §6. ≥ 1000 kW is refused ("Register as captive generation (para 3(3)(c))"). Below threshold → confirmable warning. Duplicate CAC + site address → confirmable warning (one notification per site). Issues the ACK (if not already from Registry Intake) and the OUN; creates the REG-01I checklist; audits; adds the Inward Register entry if the ACK is new.
+- **Save**: name, date and time received and channel (not future), LGA, at least one unit required; CAC/phone/email formats as §6. ≥ 1000 kW is refused ("Register as captive generation (para 3(3)(c))"). Below threshold → confirmable warning. Duplicate CAC + site address → confirmable warning (one notification per site). Computes the deemed receipt date, issues the ACK and the OUN in its year; creates the REG-01I checklist; audits.
 - **Payments** reference the OUN. There is no Finance gate on own-use; payment status as §8.2.
 - **Documents**: REG-01I list; payment_evidence automatic.
 - **Flags**: OU_MISSING_REQUIRED, OU_DUPLICATE_SITE, OU_CAC_ON_REGISTER, OU_FEE_UNPAID, OU_PRICING_OUT_OF_DATE.
-- **Filed after deadline** (Y/N) = date filed > registration deadline (information only).
+- **Filed after deadline** (Y/N) = deemed receipt date > registration deadline (information only).
 - **Register with a certificate** (Approving officer): blocked unless `ownUseCertificate = Y`, not already registered, eligibility "Notification required", fee confirmed in full, documents complete, flags resolved (as §12.3 data flags), signatories set **[G3]**, and the approver is not the user who saved it **[G8]**. Issues `OGSERC/REG/{yyyy}/I-CPT/{serial}`.
 
 ## 16. Updates and annual confirmations (para 16)
@@ -592,119 +578,35 @@ Source: `tblOwnUse`, `modIntake.SaveOwnUseAt`, `RegisterOwnUseFor`.
 - An annual confirmation with no changes is audited "Annual confirmation accepted … no changes".
 - Annual confirmation due date and the two annual flags as §14.
 
-## 17. Registry: front desk
+## 17–23. Registry flows (not applicable: registry removed)
 
-Source: Front Desk, Front Desk Log, `RegistryDesk.SaveFrontDesk`.
+The front desk, registry intake, inward items, routing, forwarding and closing, outward items, files and file movements, and pending actions were removed with the Registry on 10 Nov 2026 (Phase 9). They belong to the separate registry app. What the Register took over from them:
 
-- **Who**: Front desk officer (also Registry officer).
-- **Fields**: date & time received*, sender*, subject*, correspondence type (if known), mode of receipt (default Hand delivery), delivered by, phone, number of items/volumes, remarks. **[G6]** "Received by" is the logged-in user, not typed. Phone uses the one validator **[G5]**.
-- **Save** issues the FD number. No acknowledgement. Status "Awaiting registry".
-- **Awaiting registry list**: oldest first, with working days waiting (`NETWORKDAYS(received, today) − 1`).
-- When the Registry registers it (New Inward or Registry Intake), the FD row records the ACK and registered-on time; status "Registered". An FD item can be registered once only. The front desk time becomes the receipt time.
+- **Receipt and deemed receipt** (para 10(3)): §4.1 and §6.
+- **The ACK**: this app's own counter (§3).
+- **Sending letters**: the dates the deficiency notice, show-cause letter and certificate were sent (§13.3), from which the response and show-cause periods run (§9).
+- **Responses to deficiency notices**: the date received, asked for by "Mark complete" (§13.3).
 
-## 18. Registry: intake of registration filings
+## 24. Outputs: registration documents and the dashboard
 
-Source: Registry Intake, `modRegistry.RX_SaveIntakeCore`, `RX_PullFrontDesk`, `RX_PullAck`, `RX_LogDirectEntry`.
+### 24.1 Registration documents (PDF, generated on request)
 
-### 18.1 Registry Intake
+The app must produce four documents as PDFs (Guide B13). Their templates and wording are awaited from the Commission (Open: Q14, Q26); until then the dates they are sent are recorded on the Register (§13.3).
 
-- **Who**: Registry officer.
-- Start from an FD item (pull: received, mode, sender → name, subject, phone, delivered by, volumes, remarks; type → filing type), or from an inward item already acknowledged on New Inward whose Register entry is not yet saved (§18.2), or blank.
-- **Fields**: date & time received*, mode*, filing type* (New registration / Update / Annual confirmation / Own-use notification), form filed (required unless own-use; REG-01I refused for non-own-use), registered name*, subject, linked registration no. (required for update/annual), sender's ref, CAC, principal LGA*, primary activity, licence status, operating Y/N, planned start, address, contact, phone, email, delivered by, volumes, Schedule 2 documents attached (count), fee evidence Y/N, payment reference, amount shown, acknowledgement issued via*, remarks. Received by = logged-in user **[G6]**.
-- **Save + acknowledge**, in one transaction: issue ACK (unless pulled from §18.2) → create the inward item (correspondence type mapped from the filing type, sender category "Registrant / licensee", source "Registry Intake") → mark the FD item registered → create the Register draft (or Own-Use draft) under the same ACK with: filing type, form, linked no., name, date submitted = received date, submission channel from mode, CAC, address, LGA, activity, licence status, contact, phone, email, operating, start, remarks (officer, Schedule 2 count, fee evidence, payment ref, amount) → audit "Registry acknowledgement". Then send the acknowledgement email (§25).
-- If primary activity, licence status and operating Y/N are all given, the Register entry is saved at once (§6). Otherwise it waits as "Register row started – complete and save it".
-- Options: save, save + print slip, save + PDF slip.
-- Registry Intake does not record payments or start evaluation (Registry Intake B34).
+| Document | Content (from the Order and the workbook) |
+| --- | --- |
+| Acknowledgement letter | Para 10(3): ACK number, date and time received, channel, deemed receipt date, filing type and form, the registrant's name |
+| Deficiency notice | Para 13(1)(b): DEF number, ACK, the documents outstanding, the balance due, the failed checks, the response period from the date sent |
+| EVAL-01 report | The evaluation checks and their answers, the recommended outcome and the officers |
+| CERT-01 certificate | Registration number, registrant, category and activities, the confirmed Chairman / CEO and Commissioner (§5.3) |
 
-### 18.2 Registration filing logged on New Inward
+### 24.2 Dashboard
 
-An inward item whose correspondence type maps to a registration filing type shows a **Register / Own-Use entry** state: "Awaiting Register entry" → "Register row started – complete and save it" → "Saved on Register" / "Saved on Own-Use" (Inward Register BN). Items "Awaiting Register entry" (EXAMPLE rows excluded) are listed on Registry Intake under "Acknowledged — Register entry not yet saved".
-
-### 18.3 Direct entry
-
-Saving a submission or own-use notification that has no ACK yet issues one from the shared series and creates its inward item: received = date submitted (midnight), mode from the Register channel (Email / Online portal / else Hand delivery), type from the filing type, subject "{filing type} - {form}", acknowledgement via "Not yet issued", remark "Saved directly on the Register" / "Own-Use" (`RX_LogDirectEntry`).
-
-### 18.4 Not ported **[G11]**
-
-The two-workbook link (`RX_Partner`, `RegLink_*`, `SendFilingToEval`, "SYNC WITH CORRESPONDENCE REGISTRY", "SEND FILINGS TO EVALUATION", Filings Inward) is not ported. One database and one numbering service replace it.
-
-## 19. Registry: inward items
-
-Source: New Inward, Inward Register, `RegistryDesk.SaveInwardCore`.
-
-- **Who**: Registry officer.
-- **Fields** (* required): date & time received*, mode*, correspondence type*, sender*, sender category*, subject*, sender's ref, date on document, related OGSERC no., in response to our ref (outward no.), CAC / reg no., principal LGA, contact, phone, email, delivered/sent by, volumes, Schedule 2 docs attached, fee evidence Y/N, payment reference, amount shown, acknowledgement issued via*, remarks. Received by = logged-in user **[G6]**. The registry does **not** route at registration (New Inward A29).
-- **Calculated**: deemed receipt date (§4.1); category, Order ref, default unit, response target and slip wording from the type; division from the unit.
-- **Save** issues the ACK (year per §3), links the FD item if pulled, sends the acknowledgement email to the suggested unit and its division (§25), and, if the type is a registration filing, leaves it awaiting its Register entry (§18.2). Options: save, save + print slip, save + PDF slip.
-- **Response due** = override; else none for "For information" / "File only"; else Urgent → deemed + `urgentResponseDays` working days; else deemed + type target working days if > 0; else none (`AN`). Missing type → `defaultResponseDays`.
-- **Reply sent** = the outward item whose "In reply to" is this ACK; **reply dispatched on** = its dispatch date.
-- **Closed on** = manual close date, else reply dispatched on.
-- **Status** (`AS`), first match: Closed (closed on set) → Overdue (response due set and today > due) → Awaiting routing (not forwarded, not routed) → Awaiting forwarding (routed, not forwarded) → Noted / filed (forwarded, action For information / File only) → Open.
-- **Working days at Registry** = deemed → forwarded (or today). **Working days open** = deemed → closed (or today).
-- **Filed after registration deadline?** (REG-01 Registration (new) only) = deemed receipt date > registration deadline (with extension **[G1]**).
-- **Checks / flags** (`AW`): missing required field; possible duplicate REG-01 (same CAC); no fee evidence with REG-01; Schedule 2 documents incomplete at receipt (< 12; Open: Q16); related OGSERC number missing (update, annual, deficiency response); not forwarded within target; acknowledgement not yet issued; response overdue; closed after due date; our ref not found in Outward; file ref not in File Index. ("Locked number differs" is impossible in the app.)
-- **Item history**: every change to an inward item is audited with old → new values and shown on the item page.
-- **Update item** (Registry officer): change sender/handling details, date forwarded, unit officer, acknowledgement via, manual close date, remarks.
-
-## 20. Registry: routing, forwarding and closing
-
-- **Route** (`SaveRoute`). **[G7]** Router role only; anyone else gets 403 on the server. Fields: unit override (else the type's default unit), file reference (must exist in the File Index; warn otherwise), action required*, priority (blank = Normal), action officer, response due override. Routed by = the user; routed on = now. Re-routing is allowed and audited. If the unit (or its division) has not been emailed for this item, email it (§25).
-- **Forward** (Registry officer; `ForwardToday`): date forwarded = today (or a given date) and the receiving unit officer. If not yet routed: warn and ask to confirm.
-- **Confirm receipt** (Unit officer of the routed unit): records the receiving unit officer = the user and the date. Open: Q17.
-- **Close** (Registry officer, or Unit officer of the routed unit; `CloseToday`): manual close date = today; also sets date forwarded if blank; asks to confirm "Close … without an outgoing letter?". Logging an outward reply quoting the ACK closes it automatically on dispatch.
-
-## 21. Registry: outward items
-
-Source: New Outward, Outward Register, Update Item, `SaveOutward`, `DispatchedToday`, `DeliveredToday`.
-
-- **Who**: Registry officer.
-- **Fields** (* required): date of document*, document type*, subject*, addressee*, recipient category*, recipient address/email, in reply to (inward no.; the sender is shown to confirm the match), related OGSERC no., file reference, originating unit*, prepared by, signed by* (from Signatories **[G3]**; designation fills in), dispatch mode*, date dispatched, tracking ref, response expected (blank = type default), response due override, remarks. Dispatched by = the user when a dispatch date is recorded **[G6]**.
-- **Save & get number** issues the OUT number before signature.
-- **Response due** = override; else, if response expected (explicit or type default) and dispatched: dispatch date + type response window working days (or `defaultResponseDays` if 0).
-- **Response received** = an inward item whose "In response to our ref" is this OUT number; with its deemed date.
-- **Status**: Not yet dispatched → Response received → Response overdue → Awaiting response → Delivered → Dispatched.
-- **Working days to dispatch** = document date → dispatch (or today).
-- **Checks / flags** (`AG`): missing required field; not dispatched within target; inward no. not found; delivery not confirmed after `podChaseDays` (except Publication / gazette and Internal mail); response overdue; dispatched before document date; file ref not in File Index.
-- **Dispatched today** / **Delivered today** (Registry officer): delivered requires a dispatch first; sets delivery confirmed Y and delivered date.
-
-## 22. Registry: files and file movements
-
-Source: File Desk, File Index, File Movement, `IssueFile`, `ReturnFile`, `NewFile`.
-
-- **New file** (Registry officer): file class* (reference generated `OGSERC/{code}/{next}`; overtypeable, unique), title*, owning unit, date opened (today), volume (1), security (Open), status (Open), remarks.
-- **File Index** calculated: inward items and outward items quoting it, last correspondence date (latest of inward deemed dates and outward document dates), currently with (holder and unit of the latest unreturned movement, else Registry), out since, working days out, flags (title missing, duplicate reference, out beyond return date, correspondence after file closed).
-- **Issue** (Registry officer): file reference*, volume, issued to (officer)*, unit* (OGSERC units only), purpose, return-by override, released by = the user **[G6]**, out time = now. If the file is already out: warn and ask to confirm. Return due = override else out date + `fileReturnDays` working days.
-- **Return** (Registry officer): finds the latest unreturned movement of the file; returned = today; received back by = the user. Nothing out → refused.
-- **Movement status**: Returned / Overdue (today > return due) / Out. Flags: missing field, not in File Index, earlier movement not returned, return before out.
-- "Issued to" is a free-text officer name (files move to any staff member, not only app users). Open: Q17.
-
-## 23. Registry: pending actions
-
-All inward items with status Open, Overdue, Awaiting forwarding or Awaiting routing, in the order received, for all units or one unit: inward no., deemed receipt, sender, subject, type, unit, action officer, action, priority, response due, working days open, status. Totals: pending, overdue, awaiting routing/forwarding. Available as a screen and as a PDF. Unit officers see their unit's list by default.
-
-## 24. Outputs: acknowledgement slip, Daily Register, dashboards
-
-### 24.1 Acknowledgement slip (PDF, A4, two copies)
-
-Copies: "REGISTRANT'S / SENDER'S COPY" and "REGISTRY COPY", with a cut line. Header: OGUN STATE ELECTRICITY REGULATORY COMMISSION; registry address. Title "ACKNOWLEDGEMENT OF RECEIPT" and subtitle: if the type's para 10(3) wording is Y, "Paragraph 10(3), OGSERC Order on Commencement of Operations and Registration of Licensees and Electricity Operators, 2026", else "Correspondence received by the Registry of the Ogun State Electricity Regulatory Commission". Fields: ACK no., date & time received, deemed receipt date, mode, Order reference, type, related OGSERC no. (— if none), sender, sender's ref, subject, delivered by, volumes, Schedule 2 documents, fee evidence, payment reference, amount shown, received by, forwarded to. Footer text (verbatim from Acknowledgement Slip B22), registry officer's signature line, official stamp, "For the Secretary to the Commission ({Secretary signatory})".
-
-### 24.2 Daily Register (PDF; any date, default today)
-
-Received: every inward item whose **receipt date** (not deemed) is the date: #, ACK, time, mode, type, sender, subject, deemed receipt, received by, forward to. Dispatched: every outward item dispatched that date: #, OUT, document date, mode, type, addressee, subject, signed by, dispatched by, tracking ref. Counts of each. Sign-off line: registry officer on duty (the user printing it) and the Secretary to the Commission.
-
-### 24.3 Dashboard (combined)
-
-- **Registry** (Registry Desk A7:K8, Registry Dashboard): received today, dispatched today, awaiting routing / forwarding, incoming overdue, not yet dispatched, replies overdue to us, files out; items logged; received in last 7 days; forwarding overdue; open; closed; noted; closed on time %; acknowledgements not yet issued; received after hours / non-working day; REG-01 filed after the deadline; rows with flags; at front desk awaiting registry; awaiting Register entry; outgoing: logged, dispatched in 7 days, dispatch overdue, delivery not confirmed, awaiting response, response overdue, responses received, replies to inward items; files: in index, open, out, overdue, movements, flagged. Breakdowns by division, unit, category, month (24 months from a chosen first month), correspondent category, incoming type, outgoing document type, LGA.
-- **Registration** (Dashboard): Effective Date, deadline, days to deadline; totals (submissions, awaiting payment, registered, provisional, in progress, closed, own-use, late); SLA red / amber; records with flags; average days in queue; evaluation status counts; by category (submissions, registered, fees, late charges, waivers, collected, outstanding); by status; by primary activity; by LGA (registrants and own-use); money (total due, collected, with Finance, outstanding, collection rate, unpaid on closed, credits); monthly (12 months from the Effective Date month, then the last 12); work queues: awaiting payment oldest first (with reminder due), overdue deficiency responses, ready for decision, my assigned evaluations (the logged-in user).
+Registration figures only (Dashboard sheet): Effective Date, deadline, days to deadline; totals (submissions, awaiting payment, registered, provisional, in progress, closed, own-use, late); SLA red / amber; records with flags; average days in queue; evaluation status counts; by category (submissions, registered, fees, late charges, waivers, collected, outstanding); by status; by primary activity; by LGA (registrants and own-use); money (total due, collected, with Finance, outstanding, collection rate); monthly (12 months from the Effective Date month). Work queues: awaiting payment oldest first (with reminder due), the Finance Desk, overdue deficiency responses, ready for decision, my assigned evaluations, deficiency notices to send and certificates to send.
 
 ## 25. Acknowledgement email **[G9]**
 
-- Sent through the email adapter (provider chosen by `EMAIL_PROVIDER`). Mode: Send / Preview (the officer reviews before sending) / Off.
-- **On saving an inward item**: to the suggested unit's email(s) and its division's email(s), merged without duplicates; CC `ackEmailCc`. Subject "Acknowledgement {ACK} - {type} from {sender}". Body: the item details, received (and deemed) time, received by, unit, division, and "Routing, file reference and handling will follow from the Secretary to the Commission / Head of Administration." Slip PDF attached.
-- **On routing**: to the routed unit and division unless every address was already emailed. Subject "Routed to {unit}: {ACK} - {sender}". Body adds routed by, action, priority, action officer, response due, file reference.
-- **Resend** (Registry officer): asks to confirm if it was emailed before.
-- Each send records "emailed to" and "emailed on" on the item. **Missing address**: a warning on save and an item history entry "Not emailed: no address" (unit {unit}, division {division}).
-- A kept slip PDF (attached to an email) is stored in Vercel Blob with private access.
+Not applicable: registry removed. The unit and division acknowledgement emails are out of scope and there is no email adapter.
 
 ## 26. Daily review
 
@@ -721,24 +623,21 @@ Runs from Vercel Cron at 07:00 Lagos and from an admin "Run daily review now" bu
 
 ## 27. Roles and separation of duties
 
-### 27.1 Roles **[G2, G6, G7]**
+### 27.1 Roles **[G2, G6]**
 
-A user can hold several roles. Every server action checks the role, then the record-level rules below.
+A user can hold several roles. Every server action checks the role, then the record-level rules below. The Front desk officer, Registry officer, Router and Unit officer roles were removed with the Registry (Phase 9); a Registry officer became a Registration officer.
 
-| Role | Can do | Seed (flag for Kamiye to confirm) |
-| --- | --- | --- |
-| Front desk officer | Log delivered documents; view awaiting-registry list | Funmilayo Sorungbe, Aliu Funmilola |
-| Registry officer | Registry intake, inward, outward, update, forward, close, dispatch, delivery, files, slips, Daily Register, pending actions, resend email, save submissions and own-use notifications, record payments | Olanrewaju Oluyombo, Abiodun Sodipo |
-| Router | Route and re-route inward items | Oluwatoyin Sonoiki (Secretary to the Commission), Adetola Salami (Head of Administration) |
-| Unit officer (per unit) | See items routed to their unit; confirm receipt; close | none; set per unit |
-| Evaluating officer | Answer checks; confirm category; mark complete | none |
-| Reviewing supervisor | All the evaluator can do on items they supervise; assign officers; issue deficiency notices; record show-cause date | none |
-| Approving officer | Approve, refuse, lapse; register own-use | none |
-| Finance officer | Record, confirm, reject, reverse payments | none |
-| Admin | Settings, fee table, lists, units and emails, holidays, users and roles, signatories; cancel; recalculate pricing; run daily review; export registers; reverse payments | Kamiye (ICT) |
-| Viewer | Dashboards and registers, read-only | Management, as needed |
+| Role | Can do |
+| --- | --- |
+| Registration officer | Save submissions and own-use notifications, record payments, keep the document checklist, record when deficiency notices and certificates were sent |
+| Evaluating officer | Answer checks; confirm category; mark complete |
+| Reviewing supervisor | All the evaluator can do on items they supervise; assign officers; issue deficiency notices; record the show-cause letter date |
+| Approving officer | Approve, refuse, lapse; register own-use |
+| Finance officer | Record, confirm, reject, reverse payments |
+| Admin | Settings, fee table, lists, holidays, users and roles, signatories; cancel; recalculate pricing; run daily review; export registers; reverse payments |
+| Viewer | Dashboards and registers, read-only |
 
-Everyone signed in can read the registers and dashboards. Write access is by role only.
+Everyone signed in can read the registers and dashboards. Write access is by role only. No staff names are seeded: every officer is an admin-created account.
 
 ### 27.2 Separation of duties **[G8]**
 
@@ -751,26 +650,20 @@ Enforced on the server for each record, returning every reason at once:
 
 ## 28. Audit log
 
-- Append-only, one log for both modules: timestamp (UTC, shown in Lagos time), user (id and name at the time), action, module, entity type and id, reference (ACK, OUN, PAY, OUT, FD, file ref), detail text, and structured before/after data.
+- Append-only, one log: timestamp (UTC, shown in Lagos time), user (id and name at the time), action, module, entity type and id, reference (ACK, OUN, PAY, DEF, REG), detail text, and structured before/after data. Entries written by the Registry before Phase 9 stay, with module "registry".
 - Written in the same transaction as the change it records. No update or delete, enforced in the database.
-- Action names follow the workbook: New submission, Filing received, Registry acknowledgement, Payment recorded / confirmed / rejected / reversed, Released for evaluation, Blocked - awaiting Finance confirmation, Category confirmed, Pricing recalculated, Submission complete, Deficiency notice issued, Registered, Changes applied, Annual confirmation accepted, Provisional registration, Lapsed, Refused, Cancelled, Own-use notification, Daily review, Setting changed, Edited (field old → new); plus registry actions (Front desk logged, Inward saved, Routed, Forwarded, Closed, Outward saved, Dispatched, Delivered, File opened / issued / returned, Acknowledgement emailed / Not emailed: no address) and sign-in events.
+- Action names follow the workbook: New submission, Filing received, Payment recorded / confirmed / rejected / reversed, Released for evaluation, Blocked - awaiting Finance confirmation, Category confirmed, Pricing recalculated, Submission complete, Deficiency notice issued, Registered, Changes applied, Annual confirmation accepted, Provisional registration, Lapsed, Refused, Cancelled, Own-use notification, Daily review, Setting changed, Edited (field old → new), Deficiency notice sent, Certificate sent, Show-cause date, User created / changed / deleted, and sign-in events (Signed in, Signed out, Signed out: inactive).
 
 ## 29. Workbook records: real and EXAMPLE
 
 | Sheet | Rows | Real or EXAMPLE | Notes |
 | --- | --- | --- | --- |
-| Front Desk Log | Row 6, OGSERC/FD/2026/00001 | **Real** | Verge Power Limited, "Petition to the Commission", received 3 Nov 2026 20:50, hand delivery, type "Letter from DisCo / GenCo / TCN", delivered by Emmanuel Arowos, 8 items, remarks "Delivered", status Awaiting registry. Phone saved as 8021846578 → restore **08021846578** and list in the import report **[G5]**. Received by "[Front desk officer 1]" → keep and flag **[G6]**. |
-| Inward Register | Rows 6–8, ACK/2026/00001–00003 | EXAMPLE | Sample Mini-Grid Ltd ×2, NERC ×1. |
-| Outward Register | Rows 6–7, OUT/2026/00001–00002 | EXAMPLE | |
-| File Index | Rows 6–7, OGSERC/RL/001, OGSERC/GOV/001 | EXAMPLE | |
-| File Movement | Rows 6–7 | EXAMPLE | |
-| Acknowledgement Slip, Pending Actions, Daily Register, Registry Dashboard | n/a | Derived from the EXAMPLE rows | |
-| Register, Documents, Evaluation, Payments, Own-Use, Finance Desk | 0 rows | Empty | |
+| Register, Documents, Evaluation, Payments, Own-Use, Finance Desk | 0 rows | Empty | Nothing to import. |
 | Audit Log | Row 5 | Test | "Daily review" by "Oluwafemi" on 5 Nov 2026 08:56; all counts 0. Not imported. |
-| Settings, Lists, Registry Settings, Registry Lists | | Configuration | Seeded as reference data, except G2 staff numbers, the "[Name]" signatories and the second Effective Date. |
-| Registry Desk, New Outward, File Desk | | Form defaults | Duty officer Olanrewaju Oluyombo and Secretary Oluwatoyin Sonoiki on the Desk are names from Registry Lists, not records. |
+| Settings, Lists | | Configuration | Seeded as reference data, except G2 staff numbers, the "[Name]" signatories and the second Effective Date. |
+| Registry sheets | | Out of scope | The only real record in the workbook, Verge Power Limited's petition (Front Desk Log row 6, OGSERC/FD/2026/00001), is correspondence for the registry app. The EXAMPLE rows were all in the registry registers. |
 
-Production gets only the real Front Desk item (Phase 6). Development and preview environments seed the EXAMPLE rows behind `seedExamples` **[G4]**.
+The workbook holds no real registration records, so there is nothing to import. No example data is ever seeded in production.
 
 ## 30. Worked examples (become automated tests)
 
@@ -826,7 +719,7 @@ Also: on time (deemed 21 Dec 2026) → late 0; an email filed at 18:00 on Mon 21
 - Unlicensed → licence application due 20 Jan 2027.
 - Complete on 4 Jan 2027 → determination due 3 Feb 2027; daily review on 4 Feb 2027 → Provisionally Registered.
 - Deficiency notice 4 Jan 2027 → response due 18 Jan 2027; lapse allowed from 19 Jan 2027.
-- Changing `effectiveDate` to 2 Nov 2026 → deadline 1 Jan 2027 for the global deadline, the inward flag and unpriced records; saved submissions keep 21 Dec 2026 and are flagged PRICING_OUT_OF_DATE ("deadline 21 December 2026 → 1 January 2027; Effective Date 22 October 2026 → 2 November 2026"); "Recalculate all open submissions" with a reason moves them to 1 Jan 2027 and audits each (Q6).
+- Changing `effectiveDate` to 2 Nov 2026 → deadline 1 Jan 2027 for the global deadline, the own-use flag and unpriced records; saved submissions keep 21 Dec 2026 and are flagged PRICING_OUT_OF_DATE ("deadline 21 December 2026 → 1 January 2027; Effective Date 22 October 2026 → 2 November 2026"); "Recalculate all open submissions" with a reason moves them to 1 Jan 2027 and audits each (Q6).
 
 ### 30.4 Deemed receipt
 
@@ -836,6 +729,6 @@ Also: on time (deemed 21 Dec 2026) → late 0; an email filed at 18:00 on Mon 21
 - Hand delivery, Fri 18 Dec 2026 17:30 → Fri 18 Dec 2026 (no cut-off for hand delivery).
 - Online portal, Fri 18 Dec 2026 16:59 → Fri 18 Dec 2026; 17:00 exactly → Mon 21 Dec 2026.
 - Hand delivery, Sat 26 Dec 2026 10:00 → Tue 29 Dec 2026.
-- Hand delivery, Tue 3 Nov 2026 20:50 (Verge Power) → Tue 3 Nov 2026.
+- By hand, Tue 3 Nov 2026 20:50 → Tue 3 Nov 2026.
 - Email, Thu 31 Dec 2026 18:00 → Mon 4 Jan 2027 (1 Jan holiday; 2–3 Jan weekend) → numbered OGSERC/ACK/**2027**/… (Q3).
-- Urgent item deemed Thu 24 Dec 2026 → response due Tue 29 Dec 2026.
+- Email, Fri 6 Nov 2026 17:30 → Mon 9 Nov 2026; by hand at the same time → Fri 6 Nov 2026 (submissions, `tests/integration/registration.test.ts`).

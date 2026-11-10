@@ -17,24 +17,24 @@ describe("deemed receipt, para 10(3) (SPEC §4.1, §30.4)", () => {
     expect(deemed("2026-12-24", "18:00", "Email")).toBe("2026-12-29");
   });
   it("hand delivery at 16:00 on Friday 18 Dec 2026 → that day", () => {
-    expect(deemed("2026-12-18", "16:00", "Hand delivery")).toBe("2026-12-18");
+    expect(deemed("2026-12-18", "16:00", "By hand")).toBe("2026-12-18");
   });
 
   // Worked examples
   it("hand delivery after 17:00 keeps its date (cut-off is electronic only, Q1)", () => {
-    expect(deemed("2026-12-18", "17:30", "Hand delivery")).toBe("2026-12-18");
+    expect(deemed("2026-12-18", "17:30", "By hand")).toBe("2026-12-18");
     expect(deemed("2026-12-18", "17:30", "Courier")).toBe("2026-12-18");
   });
   it("portal at 16:59 stays; at 17:00 exactly moves", () => {
     expect(deemed("2026-12-18", "16:59", "Online portal")).toBe("2026-12-18");
     expect(deemed("2026-12-18", "17:00", "Online portal")).toBe("2026-12-21");
   });
-  it("any mode on a holiday or weekend moves to the next working day", () => {
-    expect(deemed("2026-12-26", "10:00", "Hand delivery")).toBe("2026-12-29");
+  it("any channel on a holiday or weekend moves to the next working day", () => {
+    expect(deemed("2026-12-26", "10:00", "By hand")).toBe("2026-12-29");
     expect(deemed("2026-12-27", "09:00", "Email")).toBe("2026-12-29");
   });
-  it("Verge Power's petition, hand delivery Tue 3 Nov 2026 20:50 → 3 Nov", () => {
-    expect(deemed("2026-11-03", "20:50", "Hand delivery")).toBe("2026-11-03");
+  it("hand delivery late on Tue 3 Nov 2026 (20:50) → 3 Nov", () => {
+    expect(deemed("2026-11-03", "20:50", "By hand")).toBe("2026-11-03");
   });
   it("email at 18:00 on 31 Dec 2026 → Mon 4 Jan 2027 (year changes, Q3)", () => {
     expect(deemed("2026-12-31", "18:00", "Email")).toBe("2027-01-04");

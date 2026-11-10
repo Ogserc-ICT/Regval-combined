@@ -12,7 +12,7 @@ import { CLOSED_STATUSES } from "@/domain/registration/types";
 import { auditActor, authorize, type Actor } from "../auth/actor";
 import { writeAudit, type AuditActor } from "../audit";
 import type { Db, DbOrTx, Tx } from "../db/connect";
-import { accounts, evaluations, formDrafts, notifications, sessions, submissions, units, userRoles, users } from "../db/schema";
+import { accounts, evaluations, formDrafts, notifications, sessions, submissions, userRoles, users } from "../db/schema";
 import { blocked, notFound, Problems } from "../errors";
 
 export const MIN_PASSWORD_LENGTH = 10;
@@ -28,7 +28,6 @@ export async function getActorById(db: DbOrTx, id: string): Promise<Actor | null
     active: u.active,
     mustChangePassword: u.mustChangePassword,
     roles: roles.map((r) => r.role).filter(isRole),
-    unitId: u.unitId,
   };
 }
 
@@ -69,8 +68,6 @@ export type NewUser = {
   active?: boolean;
   pendingConfirmation?: boolean;
   notes?: string | null;
-  /** Unit officers: the unit whose routed items they see. */
-  unitId?: string | null;
 };
 
 /**
@@ -108,7 +105,6 @@ export async function createUserAs(
         mustChangePassword: true,
         pendingConfirmation: input.pendingConfirmation ?? false,
         notes: input.notes ?? null,
-        unitId: input.unitId || null,
       })
       .returning({ id: users.id });
     await tx.insert(accounts).values({ accountId: u.id, providerId: "credential", userId: u.id, password: hash });
@@ -154,7 +150,6 @@ export type UserUpdate = {
   confirm?: boolean;
   roles?: string[];
   notes?: string | null;
-  unitId?: string | null;
 };
 
 export async function updateUser(db: Db, actor: Actor | null, userId: string, input: UserUpdate): Promise<void> {
@@ -196,11 +191,6 @@ export async function updateUser(db: Db, actor: Actor | null, userId: string, in
     if (input.active !== undefined && input.active !== u.active) { set.active = input.active; changes.push(input.active ? "activated" : "deactivated"); }
     if (input.confirm && u.pendingConfirmation) { set.pendingConfirmation = false; changes.push("confirmed"); }
     if (input.notes !== undefined && (input.notes ?? null) !== u.notes) { set.notes = input.notes; changes.push("notes changed"); }
-    if (input.unitId !== undefined && (input.unitId || null) !== u.unitId) {
-      const unitName = async (id: string | null) => (id ? ((await tx.select({ n: units.name }).from(units).where(eq(units.id, id)))[0]?.n ?? "?") : "none");
-      changes.push(`unit: ${await unitName(u.unitId)} → ${await unitName(input.unitId || null)}`);
-      set.unitId = input.unitId || null;
-    }
     await tx.update(users).set(set).where(eq(users.id, userId));
 
     if (roles !== undefined) {
@@ -317,7 +307,6 @@ export async function removeUser(db: Db, actor: Actor | null, userId: string): P
         active: false,
         pendingConfirmation: false,
         email: `removed.${u.id}@invalid.ogserc.local`,
-        unitId: null,
         removedAt: now,
         removedBy: actor.id,
         updatedAt: now,

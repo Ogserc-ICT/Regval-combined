@@ -13,10 +13,15 @@ import { db } from "@/server/db/client";
 import { ServiceError } from "@/server/errors";
 import { loadOwnUse, type LoadedOwnUse } from "@/server/services/ownuse";
 import { listValues } from "@/server/services/reference";
+import { lagosDateTime, lagosMinuteOfDay } from "@/domain/dates";
+
+const hhmm = (d: Date) => {
+  const m = lagosMinuteOfDay(d);
+  return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+};
 import { lagosToday } from "@/server/time";
 import { getSettings } from "@/server/services/settings";
-import { saveDraftOwnUseAction } from "../../_registry/actions";
-import { ownUseDocumentAction, ownUseFlagAction, registerOwnUseAction } from "../actions";
+import { ownUseDocumentAction, ownUseFlagAction, registerOwnUseAction, saveDraftOwnUseAction } from "../actions";
 import { OwnUseForm } from "../own-use-form";
 
 export const metadata: Metadata = { title: "Own-use notification" };
@@ -35,17 +40,17 @@ export default async function OwnUseDetailPage({ params, searchParams }: PagePro
   }
   const { row, a } = l;
   if (!row.ounNo) {
-    // A row started by Registry Intake: complete it here to issue the OUN.
+    // A row started before Phase 9 by the old Registry intake: complete it here to issue the OUN.
     const [lgas, fuels, settings] = await Promise.all([listValues(db, "lga"), listValues(db, "fuel"), getSettings(db)]);
     const str = (v: string | null) => v ?? "";
     return (
       <>
         <PageHeader
           title={row.name}
-          description={<span>ACK {row.ackNo} · Own-Use row started by Registry Intake</span>}
+          description={<span>ACK {row.ackNo} · Own-Use row not yet saved</span>}
           actions={
-            <Link href="/registry-intake" className="text-sm text-info hover:underline">
-              Back to Registry intake
+            <Link href="/own-use" className="text-sm text-info hover:underline">
+              Back to Own-use
             </Link>
           }
         />
@@ -53,13 +58,14 @@ export default async function OwnUseDetailPage({ params, searchParams }: PagePro
           <OwnUseForm
             lgas={lgas}
             fuels={fuels}
+            channels={[row.submissionChannel]}
             today={lagosToday()}
             thresholdKw={settings.ownUseThresholdKw}
             action={saveDraftOwnUseAction}
-            values={{ id: row.id, name: row.name, dateFiled: row.dateFiled, cacNo: str(row.cacNo), siteAddress: str(row.siteAddress), lga: str(row.lga), contactPerson: str(row.contactPerson), phone: str(row.phone), email: str(row.email), remarks: str(row.remarks) }}
+            values={{ id: row.id, name: row.name, dateFiled: row.dateFiled, timeReceived: hhmm(row.receivedAt), channel: row.submissionChannel, deemed: row.deemedReceiptDate, cacNo: str(row.cacNo), siteAddress: str(row.siteAddress), lga: str(row.lga), contactPerson: str(row.contactPerson), phone: str(row.phone), email: str(row.email), remarks: str(row.remarks) }}
           />
         ) : (
-          <Notice tone="info">A Registry officer completes this notification and saves it to issue the OUN number.</Notice>
+          <Notice tone="info">A Registration officer completes this notification and saves it to issue the OUN number.</Notice>
         )}
       </>
     );
@@ -84,12 +90,13 @@ export default async function OwnUseDetailPage({ params, searchParams }: PagePro
           </Link>
         }
       />
-      {sp.saved ? <Notice tone="accent" className="mb-4">Saved as {row.ounNo} (registry acknowledgement {row.ackNo}). Fee due: {naira(a.feeDue)}.</Notice> : null}
+      {sp.saved ? <Notice tone="accent" className="mb-4">Saved as {row.ounNo} (acknowledgement {row.ackNo}). Fee due: {naira(a.feeDue)}.</Notice> : null}
       <div className="grid gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader title="Notification" />
           <CardBody className="space-y-1.5 text-sm">
-            <p><span className="text-muted">Filed:</span> {dateLong(row.dateFiled)}{a.filedAfterDeadline ? " (after the registration deadline)" : ""}</p>
+            <p><span className="text-muted">Received:</span> {lagosDateTime(row.receivedAt)} · {row.submissionChannel}</p>
+            <p><span className="text-muted">Deemed received (para 10(3)):</span> {dateLong(row.deemedReceiptDate)}{a.filedAfterDeadline ? " (after the registration deadline)" : ""}</p>
             <p><span className="text-muted">LGA:</span> {row.lga}</p>
             <p><span className="text-muted">Site:</span> {row.siteAddress ?? "—"}</p>
             <p><span className="text-muted">CAC:</span> {row.cacNo ?? "—"}</p>

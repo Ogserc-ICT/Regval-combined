@@ -6,8 +6,6 @@ import { cn } from "@/lib/cn";
 
 const TABS = [
   ["/admin/reference/fees", "Fees & activities"],
-  ["/admin/reference/units", "Units & emails"],
-  ["/admin/reference/types", "Correspondence types"],
   ["/admin/reference/lists", "Lists"],
   ["/admin/reference/order", "Forms, documents & checks"],
 ] as const;

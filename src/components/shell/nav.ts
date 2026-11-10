@@ -5,9 +5,8 @@
 import type { Permission } from "@/domain/roles";
 
 export type NavIcon =
-  | "dashboard" | "frontdesk" | "intake" | "inward" | "routing" | "outward" | "files" | "pending"
-  | "register" | "payments" | "documents" | "evaluation" | "ownuse" | "reports" | "audit"
-  | "settings" | "holidays" | "users" | "signatories" | "review" | "reference" | "exports" | "import" | "golive";
+  | "dashboard" | "register" | "payments" | "documents" | "evaluation" | "ownuse" | "reports" | "audit"
+  | "settings" | "holidays" | "users" | "signatories" | "review" | "reference" | "exports" | "golive";
 
 export type NavItem = {
   label: string;
@@ -24,18 +23,6 @@ export const NAV: NavGroup[] = [
   {
     label: "Overview",
     items: [{ label: "Dashboard", href: "/dashboard", icon: "dashboard", permission: "registers:read" }],
-  },
-  {
-    label: "Registry",
-    items: [
-      { label: "Front desk", href: "/front-desk", icon: "frontdesk", permission: "registers:read" },
-      { label: "Registry intake", href: "/registry-intake", icon: "intake", permission: "registers:read" },
-      { label: "Inward", href: "/inward", icon: "inward", permission: "registers:read" },
-      { label: "Routing", href: "/routing", icon: "routing", permission: "registers:read" },
-      { label: "Outward", href: "/outward", icon: "outward", permission: "registers:read" },
-      { label: "Files", href: "/files", icon: "files", permission: "registers:read" },
-      { label: "Pending actions", href: "/pending", icon: "pending", permission: "registers:read" },
-    ],
   },
   {
     label: "Registration",
@@ -64,7 +51,6 @@ export const NAV: NavGroup[] = [
       { label: "Staff & roles", href: "/admin/users", icon: "users", permission: "users:manage" },
       { label: "Daily review", href: "/admin/daily-review", icon: "review", permission: "registers:read" },
       { label: "Export registers", href: "/admin/exports", icon: "exports", permission: "registers:export" },
-      { label: "Import", href: "/admin/import", icon: "import", permission: "settings:write" },
       { label: "Go-live checks", href: "/admin/go-live", icon: "golive", permission: "settings:write" },
     ],
   },

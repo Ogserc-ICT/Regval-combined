@@ -17,7 +17,7 @@ export function testDb(max = 25): Db {
 /** Clears record tables between tests. The audit log cannot be cleared (it is append-only). */
 export async function resetTables(db: Db) {
   // TRUNCATE skips the row-level no-delete guards; the audit log is never truncated.
-  await db.execute(sql`truncate users, settings, holidays, signatories, email_messages, daily_review_runs restart identity cascade`);
+  await db.execute(sql`truncate users, settings, holidays, signatories, daily_review_runs restart identity cascade`);
 }
 
 /** Drizzle wraps driver errors; resolve to the database's own message. */

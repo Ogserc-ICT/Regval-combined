@@ -2,7 +2,7 @@
  * Save submission (SPEC §6; modIntake.SaveSubmissionAt) and edit details.
  */
 import { and, eq, inArray } from "drizzle-orm";
-import { isLocalDate, lagosInstant } from "@/domain/dates";
+import { isLocalDate } from "@/domain/dates";
 import { currentPricing } from "@/domain/registration/pricing";
 import { FILING_LABELS, ST, type Filing } from "@/domain/registration/types";
 import { validateCac, validateEmail, validatePhone, normaliseTin } from "@/domain/validators";
@@ -12,8 +12,8 @@ import { all, type Db, type Tx } from "../../db/connect";
 import { evaluations, submissionLicences, submissionOtherActivities, submissions } from "../../db/schema";
 import { blocked, needsConfirmation, notFound, Problems } from "../../errors";
 import { lagosToday } from "../../time";
-import { createInwardItem } from "../inward";
-import { correspondenceTypeForFiling, listValues, loadRef } from "../reference";
+import { checkReceipt, deemedFor, issueAck } from "../receipt";
+import { listValues, loadRef } from "../reference";
 import { getSettings } from "../settings";
 import { CONDITION_COLUMNS, duplicateChecks, type SubmissionRow } from "./load";
 import { tryRelease } from "./workflow";
@@ -24,7 +24,9 @@ export type SubmissionInput = {
   linkedRegistrationNo?: string | null;
   registeredName: string;
   tradingName?: string | null;
+  /** Date received (YYYY-MM-DD), time received (HH:MM) and channel: para 10(3). */
   dateSubmitted: string;
+  timeReceived?: string | null;
   submissionChannel?: string | null;
   registrantType?: string | null;
   cacNo?: string | null;
@@ -62,7 +64,7 @@ const t = (v: string | null | undefined) => {
   return s === "" ? null : s;
 };
 
-type Columns = Omit<typeof submissions.$inferInsert, "id" | "inwardItemId" | "ackNo" | "createdAt" | "updatedAt">;
+type Columns = Omit<typeof submissions.$inferInsert, "id" | "ackNo" | "deemedReceiptDate" | "createdAt" | "updatedAt">;
 
 /** Validate everything at once (SPEC §6). Returns the column values and child rows. */
 async function validate(tx: Tx, input: SubmissionInput, selfId: string | null, today: string) {
@@ -78,8 +80,8 @@ async function validate(tx: Tx, input: SubmissionInput, selfId: string | null, t
   if (!(filing in FILING_LABELS)) p.field("filingType", "Choose the filing type from the list.");
   const name = t(input.registeredName);
   if (!name) p.field("registeredName", "Registered name is required.");
-  if (!isLocalDate(input.dateSubmitted)) p.field("dateSubmitted", "Date submitted is required (YYYY-MM-DD).");
-  else if (input.dateSubmitted > today) p.field("dateSubmitted", "Date submitted cannot be in the future.");
+  const receipt = checkReceipt(p, { date: input.dateSubmitted, time: input.timeReceived, channel: input.submissionChannel }, channels);
+  void today;
   const form = t(input.formFiled);
   if (!form) p.field("formFiled", "Form filed is required (REG-01A to REG-01K).");
   else if (form === "REG-01I") p.field("formFiled", "REG-01I is the own-use notification: record it under Own-use.");
@@ -97,8 +99,6 @@ async function validate(tx: Tx, input: SubmissionInput, selfId: string | null, t
   const start = t(input.plannedStartDate);
   if (operating !== "Y" && operating !== "N") p.field("operatingOnEffectiveDate", "Operating on the Effective Date must be Y or N.");
   else if (operating === "N" && (!start || !isLocalDate(start))) p.field("plannedStartDate", "Planned start date is required for a new operator.");
-  const channel = t(input.submissionChannel);
-  if (channel && !channels.includes(channel)) p.field("submissionChannel", "Choose the channel from the list.");
   const regType = t(input.registrantType);
   if (regType && !registrantTypes.includes(regType)) p.field("registrantType", "Choose the registrant type from the list.");
   let cac = t(input.cacNo);
@@ -149,8 +149,9 @@ async function validate(tx: Tx, input: SubmissionInput, selfId: string | null, t
     linkedRegistrationNo: filing === "NEW" ? null : linkedNo,
     registeredName: name ?? "",
     tradingName: t(input.tradingName),
-    dateSubmitted: input.dateSubmitted,
-    submissionChannel: channel,
+    dateSubmitted: receipt?.date ?? input.dateSubmitted,
+    receivedAt: receipt?.receivedAt ?? new Date(0),
+    submissionChannel: receipt?.channel ?? "",
     registrantType: regType,
     cacNo: cac,
     tin: input.tin ? normaliseTin(input.tin) || null : null,
@@ -205,8 +206,11 @@ async function writeChildren(tx: Tx, id: string, others: string[], licences: { l
   if (licences.length) await tx.insert(submissionLicences).values(licences.map((l, i) => ({ submissionId: id, position: i + 1, ...l })));
 }
 
-function receivedModeForChannel(channel: string | null | undefined): string {
-  return channel === "Email" ? "Email" : channel === "Online portal" ? "Online portal" : "Hand delivery";
+/** A saved filing's receipt facts never change: they set its ACK and deemed receipt date. */
+function keepReceipt(cols: Columns, row: { dateSubmitted: string; receivedAt: Date; submissionChannel: string }) {
+  cols.dateSubmitted = row.dateSubmitted;
+  cols.receivedAt = row.receivedAt;
+  cols.submissionChannel = row.submissionChannel;
 }
 
 /** Saves the Register entry: snapshot, status, evaluation row, audit, gate. */
@@ -260,7 +264,7 @@ async function warnings(tx: Tx, row: Pick<SubmissionRow, "id" | "linkedSubmissio
   return d.cac ? [`CAC number ${row.cacNo} is already on ${d.cac.ack} (${d.cac.name}). One registration per person (para 11(4)). Save anyway?`] : [];
 }
 
-/** Direct entry on the Register: issues the ACK from the shared series and logs the inward item. */
+/** A new Register entry: computes the deemed receipt date (para 10(3)) and issues the ACK. */
 export async function createSubmission(db: Db, actor: Actor | null, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
   authorize(actor, "submission:save");
   const today = lagosToday();
@@ -272,50 +276,36 @@ export async function createSubmission(db: Db, actor: Actor | null, input: Submi
     const w = await warnings(tx, { id: "00000000-0000-0000-0000-000000000000", linkedSubmissionId: v.linkedId, cacNo: v.cols.cacNo ?? null, registeredName: v.cols.registeredName });
     if (w.length && !opts.confirmWarnings) throw needsConfirmation(...w);
 
-    const type = await correspondenceTypeForFiling(tx, v.cols.filingType as Filing);
-    const label = FILING_LABELS[v.cols.filingType as Filing];
-    const inward = await createInwardItem(tx, {
-      receivedAt: lagosInstant(input.dateSubmitted, "00:00"),
-      mode: receivedModeForChannel(v.cols.submissionChannel),
-      correspondenceTypeId: type?.id ?? null,
-      sender: v.cols.registeredName,
-      subject: `${label} - ${v.cols.formFiled}`,
-      cacNo: v.cols.cacNo,
-      relatedOgsercNo: v.cols.linkedRegistrationNo,
-      lga: v.cols.principalLga,
-      contactPerson: v.cols.complianceOfficer,
-      phone: v.cols.phone,
-      email: v.cols.email,
-      ackIssuedVia: "Not yet issued",
-      receivedByUserId: actor.id,
-      source: "register_direct",
-      remarks: "Saved directly on the Register",
-    });
+    const deemed = await deemedFor(tx, { receivedAt: v.cols.receivedAt, channel: v.cols.submissionChannel });
+    const ackNo = await issueAck(tx, deemed);
     const [row] = await tx
       .insert(submissions)
-      .values({ ...v.cols, inwardItemId: inward.id, ackNo: inward.ackNo })
+      .values({ ...v.cols, ackNo, deemedReceiptDate: deemed })
       .returning({ id: submissions.id });
     await writeChildren(tx, row.id, v.others, v.licences);
-    await finishSave(tx, actor, row.id, inward.ackNo, v.cols, v.others, pricing, settings, v.linkedId);
-    return { id: row.id, ackNo: inward.ackNo };
+    await finishSave(tx, actor, row.id, ackNo, v.cols, v.others, pricing, settings, v.linkedId);
+    return { id: row.id, ackNo };
   });
 }
 
-/** Saves a Register entry started by Registry Intake (it already has its ACK). */
+/**
+ * Completes a row created before Phase 9 by the Registry's intake and never saved: it keeps the
+ * ACK and receipt facts it was given then. New entries are created whole by createSubmission.
+ */
 export async function saveDraftSubmission(db: Db, actor: Actor | null, id: string, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
   authorize(actor, "submission:save");
   return db.transaction((tx) => saveDraftInTx(tx, actor, id, input, opts));
 }
 
-/** The body of saveDraftSubmission, for callers already in a transaction (Registry Intake). */
-export async function saveDraftInTx(tx: Tx, actor: Actor, id: string, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
+async function saveDraftInTx(tx: Tx, actor: Actor, id: string, input: SubmissionInput, opts: SaveOptions = {}): Promise<{ id: string; ackNo: string }> {
   authorize(actor, "submission:save");
   const today = lagosToday();
   const [row] = await tx.select().from(submissions).where(eq(submissions.id, id)).for("update");
   if (!row) throw notFound("Submission");
   if (row.status) throw blocked(`This submission is already saved as ${row.ackNo}.`);
   const settings = await getSettings(tx);
-  const v = await validate(tx, input, id, today);
+  const v = await validate(tx, { ...input, dateSubmitted: row.dateSubmitted, timeReceived: "00:00", submissionChannel: row.submissionChannel }, id, today);
+  keepReceipt(v.cols, row);
   const pricing = checkPricing(v.problems, v.cols, v.ref, settings, v.others);
   v.problems.throwIfAny();
   const w = await warnings(tx, { id, linkedSubmissionId: v.linkedId, cacNo: v.cols.cacNo ?? null, registeredName: v.cols.registeredName });
@@ -328,7 +318,7 @@ export async function saveDraftInTx(tx: Tx, actor: Actor, id: string, input: Sub
 
 const FIELD_LABELS: Partial<Record<keyof Columns, string>> = {
   formFiled: "Form filed", linkedRegistrationNo: "Linked registration no.", registeredName: "Registered name", tradingName: "Trading name",
-  dateSubmitted: "Date submitted", submissionChannel: "Submission channel", registrantType: "Registrant type", cacNo: "CAC no.", tin: "TIN",
+  registrantType: "Registrant type", cacNo: "CAC no.", tin: "TIN",
   registeredAddress: "Registered address", principalLga: "Principal LGA", otherLgas: "Other LGAs served", townsEstates: "Towns / estates served",
   primaryActivity: "Primary activity", installedCapacityMw: "Installed capacity (MW)", customers: "Customers", licenceStatus: "Licence status",
   complianceOfficer: "Compliance officer", phone: "Phone", email: "Email", operatingOnEffectiveDate: "Operating on Effective Date",
@@ -360,7 +350,9 @@ export async function updateSubmission(db: Db, actor: Actor | null, id: string, 
     if (ev?.finalDecision) throw blocked("A final decision is recorded; the details can no longer be changed.");
     if (input.filingType !== row.filingType) throw blocked("The filing type cannot be changed after saving.");
     const settings = await getSettings(tx);
-    const v = await validate(tx, input, id, today);
+    // The receipt facts are fixed at the first save; only the other details can be edited.
+    const v = await validate(tx, { ...input, dateSubmitted: row.dateSubmitted, timeReceived: "00:00", submissionChannel: row.submissionChannel }, id, today);
+    keepReceipt(v.cols, row);
     checkPricing(v.problems, v.cols, v.ref, settings, v.others);
     v.problems.throwIfAny();
     const w = row.cacNo?.toLowerCase() !== v.cols.cacNo?.toLowerCase()

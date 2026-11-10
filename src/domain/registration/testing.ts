@@ -47,7 +47,7 @@ export function submission(over: Partial<SubmissionFacts> = {}): SubmissionFacts
     certificateIssueDate: null,
     registrationNo: null,
     priced: null,
-    createdBy: "user-registry",
+    createdBy: "user-registration",
     ...over,
   };
 }

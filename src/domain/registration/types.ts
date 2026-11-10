@@ -103,7 +103,7 @@ export type SubmissionFacts = {
   linkedRegistrationNo: string | null;
   registeredName: string;
   dateSubmitted: LocalDate;
-  /** From the inward item: sets the days late (Q3). */
+  /** Para 10(3), stored on the submission: sets the days late (Q3). */
   deemedReceiptDate: LocalDate | null;
   registrantType: string | null;
   cacNo: string | null;
@@ -126,6 +126,7 @@ export type SubmissionFacts = {
   categoryConfirmedReason: string | null;
   releasedOn: LocalDate | null;
   dateSubmissionComplete: LocalDate | null;
+  /** The date the outstanding deficiency notice was sent; the response period runs from it. */
   deficiencyNoticeDate: LocalDate | null;
   showCauseDate: LocalDate | null;
   certificateIssueDate: LocalDate | null;

@@ -12,7 +12,9 @@ import {
   answerChecksAction,
   approveAction,
   cancelAction,
+  certificateSentAction,
   deficiencyAction,
+  deficiencySentAction,
   flagReasonAction,
   lapseAction,
   markCompleteAction,
@@ -97,6 +99,44 @@ export async function EvaluationTab({ l, actor }: { l: LoadedSubmission; actor: 
         </Card>
       </div>
 
+      {can(actor, "letters:record-sent") && (row.status === "Deficiency Notice Issued" || row.certificateIssueDate) ? (
+        <Card>
+          <CardHeader title="Letters sent" description="No Registry numbers or dispatches these now: record the date each one actually went out." />
+          <CardBody className="grid gap-6 md:grid-cols-2">
+            {row.status === "Deficiency Notice Issued" ? (
+              row.deficiencyNoticeDate ? (
+                <p className="text-sm">
+                  Deficiency notice sent on <span className="font-medium">{dateLong(row.deficiencyNoticeDate)}</span>; response due {dateLong(a.deficiencyResponseDue)}.
+                </p>
+              ) : (
+                <div>
+                  <p className="mb-2 text-sm font-medium">Deficiency notice sent on</p>
+                  <p className="mb-2 text-xs text-muted">Starts the {l.settings.deficiencyResponseDays}-day response period (para 13(1)(b)). Fixed once saved.</p>
+                  <ActionForm action={deficiencySentAction} submitLabel="Save sent date" size="sm" variant="secondary" hidden={hidden} inline>
+                    <Input name="sentOn" type="date" max={l.ctx.today} defaultValue={l.ctx.today} className="h-8 w-44" aria-label="Deficiency notice sent on" />
+                  </ActionForm>
+                </div>
+              )
+            ) : null}
+            {row.certificateIssueDate ? (
+              row.certificateSentOn ? (
+                <p className="text-sm">
+                  Certificate issued {dateLong(row.certificateIssueDate)}, sent on <span className="font-medium">{dateLong(row.certificateSentOn)}</span>.
+                </p>
+              ) : (
+                <div>
+                  <p className="mb-2 text-sm font-medium">Certificate sent on</p>
+                  <p className="mb-2 text-xs text-muted">Issued {dateLong(row.certificateIssueDate)}. Fixed once saved.</p>
+                  <ActionForm action={certificateSentAction} submitLabel="Save sent date" size="sm" variant="secondary" hidden={hidden} inline>
+                    <Input name="sentOn" type="date" max={l.ctx.today} defaultValue={l.ctx.today} className="h-8 w-44" aria-label="Certificate sent on" />
+                  </ActionForm>
+                </div>
+              )
+            ) : null}
+          </CardBody>
+        </Card>
+      ) : null}
+
       <Card>
         <CardHeader title="Decisions" description="Each action lists every reason it is blocked." />
         <CardBody className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -115,14 +155,25 @@ export async function EvaluationTab({ l, actor }: { l: LoadedSubmission; actor: 
           {open && (isEval || isSup) ? (
             <div>
               <p className="mb-2 text-sm font-medium">Mark complete</p>
-              <p className="mb-2 text-xs text-muted">Starts the 30-day determination clock (para 13(1)); a deficiency notice never restarts it.</p>
-              <ActionForm action={markCompleteAction} submitLabel="Mark complete" size="sm" variant="secondary" hidden={hidden} />
+              <p className="mb-2 text-xs text-muted">
+                Starts the {l.settings.determinationDays}-day determination clock (para 13(1)); a deficiency notice never restarts it.
+                {row.status === "Deficiency Notice Issued" ? " The response to the deficiency notice clears it: give the date it was received." : ""}
+              </p>
+              <ActionForm action={markCompleteAction} submitLabel="Mark complete" size="sm" variant="secondary" hidden={hidden}>
+                {(fe) =>
+                  row.status === "Deficiency Notice Issued" ? (
+                    <Field label="Response received on *" htmlFor="responseReceivedOn" errors={fe.responseReceivedOn}>
+                      <Input id="responseReceivedOn" name="responseReceivedOn" type="date" max={l.ctx.today} className="h-8 w-44" />
+                    </Field>
+                  ) : null
+                }
+              </ActionForm>
             </div>
           ) : null}
           {open && isSup && row.status !== "Deficiency Notice Issued" ? (
             <div>
               <p className="mb-2 text-sm font-medium">Deficiency notice (para 13(1)(b))</p>
-              <p className="mb-2 text-xs text-muted">Response due in {l.settings.deficiencyResponseDays} days.</p>
+              <p className="mb-2 text-xs text-muted">The {l.settings.deficiencyResponseDays}-day response period starts on the date the notice is sent, recorded below.</p>
               <ActionForm action={deficiencyAction} submitLabel="Issue deficiency notice" size="sm" variant="secondary" hidden={hidden} />
             </div>
           ) : null}
@@ -149,9 +200,10 @@ export async function EvaluationTab({ l, actor }: { l: LoadedSubmission; actor: 
           ) : null}
           {!a.closed && (isAppr || isSup) ? (
             <div>
-              <p className="mb-2 text-sm font-medium">Show-cause notice (para 20)</p>
+              <p className="mb-2 text-sm font-medium">Show-cause letter sent on (para 20)</p>
+              <p className="mb-2 text-xs text-muted">The {l.settings.showCauseDays}-day show-cause period runs from this date.</p>
               <ActionForm action={showCauseAction} submitLabel="Save date" size="sm" variant="secondary" hidden={hidden} inline>
-                <Input name="date" type="date" defaultValue={row.showCauseDate ?? ""} className="h-8 w-44" aria-label="Show-cause date" />
+                <Input name="date" type="date" max={l.ctx.today} defaultValue={row.showCauseDate ?? ""} className="h-8 w-44" aria-label="Show-cause letter sent on" />
               </ActionForm>
             </div>
           ) : null}

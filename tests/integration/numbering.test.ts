@@ -41,10 +41,10 @@ describe("numbering service [G12]", () => {
   });
 
   it("series restart each year and are independent", async () => {
-    const a = await db.transaction((tx) => issueNumber(tx, "OUT", { year: 2033 }));
-    const b = await db.transaction((tx) => issueNumber(tx, "OUT", { year: 2034 }));
+    const a = await db.transaction((tx) => issueNumber(tx, "DEF", { year: 2033 }));
+    const b = await db.transaction((tx) => issueNumber(tx, "DEF", { year: 2034 }));
     const c = await db.transaction((tx) => issueNumber(tx, "PAY", { year: 2033 }));
-    expect([a.number, b.number, c.number]).toEqual(["OGSERC/OUT/2033/00001", "OGSERC/OUT/2034/00001", "OGSERC/PAY/2033/00001"]);
+    expect([a.number, b.number, c.number]).toEqual(["OGSERC/DEF/2033/00001", "OGSERC/DEF/2034/00001", "OGSERC/PAY/2033/00001"]);
   });
 
   it("REG shares one serial per year across categories", async () => {
@@ -53,11 +53,16 @@ describe("numbering service [G12]", () => {
     expect([a.number, b.number]).toEqual(["OGSERC/REG/2035/D-GEN/0001", "OGSERC/REG/2035/I-CPT/0002"]);
   });
 
-  it("file references count per file class, with no year", async () => {
-    const a = await db.transaction((tx) => issueNumber(tx, "FILE", { scope: "ZZA" }));
-    const b = await db.transaction((tx) => issueNumber(tx, "FILE", { scope: "ZZB" }));
-    const c = await db.transaction((tx) => issueNumber(tx, "FILE", { scope: "ZZA" }));
-    expect([a.number, b.number, c.number]).toEqual(["OGSERC/ZZA/001", "OGSERC/ZZB/001", "OGSERC/ZZA/002"]);
+  it("ACK numbers use the admin's prefix and keep counting when it changes (Q25)", async () => {
+    await db.execute(sql`insert into settings (key, value) values ('ackPrefix', '"OGSERC/REG-ACK"'::jsonb) on conflict (key) do update set value = excluded.value`);
+    try {
+      const a = await db.transaction((tx) => issueNumber(tx, "ACK", { year: 2036 }));
+      await db.execute(sql`delete from settings where key = 'ackPrefix'`);
+      const b = await db.transaction((tx) => issueNumber(tx, "ACK", { year: 2036 }));
+      expect([a.number, b.number]).toEqual(["OGSERC/REG-ACK/2036/00001", "OGSERC/ACK/2036/00002"]);
+    } finally {
+      await db.execute(sql`delete from settings where key = 'ackPrefix'`);
+    }
   });
 
   it("counters cannot go backwards or be deleted", async () => {

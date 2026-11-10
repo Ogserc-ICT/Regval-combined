@@ -1,5 +1,10 @@
+/** True on a production deployment or build: seed clean-ups and example data never run there. */
+export function isProductionEnv(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.VERCEL_ENV === "production" || (!env.VERCEL_ENV && env.NODE_ENV === "production");
+}
+
 /**
- * [G4] No example data in production. EXAMPLE rows may be seeded only in
+ * No example data in production. EXAMPLE rows may be seeded only in
  * development and preview environments, and only when SEED_EXAMPLES=true.
  */
 export function examplesAllowed(env: NodeJS.ProcessEnv = process.env): { allowed: boolean; reason: string } {

@@ -15,14 +15,12 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx seed/seed.ts",
-    "import:workbook": "tsx scripts/import-workbook.ts",
     "export:workbook": "tsx scripts/export-workbook.ts",
     "vercel-build": "tsx scripts/migrate.ts && tsx seed/seed.ts && next build"
   },
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
     "@react-pdf/renderer": "^4.9.0",
-    "@vercel/blob": "^2.8.2",
     "better-auth": "^1.7.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

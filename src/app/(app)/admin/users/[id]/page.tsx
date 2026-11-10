@@ -8,7 +8,6 @@ import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { auditLog } from "@/server/db/schema";
 import { listUsers } from "@/server/services/users";
-import { unitOptions } from "../units";
 import { DeleteUserCard } from "./delete-user-card";
 import { EditUserForm } from "./edit-user-form";
 
@@ -44,7 +43,7 @@ export default async function UserPage({ params }: PageProps<"/admin/users/[id]"
         </Notice>
       ) : (
         <>
-          <EditUserForm user={{ id: user.id, name: user.name, email: user.email, active: user.active, pendingConfirmation: user.pendingConfirmation, roles: user.roles, unitId: user.unitId }} units={await unitOptions()} />
+          <EditUserForm user={{ id: user.id, name: user.name, email: user.email, active: user.active, pendingConfirmation: user.pendingConfirmation, roles: user.roles }} />
           <div className="mt-6">
             <DeleteUserCard id={user.id} name={user.name} isSelf={user.id === me.id} />
           </div>

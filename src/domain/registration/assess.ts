@@ -453,7 +453,7 @@ function nextAction(
     case ST.LAPSED:
       return "Closed – Lapsed; fresh application needed";
     case ST.DEFICIENCY:
-      if (!x.deficiencyResponseDue) return "Await response";
+      if (!x.deficiencyResponseDue) return "Send the deficiency notice and record the date it was sent";
       return x.today > x.deficiencyResponseDue
         ? "Response overdue – lapse the submission (para 13(2))"
         : `Await response by ${longDate(x.deficiencyResponseDue)}`;

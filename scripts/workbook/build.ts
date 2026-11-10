@@ -9,7 +9,7 @@ import { lagosDate, lagosMinuteOfDay } from "@/domain/dates";
 import { lateCharge } from "@/domain/registration/pricing";
 import type { Settings } from "@/domain/settings";
 import type { DbOrTx } from "@/server/db/connect";
-import { divisions, feeSchedule, holidays, signatories, units, userRoles, users } from "@/server/db/schema";
+import { feeSchedule, holidays, signatories, userRoles, users } from "@/server/db/schema";
 import { getSettings } from "@/server/services/settings";
 import { VbaProject } from "./vba";
 import { editModIntake, editModRegistry, editRegistryDesk, partnerLeftovers } from "./vba-edits";
@@ -26,7 +26,7 @@ export type ExportData = {
 };
 
 export async function loadExportData(db: DbOrTx): Promise<ExportData> {
-  const [settings, fees, hols, sigs, roleRows, us, divs] = await Promise.all([
+  const [settings, fees, hols, sigs, roleRows] = await Promise.all([
     getSettings(db),
     db.select().from(feeSchedule).orderBy(asc(feeSchedule.category)),
     db.select().from(holidays).orderBy(asc(holidays.date)),
@@ -37,8 +37,6 @@ export async function loadExportData(db: DbOrTx): Promise<ExportData> {
       .innerJoin(users, eq(users.id, userRoles.userId))
       .where(eq(users.active, true))
       .orderBy(asc(users.name)),
-    db.select().from(units),
-    db.select().from(divisions),
   ]);
   const staffFor = (role: string) => [...new Set(roleRows.filter((r) => r.role === role).map((r) => r.name))];
   return {
@@ -49,13 +47,16 @@ export async function loadExportData(db: DbOrTx): Promise<ExportData> {
       evaluator: staffFor("evaluator"),
       supervisor: staffFor("supervisor"),
       approver: staffFor("approver"),
-      registry: staffFor("registry"),
-      router: staffFor("router"),
-      front_desk: staffFor("front_desk"),
+      // The app has no Registry since Phase 9 (QUESTIONS.md Q27): the workbook's Registry officer list
+      // takes the Registration officers, who now enter filings; nobody routes or keeps a front desk.
+      registry: staffFor("registration"),
+      router: [],
+      front_desk: [],
     },
     signatories: sigs.map((s) => ({ name: s.name, designation: s.designation, role: s.role })),
-    unitEmails: new Map(us.map((u) => [u.name, u.email])),
-    divisionEmails: new Map(divs.map((d) => [d.name, d.email])),
+    // Units and their emails left the app with the Registry: the workbook keeps its own.
+    unitEmails: new Map(),
+    divisionEmails: new Map(),
   };
 }
 
@@ -131,18 +132,9 @@ export async function buildWorkbook(template: Uint8Array, data: ExportData, opts
   report.push("G1: Registry Settings B14/B15 now read Settings (one Effective Date; the deadline includes the extension).");
 
   const [hh, mm] = s.officeClosingTime.split(":").map(Number);
-  for (const [ref, v] of [
-    ["B7", (hh * 60 + mm) / 1440],
-    ["B8", s.forwardingTargetDays],
-    ["B9", s.dispatchTargetDays],
-    ["B10", s.podChaseDays],
-    ["B11", s.urgentResponseDays],
-    ["B12", s.defaultResponseDays],
-    ["B13", s.fileReturnDays],
-  ] as const)
-    await x.set("Registry Settings", ref, v);
-  await x.set("Registry Settings", "B17", s.ackEmailCc || null);
-  await x.set("Registry Settings", "B18", s.ackEmailMode === "Preview" ? "Display" : s.ackEmailMode);
+  // B8:B13 (service targets) and B17:B18 (acknowledgement email) left the app with the Registry
+  // (Phase 9): the workbook keeps its own values there (QUESTIONS.md Q27).
+  await x.set("Registry Settings", "B7", (hh * 60 + mm) / 1440);
 
   // Holidays (Registry Settings A21:D80)
   for (let r = 21; r <= 80; r++) for (const c of ["A", "B", "C", "D"]) await x.set("Registry Settings", `${c}${r}`, null);

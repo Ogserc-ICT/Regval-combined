@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentActor } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { toResult, type ActionResult } from "@/server/errors";
-import { createOwnUse, registerOwnUse, setOwnUseDocument, setOwnUseFlagReason } from "@/server/services/ownuse";
+import { createOwnUse, registerOwnUse, saveDraftOwnUse, setOwnUseDocument, setOwnUseFlagReason } from "@/server/services/ownuse";
 import { parseOwnUseUnits } from "./parse";
 
 const s = (f: FormData, k: string) => {
@@ -23,6 +23,8 @@ export async function createOwnUseAction(_p: ActionResult<unknown> | undefined, 
       {
         name: s(f, "name"),
         dateFiled: s(f, "dateFiled"),
+        timeReceived: s(f, "timeReceived"),
+        submissionChannel: s(f, "submissionChannel"),
         cacNo: s(f, "cacNo"),
         siteAddress: s(f, "siteAddress"),
         lga: s(f, "lga"),
@@ -41,6 +43,41 @@ export async function createOwnUseAction(_p: ActionResult<unknown> | undefined, 
   if (res.ok) {
     revalidatePath("/own-use");
     redirect(`/own-use/${res.data.id}?saved=1`);
+  }
+  return res;
+}
+
+/** Completes a row started before Phase 9 by the Registry's intake (it keeps its ACK and receipt). */
+export async function saveDraftOwnUseAction(_p: ActionResult<unknown> | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  const res = await toResult(() =>
+    saveDraftOwnUse(
+      db,
+      actor,
+      id,
+      {
+        name: s(f, "name"),
+        dateFiled: s(f, "dateFiled"),
+        cacNo: s(f, "cacNo"),
+        siteAddress: s(f, "siteAddress"),
+        lga: s(f, "lga"),
+        natureOfBusiness: s(f, "natureOfBusiness"),
+        gridConnected: s(f, "gridConnected"),
+        distributionLicensee: s(f, "distributionLicensee"),
+        contactPerson: s(f, "contactPerson"),
+        phone: s(f, "phone"),
+        email: s(f, "email"),
+        remarks: s(f, "remarks"),
+        units: parseOwnUseUnits(f),
+      },
+      { confirmWarnings: f.get("confirmWarnings") === "yes" },
+    ),
+  );
+  if (res.ok) {
+    revalidatePath(`/own-use/${id}`);
+    revalidatePath("/own-use");
+    redirect(`/own-use/${id}?saved=1`);
   }
   return res;
 }

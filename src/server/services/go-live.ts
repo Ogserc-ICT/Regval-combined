@@ -1,40 +1,35 @@
 /**
- * Go-live readiness (Phase 6): everything that must be true before the
+ * Go-live readiness: everything that must be true before the
  * Commission relies on production, checked live from the database and the
  * environment. Shown on Admin › Go-live. Nothing here changes data.
  */
-import { and, desc, eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { addDays } from "@/domain/dates";
 import type { Role } from "@/domain/roles";
 import { ROLE_LABELS } from "@/domain/roles";
 import { registrationDeadline } from "@/domain/settings";
 import { verifyAuditChain } from "../audit";
-import { blobEnabled } from "../blob";
 import { all, type Db } from "../db/connect";
-import { dailyReviewRuns, divisions, holidays, importRuns, signatories, units, userRoles, users } from "../db/schema";
+import { dailyReviewRuns, holidays, signatories, userRoles, users } from "../db/schema";
 import { lagosToday } from "../time";
 import { getSettings } from "./settings";
 
 export type Check = { area: string; label: string; state: "ok" | "warn" | "fail" | "info"; detail: string; href?: string };
 
-const EXAMPLE_TABLES = ["inward_items", "outward_items", "front_desk_items", "files", "file_movements", "submissions", "payments", "own_use_notifications"] as const;
-const RECORD_TABLES = ["front_desk_items", "inward_items", "outward_items", "files", "submissions", "payments", "own_use_notifications"] as const;
+const RECORD_TABLES = ["submissions", "payments", "own_use_notifications"] as const;
 
 export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env): Promise<{ production: boolean; checks: Check[] }> {
   const production = env.VERCEL_ENV === "production";
   const today = lagosToday();
-  const [settings, examples, records, sigs, roleRows, pending, unitRows, divs, lastHoliday, lastRun, lastImport, chain] = await all(db, [
+  const [settings, examples, records, sigs, roleRows, pending, lastHoliday, lastRun, chain] = await all(db, [
     () => getSettings(db),
-    () => db.execute<{ t: string; n: number }>(sql.raw(EXAMPLE_TABLES.map((t) => `select '${t}' as t, count(*)::int as n from ${t} where is_example`).join(" union all "))),
+    () => db.execute<{ t: string; n: number }>(sql.raw(RECORD_TABLES.map((t) => `select '${t}' as t, count(*)::int as n from ${t} where is_example`).join(" union all "))),
     () => db.execute<{ t: string; n: number }>(sql.raw(RECORD_TABLES.map((t) => `select '${t}' as t, count(*)::int as n from ${t} where not is_example`).join(" union all "))),
     () => db.select().from(signatories).where(eq(signatories.active, true)),
     () => db.select({ role: userRoles.role }).from(userRoles).innerJoin(users, eq(users.id, userRoles.userId)).where(eq(users.active, true)),
     () => db.select({ n: sql<number>`count(*)::int` }).from(users).where(eq(users.pendingConfirmation, true)),
-    () => db.select().from(units).where(eq(units.active, true)),
-    () => db.select().from(divisions),
     () => db.select({ d: sql<string | null>`max(${holidays.date})::text` }).from(holidays),
     () => db.select().from(dailyReviewRuns).orderBy(desc(dailyReviewRuns.lagosDate)).limit(1),
-    () => db.select().from(importRuns).where(and(eq(importRuns.mode, "real"), eq(importRuns.dryRun, 0))).orderBy(desc(importRuns.at)).limit(1),
     () => verifyAuditChain(db),
   ]);
   const checks: Check[] = [];
@@ -46,7 +41,7 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
     area: "Data",
     label: "No EXAMPLE records",
     state: exTotal === 0 ? "ok" : production ? "fail" : "info",
-    detail: exTotal === 0 ? "None." : `${exTotal} EXAMPLE row(s): ${examples.rows.filter((r) => r.n).map((r) => `${r.t} ${r.n}`).join(", ")}.${production ? " Production must have none [G4]." : " Expected in development and preview."}`,
+    detail: exTotal === 0 ? "None." : `${exTotal} EXAMPLE row(s): ${examples.rows.filter((r) => r.n).map((r) => `${r.t} ${r.n}`).join(", ")}.${production ? " Production must never hold example data." : " Only ever in development and preview."}`,
   });
   const recTotal = records.rows.reduce((n, r) => n + r.n, 0);
   add({
@@ -54,13 +49,6 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
     label: "Records already in the registers",
     state: "info",
     detail: recTotal ? records.rows.filter((r) => r.n).map((r) => `${r.t.replace(/_/g, " ")} ${r.n}`).join(", ") : "None: the registers are empty.",
-  });
-  add({
-    area: "Data",
-    label: "Workbook imported",
-    state: lastImport.length ? "ok" : "warn",
-    detail: lastImport.length ? `${lastImport[0].sourceName}, ${lastImport[0].at.toISOString().slice(0, 10)} by ${lastImport[0].userName}.` : "Not yet. Run a dry run, check the report, then import (Admin › Import).",
-    href: "/admin/import",
   });
 
   // Order and rules
@@ -90,7 +78,7 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
   });
 
   // People
-  const needed: Role[] = ["registry", "router", "front_desk", "finance", "evaluator", "supervisor", "approver"];
+  const needed: Role[] = ["registration", "finance", "evaluator", "supervisor", "approver"];
   const missing = needed.filter((r) => !roleRows.some((x) => x.role === r));
   add({
     area: "People",
@@ -109,28 +97,6 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
     detail: pending[0].n ? `${pending[0].n} account(s) from the workbook still awaiting confirmation.` : "All confirmed.",
     href: "/admin/users",
   });
-
-  // Email and outputs
-  const divEmail = (id: string | null) => divs.find((d) => d.id === id)?.email;
-  const noAddress = unitRows.filter((u) => !u.email && !divEmail(u.divisionId));
-  add({
-    area: "Email",
-    label: "Units can be emailed",
-    state: noAddress.length ? "warn" : "ok",
-    detail: noAddress.length ? `${noAddress.length} active unit(s) with no unit or division address.` : "Every active unit has an address.",
-    href: "/admin/reference/units",
-  });
-  const provider = (env.EMAIL_PROVIDER ?? "console").toLowerCase();
-  add({
-    area: "Email",
-    label: "Email provider",
-    state: provider === "console" ? (production ? "warn" : "info") : "ok",
-    detail:
-      provider === "console"
-        ? "EMAIL_PROVIDER is console: emails are written to the log, nothing is sent (Q19)."
-        : `${provider}${provider === "resend" && !env.RESEND_API_KEY ? " without RESEND_API_KEY" : ""}; acknowledgement email mode ${settings.ackEmailMode}.`,
-  });
-  add({ area: "Email", label: "Slips kept in Vercel Blob", state: blobEnabled(env) ? "ok" : production ? "warn" : "info", detail: blobEnabled(env) ? "BLOB_READ_WRITE_TOKEN is set." : "BLOB_READ_WRITE_TOKEN is not set: slips are attached but not kept." });
 
   // Platform
   add({ area: "Platform", label: "Cron secret", state: env.CRON_SECRET && env.CRON_SECRET !== "change-me" ? "ok" : "fail", detail: !env.CRON_SECRET ? "CRON_SECRET is not set: the 07:00 daily review is refused." : env.CRON_SECRET === "change-me" ? "CRON_SECRET is still the example value from .env.example." : "CRON_SECRET is set." });

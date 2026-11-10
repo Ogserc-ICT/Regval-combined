@@ -3,10 +3,9 @@
 import { useActionState } from "react";
 import { Button, Card, CardBody, CardHeader, Field, FormErrors, Input, Notice } from "@/components/ui";
 import { createUserAction } from "../actions";
-import { UnitField } from "./[id]/edit-user-form";
 import { RolePicker } from "./role-picker";
 
-export function NewUserForm({ units }: { units: { id: string; name: string }[] }) {
+export function NewUserForm() {
   const [state, action, pending] = useActionState(createUserAction, undefined);
   const fe = state && !state.ok ? state.fieldErrors : {};
   return (
@@ -32,7 +31,6 @@ export function NewUserForm({ units }: { units: { id: string; name: string }[] }
           </div>
           <RolePicker />
           {fe.roles ? <p className="text-xs text-danger">{fe.roles.join(" ")}</p> : null}
-          <UnitField units={units} />
           <div className="flex justify-end">
             <Button type="submit" disabled={pending}>
               {pending ? "Creating…" : "Create account"}

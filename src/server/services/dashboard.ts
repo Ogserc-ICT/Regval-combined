@@ -1,17 +1,18 @@
 /**
- * The combined dashboard (SPEC §24.3): Registry counters beside Registration
- * figures, plus work queues for the signed-in user. Every figure comes from
- * the same domain functions as the registers.
+ * The dashboard: registration figures by category, status, activity and LGA,
+ * plus the work queues of the workbook's Dashboard sheet. Every figure comes
+ * from the same domain functions as the Register.
  */
 import { asc, eq, isNotNull } from "drizzle-orm";
-import { addDays, compareDates, diffDays, lagosDate, type LocalDate } from "@/domain/dates";
+import { compareDates, diffDays, type LocalDate } from "@/domain/dates";
 import { ST } from "@/domain/registration/types";
 import { registrationDeadline } from "@/domain/settings";
 import type { Actor } from "../auth/actor";
 import { all, type DbOrTx } from "../db/connect";
 import { ownUseNotifications, payments, submissions } from "../db/schema";
+import { lagosToday } from "../time";
 import { loadRef } from "./reference";
-import { listFiles, listFrontDesk, listInward, listOutward, registryCtx } from "./registry/load";
+import { getSettings } from "./settings";
 import { assessMany } from "./submissions/load";
 
 export type Bar = { label: string; value: number; hint?: string };
@@ -39,59 +40,15 @@ function monthsFrom(start: LocalDate, n: number): string[] {
 }
 
 export async function dashboardData(db: DbOrTx, actor: Actor) {
-  const ctx = await registryCtx(db);
-  const { today, settings } = ctx;
-  const weekAgo = addDays(today, -6);
-  const [inward, outward, fdAwaiting, files, subRows, pendingPays, ouRows, ref] = await all(db, [
-    () => listInward(db, ctx),
-    () => listOutward(db, ctx),
-    () => listFrontDesk(db, { awaitingOnly: true }, ctx),
-    () => listFiles(db, ctx),
+  const today = lagosToday();
+  const [settings, subRows, pendingPays, ouRows, ref] = await all(db, [
+    () => getSettings(db),
     () => db.select().from(submissions).where(isNotNull(submissions.status)),
     () => db.select().from(payments).where(eq(payments.financeStatus, "Pending")).orderBy(asc(payments.recordedAt)),
     () => db.select({ id: ownUseNotifications.id, lga: ownUseNotifications.lga }).from(ownUseNotifications).where(isNotNull(ownUseNotifications.ounNo)),
     () => loadRef(db),
   ]);
   const subs = await assessMany(db, subRows, today);
-
-  // ---------------------------------------------------------------- Registry
-  const received = (d: LocalDate) => inward.filter((x) => lagosDate(x.row.receivedAt) === d);
-  const closed = inward.filter((x) => x.a.closedOn);
-  const closedWithDue = closed.filter((x) => x.a.responseDue);
-  const onTime = closedWithDue.filter((x) => compareDates(x.a.closedOn!, x.a.responseDue!) <= 0).length;
-  const registry = {
-    receivedToday: received(today).length,
-    dispatchedToday: outward.filter((x) => x.row.dispatchedOn === today).length,
-    awaitingRouting: inward.filter((x) => x.a.status === "Awaiting routing").length,
-    awaitingForwarding: inward.filter((x) => x.a.status === "Awaiting forwarding").length,
-    incomingOverdue: inward.filter((x) => x.a.status === "Overdue").length,
-    notYetDispatched: outward.filter((x) => x.a.status === "Not yet dispatched").length,
-    repliesOverdueToUs: outward.filter((x) => x.a.status === "Response overdue").length,
-    filesOut: files.filter((f) => f.a.isOut).length,
-    filesOverdue: files.filter((f) => f.a.overdue).length,
-    itemsLogged: inward.length,
-    receivedLast7: inward.filter((x) => lagosDate(x.row.receivedAt) >= weekAgo).length,
-    open: inward.filter((x) => !x.a.closedOn).length,
-    closed: closed.length,
-    noted: inward.filter((x) => x.a.status === "Noted / filed").length,
-    closedOnTimePct: closedWithDue.length ? Math.round((onTime / closedWithDue.length) * 100) : null,
-    ackNotIssued: inward.filter((x) => !x.row.ackIssuedVia || x.row.ackIssuedVia === "Not yet issued").length,
-    afterHours: inward.filter((x) => x.row.deemedReceiptDate !== lagosDate(x.row.receivedAt)).length,
-    reg01AfterDeadline: inward.filter((x) => x.a.filedAfterDeadline).length,
-    withFlags: inward.filter((x) => x.a.flags.length).length,
-    atFrontDesk: fdAwaiting.length,
-    awaitingRegisterEntry: inward.filter((x) => x.entry === "Awaiting Register entry" || x.entry.startsWith("Register row started")).length,
-    outLogged: outward.length,
-    dispatchedLast7: outward.filter((x) => x.row.dispatchedOn && x.row.dispatchedOn >= weekAgo).length,
-    deliveryNotConfirmed: outward.filter((x) => x.a.flags.some((f) => f.startsWith("Delivery not confirmed"))).length,
-    awaitingResponse: outward.filter((x) => x.a.status === "Awaiting response").length,
-    responsesReceived: outward.filter((x) => x.a.status === "Response received").length,
-    byUnit: countBy(
-      inward.filter((x) => !x.a.closedOn),
-      (x) => x.unit?.name,
-    ).slice(0, 10),
-    byType: countBy(inward, (x) => x.typeName).slice(0, 10),
-  };
 
   // ---------------------------------------------------------------- Registration
   const open = subs.filter((x) => !x.a.closed);
@@ -168,19 +125,16 @@ export async function dashboardData(db: DbOrTx, actor: Actor) {
       .map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.registeredName, due: x.a.deficiencyResponseDue! })),
     readyForDecision: subs.filter((x) => x.a.evaluationStatus === "Ready for decision").map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.registeredName })),
     myEvaluations: mine.map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.registeredName, next: x.a.nextAction })),
-    awaitingRouting: inward
-      .filter((x) => x.a.status === "Awaiting routing")
-      .sort((a, b) => a.row.receivedAt.getTime() - b.row.receivedAt.getTime())
-      .slice(0, 8)
-      .map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.sender, days: x.a.workingDaysAtRegistry })),
-    myUnit: actor.unitId
-      ? inward
-          .filter((x) => x.unit?.id === actor.unitId && !x.a.closedOn)
-          .map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.sender, status: x.a.status, due: x.a.responseDue }))
-      : null,
+    // No Registry numbers or dispatches letters now: the Registration officers send them and record the date.
+    deficiencyToSend: subs
+      .filter((x) => x.row.status === ST.DEFICIENCY && !x.row.deficiencyNoticeDate)
+      .map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.registeredName })),
+    certificatesToSend: subs
+      .filter((x) => x.row.certificateIssueDate && !x.row.certificateSentOn)
+      .map((x) => ({ id: x.row.id, ack: x.row.ackNo, name: x.row.registeredName, issued: x.row.certificateIssueDate! })),
   };
 
-  return { today, settings, registry, registration, queues };
+  return { today, settings, registration, queues };
 }
 
 export type DashboardData = Awaited<ReturnType<typeof dashboardData>>;

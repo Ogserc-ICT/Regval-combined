@@ -1,14 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button, Card, CardBody, CardHeader, Field, FormErrors, Input, Notice, Select } from "@/components/ui";
+import { Button, Card, CardBody, CardHeader, Field, FormErrors, Input, Notice } from "@/components/ui";
 import type { Role } from "@/domain/roles";
 import { resetPasswordAction, updateUserAction } from "../../actions";
 import { RolePicker } from "../role-picker";
 
-type U = { id: string; name: string; email: string; active: boolean; pendingConfirmation: boolean; roles: Role[]; unitId: string | null };
+type U = { id: string; name: string; email: string; active: boolean; pendingConfirmation: boolean; roles: Role[] };
 
-export function EditUserForm({ user, units }: { user: U; units: { id: string; name: string }[] }) {
+export function EditUserForm({ user }: { user: U }) {
   const [state, action, pending] = useActionState(updateUserAction, undefined);
   const [reset, resetAction, resetting] = useActionState(resetPasswordAction, undefined);
   const fe = state && !state.ok ? state.fieldErrors : {};
@@ -48,7 +48,6 @@ export function EditUserForm({ user, units }: { user: U; units: { id: string; na
             </div>
             <RolePicker selected={user.roles} />
             {fe.roles ? <p className="text-xs text-danger">{fe.roles.join(" ")}</p> : null}
-            <UnitField units={units} value={user.unitId ?? ""} />
             <div className="flex justify-end">
               <Button type="submit" disabled={pending}>
                 {pending ? "Saving…" : "Save changes"}
@@ -76,20 +75,5 @@ export function EditUserForm({ user, units }: { user: U; units: { id: string; na
         </CardBody>
       </Card>
     </div>
-  );
-}
-
-export function UnitField({ units, value = "" }: { units: { id: string; name: string }[]; value?: string }) {
-  return (
-    <Field label="Unit" htmlFor="unitId" hint="For Unit officers: they see, confirm and close items routed to this unit." className="max-w-md">
-      <Select id="unitId" name="unitId" defaultValue={value}>
-        <option value="">None</option>
-        {units.map((u) => (
-          <option key={u.id} value={u.id}>
-            {u.name}
-          </option>
-        ))}
-      </Select>
-    </Field>
   );
 }

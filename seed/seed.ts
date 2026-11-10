@@ -1,24 +1,25 @@
 /**
  * Idempotent seed (docs/PLAN.md §9). Safe to run on every deploy:
  *  - reference data: holidays (inserted only if missing; admin edits are kept)
- *  - people from the workbook: inactive, awaiting confirmation (Q22)
  *  - the first admin, from BOOTSTRAP_ADMIN_* when no active admin exists
- *  - EXAMPLE rows: development and preview only ([G4]); none exist yet in Phase 1
+ *  - development and preview only: the workbook's Registry staff, seeded before Phase 9,
+ *    are marked deleted (the Registry left this app). Production is never touched.
+ *
+ * There are no EXAMPLE rows to seed: the workbook's EXAMPLE rows were all Registry records.
  *
  * Usage: pnpm db:seed
  */
 import { config } from "dotenv";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { createDb, type Db } from "../src/server/db/connect";
 import { directDatabaseUrl, missingDatabaseMessage } from "../src/server/db/env";
-import { holidays, userRoles, users } from "../src/server/db/schema";
+import { accounts, formDrafts, holidays, notifications, sessions, signatories, userRoles, users } from "../src/server/db/schema";
 import { writeAudit, type AuditActor } from "../src/server/audit";
 import { createUserAs } from "../src/server/services/users";
-import { examplesAllowed } from "../src/server/seed-guard";
+import { isProductionEnv } from "../src/server/seed-guard";
 import { seedReference } from "./reference";
-import { seedExamples } from "./examples";
 
 config({ path: ".env.local", quiet: true });
 config({ quiet: true });
@@ -26,15 +27,11 @@ config({ quiet: true });
 const SEED: AuditActor = { id: null, name: "Seed" };
 
 type HolidayRow = { date: string; name: string; status: "Fixed" | "Provisional" | "Estimated" | "State-declared"; note?: string };
-type Person = { name: string; roles: string[]; notes?: string };
 
 function readJson<T>(file: string): T {
   return JSON.parse(readFileSync(path.join(process.cwd(), "seed", "data", file), "utf8")) as T;
 }
 
-function slug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "");
-}
 
 export async function seedHolidays(db: Db): Promise<number> {
   const rows = readJson<HolidayRow[]>("holidays.json");
@@ -55,23 +52,46 @@ export async function seedHolidays(db: Db): Promise<number> {
   return added;
 }
 
-export async function seedPeople(db: Db): Promise<number> {
-  const { people } = readJson<{ people: Person[] }>("people.json");
-  let added = 0;
-  for (const p of people) {
-    const [exists] = await db.select({ id: users.id }).from(users).where(eq(users.name, p.name));
-    if (exists) continue;
-    await createUserAs(db, SEED, {
-      name: p.name,
-      email: `pending.${slug(p.name)}@invalid.ogserc.local`,
-      roles: p.roles,
-      active: false,
-      pendingConfirmation: true,
-      notes: `${p.notes ?? ""} · Seeded from the workbook: add the work email, confirm and activate.`.trim(),
-    });
-    added += 1;
-  }
-  return added;
+/**
+ * Development and preview only: the workbook's Registry staff (seeded before Phase 9) are marked
+ * deleted, as Admin › Staff would, and their unconfirmed signatory rows switched off. The names
+ * come from seed/data, never from code. Production is never touched.
+ */
+export async function removeRegistryPeople(db: Db, env = process.env): Promise<string> {
+  if (isProductionEnv(env)) return "skipped (production)";
+  const { names } = readJson<{ names: string[] }>("removed-registry-people.json");
+  let people = 0;
+  let sigs = 0;
+  await db.transaction(async (tx) => {
+    const rows = await tx.select().from(users).where(and(inArray(users.name, names), isNull(users.removedAt)));
+    for (const u of rows) {
+      const now = new Date();
+      await tx
+        .update(users)
+        .set({ active: false, pendingConfirmation: false, email: `removed.${u.id}@invalid.ogserc.local`, removedAt: now, updatedAt: now })
+        .where(eq(users.id, u.id));
+      for (const t of [userRoles, sessions, accounts, notifications, formDrafts] as const) await tx.delete(t).where(eq(t.userId, u.id));
+      await writeAudit(tx, {
+        actor: SEED,
+        action: "User deleted",
+        module: "admin",
+        entityType: "user",
+        entityId: u.id,
+        detail: `${u.name} <${u.email}>: Registry staff, removed with the Registry (Phase 9; development and preview only).`,
+      });
+      people += 1;
+    }
+    const off = await tx
+      .update(signatories)
+      .set({ active: false, updatedAt: new Date() })
+      .where(and(inArray(signatories.name, names), eq(signatories.confirmed, false), eq(signatories.active, true)))
+      .returning({ id: signatories.id, name: signatories.name });
+    for (const g of off) {
+      await writeAudit(tx, { actor: SEED, action: "Signatory changed", module: "admin", entityType: "signatory", entityId: g.id, detail: `${g.name}: switched off (Registry staff, removed with the Registry; Phase 9)` });
+    }
+    sigs = off.length;
+  });
+  return `${people} account(s) marked deleted, ${sigs} signatory row(s) switched off`;
 }
 
 export async function seedBootstrapAdmin(db: Db, env = process.env): Promise<string | null> {
@@ -107,12 +127,9 @@ async function main() {
     console.log(`Holidays added: ${await seedHolidays(db)}`);
     const ref = await seedReference(db, SEED);
     console.log(`Reference data added: ${Object.entries(ref).map(([k, n]) => `${k} ${n}`).join(", ")}`);
-    console.log(`People added (inactive, awaiting confirmation): ${await seedPeople(db)}`);
+    console.log(`Registry staff: ${await removeRegistryPeople(db)}`);
     const pw = await seedBootstrapAdmin(db);
     if (pw) console.log(`First admin created. One-time password (shown once): ${pw}`);
-    const ex = examplesAllowed();
-    if (ex.allowed) console.log(`EXAMPLE rows (${ex.reason}): ${await seedExamples(db)}`);
-    else console.log(`EXAMPLE rows: not seeded (${ex.reason}).`);
   } finally {
     await db.$client.end();
   }

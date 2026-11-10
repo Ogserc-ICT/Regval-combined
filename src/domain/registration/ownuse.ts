@@ -12,6 +12,8 @@ export type OwnUseFacts = {
   ounNo: string | null;
   name: string;
   dateFiled: LocalDate;
+  /** Para 10(3); decides "filed after the deadline" (Q3). Falls back to the date filed. */
+  deemedReceiptDate?: LocalDate | null;
   cacNo: string | null;
   siteAddress: string | null;
   lga: string | null;
@@ -127,7 +129,7 @@ export function assessOwnUse(o: OwnUseFacts, ctx: OwnUseContext): OwnUseAssessme
     payments: pay,
     balance,
     paymentStatus,
-    filedAfterDeadline: !!o.dateFiled && o.dateFiled > ctx.registrationDeadline,
+    filedAfterDeadline: !!(o.deemedReceiptDate ?? o.dateFiled) && (o.deemedReceiptDate ?? o.dateFiled) > ctx.registrationDeadline,
     documents,
     flags,
     registrationBlockers: blockers,

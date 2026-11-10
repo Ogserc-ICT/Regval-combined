@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "New own-use notification" };
 
 export default async function NewOwnUsePage() {
   await requirePermission("ownuse:save");
-  const [lgas, fuels, settings] = await Promise.all([listValues(db, "lga"), listValues(db, "fuel"), getSettings(db)]);
+  const [lgas, fuels, channels, settings] = await Promise.all([listValues(db, "lga"), listValues(db, "fuel"), listValues(db, "submission_channel"), getSettings(db)]);
   return (
     <>
       <PageHeader
@@ -24,7 +24,7 @@ export default async function NewOwnUsePage() {
           </Link>
         }
       />
-      <OwnUseForm lgas={lgas} fuels={fuels} today={lagosToday()} thresholdKw={settings.ownUseThresholdKw} />
+      <OwnUseForm lgas={lgas} fuels={fuels} channels={channels} today={lagosToday()} thresholdKw={settings.ownUseThresholdKw} />
     </>
   );
 }

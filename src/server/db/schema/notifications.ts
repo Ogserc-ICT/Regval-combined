@@ -13,11 +13,11 @@ export const notifications = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    /** What happened, for grouping and tests (e.g. "inward:routed"). */
+    /** What happened, for grouping and tests (e.g. "payment:recorded"). */
     kind: text("kind").notNull(),
     title: text("title").notNull(),
     body: text("body"),
-    /** The business number shown to staff: ACK, FD, PAY … */
+    /** The business number shown to staff: ACK, PAY, DEF … */
     reference: text("reference"),
     /** Where the notification takes the person. Always an in-app path. */
     href: text("href").notNull(),
