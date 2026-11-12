@@ -18,6 +18,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 
 - [ ] **Register › New submission:** filing type "New registration", form REG-01A to K, registered name, LGA, primary activity, capacity, licence status, operating on the Effective Date.
 - [ ] Enter the **date received, time received and how it came** (By hand, Email, Online portal).
+- [ ] Not sure what a field is for? See §10, "The New submission form, field by field".
 - [ ] Save. The app works out the **deemed receipt date**: email or portal at or after 17:00, or any filing on a weekend or holiday, counts from the next working day. It issues the **ACK** in that year and prices the filing (fee, and the late charge if received after the deadline).
 - [ ] Open the entry: Summary shows the receipt, the deemed receipt date, the category, the fees and the next action. The receipt can no longer be changed.
 - [ ] Try a bad phone (8021846578): it is refused with an example of the right form (08021846578).
@@ -77,3 +78,86 @@ A user can hold several roles, but on one submission the Registration officer wh
 ## 9. Staff changes (Admin)
 
 - [ ] Deactivate someone (they are signed out at once), issue a new one-time password, or **delete** them: they leave every list, but their name stays on the records they worked on. You cannot delete yourself, the last admin, or an officer still assigned to an open evaluation.
+
+## 10. The New submission form, field by field
+
+What each input on **Register › New submission** is for. A \* means the entry cannot be saved without it.
+
+The fields do one of three jobs, and most confusion comes from mixing them up:
+
+- **Set the money:** filing type, activities, installed capacity, "operating on the Effective Date", planned start date, waiver, category override, and the date and time received.
+- **Set the document checklist:** form filed, activities, capacity, licence status and the document conditions.
+- **Record or cross-check:** everything else. These never change a fee; at most they raise a data flag, which needs a written reason before approval.
+
+### Submission
+
+| Field | What it is | What it affects |
+|---|---|---|
+| **Filing type \*** | New registration, Update (material change, para 16(1)) or Annual confirmation (para 16(2)). Fixed once saved. | Only a **New** registration has a deadline and late charges. Updates and annual confirmations pay a fee only if the "fee on updates" setting is Y. |
+| **Form filed \*** | The REG-01 form the applicant actually used (A to K). REG-01I is refused here; record it under Own-use. | A cross-check only. The category comes from the activities and capacity, not from the form. If they differ, a "form does not match the category" flag appears, settled on the evaluation by confirming the category. |
+| **Linked registration no. \*** (updates and annual confirmations only) | The OGSERC/REG number the filing is for. | Must be a **Registered new registration** on the Register, or the save is refused. |
+| **Date received \*, Time received \*, Received by \*** | When and how the filing arrived: By hand, Email or Online portal. | Give the **deemed receipt date** (para 10(3)): a weekend or holiday moves to the next working day; Email or portal at or after the closing time also moves to the next working day; By hand does not. That date sets the **ACK year** and the **days late**. All three are **locked once saved**. |
+
+### Identity and service area
+
+| Field | What it affects |
+|---|---|
+| **Registered name \*** | Required. The same name on another submission raises a flag. |
+| Trading name, registered address, other LGAs served, towns / estates served | Record only. |
+| **Registrant type** | Record. When it is set and is not "Company", the EVAL-01 checks for non-company registrants apply. |
+| **CAC no.** | Must be RC, BN or IT followed by digits. The same CAC number on another submission raises a flag (one registration per person, para 11(4)). |
+| **TIN** | Record only; the format is not yet confirmed by Finance. |
+| **Principal LGA \*** | Required, from the 20 Ogun LGAs. Used in the dashboard figures and filters. |
+
+### Activities and capacity: these set the fee
+
+| Field | What it affects |
+|---|---|
+| **Primary activity \*** and **Other activities** | Each activity has a category at the submission's capacity. The **category charged is the highest of them all**: A beats B, then the one with the highest fee. Adding an other activity can therefore **raise the fee**. Other activities also add their own documents to the checklist. |
+| **Installed capacity (MW)** | One figure for the whole operator, used for **every** activity. The bands are below 1 MW, 1 to below 10 MW, and 10 MW or more. A capacity-based activity with no capacity raises a flag; captive generation below 1 MW raises a flag pointing to REG-01I (own-use). |
+| **Customers** | Record only. |
+
+### Licences: two different things
+
+- **Licence status \*** is the applicant's legal position (for example Unlicensed, Licence pending, OGSERC licence/permit, NERC multi-State licence). It decides:
+  - the *holds any licence* document condition, which is Y unless the status is Unlicensed;
+  - for an Unlicensed operator, the date by which a licence application is due (para 18(2));
+  - which EVAL-01 checks apply.
+- **Licences held (number and expiry)** are the actual licences or permits. They are only checked against the status:
+  - a number entered while the status is Unlicensed or Licence pending raises a flag;
+  - a licence status that means one is held, with no number entered, raises a flag;
+  - a licence that expires within 6 months of the Effective Date raises a renewal flag (para 8(5)).
+
+### Contact
+
+Compliance officer, phone and email: record only. The phone must be 11 digits starting with 0 (08021846578), or +234 and 10 digits.
+
+### Timeline and fees
+
+| Field | What it affects |
+|---|---|
+| **Operating on the Effective Date? \*** | Sets the **deadline** for a new registration. **Y** (existing operator): the Effective Date. **N** (new operator): 30 days before the planned start date. |
+| **Planned start date** (required when N) | Used only for that deadline. |
+| **Approved waiver (₦)** | Comes off the registration fee (para 17(3)). It cannot be more than the fee. Whether it also reduces the late charge is an admin setting. |
+| **Category override** and **Override reason** | Leave on **(calculated)** unless the Commission has decided on a different category. An override that differs from the calculated category needs a reason. This is not the same as **Confirmed category** on the evaluation, which settles a form that does not match. |
+
+**Late charge (new registrations only):** days late = deemed receipt date − deadline. The charge is the initial amount plus the daily rate for each day late, but never more than the category's cap.
+
+### Document conditions
+
+These are not questions the applicant has to answer. Each one can take a document off the checklist:
+
+- **Blank** (the default) or **Y**: the document stays required.
+- **N**: the document becomes **N/A**.
+
+The eight conditions: multi-State licensee, generation for sale, grid-connected, interconnected mini-grid, Form F distribution part, Form F trading part, Form G DisCo bulk supply, sub-franchise. A ninth, *holds any licence*, is not shown because the licence status sets it.
+
+Set **N** only where the applicant clearly does not do that thing, so nobody chases a document that does not apply.
+
+### Form sections summary
+
+The app does not hold the detailed REG-01 sections. Record a short summary for the evaluator:
+
+- **Sections not complete** (for example "G, J"): raises a "sections not complete" flag.
+- **Capacity stated in sections (MW)**: the capacity the applicant wrote inside the technical sections. If it differs from *Installed capacity* by more than 1%, a capacity mismatch flag appears. It is a cross-check only; the fee is always worked out from *Installed capacity*.
+- **Remarks**: free text.
