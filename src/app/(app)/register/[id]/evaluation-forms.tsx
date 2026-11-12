@@ -2,7 +2,7 @@
 
 import { ActionForm } from "@/components/action-form";
 import { Field, Input, Select } from "@/components/ui";
-import { assignOfficersAction, confirmCategoryAction } from "../actions";
+import { assignOfficersAction, confirmCategoryAction, markCompleteAction } from "../actions";
 
 type Person = { id: string; name: string };
 
@@ -45,6 +45,21 @@ export function OfficersForm({
           ) : null}
         </>
       )}
+    </ActionForm>
+  );
+}
+
+/** Mark complete. After a deficiency notice it also asks when the response was received. */
+export function MarkCompleteForm({ id, needsResponseDate, today }: { id: string; needsResponseDate: boolean; today: string }) {
+  return (
+    <ActionForm action={markCompleteAction} submitLabel="Mark complete" size="sm" variant="secondary" hidden={{ id }}>
+      {(fe) =>
+        needsResponseDate ? (
+          <Field label="Response received on *" htmlFor="responseReceivedOn" errors={fe.responseReceivedOn}>
+            <Input id="responseReceivedOn" name="responseReceivedOn" type="date" max={today} className="h-8 w-44" />
+          </Field>
+        ) : null
+      }
     </ActionForm>
   );
 }

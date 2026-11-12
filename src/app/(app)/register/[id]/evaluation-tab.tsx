@@ -17,12 +17,11 @@ import {
   deficiencySentAction,
   flagReasonAction,
   lapseAction,
-  markCompleteAction,
   recalculateAction,
   refuseAction,
   showCauseAction,
 } from "../actions";
-import { ConfirmCategoryForm, OfficersForm } from "./evaluation-forms";
+import { ConfirmCategoryForm, MarkCompleteForm, OfficersForm } from "./evaluation-forms";
 
 async function officers() {
   const rows = await db
@@ -159,15 +158,7 @@ export async function EvaluationTab({ l, actor }: { l: LoadedSubmission; actor: 
                 Starts the {l.settings.determinationDays}-day determination clock (para 13(1)); a deficiency notice never restarts it.
                 {row.status === "Deficiency Notice Issued" ? " The response to the deficiency notice clears it: give the date it was received." : ""}
               </p>
-              <ActionForm action={markCompleteAction} submitLabel="Mark complete" size="sm" variant="secondary" hidden={hidden}>
-                {(fe) =>
-                  row.status === "Deficiency Notice Issued" ? (
-                    <Field label="Response received on *" htmlFor="responseReceivedOn" errors={fe.responseReceivedOn}>
-                      <Input id="responseReceivedOn" name="responseReceivedOn" type="date" max={l.ctx.today} className="h-8 w-44" />
-                    </Field>
-                  ) : null
-                }
-              </ActionForm>
+              <MarkCompleteForm id={row.id} needsResponseDate={row.status === "Deficiency Notice Issued"} today={l.ctx.today} />
             </div>
           ) : null}
           {open && isSup && row.status !== "Deficiency Notice Issued" ? (
