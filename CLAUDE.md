@@ -52,4 +52,4 @@ Update this list as each phase finishes.
 - Phase 9, re-scope (Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register): done 10 Nov 2026, pushed
 - Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
 - Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): done 13 Nov 2026 on the templates in `docs/templates/` (Q26); Q12 and Q28a, e answered (Commissioner Femi Omisanjo); Q28b–d, f–h on defaults
-- Go-live: 13 Nov 2026, signatories entered (Jide Onakoya, Femi Omisanjo), BETTER_AUTH_URL set to https://regval-combined.vercel.app, daily review run; every Admin › Go-live check Ready. Open for the Commission: Q25, Q28b–d and f–h, and the defaults in docs/QUESTIONS.md
+- Go-live: 13 Nov 2026, signatories entered (Jide Onakoya, Femi Omisanjo), BETTER_AUTH_URL set to https://regval-combined.vercel.app, daily review run; every Admin › Go-live check Ready. Q8–Q11, Q13, Q15, Q20, Q21, Q25, Q27 and Q28 answered the same day; still open: Q2 (gazetted date), Q18 (Microsoft sign-in), Q23 (full form sections)

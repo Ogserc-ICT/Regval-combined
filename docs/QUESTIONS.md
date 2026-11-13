@@ -19,9 +19,15 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q12 signatories | **Decided (13 Nov 2026)**: Jide Onakoya is the Chairman / CEO; the Commissioner is Femi Omisanjo (Q28e), entered by an admin |
 | Q26 document templates | **Received (13 Nov 2026)**: in `docs/templates/`; follow-ups in Q28 |
 | Q28a email, Q28e Commissioner | **Decided (13 Nov 2026)**: `registration@ogserc.org.ng`; Femi Omisanjo |
-| Q28b–d, f–h template details | Defaults in use (Phase 10); still open |
-| Q25 ACK prefix, Q27 workbook export | Open |
-| Q9, Q15 and all others | Defaults in use; still open |
+| Q28b–d, f–h template details | **Confirmed (13 Nov 2026)**: as built |
+| Q25 ACK prefix | **Decided (13 Nov 2026)**: keep `OGSERC/ACK/{year}/{n}`; the registry app is separate |
+| Q27 workbook export | **Decided (13 Nov 2026)**: keep the Registry sheets as they are |
+| Q8, Q9, Q10, Q11, Q15 | **Confirmed (13 Nov 2026)**: the defaults stand; Q11's settings stay admin-editable |
+| Q13 holidays | **Decided (13 Nov 2026)**: an admin maintains Admin › Holidays as dates are confirmed |
+| Q20 data location | **Decided (13 Nov 2026)**: London or Frankfurt is acceptable |
+| Q21 old app | **Answered (13 Nov 2026)**: the old app stays live alongside this one; retirement not yet decided |
+| Q18 sign-in | Mailboxes are on Microsoft 365 (13 Nov 2026); whether to add Microsoft sign-in is open |
+| Q2, Q22, Q23 | Q2: enter the gazetted date when known. Q22: staff entered by an admin. Q23: default in use; open |
 
 Also decided, not from this list: the late charge follows the Order, not the workbook (gap G14 in `COMBINED_BUILD.md`; `SPEC.md` §8.2).
 
@@ -59,14 +65,17 @@ Mark complete sets "Date Submission Complete" only if it is blank. If a submissi
 **Q8. Are the Order's periods calendar days?** (Phase 2)
 The workbook counts the 60-day registration period, 30-day determination, 14-day deficiency response, 90-day licence application and 14-day show-cause in calendar days. (Registry service targets, in working days, left with the Registry.) Since Phase 9 the deficiency response and show-cause periods run from the dates the letters were actually sent.
 Default: as the workbook. Confirm.
+**Confirmed (13 Nov 2026):** calendar days, as the workbook.
 
 **Q9. Who may lapse a submission, and who may issue a deficiency notice when no supervisor is assigned?** (Phase 2)
 The Lapse macro has no role check at all. The deficiency macro allows anyone if no reviewing supervisor is assigned.
 Default: Lapse = the assigned approving officer; deficiency notice = the assigned reviewing supervisor only (one must be assigned first).
+**Confirmed (13 Nov 2026).**
 
 **Q15. Can an operator that is Provisionally Registered file an update or annual confirmation?** (Phase 2)
 The workbook only accepts updates and annual confirmations linked to a **Registered** new registration.
 Default: Registered only.
+**Confirmed (13 Nov 2026).**
 
 **Q16. How many Schedule 2 documents should the inward check expect?** (Phase 3) **Not applicable: registry removed (Phase 9, 10 Nov 2026).**
 The Inward Register flags "Schedule 2 documents incomplete at receipt" when fewer than **12** are attached ("12 req.; 13 multi-State"), but the per-form lists in the Lists sheet have 10 to 14 documents (REG-01H has 10, REG-01A has 14).
@@ -78,24 +87,28 @@ Default: unit officers are user accounts linked to one unit; "confirm receipt" r
 
 ## Commission decisions (from the brief, restated)
 
-**Q10. TIN format.** Not confirmed by Finance; the workbook does not check it. Default: free text, no check.
+**Q10. TIN format.** Not confirmed by Finance; the workbook does not check it. Default: free text, no check. **Confirmed (13 Nov 2026).**
 
-**Q11. Undecided policy settings** (Settings rows 33–42). Defaults are the workbook's values: unpaid late charge blocks "complete" = **N**; waiver also reduces the late charge = **N**; data flags block approval outright = **N** (an approver may override with a written reason; the note says the other app has this on); late charge required to release for evaluation = **N**; unpaid reminder = none; supply/retail at 1 MW+ = **K**; wrong form = **accept and re-categorise**; other activities add their documents = **N**; own-use certificate = **N**; fee on updates and annual confirmations = **N**. **6 Nov 2026:** every one of these is an admin setting. B35 defaults to N: an approver can override unresolved flags with a written reason, which is logged. Kamiye to confirm with the Commission before Phase 2.
+**Q11. Undecided policy settings** (Settings rows 33–42). Defaults are the workbook's values: unpaid late charge blocks "complete" = **N**; waiver also reduces the late charge = **N**; data flags block approval outright = **N** (an approver may override with a written reason; the note says the other app has this on); late charge required to release for evaluation = **N**; unpaid reminder = none; supply/retail at 1 MW+ = **K**; wrong form = **accept and re-categorise**; other activities add their documents = **N**; own-use certificate = **N**; fee on updates and annual confirmations = **N**. **6 Nov 2026:** every one of these is an admin setting. B35 defaults to N: an approver can override unresolved flags with a written reason, which is logged. Kamiye to confirm with the Commission before Phase 2. **Confirmed (13 Nov 2026):** the defaults stand; an admin changes any of them under Admin › Settings if the Commission decides otherwise.
 
 **Q12. Signatories.** The Commissioner's name (approval of new registrations stays blocked until an admin adds it), and confirmation that Jide Onakoya is the "Chairman / CEO" signatory. (The Secretary to the Commission was seeded from the Registry; since Phase 9 only the Chairman / CEO is seeded.)
 **Decided (13 Nov 2026):** Jide Onakoya is confirmed as the Chairman / CEO signatory. The Commissioner was first to be the placeholder JOHN DOE, then named the same day: **Femi Omisanjo** (Q28e). An admin enters both under Admin › Signatories and ticks them confirmed; the names are data, not code. CERT-01 prints as a draft while either is missing or unconfirmed.
 
 **Q13. Holidays.** Confirm the dates marked Estimated or Provisional (Eid al-Fitr, Eid al-Adha, Eid al-Mawlid, weekend substitutes) and add any Ogun State holidays. The list starts at 25 Dec 2026 and ends at 28 Dec 2027; 2028 needs adding before the end of 2027.
+**Decided (13 Nov 2026):** an admin keeps Admin › Holidays up to date, confirming the estimated and provisional dates as they are announced. Edits apply to records saved afterwards; deemed receipt dates already fixed do not move.
 
 **Q14. Which documents should the app produce?** The workbook says the acknowledgement letter, EVAL-01, deficiency notice and CERT-01 certificate are "generated in the app", but the brief's Phase 4 lists only the acknowledgement slip, Daily Register and pending actions. Default: build those three; add letter, notice, EVAL-01 and certificate templates if you send their approved wording and layout. The certificate needs the signatories (Q12). **Updated 10 Nov 2026 (Phase 9):** the slip, Daily Register and pending actions left with the Registry; the four registration documents are now the app's reports (see Q26).
 
 **Q18. Sign-in.** Do the ogserc.org.ng mailboxes run on Microsoft 365? If so, staff could sign in with their work accounts (Microsoft Entra ID). Default: email and password accounts created by an admin, with optional two-factor codes.
+**13 Nov 2026:** the mailboxes are on Microsoft 365. Adding Microsoft sign-in is open: it needs an app registration in Microsoft Entra by the tenant admin, then a small change here.
 
 **Q19. Email.** **Not applicable: registry removed (Phase 9, 10 Nov 2026).** The unit and division acknowledgement emails are out of scope and there is no email adapter. The original question: the provider (Resend is simplest on Vercel; Microsoft Graph fits if the mailboxes are on Microsoft 365), the sending address, the CC address if any, and the missing unit and division emails: 29 of 30 units and 3 of 5 divisions (Office of the Chairman; Financial Management Services; Legal, Licensing and Consumer Affairs) have none. Until then the app warns on save and logs "Not emailed: no address".
 
 **Q20. Data location.** Is hosting Commission data outside Nigeria acceptable under the Nigeria Data Protection Act 2023? The nearest regions Vercel and Neon offer are London or Frankfurt.
+**Decided (13 Nov 2026):** yes, acceptable.
 
 **Q21. Other apps.** Does this app replace the existing Registration & Evaluation app when it goes live, or run alongside it? **Updated 10 Nov 2026 (Phase 9):** the separate registry app keeps the Registry, so the two run side by side; the ACK overlap is Q25.
+**Answered (13 Nov 2026):** the old Registration & Evaluation app stays live alongside this one; whether to retire it is not yet decided.
 
 **Q22. People.** Names (and work emails) of the evaluating officers, reviewing supervisors, approving officers and Finance officers, and the Registration officers. **Updated 10 Nov 2026 (Phase 9):** the six seeded people were all Registry staff and are no longer seeded; the Verge Power petition is correspondence for the registry app.
 
@@ -109,6 +122,7 @@ The workbook holds one "Installed Capacity (MW)" per submission and uses it to c
 
 **Q25. The ACK prefix.** This app now issues its own ACK numbers (`OGSERC/ACK/2026/00001` …). The separate registry app also issues OGSERC/ACK numbers, so the two series will overlap: the same number can mean a registration here and a letter there.
 Default: `OGSERC/ACK`, as an admin setting (Admin › Settings › Receipt and letters). Changing it affects new numbers only; the serial keeps counting. Say which app should change its prefix, and to what (for example `OGSERC/REG-ACK` here).
+**Decided (13 Nov 2026):** keep `OGSERC/ACK/{year}/{n}` in this app. The registry app is a separate system.
 
 **Q26. The registration documents.** The app must produce the para 10(3) acknowledgement letter, the deficiency notice, the EVAL-01 report and the CERT-01 certificate as PDFs. Please send the Commission's templates and approved wording for each: letterhead, the exact text, which signatory signs (Q12), and any reference or file number printed on them.
 Default: none built yet; the next phase builds them once the templates arrive. Until then the Register records the dates the deficiency notice, show-cause letter and certificate were sent.
@@ -116,6 +130,7 @@ Default: none built yet; the next phase builds them once the templates arrive. U
 
 **Q27. The offline workbook export.** The export (`pnpm export:workbook`, Phase 7) patches the combined workbook, which still has its Registry sheets and macros. Since Phase 9 the app fills the Registry officer list with the Registration officers, leaves the router and front-desk lists empty, and leaves the Registry service targets, acknowledgement-email settings and unit emails as the workbook has them.
 Default: left as it is. Decide before the export is used again whether its Registry sheets should be removed or blanked (that needs re-checking in desktop Excel).
+**Decided (13 Nov 2026):** keep the Registry sheets as they are.
 
 ## Templates received (13 Nov 2026)
 
@@ -130,4 +145,5 @@ e) **CERT-01 while a signatory is unconfirmed.** With JOHN DOE as a placeholder 
 f) **"Scan to verify" QR code.** Default: it links to the registration's page in this app, which only signed-in staff can open, as the sample says. There is no public verification page.
 g) **Seal.** Default: the printed "COMMISSION SEAL" circle is where the physical seal is stamped; no seal image is printed.
 h) **Wording on the certificate:** "Established under the Ogun State Power Law, 2024" and "OGSERC Order on Commencement of Operations and Registration of Licensees and Electricity Operators, 2026". Default: printed as in the template. Confirm both titles.
+**Confirmed (13 Nov 2026):** b, c, d, f, g and h stand as built.
 
