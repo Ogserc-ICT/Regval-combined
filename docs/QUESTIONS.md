@@ -26,8 +26,10 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q13 holidays | **Decided (13 Nov 2026)**: an admin maintains Admin › Holidays as dates are confirmed |
 | Q20 data location | **Decided (13 Nov 2026)**: London or Frankfurt is acceptable |
 | Q21 old app | **Answered (13 Nov 2026)**: the old app stays live alongside this one; retirement not yet decided |
-| Q18 sign-in | Mailboxes are on Microsoft 365 (13 Nov 2026); whether to add Microsoft sign-in is open |
-| Q2, Q22, Q23 | Q2: enter the gazetted date when known. Q22: staff entered by an admin. Q23: default in use; open |
+| Q2 Effective Date | **Decided (13 Nov 2026)**: gazetted 2 Nov 2026, entered by an admin, placeholder cleared |
+| Q18 sign-in | **Decided (13 Nov 2026)**: no Microsoft sign-in for now |
+| Q23 form sections | **Deferred (13 Nov 2026)**: two summary fields kept; revisit if the Commission asks or an operator portal is built |
+| Q22 | Staff entered by an admin |
 
 Also decided, not from this list: the late charge follows the Order, not the workbook (gap G14 in `COMBINED_BUILD.md`; `SPEC.md` §8.2).
 
@@ -40,6 +42,7 @@ The Inward Register formula moves only **Email** and **Online portal** items rec
 **Q2. Which placeholder Effective Date should the app start with?** (Phase 1)
 Settings B7 says 22 Oct 2026 (deadline 21 Dec 2026); Registry Settings B14 says 2 Nov 2026 (deadline 1 Jan 2027). Both are placeholders until the Order is gazetted.
 Default: 22 Oct 2026, with the placeholder banner shown to admins. Also needed from the Commission: the gazetted date (brief).
+**Decided (13 Nov 2026):** gazetted Effective Date 2 Nov 2026 (registration deadline 1 Jan 2027), entered by an admin in Admin › Settings.
 
 **Q3. Which date sets the ACK year and the days late?** (Phase 2)
 a) ACK year. The Registry Guide and the Inward Register use the year of the **deemed receipt date**. Registry Intake's macro uses the year of the **date received**, and Save submission uses the year of **Date Submitted**. They differ only for an item received around midnight on 31 December or on a non-working 31 December.
@@ -100,7 +103,7 @@ Default: unit officers are user accounts linked to one unit; "confirm receipt" r
 **Q14. Which documents should the app produce?** The workbook says the acknowledgement letter, EVAL-01, deficiency notice and CERT-01 certificate are "generated in the app", but the brief's Phase 4 lists only the acknowledgement slip, Daily Register and pending actions. Default: build those three; add letter, notice, EVAL-01 and certificate templates if you send their approved wording and layout. The certificate needs the signatories (Q12). **Updated 10 Nov 2026 (Phase 9):** the slip, Daily Register and pending actions left with the Registry; the four registration documents are now the app's reports (see Q26).
 
 **Q18. Sign-in.** Do the ogserc.org.ng mailboxes run on Microsoft 365? If so, staff could sign in with their work accounts (Microsoft Entra ID). Default: email and password accounts created by an admin, with optional two-factor codes.
-**13 Nov 2026:** the mailboxes are on Microsoft 365. Adding Microsoft sign-in is open: it needs an app registration in Microsoft Entra by the tenant admin, then a small change here.
+**13 Nov 2026:** the mailboxes are on Microsoft 365. Adding Microsoft sign-in would need an app registration in Microsoft Entra by the tenant admin, then a small change here. **Decided:** not for now; email and password stay.
 
 **Q19. Email.** **Not applicable: registry removed (Phase 9, 10 Nov 2026).** The unit and division acknowledgement emails are out of scope and there is no email adapter. The original question: the provider (Resend is simplest on Vercel; Microsoft Graph fits if the mailboxes are on Microsoft 365), the sending address, the CC address if any, and the missing unit and division emails: 29 of 30 units and 3 of 5 divisions (Office of the Chairman; Financial Management Services; Legal, Licensing and Consumer Affairs) have none. Until then the app warns on save and logs "Not emailed: no address".
 
@@ -117,6 +120,7 @@ The workbook holds one "Installed Capacity (MW)" per submission and uses it to c
 **Decided (6 Nov 2026):** one figure per record, as the workbook.
 
 **Q23. Form sections.** The detailed sections of REG-01A–K are not in the workbook; it records only "sections not complete" and "capacity stated in sections" (Guide B14). Default: the same two summary fields. Say if the Commission wants the full form sections captured in the app (a larger piece of work, best scoped after go-live).
+**Deferred (13 Nov 2026):** the Commission has not asked for it; the two summary fields stay. Recommended path if it comes up: first keep a copy of each filed form with its submission, then add per-category fields only for what the Commission needs to check or report on; capture full forms only if operators file online through a portal, where they type them in themselves.
 
 ## Phase 9: the Registry removed (10 Nov 2026)
 
