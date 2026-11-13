@@ -11,6 +11,7 @@ import {
   doublePrecision,
   index,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   text,
@@ -96,6 +97,8 @@ export const submissions = pgTable(
     /** The date the certificate was actually sent to the registrant. */
     certificateSentOn: date("certificate_sent_on", { mode: "string" }),
     registrationNo: text("registration_no").unique(),
+    /** CERT-01 "Certificate Serial No.": its own series, never reset (Q28d); issued with the registration number. */
+    certificateSerial: integer("certificate_serial").unique(),
     certificateNeedsReissue: boolean("certificate_needs_reissue").notNull().default(false),
     remarks: text("remarks"),
     // Pricing snapshot, frozen at save (SPEC §8.3)
@@ -247,7 +250,24 @@ export const deficiencyNotices = pgTable("deficiency_notices", {
   sentOn: date("sent_on", { mode: "string" }),
   /** The date the registrant's response arrived (asked for by "Mark complete"). */
   responseReceivedOn: date("response_received_on", { mode: "string" }),
+  /** What the notice says, frozen when it is issued (Phase 10): the printed notice never changes afterwards. */
+  contents: jsonb("contents").$type<DeficiencyContents>(),
 });
+
+/** The body of a deficiency notice as issued (src/server/pdf/deficiency-notice.tsx). */
+export type DeficiencyContents = {
+  /** The Schedule 2 documents outstanding or not yet received: "{no}. {document}". */
+  documents: string[];
+  /** The evaluation checks answered N: "{text} (check {id})". */
+  checks: string[];
+  remarks: string | null;
+  category: string | null;
+  totalDue: number;
+  paid: number;
+  balance: number;
+  /** The officer who issued it (the reviewing supervisor), printed above the signature line. */
+  issuedByName: string | null;
+};
 
 export const ownUseNotifications = pgTable(
   "own_use_notifications",

@@ -1,5 +1,6 @@
 /**
- * Number formats (SPEC §3). Every series restarts each year. Issuing is done by
+ * Number formats (SPEC §3). Every series restarts each year, except the CERT-01
+ * certificate serial, which never resets (Q28d). Issuing is done by
  * the numbering service (src/server/numbering.ts) inside a database
  * transaction ([G12]).
  *
@@ -7,7 +8,7 @@
  * prefixes are fixed, so their format never changes after a number is issued.
  */
 
-export const SERIES = ["ACK", "PAY", "OUN", "DEF", "REG"] as const;
+export const SERIES = ["ACK", "PAY", "OUN", "DEF", "REG", "CERT"] as const;
 export type Series = (typeof SERIES)[number];
 
 const PREFIX = "OGSERC";
@@ -19,7 +20,11 @@ const WIDTH: Record<Series, number> = {
   OUN: 4,
   DEF: 5,
   REG: 4,
+  CERT: 4,
 };
+
+/** Series that never restart: their counter is kept under year 0. */
+export const UNDATED_SERIES: ReadonlySet<Series> = new Set(["CERT"]);
 
 function pad(n: number, width: number): string {
   if (!Number.isSafeInteger(n) || n < 1) throw new RangeError(`Bad serial ${n}`);
@@ -38,6 +43,7 @@ export type NumberParts = {
 
 export function formatNumber({ series, serial, year, scope, ackPrefix }: NumberParts): string {
   const n = pad(serial, WIDTH[series]);
+  if (series === "CERT") return n;
   if (!year || !Number.isInteger(year)) throw new RangeError(`${series} numbers need a year`);
   if (series === "ACK") return `${ackPrefix || DEFAULT_ACK_PREFIX}/${year}/${n}`;
   if (series === "REG") {

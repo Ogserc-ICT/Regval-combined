@@ -40,8 +40,8 @@ Do **not** set `SEED_EXAMPLES` or `APP_TODAY` for Production. The code refuses b
 
 1. Sign in as the bootstrap admin and choose your own password.
 2. **Admin › Staff & roles:** create the Registration officers, evaluators, supervisors, approvers and Finance officers, each with a one-time password. Approval needs four different people [G8]. Accounts that held only registry roles before Phase 9 now have no roles: give them a role or delete them.
-3. **Admin › Signatories:** confirm the Chairman / CEO and **add the Commissioner**. New registrations cannot be approved without one [G3].
-4. **Admin › Settings:** enter the gazetted Effective Date and clear "placeholder" (Q2). Check the ACK number prefix under Receipt and letters (Q25).
+3. **Admin › Signatories:** tick Jide Onakoya (Chairman / CEO) confirmed and **add Femi Omisanjo as Commissioner**, ticked confirmed (Q12, Q28e). New registrations cannot be approved without a Commissioner [G3], and CERT-01 prints as a draft while either is unconfirmed.
+4. **Admin › Settings:** enter the gazetted Effective Date and clear "placeholder" (Q2). Under Receipt and letters, check the ACK number prefix (Q25) and the address and email printed on letters (Q28a).
 5. **Admin › Holidays:** confirm the provisional and estimated dates, and keep the list six months ahead; deemed receipt depends on it.
 
 There is nothing to import: the workbook holds no real registration records.

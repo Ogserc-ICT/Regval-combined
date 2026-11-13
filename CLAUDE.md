@@ -51,4 +51,4 @@ Update this list as each phase finishes.
 - Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications done 10 Nov 2026; 8c idle sign-out with resume built 10 Nov 2026, awaiting Kamiye's test
 - Phase 9, re-scope (Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register): done 10 Nov 2026, pushed
 - Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
-- Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): next, once the Commission's templates arrive (Q26); not started
+- Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): done 13 Nov 2026 on the templates in `docs/templates/` (Q26); Q12 and Q28a, e answered (Commissioner Femi Omisanjo); Q28b–d, f–h on defaults

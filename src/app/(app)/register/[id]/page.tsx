@@ -20,6 +20,7 @@ import { DocumentsTab } from "./documents-tab";
 import { EvaluationTab } from "./evaluation-tab";
 import { HistoryTab } from "./history-tab";
 import { PaymentsTab } from "./payments-tab";
+import { PrintCard } from "./print-card";
 import { SummaryTab } from "./summary-tab";
 
 export const metadata: Metadata = { title: "Submission" };
@@ -106,6 +107,7 @@ export default async function SubmissionPage({ params, searchParams }: PageProps
         ))}
       </nav>
 
+      {(tab === "summary" || tab === "evaluation") && can(actor, "reports:print") ? <PrintCard l={l} /> : null}
       {tab === "summary" ? <SummaryTab l={l} /> : null}
       {tab === "details" ? <DetailsTab l={l} actor={actor} /> : null}
       {tab === "documents" ? <DocumentsTab l={l} actor={actor} /> : null}

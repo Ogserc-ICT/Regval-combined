@@ -46,7 +46,8 @@ export const PERMISSIONS = {
   "ownuse:save": ["registration"],
   /** The date a deficiency notice or certificate was actually sent (no Registry numbers them now). */
   "letters:record-sent": ["registration"],
-  "reports:print": ["registration", "admin"],
+  /** The four registration documents (Phase 10): staff who send them or act on the evaluation. */
+  "reports:print": ["registration", "evaluator", "supervisor", "approver", "admin"],
   "payment:record": ["registration", "finance"],
   "payment:decide": ["finance"],
   "payment:reverse": ["finance", "admin"],

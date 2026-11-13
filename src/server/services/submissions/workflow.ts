@@ -29,6 +29,7 @@ import { lagosToday } from "../../time";
 import { evaluationOfficers, notify, submissionHref } from "../notifications";
 import { listValues } from "../reference";
 import { getSettings } from "../settings";
+import { deficiencyContents } from "../letters";
 import { loadSubmission, type LoadedSubmission } from "./load";
 
 const audit = (tx: Tx, actor: Actor, l: LoadedSubmission, action: string, detail: string, data?: unknown) =>
@@ -446,6 +447,7 @@ export async function issueDeficiency(db: Db, actor: Actor | null, id: string, o
       balance: Math.max(0, l.a.balance),
       checksFailed: l.a.checks.failed,
       issuedBy: actor.id,
+      contents: deficiencyContents(l, actor.name),
     });
     await audit(
       tx,
@@ -609,9 +611,10 @@ export async function approve(db: Db, actor: Actor | null, id: string): Promise<
     }
     const scope = `${l.a.categoryApplied}-${l.a.primaryCode}`;
     const { number } = await issueNumber(tx, "REG", { year: yearOf(today), scope });
+    const { serial: certificateSerial } = await issueNumber(tx, "CERT", { year: yearOf(today) });
     await tx
       .update(submissions)
-      .set({ status: ST.REGISTERED, registrationNo: number, certificateIssueDate: today, dateSubmissionComplete: l.row.dateSubmissionComplete ?? today, updatedAt: new Date() })
+      .set({ status: ST.REGISTERED, registrationNo: number, certificateSerial, certificateIssueDate: today, dateSubmissionComplete: l.row.dateSubmissionComplete ?? today, updatedAt: new Date() })
       .where(eq(submissions.id, id));
     await tx.update(evaluations).set({ finalDecision: OUTCOMES.REGISTER }).where(eq(evaluations.submissionId, id));
     await audit(tx, actor, l, "Registered", `${number} - approved by ${actor.name}${overridden}`);

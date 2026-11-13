@@ -8,12 +8,13 @@
  * later cancelled.
  */
 import { eq, sql } from "drizzle-orm";
-import { DEFAULT_ACK_PREFIX, formatNumber, type Series } from "@/domain/numbering";
+import { DEFAULT_ACK_PREFIX, formatNumber, UNDATED_SERIES, type Series } from "@/domain/numbering";
 import { settingsSchema } from "@/domain/settings";
 import type { DbOrTx, Tx } from "./db/connect";
 import { settings } from "./db/schema";
 
 export type IssueOptions = {
+  /** Ignored for a series that never restarts (CERT), which is kept under year 0. */
   year: number;
   /** REG: "{Category}-{Code}" for the formatted number (the serial is shared across categories). */
   scope?: string;
@@ -29,8 +30,8 @@ async function ackPrefix(tx: DbOrTx): Promise<string> {
 }
 
 export async function issueNumber(tx: Tx, series: Series, opts: IssueOptions): Promise<IssuedNumber> {
-  const year = opts.year;
-  if (!year || !Number.isInteger(year)) throw new Error(`${series} needs a year`);
+  const year = UNDATED_SERIES.has(series) ? 0 : opts.year;
+  if (!UNDATED_SERIES.has(series) && (!year || !Number.isInteger(year))) throw new Error(`${series} needs a year`);
 
   await tx.execute(sql`
     insert into counters (series, year, scope, last_value)

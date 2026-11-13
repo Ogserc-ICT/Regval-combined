@@ -1,10 +1,10 @@
 # Open questions
 
-Phase 0 · 5 Nov 2026 · for Kamiye and the Commission. Updated 10 Nov 2026 (Phase 9: the Registry was removed; registry-only questions are closed as not applicable, Q25 to Q27 added).
+Phase 0 · 5 Nov 2026 · for Kamiye and the Commission. Updated 10 Nov 2026 (Phase 9: the Registry was removed; registry-only questions are closed as not applicable, Q25 to Q27 added). Updated 13 Nov 2026: Q12 answered, Q26 templates received, Q28 added and partly answered (Phase 10 built).
 
 Each question says what the workbook does, what the app will do until it is answered (the **default**), and which phase it affects. None of them blocks Phase 1. Every default is a setting or an admin-editable list, so an answer changes data, not code, unless noted. Reply with the number and the answer, e.g. "Q1: all modes".
 
-## Status (10 Nov 2026)
+## Status (13 Nov 2026)
 
 | Question | Status |
 | --- | --- |
@@ -16,7 +16,11 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q11 policy settings | **B35 decided (6 Nov 2026)**: an approver may override unresolved flags with a written reason, which is logged (`flagsBlockApproval = N`). The other policy settings keep their defaults as admin settings |
 | Q24 capacity per activity | **Decided (6 Nov 2026)**: one installed capacity per record, as the workbook |
 | Q5, Q16, Q17, Q19 | **Not applicable**: registry removed (Phase 9) |
-| Q25 ACK prefix, Q26 document templates, Q27 workbook export | New (Phase 9); open |
+| Q12 signatories | **Decided (13 Nov 2026)**: Jide Onakoya is the Chairman / CEO; the Commissioner is Femi Omisanjo (Q28e), entered by an admin |
+| Q26 document templates | **Received (13 Nov 2026)**: in `docs/templates/`; follow-ups in Q28 |
+| Q28a email, Q28e Commissioner | **Decided (13 Nov 2026)**: `registration@ogserc.org.ng`; Femi Omisanjo |
+| Q28b–d, f–h template details | Defaults in use (Phase 10); still open |
+| Q25 ACK prefix, Q27 workbook export | Open |
 | Q9, Q15 and all others | Defaults in use; still open |
 
 Also decided, not from this list: the late charge follows the Order, not the workbook (gap G14 in `COMBINED_BUILD.md`; `SPEC.md` §8.2).
@@ -79,6 +83,7 @@ Default: unit officers are user accounts linked to one unit; "confirm receipt" r
 **Q11. Undecided policy settings** (Settings rows 33–42). Defaults are the workbook's values: unpaid late charge blocks "complete" = **N**; waiver also reduces the late charge = **N**; data flags block approval outright = **N** (an approver may override with a written reason; the note says the other app has this on); late charge required to release for evaluation = **N**; unpaid reminder = none; supply/retail at 1 MW+ = **K**; wrong form = **accept and re-categorise**; other activities add their documents = **N**; own-use certificate = **N**; fee on updates and annual confirmations = **N**. **6 Nov 2026:** every one of these is an admin setting. B35 defaults to N: an approver can override unresolved flags with a written reason, which is logged. Kamiye to confirm with the Commission before Phase 2.
 
 **Q12. Signatories.** The Commissioner's name (approval of new registrations stays blocked until an admin adds it), and confirmation that Jide Onakoya is the "Chairman / CEO" signatory. (The Secretary to the Commission was seeded from the Registry; since Phase 9 only the Chairman / CEO is seeded.)
+**Decided (13 Nov 2026):** Jide Onakoya is confirmed as the Chairman / CEO signatory. The Commissioner was first to be the placeholder JOHN DOE, then named the same day: **Femi Omisanjo** (Q28e). An admin enters both under Admin › Signatories and ticks them confirmed; the names are data, not code. CERT-01 prints as a draft while either is missing or unconfirmed.
 
 **Q13. Holidays.** Confirm the dates marked Estimated or Provisional (Eid al-Fitr, Eid al-Adha, Eid al-Mawlid, weekend substitutes) and add any Ogun State holidays. The list starts at 25 Dec 2026 and ends at 28 Dec 2027; 2028 needs adding before the end of 2027.
 
@@ -107,6 +112,22 @@ Default: `OGSERC/ACK`, as an admin setting (Admin › Settings › Receipt and l
 
 **Q26. The registration documents.** The app must produce the para 10(3) acknowledgement letter, the deficiency notice, the EVAL-01 report and the CERT-01 certificate as PDFs. Please send the Commission's templates and approved wording for each: letterhead, the exact text, which signatory signs (Q12), and any reference or file number printed on them.
 Default: none built yet; the next phase builds them once the templates arrive. Until then the Register records the dates the deficiency notice, show-cause letter and certificate were sent.
+**Received (13 Nov 2026):** PDF samples of all four are in `docs/templates/` (`acknowledgement-letter.pdf`, `deficiency-notice.pdf`, `EVAL-01.pdf`, `CERT-01.pdf`). Phase 10 builds from them; the names and companies in them are sample data. Details they leave open are Q28.
 
 **Q27. The offline workbook export.** The export (`pnpm export:workbook`, Phase 7) patches the combined workbook, which still has its Registry sheets and macros. Since Phase 9 the app fills the Registry officer list with the Registration officers, leaves the router and front-desk lists empty, and leaves the Registry service targets, acknowledgement-email settings and unit emails as the workbook has them.
 Default: left as it is. Decide before the export is used again whether its Registry sheets should be removed or blanked (that needs re-checking in desktop Excel).
+
+## Templates received (13 Nov 2026)
+
+**Q28. Details the templates leave open.** (Phase 10)
+a) **Contact email.** The templates print `registration@ogserc.gov.ng`; staff emails elsewhere are `@ogserc.org.ng`.
+**Decided (13 Nov 2026):** ogserc.org.ng. The setting "Commission email on letters" (Admin › Settings › Receipt and letters) starts as `registration@ogserc.org.ng`.
+b) **Who signs the acknowledgement letter?** The sample is signed by the evaluating officer. Default: the assigned evaluating officer, or the officer generating it if none is assigned.
+c) **Who signs the deficiency notice?** The sample has a signature line with no name. Default: the reviewing supervisor who issued it (Q9).
+d) **Certificate serial number** ("Certificate Serial No.: 0001"). Default: its own counter that never resets or repeats, issued with the registration number, separate from the REG number. Say if it should restart each year.
+e) **CERT-01 while a signatory is unconfirmed.** With JOHN DOE as a placeholder Commissioner, a certificate would print a false name.
+**Answered (13 Nov 2026):** the Commissioner is Femi Omisanjo, so no placeholder is needed. As built: CERT-01 still prints "DRAFT – NOT ISSUED" across it while either signatory is missing or not ticked confirmed, so leave a name unconfirmed only while it is provisional.
+f) **"Scan to verify" QR code.** Default: it links to the registration's page in this app, which only signed-in staff can open, as the sample says. There is no public verification page.
+g) **Seal.** Default: the printed "COMMISSION SEAL" circle is where the physical seal is stamped; no seal image is printed.
+h) **Wording on the certificate:** "Established under the Ogun State Power Law, 2024" and "OGSERC Order on Commencement of Operations and Registration of Licensees and Electricity Operators, 2026". Default: printed as in the template. Confirm both titles.
+

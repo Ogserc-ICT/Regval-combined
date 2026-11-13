@@ -44,6 +44,7 @@ export const settingsSchema = z.object({
   officeClosingTime: time,
   ackPrefix: z.string().regex(/^[A-Z0-9]+(?:[/-][A-Z0-9]+)*$/, "Capital letters and digits, parts separated by / or -").max(40),
   letterAddress: z.string().min(1).max(300),
+  letterEmail: z.email("Enter an email address").max(200),
   // Security (Phase 8c)
   idleMinutes: z.number().int().min(1).max(240),
 });
@@ -80,6 +81,7 @@ export const DEFAULT_SETTINGS: Settings = {
   officeClosingTime: "17:00",
   ackPrefix: "OGSERC/ACK",
   letterAddress: "5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta",
+  letterEmail: "registration@ogserc.org.ng",
   idleMinutes: 4,
 };
 
@@ -124,6 +126,7 @@ export const SETTING_META: Record<SettingKey, SettingMeta> = {
   officeClosingTime: { label: "Office closing time", group: "Receipt and letters", kind: "time", note: "Para 10(3): filings by email or online portal at or after this time are received the next working day. Hand deliveries are not cut off.", source: "Registry Settings B7" },
   ackPrefix: { label: "ACK number prefix", group: "Receipt and letters", kind: "text", note: "ACK numbers read <prefix>/<year>/<serial>, e.g. OGSERC/ACK/2026/00001. The separate registry app also issues OGSERC/ACK numbers: see QUESTIONS.md Q25.", source: "Phase 9 (was fixed in the combined workbook)" },
   letterAddress: { label: "Commission address on letters", group: "Receipt and letters", kind: "text", note: "Printed under the Commission's name on the acknowledgement letter, deficiency notice and certificate.", source: "Acknowledgement Slip B4" },
+  letterEmail: { label: "Commission email on letters", group: "Receipt and letters", kind: "text", note: "Printed in the letterhead of the acknowledgement letter, deficiency notice and EVAL-01 (Q28a: ogserc.org.ng).", source: "Phase 10 templates" },
   idleMinutes: {
     label: "Sign out after inactivity (minutes)",
     group: "Security",

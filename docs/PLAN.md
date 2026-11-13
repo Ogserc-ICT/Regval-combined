@@ -157,7 +157,7 @@ Sidebar (dark by default, collapsible; light mode available): one entry per modu
 | Documents | Per-submission checklist (also a tab); cross-submission outstanding-documents view |
 | Evaluation | EVAL-01 form per submission: officers, checks by stage, counts, recommended outcome, approval blockers, decision buttons; my evaluations |
 | Own-use | Own-use list; notification form (date, time and channel received; generator units); notification page; register with certificate (when enabled) |
-| Reports | The four registration documents as PDFs (Phase 10; awaiting templates, Q26) |
+| Reports | The four registration documents as PDFs (Phase 10): what each holds; printing is from each submission's Summary and Evaluation tabs |
 | Audit log | Filterable, read-only; per-record history links |
 | Admin | Settings (grouped, with notes and sources); fee table; activity map; forms, documents and checks (read-only); lists; holidays (with status); users and roles; signatories; daily review; export registers (CSV / .xlsx); go-live checks; audit chain check |
 
@@ -180,7 +180,7 @@ src/
     db/            schema/*.ts, client.ts, migrations/
     services/      one file per use case group (submissions/, payments, ownuse, receipt, notifications, idle, drafts, …)
     auth/          better-auth config, session.ts, actor.ts
-    pdf/           common.tsx, respond.ts (helpers for the Phase 10 documents)
+    pdf/           the four documents (Phase 10), common.tsx, respond.ts, fonts/, assets/
     numbering.ts, audit.ts, time.ts
   components/      ui, shell, forms
   lib/             browser helpers (pulse, drafts-client)
@@ -319,6 +319,18 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 - **Database** (migration 0013): `reject_delete()` and `counters_no_delete()` stand aside only when the transaction has set `ogserc.allow_delete` to 'on' (`set_config(..., true)`), which only this service does. Ordinary deletes are still refused; the audit log's guards are unchanged.
 - Tests: `tests/integration/data-admin.test.ts`. The end-to-end walk-through for staff is `docs/END-TO-END.md`.
 
+## 11i. As built in Phase 10 (13 Nov 2026)
+
+- **Documents** (`src/server/pdf/`): `acknowledgement-letter.tsx`, `deficiency-notice.tsx`, `eval-01.tsx`, `certificate.tsx`, laid out on `docs/templates/`. `common.tsx` holds the letterhead (full on page 1, short after), footer, watermark and tables. DejaVu Sans and Serif are embedded (`fonts/`, with their licence) for the ₦ sign; the logo is `assets/ogserc-wordmark.png`. `next.config.ts` traces both into the route's bundle (`outputFileTracingIncludes`).
+- **react-pdf quirks** (4.9 with React 19.3): a `render` prop draws nothing on an element placed with `bottom`, so the footer is placed from the top of the A4 page; a `render` prop that returns differently shaped trees per page mixes up their nodes, so the letterhead is one tree whose sizes vary by page.
+- **Data** (`src/server/services/letters.ts`): one loader per document gathers plain data from `loadSubmission`; `deficiencyContents()` is what `issueDeficiency` freezes into the notice.
+- **Route**: `GET /api/pdf/{acknowledgement|deficiency|eval-01|certificate}/{id}` (`?download=1`; `?notice={id}` for an earlier notice), permission `reports:print` (now Registration, evaluator, supervisor, approver, admin), Node runtime, audited as "{Document} printed". 409 when the document does not exist yet (no certificate before approval), 404 for a missing notice.
+- **Schema** (migration 0014): `submissions.certificate_serial` (unique; issued on approval from the `CERT` series, which never resets and is kept in `counters` under year 0; earlier registrations backfilled in issue order) and `deficiency_notices.contents` (jsonb). Both are added to the `numbers_locked` triggers. Data management restarts the CERT series once nothing holds a serial.
+- **Settings**: `letterEmail` (Receipt and letters), default `registration@ogserc.org.ng` (Q28a).
+- **Screens**: a "Documents" card on the Summary and Evaluation tabs of each submission (Open / Download, with Draft and status badges); Reports explains each document.
+- **Tests**: `src/server/pdf/pdf.test.ts` renders all four from sample data and checks page counts (set `PDF_SAMPLES_DIR` to write them out for a visual check); `tests/integration/documents.test.ts` covers serials, the frozen notice, drafts, signatories and rendering from real records.
+- **Not built**: a reissued certificate keeps its serial and prints the current particulars (the "needs reissue" badge shows on the card); own-use registrations have no certificate (`ownUseCertificate` = N).
+
 ## 12. Phase map
 
 | Phase | Delivers |
@@ -332,6 +344,6 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 | 7 | Optional workbook export |
 | 8 | Live updates (8a), notifications (8b), idle sign-out with resume (8c) |
 | 9 | Re-scope: the Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register (§11g) |
-| 10 | The four registration PDFs: acknowledgement letter, deficiency notice, EVAL-01 report, CERT-01 certificate (awaiting templates, Q26) |
+| 10 | The four registration PDFs: acknowledgement letter, deficiency notice, EVAL-01 report, CERT-01 certificate (§11i) |
 
 Phases 3, 4 and 6 built registry parts that Phase 9 removed again (§11a, §11b, §11d are kept as history).

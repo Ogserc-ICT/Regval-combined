@@ -9,7 +9,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] Sign in with the bootstrap admin and choose a new password.
 - [ ] **Admin › Staff & roles:** create one account per person, with a role each. Note the one-time password shown for each.
 - [ ] **Admin › Settings:** check the Effective Date (clear "placeholder" once gazetted), the 17:00 office closing time, the ACK number prefix and "Sign out after inactivity".
-- [ ] **Admin › Signatories:** confirm the Chairman / CEO and add the Commissioner. Without a Commissioner, new registrations cannot be approved.
+- [ ] **Admin › Signatories:** confirm the Chairman / CEO (Jide Onakoya) and add the Commissioner (Femi Omisanjo), both ticked confirmed. Without a Commissioner, new registrations cannot be approved; while either is unconfirmed the certificate prints as a draft.
 - [ ] **Admin › Holidays:** confirm the provisional and estimated dates; deemed receipt and working days depend on them.
 - [ ] **Admin › Go-live checks:** work down the list until every row is ready.
 - [ ] Each person signs in once and replaces the one-time password. The eye button shows what they type.
@@ -21,6 +21,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] Not sure what a field is for? See §10, "The New submission form, field by field".
 - [ ] Save. The app works out the **deemed receipt date**: email or portal at or after 17:00, or any filing on a weekend or holiday, counts from the next working day. It issues the **ACK** in that year and prices the filing (fee, and the late charge if received after the deadline).
 - [ ] Open the entry: Summary shows the receipt, the deemed receipt date, the category, the fees and the next action. The receipt can no longer be changed.
+- [ ] **Documents card** (Summary tab): open the **acknowledgement letter** (para 10(3)) and send it to the operator. Tick the Schedule 2 documents first so the letter lists them as received; it is generated afresh each time it is opened.
 - [ ] Try a bad phone (8021846578): it is refused with an example of the right form (08021846578).
 
 ## 3. Payment and the Finance gate
@@ -36,12 +37,14 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] **Reviewing supervisor:** Evaluation tab › assign the evaluating officer, reviewing supervisor and approving officer. Each is notified.
 - [ ] **Documents tab:** tick each Schedule 2 document received (Registration officer, evaluator or supervisor).
 - [ ] **Evaluator:** answer the EVAL-01 checks, and confirm the category if the form filed does not match.
+- [ ] The **EVAL-01 form** can be printed from the Documents card at any stage, for signing by the three officers.
 - [ ] **Evaluator or supervisor:** "Mark complete" once documents and payment are complete. It starts the 30-day determination clock. The approver and supervisor are notified "Ready for decision".
 
 ### If something is missing: the deficiency notice
 
 - [ ] **Reviewing supervisor:** "Issue deficiency notice". It gets a DEF number; the Registration officers and the evaluator are notified to send it. The clock has not started.
-- [ ] **Registration officer:** send the notice, then record the **date it was sent** (Evaluation tab › Letters sent). The 14-day response period runs from that date.
+- [ ] **Supervisor or Registration officer:** open the notice from the submission's **Documents** card to check it. It prints "DRAFT – NOT ISSUED" until it is sent, and says what was outstanding when it was issued.
+- [ ] **Registration officer:** record the **date it was sent** (Evaluation tab › Letters sent), then print the final notice (dated that day, with its response date) and send it. The 14-day response period runs from that date.
 - [ ] When the response arrives, **evaluator or supervisor:** "Mark complete" asks for the **date the response was received**.
 - [ ] If no response comes in time, **approving officer:** "Lapse" (only after the period, and only once the notice was sent).
 
@@ -49,7 +52,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 
 - [ ] **Approve and register:** blocked, with every reason listed, until the checks, documents, payment, signatories and separation of duties allow it. Data flags need a written reason first.
 - [ ] On approval the entry gets its **registration number** (`OGSERC/REG/{year}/{category}-{activity}/{serial}`) and the certificate date. Registration officers and the evaluator are notified.
-- [ ] **Registration officer:** record the date the **certificate was sent** (Letters sent).
+- [ ] **Registration officer:** print the **CERT-01 certificate** from the Documents card (serial number, both signatories, QR code), have it signed and sealed, send it, and record the date it was sent (Letters sent).
 - [ ] Refusing instead: record the **show-cause letter sent** date, wait 14 days, then refuse with one of the three grounds.
 - [ ] If nobody decides within 30 days of completion, the daily review makes the registration **provisional** (para 13(4)).
 

@@ -96,6 +96,7 @@ async function restartEmptySeries(tx: Tx): Promise<string[]> {
     REG:
       (await n(tx, sql`select count(*)::int as n from ${submissions} where ${submissions.registrationNo} is not null`)) +
       (await n(tx, sql`select count(*)::int as n from ${ownUseNotifications} where ${ownUseNotifications.registrationNo} is not null`)),
+    CERT: await n(tx, sql`select count(*)::int as n from ${submissions} where ${submissions.certificateSerial} is not null`),
   };
   const empty = Object.entries(held).filter(([, v]) => v === 0).map(([k]) => k);
   if (!empty.length) return [];

@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Generated in Node route handlers only (register exports).
   serverExternalPackages: ["exceljs"],
+  // The registration PDFs read their fonts and logo from disk at runtime (Phase 10).
+  outputFileTracingIncludes: {
+    "/api/pdf/**": ["./src/server/pdf/fonts/*.ttf", "./src/server/pdf/assets/*"],
+  },
   // Workbook import (Admin › Import) uploads the .xlsm (2.7 MB); Vercel allows 4.5 MB.
   experimental: { serverActions: { bodySizeLimit: "4mb" } },
 };

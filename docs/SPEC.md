@@ -96,6 +96,7 @@ All settings are admin-editable, audited on change (`modCommon.LogEdit` writes "
 | `officeClosingTime` | 17:00 | Registry Settings B7 | Para 10(3): the cut-off for Email and Online portal filings (§4.1). |
 | `ackPrefix` | `OGSERC/ACK` | Phase 9 | The prefix of ACK numbers (§3). Open: Q25. |
 | `letterAddress` | "5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta" | Acknowledgement Slip B4 | Printed under the Commission's name on the registration documents (§24.1). |
+| `letterEmail` | "registration@ogserc.org.ng" | Phase 10 templates (Q28a) | Printed in the letterhead next to the address (§24.1). |
 | `idleMinutes` | 4 | Phase 8c | Sign-out after inactivity (docs/PLAN.md §11f). |
 
 The registry service targets and acknowledgement-email settings (Registry Settings B8–B13, B17–B18) were removed with the Registry. No example data is ever seeded in production.
@@ -118,6 +119,7 @@ Signatories are not settings; see §5.6 **[G3]**. Staff names are not settings o
 | Registration | `OGSERC/REG/2026/D-GEN/0001` | 4 digits | Yearly | Approval date | `modWorkflow.ApproveFor`; `modIntake.NextRegistrationSerial` |
 | Own-use registration | `OGSERC/REG/2026/I-CPT/0001` | 4 digits | Shares the REG serial | Approval date | `modIntake.RegisterOwnUseFor` |
 | Deficiency notice | `OGSERC/DEF/2027/00001` | 5 digits | Yearly | Issue date | Own counter (Q4); replaces `modWorkflow.IssueDeficiencyFor` |
+| Certificate serial | `0001` ("Certificate Serial No." on CERT-01) | 4 digits | Never | None (counter kept under year 0) | Q28d default; issued with the REG number on approval of a new registration (Phase 10) |
 
 The front desk (FD), outward (OUT) and file reference series were removed with the Registry.
 
@@ -177,7 +179,7 @@ One table: name, designation, signatory role (Chairman / CEO, Commissioner, Secr
 - Seed: Jide Onakoya, Chairman, role Chairman / CEO, **unconfirmed** (from Registry Lists AC4; flag for Kamiye). The Secretary (Registry Lists AC5) was Registry staff and is no longer seeded (Phase 9).
 - Commissioner: no row. Never invent a name.
 - Approval of a new registration and own-use registration is blocked while there is no active Chairman / CEO **or** no active Commissioner, with the message "Certificate signatory not set: Commissioner. An admin must add it under Admin › Signatories." (`tblEvaluation[Approval Blockers]`; `tblOwnUse[Registration Blockers]`). Open: Q12.
-- Which signatory signs which registration document comes with the templates (Open: Q26).
+- CERT-01 is signed by the active Chairman / CEO and Commissioner (a confirmed one first); it prints as a draft while either is missing or unconfirmed (Q28e). The acknowledgement letter is signed by the assigned evaluating officer, else the officer printing it (Q28b); the deficiency notice by the reviewing supervisor who issued it (Q28c). Decided 13 Nov 2026 (Q12): Jide Onakoya, Chairman / CEO; Femi Omisanjo, Commissioner.
 
 ## 6. Registration: data model
 
@@ -591,14 +593,14 @@ The front desk, registry intake, inward items, routing, forwarding and closing, 
 
 ### 24.1 Registration documents (PDF, generated on request)
 
-The app must produce four documents as PDFs (Guide B13). Their templates and wording are awaited from the Commission (Open: Q14, Q26); until then the dates they are sent are recorded on the Register (§13.3).
+Built in Phase 10 (13 Nov 2026) on the Commission's templates in `docs/templates/` (Q26). Each is generated from the current records when opened (`/api/pdf/{doc}/{submission id}`, `?download=1` to save), for Registration officers, evaluators, supervisors, approvers and admins (`reports:print`), and each print is audited. The letterhead prints the logo, the Commission's name, `letterAddress` and `letterEmail` (§2); every page has "{reference} · Page n of m".
 
-| Document | Content (from the Order and the workbook) |
-| --- | --- |
-| Acknowledgement letter | Para 10(3): ACK number, date and time received, channel, deemed receipt date, filing type and form, the registrant's name |
-| Deficiency notice | Para 13(1)(b): DEF number, ACK, the documents outstanding, the balance due, the failed checks, the response period from the date sent |
-| EVAL-01 report | The evaluation checks and their answers, the recommended outcome and the officers |
-| CERT-01 certificate | Registration number, registrant, category and activities, the confirmed Chairman / CEO and Commissioner (§5.3) |
+| Document | Content | Signed by | Draft / marked when |
+| --- | --- | --- | --- |
+| Acknowledgement letter (2 pages) | Para 10(3): ACK, date printed, registrant, address, compliance officer; date received with channel, and the deemed receipt date when it differs; activities, capacity, category (provisional until confirmed), fee, waiver, late charge, payments and balance, filed in time; Schedule 2 documents received and pending; what happens next (periods from §2); obligations, with the licence application date for an unlicensed operator. Updates and annual confirmations get their own heading and a shorter "what happens next". | The assigned evaluating officer, else the officer printing it (Q28b) | Never |
+| Deficiency notice (1 page) | Para 13(1)(b): DEF, ACK, the documents outstanding and failed checks, evaluator's remarks, category, total due, paid and balance, and the response date. The body is **frozen when the notice is issued** (`deficiency_notices.contents`, locked in the database); notices issued before Phase 10 are rebuilt from current records. | The reviewing supervisor who issued it (Q28c) | "DRAFT – NOT ISSUED" until the sent date is recorded; then dated the sent date, response due = sent + `deficiencyResponseDays` |
+| EVAL-01 (internal, 2–3 pages) | The officers and start date; every check by stage with its value (auto / N/A / pending); counts; recommended outcome; data flags and override reason; final decision; reasons and remarks; registration number; three signature lines; post-approval actions 9.1–9.7. | Signature lines for the three officers | Never |
+| CERT-01 (1 page, landscape) | Para 13(5): certificate serial (§3), form version, registration number, registrant, RC number and address, category, primary and other activities, principal LGA and service area, licence held, "Issued at Abeokuta this {nth} day of {month}, {year}" (certificate issue date), a seal circle for the physical seal (Q28g), a QR code to the registration in this app for signed-in staff (Q28f). New registrations only, once approved. | Chairman / CEO and Commissioner from Admin › Signatories | "DRAFT – NOT ISSUED" while a signatory is missing or unconfirmed (Q28e); the status (e.g. "CANCELLED") when no longer Registered |
 
 ### 24.2 Dashboard
 
