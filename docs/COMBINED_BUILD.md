@@ -147,7 +147,7 @@ After each phase, stop, summarise what changed and what comes next, and wait for
 | 5 | Dashboard and admin: dashboard, admin screens, register exports | Done 6 Nov 2026 (registry parts removed in Phase 9) |
 | 6 | Go-live: production on Vercel; the workbook import (removed in Phase 9: nothing to import) | Done 6 Nov 2026 |
 | 7 | Offline workbook export (optional) | Done 6 Nov 2026; registry sheets left as they were (QUESTIONS.md Q27) |
-| 8 | Live updates, notifications, idle sign-out with resume | Built 10 Nov 2026; awaiting Kamiye's test |
+| 8 | Live updates, notifications, idle sign-out with resume | Done 10 Nov 2026; 8c tested by Kamiye 13 Nov 2026 |
 | 9 | Re-scope: Registry removed; deemed receipt, ACK and sent dates moved into the Register | 10 Nov 2026 |
 | 10 | The four registration PDFs: acknowledgement letter, deficiency notice, EVAL-01 report, CERT-01 certificate | Done 13 Nov 2026 (templates in `docs/templates/`; PLAN.md §11i) |
 

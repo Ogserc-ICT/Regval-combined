@@ -48,7 +48,8 @@ Update this list as each phase finishes.
 - Phase 5, dashboard and admin: done 6 Nov 2026 (registry parts removed in Phase 9)
 - Phase 6, go-live: done 6 Nov 2026; production steps in docs/GO-LIVE.md are for Kamiye (workbook import removed in Phase 9)
 - Phase 7, offline workbook export: done 6 Nov 2026; reviewed in Excel and accepted (`pnpm export:workbook`); its Registry sheets left as they were (Q27)
-- Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications done 10 Nov 2026; 8c idle sign-out with resume built 10 Nov 2026, awaiting Kamiye's test
+- Phase 8, live updates, notifications, idle sign-out (plan in docs/PLAN.md §11f, agreed 9 Nov 2026): 8a live updates done 9 Nov 2026; 8b notifications done 10 Nov 2026; 8c idle sign-out with resume built 10 Nov 2026, tested by Kamiye 13 Nov 2026
 - Phase 9, re-scope (Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register): done 10 Nov 2026, pushed
 - Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
 - Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): done 13 Nov 2026 on the templates in `docs/templates/` (Q26); Q12 and Q28a, e answered (Commissioner Femi Omisanjo); Q28b–d, f–h on defaults
+- Go-live: 13 Nov 2026, signatories entered (Jide Onakoya, Femi Omisanjo), BETTER_AUTH_URL set to https://regval-combined.vercel.app, daily review run; every Admin › Go-live check Ready. Open for the Commission: Q25, Q28b–d and f–h, and the defaults in docs/QUESTIONS.md
