@@ -34,6 +34,7 @@ This Next.js version (16.4) differs from older ones; read `node_modules/next/dis
 - `docs/SPEC.md`: the registration rules (written in Phase 0; registry sections marked not applicable in Phase 9)
 - `docs/PLAN.md`: architecture, schema, ORM, auth, screens (written in Phase 0)
 - `docs/QUESTIONS.md`: open questions for Kamiye and the Commission (written in Phase 0)
+- `docs/REVENUE-REGISTRY-CONTRACT.md`: the payment handover format shared with the Revenue Registry app (change it before the code)
 - `docs/GO-LIVE.md`: production checklist; `docs/ACCEPTANCE.md`: acceptance check → test; `docs/END-TO-END.md`: walk-through of the whole app
 
 ## Status
@@ -53,4 +54,5 @@ Update this list as each phase finishes.
 - Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
 - Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): done 13 Nov 2026 on the templates in `docs/templates/` (Q26); Q12 and Q28a, e answered (Commissioner Femi Omisanjo); Q28b–d, f–h on defaults
 - Go-live: 13 Nov 2026, signatories entered (Jide Onakoya, Femi Omisanjo), BETTER_AUTH_URL set to https://regval-combined.vercel.app, daily review run; every Admin › Go-live check Ready. Q8–Q11, Q13, Q15, Q20, Q21, Q25, Q27 and Q28 answered the same day; Q2 gazetted Effective Date 2 Nov 2026 entered; Q18 no Microsoft sign-in for now; Q23 deferred (see docs/QUESTIONS.md)
+- Phase 11a, payment handover to the Revenue Registry: built 15 Nov 2026 (Payments & Finance › Handover, numbered EXP batches as Excel/CSV, migration 0016); the shared format is docs/REVENUE-REGISTRY-CONTRACT.md, agreed with the Revenue Registry's developer; 11b (direct feed) waits for them
 - Q23 step 1, filed forms and attachments: built 14 Nov 2026 (Documents tab upload, private Vercel Blob, migration 0015); needs a Blob store connected in Vercel (docs/GO-LIVE.md §2)

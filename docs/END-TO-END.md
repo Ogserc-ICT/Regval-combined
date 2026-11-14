@@ -32,6 +32,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] **Finance officer:** Payments & Finance, find it, tick "verified with the bank / Remita" and confirm. The officer who recorded a payment cannot confirm it.
 - [ ] When confirmed payments cover what is due, the submission is **released for evaluation** and the assigned evaluator (or the supervisors, if nobody is assigned yet) is notified.
 - [ ] A wrong payment can be rejected (with a reason) or, once confirmed, reversed.
+- [ ] **Finance officer: hand over to the Revenue Registry.** Payments & Finance › **Handover** › **Prepare handover**: every confirmed payment not handed over before (and a reversal line for any handed-over payment reversed since) goes into one batch, `OGSERC/EXP/{year}/{n}`. Download it (Excel), import it into the Revenue Registry, then **Mark imported**. A payment is never in two batches; a batch never changes, so downloading it again is safe. The format is in `docs/REVENUE-REGISTRY-CONTRACT.md`.
 
 ## 4. Evaluation (supervisor, evaluator)
 

@@ -92,18 +92,18 @@ export async function updateActivity(db: Db, actor: Actor | null, code: string, 
 // ------------------------------------------------------------------ simple lists
 
 /** The admin-editable drop-down lists. Values the rules rely on cannot be switched off. */
-export const EDITABLE_LISTS: Record<string, { label: string; locked?: string[] }> = {
+export const EDITABLE_LISTS: Record<string, { label: string; locked?: string[]; /** A second text per value, kept in list_items.meta. */ meta?: { label: string; hint: string } }> = {
   lga: { label: "LGAs" },
   registrant_type: { label: "Registrant types" },
   licence_status: { label: "Licence statuses" },
   submission_channel: { label: "Submission channels", locked: ["By hand", "Email", "Online portal"] },
   payment_channel: { label: "Payment channels" },
-  payment_purpose: { label: "Payment purposes" },
+  payment_purpose: { label: "Payment purposes", meta: { label: "Revenue code", hint: "Printed on each line handed over to the Revenue Registry (Q29). Blank until Finance supplies it." } },
   fuel: { label: "Fuels (own-use)" },
   refusal_ground: { label: "Refusal grounds" },
 };
 
-export type ListItemInput = { value: string; active?: boolean };
+export type ListItemInput = { value: string; active?: boolean; meta?: string };
 
 export async function addListItem(db: Db, actor: Actor | null, listKey: string, input: ListItemInput): Promise<void> {
   authorize(actor, "lists:write");
@@ -131,8 +131,9 @@ export async function updateListItem(db: Db, actor: Actor | null, listKey: strin
     const [row] = await tx.select().from(listItems).where(and(eq(listItems.listKey, listKey), eq(listItems.value, value))).for("update");
     if (!row) throw notFound("List item");
     if (input.active === false && def.locked?.includes(value)) throw blocked(`"${value}" is used by the rules and cannot be switched off.`);
-    const next = { active: input.active ?? row.active };
-    const c = diff(row, next, { active: "active" });
+    const next: { active: boolean; meta?: string | null } = { active: input.active ?? row.active };
+    if (def.meta && input.meta !== undefined) next.meta = t(input.meta)?.slice(0, 60) || null;
+    const c = diff(row, next, { active: "active", meta: def.meta?.label ?? "meta" });
     if (!c.length) return [];
     await tx.update(listItems).set(next).where(and(eq(listItems.listKey, listKey), eq(listItems.value, value)));
     await audit(tx, actor, "List item changed", `${def.label}: ${value}`, c);

@@ -10,6 +10,8 @@ import { can } from "@/server/auth/actor";
 import { requirePermission } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { listPayments } from "@/server/services/payments";
+import { handoverWaiting, listBatches } from "@/server/services/handover";
+import { HandoverPanel } from "./handover-panel";
 import { listValues } from "@/server/services/reference";
 import { lagosToday } from "@/server/time";
 
@@ -18,13 +20,16 @@ export const metadata: Metadata = { title: "Payments & Finance" };
 export default async function PaymentsPage({ searchParams }: PageProps<"/payments">) {
   const actor = await requirePermission("registers:read");
   const sp = await searchParams;
-  const view = sp.view === "ledger" ? "ledger" : "finance";
+  const handover = can(actor, "payments:handover");
+  const view = sp.view === "ledger" ? "ledger" : sp.view === "handover" && handover ? "handover" : "finance";
   const today = lagosToday();
-  const [pending, all, channels, purposes] = await Promise.all([
+  const [pending, all, channels, purposes, waiting, batches] = await Promise.all([
     listPayments(db, { status: "Pending" }),
     view === "ledger" ? listPayments(db, { limit: 500 }) : Promise.resolve([]),
     listValues(db, "payment_channel"),
     listValues(db, "payment_purpose"),
+    view === "handover" ? handoverWaiting(db) : Promise.resolve(null),
+    view === "handover" ? listBatches(db) : Promise.resolve([]),
   ]);
   const href = (p: { ownerType: string; ownerId: string }) => (p.ownerType === "submission" ? `/register/${p.ownerId}?tab=payments` : `/own-use/${p.ownerId}`);
   const oldest = pending[0] ? diffDays(lagosDate(pending[0].recordedAt), today) : 0;
@@ -45,6 +50,7 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
           [
             ["finance", "Finance Desk"],
             ["ledger", "Ledger"],
+            ...(handover ? ([["handover", "Handover"]] as const) : []),
           ] as const
         ).map(([k, label]) => (
           <Link
@@ -56,7 +62,9 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/payment
           </Link>
         ))}
       </nav>
-      {view === "finance" ? (
+      {view === "handover" && waiting ? (
+        <HandoverPanel waiting={waiting} batches={batches} today={today} />
+      ) : view === "finance" ? (
         <Card>
           <CardHeader title="Finance Desk" description="Payments waiting for confirmation, oldest first." />
           <PaymentsTable rows={pending} actor={actor} ownerHref={href} />

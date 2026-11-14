@@ -19,7 +19,10 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { FILE_KINDS, type FileKind } from "../../../domain/files";
+import { HANDOVER_LINE_TYPES, type HandoverLine, type HandoverLineType } from "../../../domain/handover";
 import { users } from "./auth";
+
+export { HANDOVER_LINE_TYPES, type HandoverLine, type HandoverLineType };
 
 export { FILE_KINDS, type FileKind };
 
@@ -265,6 +268,49 @@ export const payments = pgTable(
     index("payments_rrr_idx").on(sql`lower(trim(${t.rrr}))`),
     check("payments_amount_check", sql`${t.amount} > 0`),
     check("payments_status_check", sql`${t.financeStatus} in ('Pending', 'Confirmed', 'Rejected')`),
+  ],
+);
+
+/**
+ * Payment handover to the Revenue Registry (Phase 11; docs/REVENUE-REGISTRY-CONTRACT.md).
+ * A batch is frozen when prepared: its lines (as handed over) are kept in `lines`.
+ */
+export const handoverBatches = pgTable("handover_batches", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  batchNo: text("batch_no").notNull().unique(),
+  preparedAt: timestamp("prepared_at", { withTimezone: true }).notNull(),
+  preparedBy: uuid("prepared_by").notNull().references(() => users.id),
+  preparedByName: text("prepared_by_name").notNull(),
+  paymentLines: integer("payment_lines").notNull(),
+  reversalLines: integer("reversal_lines").notNull(),
+  paymentTotal: bigint("payment_total", { mode: "number" }).notNull(),
+  reversalTotal: bigint("reversal_total", { mode: "number" }).notNull(),
+  netTotal: bigint("net_total", { mode: "number" }).notNull(),
+  confirmedFrom: date("confirmed_from", { mode: "string" }),
+  confirmedTo: date("confirmed_to", { mode: "string" }),
+  checksum: text("checksum").notNull(),
+  /** The lines exactly as handed over (contract §4.1), in Line ID order. */
+  lines: jsonb("lines").$type<HandoverLine[]>().notNull(),
+  importedOn: date("imported_on", { mode: "string" }),
+  importedBy: uuid("imported_by").references(() => users.id),
+  importedByName: text("imported_by_name"),
+  importedAt: timestamp("imported_at", { withTimezone: true }),
+});
+
+/** One row per line ever handed over: a payment line and a reversal line can each be handed over once. */
+export const handoverLines = pgTable(
+  "handover_lines",
+  {
+    /** `{PAY no}:P` or `{PAY no}:R` (contract §2). */
+    lineId: text("line_id").primaryKey(),
+    paymentId: uuid("payment_id").notNull().references(() => payments.id),
+    lineType: text("line_type").$type<HandoverLineType>().notNull(),
+    batchId: uuid("batch_id").notNull().references(() => handoverBatches.id),
+  },
+  (t) => [
+    index("handover_lines_payment_idx").on(t.paymentId),
+    index("handover_lines_batch_idx").on(t.batchId),
+    check("handover_lines_type_check", sql`${t.lineType} in ('Payment', 'Reversal')`),
   ],
 );
 

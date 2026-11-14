@@ -343,7 +343,7 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 - **Tests**: `tests/integration/files.test.ts` (fake store).
 - **Not built**: files on own-use notifications; scanning or text extraction; per-category form fields (Q23 step 2, only when a report needs them).
 
-## 11k. Phase 11 plan: payment handover to the Revenue Registry (proposed 14 Nov 2026)
+## 11k. Phase 11: payment handover to the Revenue Registry (11a built 15 Nov 2026; 11b proposed)
 
 Finance records and confirms payments here, then keeps every payment in the Revenue Registry, a separate app (a colleague's, also on Vercel). Payments & Finance stays in this app; Finance hands confirmed payments over in numbered batches. The aim: no payment imported twice, none missed, and reversals carried across.
 
@@ -356,6 +356,15 @@ Finance records and confirms payments here, then keeps every payment in the Reve
 - **Marked imported**: Finance records "Imported into the Revenue Registry" on a batch (date, by whom). The Finance dashboard shows batches prepared but not marked imported, and the count of confirmed payments waiting for a batch.
 - **Screens**: Payments & Finance › Handover: waiting count and total, Prepare handover, the list of batches (download .xlsx / .csv, mark imported). Each payment shows its batch number.
 - **Rules**: a payment in a batch can still be reversed (it travels as a reversal line) but cannot be deleted in Admin › Data management. Clearing the Register is refused while batches exist, unless they are cleared together (stated on the screen). Every prepare, download and mark-imported is audited.
+
+**As built (11a, 15 Nov 2026)**
+- **Contract**: `docs/REVENUE-REGISTRY-CONTRACT.md` is the shared format with the Revenue Registry's developer; `src/domain/handover.ts` is that format as code (columns, Line IDs, checksum). Sample files: `docs/handover-samples/` (`scripts/handover-samples.ts`).
+- **Schema** (migration 0016): `handover_batches` (frozen `lines` jsonb, totals, checksum, imported on/by) and `handover_lines` (primary key Line ID `{PAY no}:P|R`; one row per line ever handed over). No-delete guards; `numbers_locked` on every batch fact and on the imported record once set. `EXP` series (4 digits, per Lagos year).
+- **Service** (`src/server/services/handover.ts`): `prepareHandover` under a transaction-level advisory lock, so two Prepares at once give one batch; `handoverWaiting`, `listBatches`, `markImported` (once; not in the future, not before preparation), `batchXlsx`, `batchCsv`. Every prepare, download and mark-imported is audited.
+- **Route**: `GET /api/handover/OGSERC-EXP-2026-0001` (`?format=csv`), permission `payments:handover` (Finance, Admin).
+- **Screens**: Payments & Finance › Handover (waiting counts, Prepare, batches with Excel / CSV and Mark imported); a dashboard queue for Finance and Admin. Revenue codes: Admin › Reference data › Lists › Payment purposes (`list_items.meta`).
+- **Data management**: a handed-over payment, or an entry with one, cannot be deleted; "Payment handover batches" is a clear group that goes only together with Register entries and Own-use notifications (refused otherwise, and those two are refused without it while batches exist).
+- **Tests**: `tests/integration/handover.test.ts`.
 
 **11b · Direct feed (after 11a, only if the Revenue Registry builds the other side)**
 - `GET /api/handover/batches?after={batch no.}` and `GET /api/handover/batches/{no}` (JSON, the same frozen lines and totals), authorised by a shared secret (`HANDOVER_API_KEY`, Bearer), read-only, rate-limited, audited. `POST /api/handover/batches/{no}/imported` lets the Revenue Registry mark a batch imported itself.
@@ -376,6 +385,6 @@ Finance records and confirms payments here, then keeps every payment in the Reve
 | 8 | Live updates (8a), notifications (8b), idle sign-out with resume (8c) |
 | 9 | Re-scope: the Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register (§11g) |
 | 10 | The four registration PDFs: acknowledgement letter, deficiency notice, EVAL-01 report, CERT-01 certificate (§11i) |
-| 11 | Payment handover to the Revenue Registry: numbered batches as Excel (11a); a direct feed if the Revenue Registry builds the other side (11b) (§11k, proposed) |
+| 11 | Payment handover to the Revenue Registry: numbered batches as Excel (11a, built); a direct feed if the Revenue Registry builds the other side (11b, proposed) (§11k) |
 
 Phases 3, 4 and 6 built registry parts that Phase 9 removed again (§11a, §11b, §11d are kept as history).

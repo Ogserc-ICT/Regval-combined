@@ -70,13 +70,31 @@ export function ActivityRow({ a, categories }: { a: { code: string; name: string
   );
 }
 
-export function ListItemRow({ listKey, item, locked }: { listKey: string; item: { value: string; active: boolean }; locked: boolean }) {
+export function ListItemRow({
+  listKey,
+  item,
+  locked,
+  meta,
+}: {
+  listKey: string;
+  item: { value: string; active: boolean; meta?: string | null };
+  locked: boolean;
+  meta?: { label: string; hint: string };
+}) {
   return (
-    <ActionForm action={updateListItemAction} submitLabel="Save" size="sm" variant="ghost" inline hidden={{ listKey, value: item.value, activeField: "1" }}>
+    <ActionForm
+      action={updateListItemAction}
+      submitLabel="Save"
+      size="sm"
+      variant="ghost"
+      inline
+      hidden={{ listKey, value: item.value, activeField: "1", ...(meta ? { metaField: "1" } : {}) }}
+    >
       <div className="min-w-48 flex-1 self-center text-sm">
         {item.value}
         {locked ? <span className="ml-2 text-xs text-faint">used by the rules</span> : null}
       </div>
+      {meta ? <Input name="meta" defaultValue={item.meta ?? ""} placeholder={meta.label} title={meta.hint} aria-label={`${meta.label} for ${item.value}`} className="h-8 w-40" maxLength={60} /> : null}
       <Check name="active" label="Active" checked={item.active} />
     </ActionForm>
   );

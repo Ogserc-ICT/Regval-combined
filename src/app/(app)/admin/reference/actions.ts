@@ -64,6 +64,7 @@ export async function updateActivityAction(_p: R | undefined, f: FormData) {
 const listInput = (f: FormData) => ({
   value: s(f, "value"),
   active: f.has("activeField") ? on(f, "active") : undefined,
+  meta: f.has("metaField") ? s(f, "meta") : undefined,
 });
 
 export async function addListItemAction(_p: R | undefined, f: FormData) {

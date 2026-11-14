@@ -146,7 +146,7 @@ Default: left as it is. Decide before the export is used again whether its Regis
 Decided 14 Nov 2026: Payments & Finance stays in this app; Finance hands confirmed payments to the Revenue Registry as numbered batches in Excel; a batch holds every confirmed payment not yet handed over (docs/PLAN.md §11k).
 
 **Q29. Revenue codes.** Does the Revenue Registry file payments under revenue codes or account heads that this app does not record? This app records only a purpose: Registration fee, Late registration charge, Fee and late charge.
-Default: a *Revenue code* column, filled from an admin-editable code per purpose, blank until Finance supplies the codes. If a "Fee and late charge" payment must be split between two codes, say so: the app knows the fee and late charge due on each submission and can split the line.
+Default: a *Revenue code* column, filled from an admin-editable code per purpose (Admin › Reference data › Lists › Payment purposes; built 15 Nov 2026), blank until Finance supplies the codes. If a "Fee and late charge" payment must be split between two codes, say so: the app knows the fee and late charge due on each submission and can split the line.
 
 **Q30. The Revenue Registry's import.** For its developer: which columns and names its import expects, whether it can skip a PAY number it already holds (so a repeated import is harmless), how it treats a reversal line (negative amount, same PAY number), and whether it would rather fetch batches from this app directly (11b) than import files.
 Default: the columns in docs/PLAN.md §11k, Excel, PAY number as the key.

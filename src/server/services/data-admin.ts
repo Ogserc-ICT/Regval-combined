@@ -25,6 +25,8 @@ import {
   evaluations,
   feeSchedule,
   formDrafts,
+  handoverBatches,
+  handoverLines,
   holidays,
   listItems,
   notifications,
@@ -45,6 +47,7 @@ import { blobStore, type FileStore } from "../blob";
 export const CLEAR_GROUPS = {
   register: { label: "Register entries", detail: "Every submission with its payments, documents checklist, uploaded files, evaluation and deficiency notices", recommended: true, setup: false },
   ownUse: { label: "Own-use notifications", detail: "Every notification with its generator units, payments and documents checklist", recommended: true, setup: false },
+  handover: { label: "Payment handover batches", detail: "Every batch prepared for the Revenue Registry. Cleared only together with Register entries and Own-use notifications, so no payment is handed over twice", recommended: true, setup: false },
   notifications: { label: "Notifications", detail: "Everyone's bell notifications", recommended: true, setup: false },
   drafts: { label: "Saved form drafts", detail: "Typing kept across an idle sign-out", recommended: true, setup: false },
   dailyReview: { label: "Daily review history", detail: "The record of past daily review runs (it can run again today)", recommended: false, setup: false },
@@ -68,6 +71,7 @@ export async function dataCounts(db: DbOrTx): Promise<Record<ClearGroup, number>
   return {
     register: await n(db, sql`select count(*)::int as n from ${submissions}`),
     ownUse: await n(db, sql`select count(*)::int as n from ${ownUseNotifications}`),
+    handover: await n(db, sql`select count(*)::int as n from ${handoverBatches}`),
     notifications: await n(db, sql`select count(*)::int as n from ${notifications}`),
     drafts: await n(db, sql`select count(*)::int as n from ${formDrafts}`),
     dailyReview: await n(db, sql`select count(*)::int as n from ${dailyReviewRuns}`),
@@ -99,6 +103,7 @@ async function restartEmptySeries(tx: Tx): Promise<string[]> {
       (await n(tx, sql`select count(*)::int as n from ${submissions} where ${submissions.registrationNo} is not null`)) +
       (await n(tx, sql`select count(*)::int as n from ${ownUseNotifications} where ${ownUseNotifications.registrationNo} is not null`)),
     CERT: await n(tx, sql`select count(*)::int as n from ${submissions} where ${submissions.certificateSerial} is not null`),
+    EXP: await n(tx, sql`select count(*)::int as n from ${handoverBatches}`),
   };
   const empty = Object.entries(held).filter(([, v]) => v === 0).map(([k]) => k);
   if (!empty.length) return [];
@@ -196,8 +201,21 @@ export async function clearData(db: Db, actor: Actor | null, groups: string[], p
   await checkPassword(db, actor, password);
   const files: string[] = [];
   const result = await db.transaction(async (tx) => {
+    const batches = await n(tx, sql`select count(*)::int as n from ${handoverBatches}`);
+    if (batches) {
+      const p = new Problems();
+      if ((chosen.includes("register") || chosen.includes("ownUse")) && !chosen.includes("handover"))
+        p.reason(`${batches} payment handover batch(es) list payments in these registers: tick Payment handover batches too.`);
+      if (chosen.includes("handover") && !(chosen.includes("register") && chosen.includes("ownUse")))
+        p.reason("Payment handover batches can be cleared only together with Register entries and Own-use notifications; otherwise their payments would be handed over again.");
+      p.throwIfAny("blocked");
+    }
     await allowDeletes(tx);
     const cleared: Partial<Record<ClearGroup, number>> = {};
+    if (chosen.includes("handover")) {
+      await tx.delete(handoverLines);
+      cleared.handover = (await tx.delete(handoverBatches).returning({ id: handoverBatches.id })).length;
+    }
     if (chosen.includes("register")) cleared.register = await clearSubmissions(tx, files);
     if (chosen.includes("ownUse")) cleared.ownUse = await clearOwnUse(tx);
     if (chosen.includes("notifications")) cleared.notifications = (await tx.delete(notifications).returning({ id: notifications.id })).length;
@@ -219,6 +237,20 @@ export async function clearData(db: Db, actor: Actor | null, groups: string[], p
   return result;
 }
 
+/** Payments already handed over to the Revenue Registry stay: the Revenue Registry holds them. */
+async function handedOver(tx: Tx, ownerType: "submission" | "own_use", ownerId: string, paymentId?: string): Promise<string[]> {
+  const rows = await tx
+    .select({ payNo: payments.payNo, batchNo: handoverBatches.batchNo })
+    .from(handoverLines)
+    .innerJoin(payments, eq(payments.id, handoverLines.paymentId))
+    .innerJoin(handoverBatches, eq(handoverBatches.id, handoverLines.batchId))
+    .where(and(eq(payments.ownerType, ownerType), eq(payments.ownerId, ownerId), paymentId ? eq(payments.id, paymentId) : undefined));
+  const seen = new Set<string>();
+  return rows
+    .filter((r) => !seen.has(r.payNo) && seen.add(r.payNo))
+    .map((r) => `${r.payNo} was handed over to the Revenue Registry in ${r.batchNo}, so it cannot be deleted here. Reverse it instead if it was wrong.`);
+}
+
 /** Notifications that point at a deleted entry would lead nowhere. */
 async function dropNotificationsFor(tx: Tx, hrefPrefix: string) {
   await tx.delete(notifications).where(or(eq(notifications.href, hrefPrefix), like(notifications.href, `${hrefPrefix}?%`)));
@@ -238,6 +270,7 @@ export async function deleteSubmission(db: Db, actor: Actor | null, id: string, 
       .from(submissions)
       .where(eq(submissions.linkedSubmissionId, id));
     for (const l of linked) p.reason(`${l.ack} is an update or annual confirmation linked to this registration: delete it first.`);
+    for (const r of await handedOver(tx, "submission", id)) p.reason(r);
     p.throwIfAny("blocked");
     await allowDeletes(tx);
     const pays = await tx.select({ no: payments.payNo }).from(payments).where(and(eq(payments.ownerType, "submission"), eq(payments.ownerId, id)));
@@ -264,7 +297,10 @@ export async function deleteOwnUse(db: Db, actor: Actor | null, id: string, conf
   return db.transaction(async (tx) => {
     const [row] = await tx.select().from(ownUseNotifications).where(eq(ownUseNotifications.id, id)).for("update");
     if (!row) throw notFound("Own-use notification");
-    if (confirmAck.trim().toUpperCase() !== row.ackNo.toUpperCase()) new Problems().field("confirmAck", `Type ${row.ackNo} to confirm.`).throwIfAny("blocked");
+    const p = new Problems();
+    if (confirmAck.trim().toUpperCase() !== row.ackNo.toUpperCase()) p.field("confirmAck", `Type ${row.ackNo} to confirm.`);
+    for (const r of await handedOver(tx, "own_use", id)) p.reason(r);
+    p.throwIfAny("blocked");
     await allowDeletes(tx);
     const pays = await tx.select({ no: payments.payNo }).from(payments).where(and(eq(payments.ownerType, "own_use"), eq(payments.ownerId, id)));
     await clearOwnUse(tx, [id]);
@@ -292,6 +328,8 @@ export async function deletePayment(db: Db, actor: Actor | null, id: string): Pr
     const [p] = await tx.select().from(payments).where(eq(payments.id, id)).for("update");
     if (!p) throw notFound("Payment");
     if (p.financeStatus === "Confirmed" && !p.reversed) throw blocked(`${p.payNo} is confirmed by Finance and counts towards the gate. Reverse it first, then delete it.`);
+    const sent = await handedOver(tx, p.ownerType, p.ownerId, id);
+    if (sent.length) throw blocked(...sent);
     await allowDeletes(tx);
     await tx.delete(payments).where(eq(payments.id, id));
     await writeAudit(tx, {

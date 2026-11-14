@@ -103,7 +103,7 @@ describe("clear data", () => {
     const staff = (await db.select().from(users)).length;
     const roles = (await db.select().from(userRoles)).length;
 
-    const all = ["register", "ownUse", "notifications", "drafts", "dailyReview", "settings", "fees", "lists", "holidays", "signatories"];
+    const all = ["register", "ownUse", "handover", "notifications", "drafts", "dailyReview", "settings", "fees", "lists", "holidays", "signatories"];
     const r = await clearData(db, admin, all, PW);
     expect(r.restarted).toEqual(expect.arrayContaining(["ACK", "OUN", "PAY"]));
     expect(await db.select().from(counters)).toEqual([]);

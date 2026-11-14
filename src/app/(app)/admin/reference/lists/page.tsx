@@ -32,14 +32,18 @@ export default async function ListsPage({ searchParams }: PageProps<"/admin/refe
         ))}
       </nav>
       <Card>
-        <CardHeader title={def.label} description="Values cannot be renamed (records keep the text). Switch a value off to hide it from new entries." />
+        <CardHeader
+          title={def.label}
+          description={`Values cannot be renamed (records keep the text). Switch a value off to hide it from new entries.${def.meta ? ` ${def.meta.label}: ${def.meta.hint}` : ""}`}
+        />
         <CardBody className="flex flex-col gap-2">
           {items.map((i) =>
             edit ? (
-              <ListItemRow key={i.value} listKey={key} item={i} locked={!!def.locked?.includes(i.value)} />
+              <ListItemRow key={i.value} listKey={key} item={i} locked={!!def.locked?.includes(i.value)} meta={def.meta} />
             ) : (
               <div key={i.value} className="flex items-center gap-2 text-sm">
                 {i.value}
+                {def.meta && i.meta ? <span className="text-xs text-faint">{def.meta.label}: {i.meta}</span> : null}
                 {!i.active ? <Badge>off</Badge> : null}
               </div>
             ),

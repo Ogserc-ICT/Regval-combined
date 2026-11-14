@@ -12,6 +12,7 @@ import { requireActor } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { dashboardData } from "@/server/services/dashboard";
 import { listHolidays } from "@/server/services/holidays";
+import { batchesNotImported, handoverWaiting } from "@/server/services/handover";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -67,7 +68,13 @@ function Item({ href, ack, name, note }: { href: string; ack: string; name: stri
 
 export default async function DashboardPage() {
   const actor = await requireActor();
-  const [d, holidays] = await Promise.all([dashboardData(db, actor), listHolidays(db)]);
+  const handsOver = can(actor, "payments:handover");
+  const [d, holidays, waiting, unimported] = await Promise.all([
+    dashboardData(db, actor),
+    listHolidays(db),
+    handsOver ? handoverWaiting(db) : Promise.resolve(null),
+    handsOver ? batchesNotImported(db) : Promise.resolve(0),
+  ]);
   const { registration: g, queues: q, settings, today } = d;
   const daysLeft = diffDays(today, g.deadline);
   const upcoming = holidays.filter((h) => h.date >= today).slice(0, 4);
@@ -130,6 +137,21 @@ export default async function DashboardPage() {
         {showFinance ? (
           <Queue title="Finance Desk" href="/payments" count={q.financeDesk} empty="No payment waits for Finance.">
             {q.oldestPayment ? <li className="py-1.5 text-muted">Oldest: <span className="font-mono text-xs text-text">{q.oldestPayment.payNo}</span> for {q.oldestPayment.reference}</li> : null}
+          </Queue>
+        ) : null}
+        {waiting ? (
+          <Queue
+            title="Handover to the Revenue Registry"
+            href="/payments?view=handover"
+            count={waiting.paymentLines + waiting.reversalLines + unimported}
+            empty="Every confirmed payment is handed over and every batch is marked imported."
+          >
+            {waiting.paymentLines + waiting.reversalLines ? (
+              <li className="py-1.5 text-muted">
+                {waiting.paymentLines} payment(s){waiting.reversalLines ? `, ${waiting.reversalLines} reversal(s)` : ""} waiting for a batch · net {naira(waiting.netTotal)}
+              </li>
+            ) : null}
+            {unimported ? <li className="py-1.5 text-muted">{unimported} batch(es) not yet marked imported</li> : null}
           </Queue>
         ) : null}
         <Queue title="Ready for decision" href="/evaluation" count={q.readyForDecision.length} empty="Nothing ready for a decision.">

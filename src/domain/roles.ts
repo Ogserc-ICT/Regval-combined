@@ -32,7 +32,7 @@ export const ROLE_DESCRIPTIONS: Record<Role, string> = {
   evaluator: "Complete EVAL-01 checks",
   supervisor: "Review evaluations, assign officers, issue deficiency notices",
   approver: "Approve, refuse, lapse",
-  finance: "Record, confirm, reject and reverse payments",
+  finance: "Record, confirm, reject and reverse payments; hand confirmed payments over to the Revenue Registry",
   admin: "Settings, lists, holidays, users and roles, signatories; cancel; recalculate; daily review; exports",
   viewer: "Dashboards and registers, read-only",
 };
@@ -51,6 +51,8 @@ export const PERMISSIONS = {
   "payment:record": ["registration", "finance"],
   "payment:decide": ["finance"],
   "payment:reverse": ["finance", "admin"],
+  /** Prepare and download payment handover batches for the Revenue Registry (Phase 11). */
+  "payments:handover": ["finance", "admin"],
   "documents:update": ["registration", "evaluator", "supervisor"],
   "evaluation:assign": ["supervisor", "admin"],
   "signatories:manage": ["admin"],

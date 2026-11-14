@@ -8,7 +8,8 @@
  * prefixes are fixed, so their format never changes after a number is issued.
  */
 
-export const SERIES = ["ACK", "PAY", "OUN", "DEF", "REG", "CERT"] as const;
+/** EXP: payment handover batches to the Revenue Registry (Phase 11). */
+export const SERIES = ["ACK", "PAY", "OUN", "DEF", "REG", "CERT", "EXP"] as const;
 export type Series = (typeof SERIES)[number];
 
 const PREFIX = "OGSERC";
@@ -21,6 +22,7 @@ const WIDTH: Record<Series, number> = {
   DEF: 5,
   REG: 4,
   CERT: 4,
+  EXP: 4,
 };
 
 /** Series that never restart: their counter is kept under year 0. */
