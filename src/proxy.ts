@@ -22,5 +22,5 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // The browser's own JSON endpoints answer 401 themselves rather than redirect.
-  matcher: ["/((?!sign-in|api/auth|api/cron|api/pulse|api/notifications|api/activity|api/drafts|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico)$).*)"],
+  matcher: ["/((?!sign-in|api/auth|api/cron|api/pulse|api/notifications|api/activity|api/drafts|api/files/upload|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|ico)$).*)"],
 };

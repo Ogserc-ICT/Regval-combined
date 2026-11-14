@@ -35,6 +35,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 ## 4. Evaluation (supervisor, evaluator)
 
 - [ ] **Reviewing supervisor:** Evaluation tab › assign the evaluating officer, reviewing supervisor and approving officer. Each is notified.
+- [ ] **Documents tab › Filed form and attachments:** upload the operator's REG-01 form as filed (PDF or scan, "Filed form") and any scanned supporting documents. Click a file name to open it; **Remove…** asks for a reason and keeps a note of it.
 - [ ] **Documents tab:** tick each Schedule 2 document received (Registration officer, evaluator or supervisor).
 - [ ] **Evaluator:** answer the EVAL-01 checks, and confirm the category if the form filed does not match.
 - [ ] The **EVAL-01 form** can be printed from the Documents card at any stage, for signing by the three officers.

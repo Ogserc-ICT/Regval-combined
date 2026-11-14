@@ -18,7 +18,10 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { FILE_KINDS, type FileKind } from "../../../domain/files";
 import { users } from "./auth";
+
+export { FILE_KINDS, type FileKind };
 
 export const FILING_CODES = ["NEW", "UPDATE", "ANNUAL"] as const;
 export type FilingCode = (typeof FILING_CODES)[number];
@@ -191,6 +194,37 @@ export const documentChecklist = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.ownerType, t.ownerId, t.key] })],
+);
+
+/**
+ * Copies of what the operator filed (the REG-01 form, scans of supporting documents), kept in
+ * Vercel Blob (private). Rows are never deleted by staff: "Remove" deletes the stored file and
+ * keeps this row with who removed it and why. Only the admin data tools delete rows.
+ */
+export const submissionFiles = pgTable(
+  "submission_files",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    submissionId: uuid("submission_id").notNull().references(() => submissions.id),
+    kind: text("kind").$type<FileKind>().notNull(),
+    description: text("description"),
+    fileName: text("file_name").notNull(),
+    contentType: text("content_type").notNull(),
+    sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(),
+    /** The Blob pathname (private store). */
+    blobPath: text("blob_path").notNull().unique(),
+    uploadedBy: uuid("uploaded_by").notNull().references(() => users.id),
+    uploadedByName: text("uploaded_by_name").notNull(),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).notNull().defaultNow(),
+    removedBy: uuid("removed_by").references(() => users.id),
+    removedByName: text("removed_by_name"),
+    removedAt: timestamp("removed_at", { withTimezone: true }),
+    removedReason: text("removed_reason"),
+  },
+  (t) => [
+    index("submission_files_submission_idx").on(t.submissionId),
+    check("submission_files_kind_check", sql`${t.kind} in ('Filed form', 'Supporting document', 'Other')`),
+  ],
 );
 
 export const FINANCE_STATUSES = ["Pending", "Confirmed", "Rejected"] as const;

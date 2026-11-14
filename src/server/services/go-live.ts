@@ -99,6 +99,14 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
   });
 
   // Platform
+  add({
+    area: "Platform",
+    label: "File storage",
+    state: env.BLOB_READ_WRITE_TOKEN ? "ok" : "warn",
+    detail: env.BLOB_READ_WRITE_TOKEN
+      ? "Vercel Blob is connected: staff can upload the filed form and scans on a submission's Documents tab."
+      : "BLOB_READ_WRITE_TOKEN is not set: connect a private Blob store to the project (Vercel › Storage) so staff can upload the filed form. Everything else works without it.",
+  });
   add({ area: "Platform", label: "Cron secret", state: env.CRON_SECRET && env.CRON_SECRET !== "change-me" ? "ok" : "fail", detail: !env.CRON_SECRET ? "CRON_SECRET is not set: the 07:00 daily review is refused." : env.CRON_SECRET === "change-me" ? "CRON_SECRET is still the example value from .env.example." : "CRON_SECRET is set." });
   add({
     area: "Platform",

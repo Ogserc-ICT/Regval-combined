@@ -33,15 +33,17 @@ import {
   payments,
   settings,
   signatories,
+  submissionFiles,
   submissionLicences,
   submissionOtherActivities,
   submissions,
 } from "../db/schema";
 import { blocked, notFound, Problems } from "../errors";
+import { blobStore, type FileStore } from "../blob";
 
 /** What can be cleared. `recommended` groups are ticked by default (a factory reset of the entries). */
 export const CLEAR_GROUPS = {
-  register: { label: "Register entries", detail: "Every submission with its payments, documents checklist, evaluation and deficiency notices", recommended: true, setup: false },
+  register: { label: "Register entries", detail: "Every submission with its payments, documents checklist, uploaded files, evaluation and deficiency notices", recommended: true, setup: false },
   ownUse: { label: "Own-use notifications", detail: "Every notification with its generator units, payments and documents checklist", recommended: true, setup: false },
   notifications: { label: "Notifications", detail: "Everyone's bell notifications", recommended: true, setup: false },
   drafts: { label: "Saved form drafts", detail: "Typing kept across an idle sign-out", recommended: true, setup: false },
@@ -104,8 +106,11 @@ async function restartEmptySeries(tx: Tx): Promise<string[]> {
   return [...new Set(gone.map((g) => g.series))].sort();
 }
 
-async function clearSubmissions(tx: Tx, ids?: string[]): Promise<number> {
+/** `files` collects the Blob pathnames to delete once the transaction commits. */
+async function clearSubmissions(tx: Tx, files: string[], ids?: string[]): Promise<number> {
   const only = <T>(col: T) => (ids ? inArray(col as never, ids) : undefined);
+  const kept = await tx.delete(submissionFiles).where(only(submissionFiles.submissionId)).returning({ path: submissionFiles.blobPath, removedAt: submissionFiles.removedAt });
+  files.push(...kept.filter((f) => !f.removedAt).map((f) => f.path));
   await tx.delete(deficiencyNotices).where(only(deficiencyNotices.submissionId));
   await tx.delete(evaluationAnswers).where(only(evaluationAnswers.submissionId));
   await tx.delete(evaluations).where(only(evaluations.submissionId));
@@ -184,15 +189,16 @@ export type ClearResult = { cleared: Partial<Record<ClearGroup, number>>; restar
  * Clear the chosen groups in one transaction (all or nothing). Ticking every
  * group is a factory reset; staff, roles and the audit log always stay.
  */
-export async function clearData(db: Db, actor: Actor | null, groups: string[], password: string): Promise<ClearResult> {
+export async function clearData(db: Db, actor: Actor | null, groups: string[], password: string, store: FileStore = blobStore): Promise<ClearResult> {
   authorize(actor, "data:clear");
   const chosen = [...new Set(groups)].filter(isClearGroup);
   if (!chosen.length) new Problems().reason("Tick at least one thing to clear.").throwIfAny("blocked");
   await checkPassword(db, actor, password);
-  return db.transaction(async (tx) => {
+  const files: string[] = [];
+  const result = await db.transaction(async (tx) => {
     await allowDeletes(tx);
     const cleared: Partial<Record<ClearGroup, number>> = {};
-    if (chosen.includes("register")) cleared.register = await clearSubmissions(tx);
+    if (chosen.includes("register")) cleared.register = await clearSubmissions(tx, files);
     if (chosen.includes("ownUse")) cleared.ownUse = await clearOwnUse(tx);
     if (chosen.includes("notifications")) cleared.notifications = (await tx.delete(notifications).returning({ id: notifications.id })).length;
     if (chosen.includes("drafts")) cleared.drafts = (await tx.delete(formDrafts).returning({ id: formDrafts.id })).length;
@@ -209,6 +215,8 @@ export async function clearData(db: Db, actor: Actor | null, groups: string[], p
     });
     return { cleared, restarted };
   });
+  await store.remove(files);
+  return result;
 }
 
 /** Notifications that point at a deleted entry would lead nowhere. */
@@ -217,9 +225,10 @@ async function dropNotificationsFor(tx: Tx, hrefPrefix: string) {
 }
 
 /** Delete one Register entry with its payments, documents, evaluation and deficiency notices. */
-export async function deleteSubmission(db: Db, actor: Actor | null, id: string, confirmAck: string): Promise<string> {
+export async function deleteSubmission(db: Db, actor: Actor | null, id: string, confirmAck: string, store: FileStore = blobStore): Promise<string> {
   authorize(actor, "data:clear");
-  return db.transaction(async (tx) => {
+  const files: string[] = [];
+  const ack = await db.transaction(async (tx) => {
     const [row] = await tx.select().from(submissions).where(eq(submissions.id, id)).for("update");
     if (!row) throw notFound("Submission");
     const p = new Problems();
@@ -232,7 +241,7 @@ export async function deleteSubmission(db: Db, actor: Actor | null, id: string, 
     p.throwIfAny("blocked");
     await allowDeletes(tx);
     const pays = await tx.select({ no: payments.payNo }).from(payments).where(and(eq(payments.ownerType, "submission"), eq(payments.ownerId, id)));
-    await clearSubmissions(tx, [id]);
+    await clearSubmissions(tx, files, [id]);
     await dropNotificationsFor(tx, `/register/${id}`);
     await writeAudit(tx, {
       actor: auditActor(actor),
@@ -241,10 +250,12 @@ export async function deleteSubmission(db: Db, actor: Actor | null, id: string, 
       entityType: "submission",
       entityId: id,
       reference: row.ackNo,
-      detail: `${row.registeredName} (${row.status ?? "not saved"})${row.registrationNo ? `, ${row.registrationNo}` : ""}; ${pays.length} payment(s) deleted with it${pays.length ? `: ${pays.map((x) => x.no).join(", ")}` : ""}. Its numbers are not reused.`,
+      detail: `${row.registeredName} (${row.status ?? "not saved"})${row.registrationNo ? `, ${row.registrationNo}` : ""}; ${pays.length} payment(s) deleted with it${pays.length ? `: ${pays.map((x) => x.no).join(", ")}` : ""}${files.length ? `; ${files.length} uploaded file(s) deleted` : ""}. Its numbers are not reused.`,
     });
     return row.ackNo;
   });
+  await store.remove(files);
+  return ack;
 }
 
 /** Delete one own-use notification with its units, payments and documents. */

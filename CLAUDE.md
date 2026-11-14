@@ -20,7 +20,7 @@ This project shares no code, database, number series or Vercel project with the 
 - No example data in production. Seed it only in development and preview environments.
 - Stack: Next.js (App Router), TypeScript, Tailwind, PostgreSQL. The ORM, migration tool and auth approach are chosen in Phase 0 and recorded in `docs/PLAN.md`.
 - Design: a modern, premium dashboard with a sidebar, dark mode by default.
-- Nothing may depend on a local disk or desktop Office: generate PDFs on request and store any kept file in Vercel Blob. There is no email.
+- Nothing may depend on a local disk or desktop Office: generate PDFs on request and store any kept file in Vercel Blob (private; uploaded files on the Documents tab). There is no email.
 
 ## Commands
 
@@ -53,3 +53,4 @@ Update this list as each phase finishes.
 - Admin data tools (Admin › Data management: clear registers up to a factory reset, delete entries) and docs/END-TO-END.md: done 10 Nov 2026
 - Phase 10, the four registration PDFs (acknowledgement letter, deficiency notice, EVAL-01, CERT-01): done 13 Nov 2026 on the templates in `docs/templates/` (Q26); Q12 and Q28a, e answered (Commissioner Femi Omisanjo); Q28b–d, f–h on defaults
 - Go-live: 13 Nov 2026, signatories entered (Jide Onakoya, Femi Omisanjo), BETTER_AUTH_URL set to https://regval-combined.vercel.app, daily review run; every Admin › Go-live check Ready. Q8–Q11, Q13, Q15, Q20, Q21, Q25, Q27 and Q28 answered the same day; Q2 gazetted Effective Date 2 Nov 2026 entered; Q18 no Microsoft sign-in for now; Q23 deferred (see docs/QUESTIONS.md)
+- Q23 step 1, filed forms and attachments: built 14 Nov 2026 (Documents tab upload, private Vercel Blob, migration 0015); needs a Blob store connected in Vercel (docs/GO-LIVE.md §2)

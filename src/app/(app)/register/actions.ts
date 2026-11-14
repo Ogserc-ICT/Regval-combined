@@ -10,6 +10,7 @@ import { confirmPayment, recordPayment, rejectPayment, reversePayment } from "@/
 import { createSubmission, saveDraftSubmission, updateSubmission } from "@/server/services/submissions/save";
 import { parseSubmission } from "./parse";
 import { parseNairaToKobo } from "@/lib/format";
+import { attachFile, removeFile } from "@/server/services/files";
 import {
   answerChecks,
   approve,
@@ -90,6 +91,18 @@ async function run(id: string, fn: () => Promise<string | void | number>, messag
 export async function setDocumentAction(_p: R | undefined, f: FormData) {
   const actor = await getCurrentActor();
   return run(s(f, "id"), () => setDocument(db, actor, s(f, "id"), s(f, "key"), s(f, "value")), "Saved.");
+}
+
+/** Records a file the browser has just uploaded to Blob (see /api/files/upload). */
+export async function attachFileAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  const id = s(f, "id");
+  return run(id, () => attachFile(db, actor, id, { pathname: s(f, "pathname"), kind: s(f, "kind"), description: s(f, "description"), fileName: s(f, "fileName") }));
+}
+
+export async function removeFileAction(_p: R | undefined, f: FormData) {
+  const actor = await getCurrentActor();
+  return run(s(f, "id"), () => removeFile(db, actor, s(f, "fileId"), s(f, "reason")));
 }
 
 export async function assignOfficersAction(_p: R | undefined, f: FormData) {

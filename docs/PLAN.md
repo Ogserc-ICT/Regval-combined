@@ -194,7 +194,7 @@ tests/integration  Postgres
 - **Local**: Postgres in Docker (or a Neon dev branch), `.env.local`, `APP_TODAY` allowed.
 - **Preview**: a Neon branch per preview via the Vercel–Neon integration, migrated and seeded with reference data; Deployment Protection on.
 - **Production**: migrations as a build step; reference data seed (idempotent); never EXAMPLE rows (guard checks `VERCEL_ENV`); cron enabled; region pinned; custom subdomain of ogserc.org.ng (DNS records prepared for whoever manages the domain).
-- **Environment variables**: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`, `BETTER_AUTH_URL`, `CRON_SECRET`, `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `APP_TODAY` (development and preview tests only). `EMAIL_PROVIDER`, `EMAIL_FROM`, `RESEND_API_KEY` and `BLOB_READ_WRITE_TOKEN` are no longer used (Phase 9).
+- **Environment variables**: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`, `BETTER_AUTH_URL`, `CRON_SECRET`, `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `APP_TODAY` (development and preview tests only). `BLOB_READ_WRITE_TOKEN` (private Blob store for uploaded files, §11j). `EMAIL_PROVIDER`, `EMAIL_FROM` and `RESEND_API_KEY` are no longer used (Phase 9).
 - **Backups**: Neon point-in-time restore; admin "Export registers" (CSV and .xlsx).
 
 ## 10. Testing and acceptance
@@ -330,6 +330,18 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 - **Screens**: a "Documents" card on the Summary and Evaluation tabs of each submission (Open / Download, with Draft and status badges); Reports explains each document.
 - **Tests**: `src/server/pdf/pdf.test.ts` renders all four from sample data and checks page counts (set `PDF_SAMPLES_DIR` to write them out for a visual check); `tests/integration/documents.test.ts` covers serials, the frozen notice, drafts, signatories and rendering from real records.
 - **Not built**: a reissued certificate keeps its serial and prints the current particulars (the "needs reissue" badge shows on the card); own-use registrations have no certificate (`ownUseCertificate` = N).
+
+## 11j. Filed forms and attachments (Q23 step 1, 14 Nov 2026)
+
+- **What**: staff keep a copy of what the operator filed with each submission: the REG-01 form (PDF or scan) and any supporting documents. Kinds: Filed form, Supporting document, Other, with an optional description. PDF, JPEG, PNG and TIFF up to 50 MB (`src/domain/files.ts`).
+- **Storage**: Vercel Blob, private store, under `submissions/{submission id}/` with a random suffix (`src/server/blob.ts`). Nothing has a public URL.
+- **Upload**: the browser uploads straight to Blob (`@vercel/blob/client` `upload`, multipart above 8 MB), so files over Vercel's 4.5 MB request limit work. `POST /api/files/upload` hands out the one-file token after checking `documents:update`, that the submission is saved and that the path is in its folder. The browser then calls `attachFileAction`, which checks again, reads the stored file's real size and type, refuses (and deletes) anything else, and writes the row and a "File uploaded" audit entry. No upload-completed webhook, so it works locally and on previews.
+- **Open**: `GET /api/files/{file id}` (`?download=1`), permission `registers:read`, streams from Blob with `private, no-store`.
+- **Remove**: `documents:update`, reason required. Deletes the stored file; the row stays with who, when and why ("File removed" audit entry), shown under "removed files". Allowed on closed submissions too, as is uploading (forms can be added to registered records).
+- **Schema** (migration 0015): `submission_files`; no-delete guard; `numbers_locked` on the upload and removal facts. Admin › Data management deletes the rows and the stored files with the entry or the cleared Register.
+- **Screens**: "Filed form and attachments" card at the top of the Documents tab (Filed form on record / No filed form badge). Admin › Go-live: **File storage** check.
+- **Tests**: `tests/integration/files.test.ts` (fake store).
+- **Not built**: files on own-use notifications; scanning or text extraction; per-category form fields (Q23 step 2, only when a report needs them).
 
 ## 12. Phase map
 

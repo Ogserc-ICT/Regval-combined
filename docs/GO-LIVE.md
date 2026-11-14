@@ -25,7 +25,9 @@ Project › Settings › Environment Variables, **Production**:
 | `BETTER_AUTH_URL` | `https://<the production domain>` (step 3) |
 | `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` | The first admin; used only while no active admin exists |
 | `CRON_SECRET` | Set (done in Phase 4) |
-`BLOB_READ_WRITE_TOKEN`, `EMAIL_PROVIDER`, `EMAIL_FROM` and `RESEND_API_KEY` are no longer used (Phase 9) and can be removed.
+`BLOB_READ_WRITE_TOKEN` is used again (14 Nov 2026) for the filed forms and scans uploaded on a submission's Documents tab. Set it by connecting a Blob store, not by typing it: Project › Storage › Create › Blob, choose **Private** access, name it e.g. `ogserc-files`, and connect it to Production and Preview. Vercel adds the variable; redeploy so it takes effect. Admin › Go-live then shows **File storage** as Ready. If an old `BLOB_READ_WRITE_TOKEN` from Phase 4 is still set, check it points at a private store, or replace it by connecting the new one.
+
+`EMAIL_PROVIDER`, `EMAIL_FROM` and `RESEND_API_KEY` are no longer used (Phase 9) and can be removed.
 
 Do **not** set `SEED_EXAMPLES` or `APP_TODAY` for Production. The code refuses both there anyway [G13].
 

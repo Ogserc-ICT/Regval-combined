@@ -28,7 +28,7 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q21 old app | **Answered (13 Nov 2026)**: the old app stays live alongside this one; retirement not yet decided |
 | Q2 Effective Date | **Decided (13 Nov 2026)**: gazetted 2 Nov 2026, entered by an admin, placeholder cleared |
 | Q18 sign-in | **Decided (13 Nov 2026)**: no Microsoft sign-in for now |
-| Q23 form sections | **Deferred (13 Nov 2026)**: two summary fields kept; revisit if the Commission asks or an operator portal is built |
+| Q23 form sections | **Deferred (13 Nov 2026)**: two summary fields kept; step 1 built 14 Nov 2026 (the filed form is uploaded with each submission); steps 2 and 3 only if needed |
 | Q22 | Staff entered by an admin |
 
 Also decided, not from this list: the late charge follows the Order, not the workbook (gap G14 in `COMBINED_BUILD.md`; `SPEC.md` §8.2).
@@ -121,6 +121,7 @@ The workbook holds one "Installed Capacity (MW)" per submission and uses it to c
 
 **Q23. Form sections.** The detailed sections of REG-01A–K are not in the workbook; it records only "sections not complete" and "capacity stated in sections" (Guide B14). Default: the same two summary fields. Say if the Commission wants the full form sections captured in the app (a larger piece of work, best scoped after go-live).
 **Deferred (13 Nov 2026):** the Commission has not asked for it; the two summary fields stay. Recommended path if it comes up: first keep a copy of each filed form with its submission, then add per-category fields only for what the Commission needs to check or report on; capture full forms only if operators file online through a portal, where they type them in themselves.
+**Step 1 built (14 Nov 2026):** staff upload the operator's filed form and scans on the submission's Documents tab (Vercel Blob, private; docs/PLAN.md §11j). Steps 2 and 3 wait for a reason.
 
 ## Phase 9: the Registry removed (10 Nov 2026)
 

@@ -17,6 +17,9 @@ import { submissions } from "@/server/db/schema";
 import { DetailsTab } from "./details-tab";
 import { DraftSubmission } from "./draft";
 import { DocumentsTab } from "./documents-tab";
+import { FilesCard } from "./files-card";
+import { blobEnabled } from "@/server/blob";
+import { listFiles } from "@/server/services/files";
 import { EvaluationTab } from "./evaluation-tab";
 import { HistoryTab } from "./history-tab";
 import { PaymentsTab } from "./payments-tab";
@@ -51,6 +54,7 @@ export default async function SubmissionPage({ params, searchParams }: PageProps
     throw e;
   }
   const { row, a } = l;
+  const files = tab === "documents" ? await listFiles(db, id) : [];
 
   return (
     <>
@@ -110,12 +114,13 @@ export default async function SubmissionPage({ params, searchParams }: PageProps
       {(tab === "summary" || tab === "evaluation") && can(actor, "reports:print") ? <PrintCard l={l} /> : null}
       {tab === "summary" ? <SummaryTab l={l} /> : null}
       {tab === "details" ? <DetailsTab l={l} actor={actor} /> : null}
+      {tab === "documents" ? <FilesCard submissionId={row.id} files={files} actor={actor} storageReady={blobEnabled()} /> : null}
       {tab === "documents" ? <DocumentsTab l={l} actor={actor} /> : null}
       {tab === "payments" ? <PaymentsTab l={l} actor={actor} /> : null}
       {tab === "evaluation" ? <EvaluationTab l={l} actor={actor} /> : null}
       {tab === "history" ? <HistoryTab l={l} /> : null}
       {tab === "summary" && can(actor, "data:clear") ? (
-        <DeleteEntryCard action={deleteSubmissionAction} id={row.id} ack={row.ackNo} what="Register entry" withIt="its payments, documents checklist, evaluation and deficiency notices" />
+        <DeleteEntryCard action={deleteSubmissionAction} id={row.id} ack={row.ackNo} what="Register entry" withIt="its payments, documents checklist, uploaded files, evaluation and deficiency notices" />
       ) : null}
     </>
   );
