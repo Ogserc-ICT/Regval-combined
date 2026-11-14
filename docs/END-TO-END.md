@@ -21,6 +21,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] Not sure what a field is for? See §10, "The New submission form, field by field".
 - [ ] Save. The app works out the **deemed receipt date**: email or portal at or after 17:00, or any filing on a weekend or holiday, counts from the next working day. It issues the **ACK** in that year and prices the filing (fee, and the late charge if received after the deadline).
 - [ ] Open the entry: Summary shows the receipt, the deemed receipt date, the category, the fees and the next action. The receipt can no longer be changed.
+- [ ] **Documents tab › Filed form and attachments:** upload the operator's REG-01 form as filed (PDF or scan, "Filed form") and any scanned supporting documents, while the paper is in hand. Click a file name to open it; **Remove…** asks for a reason and keeps a note of it. Evaluators open the same files later instead of asking for the paper.
 - [ ] **Documents card** (Summary tab): open the **acknowledgement letter** (para 10(3)) and send it to the operator. Tick the Schedule 2 documents first so the letter lists them as received; it is generated afresh each time it is opened.
 - [ ] Try a bad phone (8021846578): it is refused with an example of the right form (08021846578).
 
@@ -35,7 +36,6 @@ A user can hold several roles, but on one submission the Registration officer wh
 ## 4. Evaluation (supervisor, evaluator)
 
 - [ ] **Reviewing supervisor:** Evaluation tab › assign the evaluating officer, reviewing supervisor and approving officer. Each is notified.
-- [ ] **Documents tab › Filed form and attachments:** upload the operator's REG-01 form as filed (PDF or scan, "Filed form") and any scanned supporting documents. Click a file name to open it; **Remove…** asks for a reason and keeps a note of it.
 - [ ] **Documents tab:** tick each Schedule 2 document received (Registration officer, evaluator or supervisor).
 - [ ] **Evaluator:** answer the EVAL-01 checks, and confirm the category if the form filed does not match.
 - [ ] The **EVAL-01 form** can be printed from the Documents card at any stage, for signing by the three officers.
