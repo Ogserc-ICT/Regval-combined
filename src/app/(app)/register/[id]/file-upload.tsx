@@ -1,6 +1,6 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
+import { upload, uploadPresigned } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { Button, Field, FormErrors, Input, Notice, Select } from "@/components/ui";
@@ -12,7 +12,7 @@ import { attachFileAction } from "../actions";
  * records the file on the submission. The server checks the person's role before handing out
  * the upload token and again when recording it.
  */
-export function FileUpload({ submissionId, hasFiledForm }: { submissionId: string; hasFiledForm: boolean }) {
+export function FileUpload({ submissionId, hasFiledForm, mode }: { submissionId: string; hasFiledForm: boolean; mode: "token" | "oidc" }) {
   const router = useRouter();
   const form = useRef<HTMLFormElement>(null);
   const [busy, setBusy] = useState(false);
@@ -36,7 +36,8 @@ export function FileUpload({ submissionId, hasFiledForm }: { submissionId: strin
     setBusy(true);
     setProgress(0);
     try {
-      const blob = await upload(uploadPathname(submissionId, file.name), file, {
+      const send = mode === "oidc" ? uploadPresigned : upload;
+      const blob = await send(uploadPathname(submissionId, file.name, crypto.randomUUID().slice(0, 8)), file, {
         access: "private",
         handleUploadUrl: "/api/files/upload",
         clientPayload: JSON.stringify({ submissionId }),

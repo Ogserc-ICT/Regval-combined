@@ -194,7 +194,7 @@ tests/integration  Postgres
 - **Local**: Postgres in Docker (or a Neon dev branch), `.env.local`, `APP_TODAY` allowed.
 - **Preview**: a Neon branch per preview via the Vercel–Neon integration, migrated and seeded with reference data; Deployment Protection on.
 - **Production**: migrations as a build step; reference data seed (idempotent); never EXAMPLE rows (guard checks `VERCEL_ENV`); cron enabled; region pinned; custom subdomain of ogserc.org.ng (DNS records prepared for whoever manages the domain).
-- **Environment variables**: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`, `BETTER_AUTH_URL`, `CRON_SECRET`, `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `APP_TODAY` (development and preview tests only). `BLOB_READ_WRITE_TOKEN` (private Blob store for uploaded files, §11j). `EMAIL_PROVIDER`, `EMAIL_FROM` and `RESEND_API_KEY` are no longer used (Phase 9).
+- **Environment variables**: `DATABASE_URL` (pooled), `DATABASE_URL_UNPOOLED`, `AUTH_SECRET`, `BETTER_AUTH_URL`, `CRON_SECRET`, `BOOTSTRAP_ADMIN_NAME`, `BOOTSTRAP_ADMIN_EMAIL`, `APP_TODAY` (development and preview tests only). `BLOB_STORE_ID` (OIDC) or `BLOB_READ_WRITE_TOKEN`: the private Blob store for uploaded files, §11j. `EMAIL_PROVIDER`, `EMAIL_FROM` and `RESEND_API_KEY` are no longer used (Phase 9).
 - **Backups**: Neon point-in-time restore; admin "Export registers" (CSV and .xlsx).
 
 ## 10. Testing and acceptance
@@ -334,7 +334,7 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 ## 11j. Filed forms and attachments (Q23 step 1, 14 Nov 2026)
 
 - **What**: staff keep a copy of what the operator filed with each submission: the REG-01 form (PDF or scan) and any supporting documents. Kinds: Filed form, Supporting document, Other, with an optional description. PDF, JPEG, PNG and TIFF up to 50 MB (`src/domain/files.ts`).
-- **Storage**: Vercel Blob, private store, under `submissions/{submission id}/` with a random suffix (`src/server/blob.ts`). Nothing has a public URL.
+- **Storage**: Vercel Blob, private store, under `submissions/{submission id}/{name}-{random}.{ext}` (the path is fixed in the browser before upload; `src/server/blob.ts`). Nothing has a public URL. Connected either through OIDC with `BLOB_STORE_ID` (browser gets a presigned URL: `uploadPresigned` / `handleUploadPresigned` + `issueSignedToken`) or with `BLOB_READ_WRITE_TOKEN` (client token: `upload` / `handleUpload`).
 - **Upload**: the browser uploads straight to Blob (`@vercel/blob/client` `upload`, multipart above 8 MB), so files over Vercel's 4.5 MB request limit work. `POST /api/files/upload` hands out the one-file token after checking `documents:update`, that the submission is saved and that the path is in its folder. The browser then calls `attachFileAction`, which checks again, reads the stored file's real size and type, refuses (and deletes) anything else, and writes the row and a "File uploaded" audit entry. No upload-completed webhook, so it works locally and on previews.
 - **Open**: `GET /api/files/{file id}` (`?download=1`), permission `registers:read`, streams from Blob with `private, no-store`.
 - **Remove**: `documents:update`, reason required. Deletes the stored file; the row stays with who, when and why ("File removed" audit entry), shown under "removed files". Allowed on closed submissions too, as is uploading (forms can be added to registered records).

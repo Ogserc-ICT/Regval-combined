@@ -32,7 +32,7 @@ export async function authorizeUpload(db: DbOrTx, actor: Actor | null, submissio
   authorize(actor, "documents:update");
   await savedSubmission(db, submissionId);
   if (!inSubmissionFolder(submissionId, pathname)) throw blocked("That upload path is not allowed.");
-  return { allowedContentTypes: Object.keys(ALLOWED_FILE_TYPES), maximumSizeInBytes: MAX_FILE_BYTES, addRandomSuffix: true };
+  return { allowedContentTypes: Object.keys(ALLOWED_FILE_TYPES), maximumSizeInBytes: MAX_FILE_BYTES, addRandomSuffix: false };
 }
 
 export type AttachInput = { pathname: string; kind: string; description?: string | null; fileName: string };

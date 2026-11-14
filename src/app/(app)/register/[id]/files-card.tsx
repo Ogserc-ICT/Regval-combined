@@ -4,11 +4,12 @@ import { lagosDateTime } from "@/domain/dates";
 import { ALLOWED_FILE_TYPES, formatBytes } from "@/domain/files";
 import { can, type Actor } from "@/server/auth/actor";
 import type { SubmissionFile } from "@/server/services/files";
+import type { BlobMode } from "@/server/blob";
 import { removeFileAction } from "../actions";
 import { FileUpload } from "./file-upload";
 
 /** The operator's filed form and scans kept with this submission (Q23 step 1). */
-export function FilesCard({ submissionId, files, actor, storageReady }: { submissionId: string; files: SubmissionFile[]; actor: Actor; storageReady: boolean }) {
+export function FilesCard({ submissionId, files, actor, storage }: { submissionId: string; files: SubmissionFile[]; actor: Actor; storage: BlobMode | null }) {
   const editable = can(actor, "documents:update");
   const live = files.filter((f) => !f.removedAt);
   const removed = files.filter((f) => f.removedAt);
@@ -71,11 +72,11 @@ export function FilesCard({ submissionId, files, actor, storageReady }: { submis
       ) : null}
       {editable ? (
         <CardBody className={live.length ? "border-t border-border" : undefined}>
-          {storageReady ? (
-            <FileUpload submissionId={submissionId} hasFiledForm={hasFiledForm} />
+          {storage ? (
+            <FileUpload submissionId={submissionId} hasFiledForm={hasFiledForm} mode={storage} />
           ) : (
             <Notice tone="warn" title="File storage is not set up">
-              Uploads need a private Vercel Blob store connected to this project (BLOB_READ_WRITE_TOKEN). An admin can see this under Admin › Go-live.
+              Uploads need a private Vercel Blob store connected to this project. An admin can see this under Admin › Go-live.
             </Notice>
           )}
         </CardBody>

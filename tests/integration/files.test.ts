@@ -65,8 +65,8 @@ const filing = () => ({
 describe("upload paths", () => {
   it("keeps every upload in its submission's own folder", () => {
     const id = "6f1c1d2e-0000-4000-8000-000000000001";
-    expect(uploadPathname(id, "REG-01D (signed) final.PDF")).toBe(`submissions/${id}/REG-01D-signed-final.pdf`);
-    expect(uploadPathname(id, "....")).toBe(`submissions/${id}/file`);
+    expect(uploadPathname(id, "REG-01D (signed) final.PDF", "a1b2c3d4")).toBe(`submissions/${id}/REG-01D-signed-final-a1b2c3d4.pdf`);
+    expect(uploadPathname(id, "....", "x/y")).toBe(`submissions/${id}/file-xy`);
     expect(inSubmissionFolder(id, `submissions/${id}/a-x1Y2.pdf`)).toBe(true);
     expect(inSubmissionFolder(id, `submissions/${id}/../other/a.pdf`)).toBe(false);
     expect(inSubmissionFolder(id, `submissions/${id}/sub/a.pdf`)).toBe(false);

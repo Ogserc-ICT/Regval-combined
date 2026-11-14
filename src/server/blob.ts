@@ -3,12 +3,25 @@
  * form and scans of supporting documents. Browsers upload straight to Blob with a short-lived
  * token from /api/files/upload (so a scan may exceed Vercel's 4.5 MB request limit); staff open
  * a file through /api/files/{id}, which checks their role and streams it. Nothing touches a
- * local disk. Without BLOB_READ_WRITE_TOKEN (local development) uploads are switched off.
+ * local disk.
+ *
+ * Two ways a store can be connected: a read-write token (BLOB_READ_WRITE_TOKEN, older
+ * connections and local development) or Vercel's OIDC with BLOB_STORE_ID (newer connections,
+ * no token). Browser uploads use a client token in the first case and a presigned URL in the
+ * second. Without either, uploads are switched off.
  */
 import { del, get, head } from "@vercel/blob";
 
+export type BlobMode = "token" | "oidc";
+
+export function blobMode(env: NodeJS.ProcessEnv = process.env): BlobMode | null {
+  if (env.BLOB_READ_WRITE_TOKEN) return "token";
+  if (env.BLOB_STORE_ID) return "oidc";
+  return null;
+}
+
 export function blobEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return !!env.BLOB_READ_WRITE_TOKEN;
+  return blobMode(env) !== null;
 }
 
 /** What the file service needs from storage; tests pass a fake. */

@@ -38,15 +38,19 @@ export const filePrefix = (submissionId: string) => `submissions/${submissionId}
 export const inSubmissionFolder = (submissionId: string, pathname: string) =>
   pathname.startsWith(filePrefix(submissionId)) && !pathname.includes("..") && !pathname.slice(filePrefix(submissionId).length).includes("/");
 
-/** The Blob pathname a new upload goes to (Blob adds a random suffix). */
-export function uploadPathname(submissionId: string, fileName: string): string {
+/**
+ * The Blob pathname a new upload goes to. `unique` (random, from the browser) keeps two files
+ * with the same name apart; the path is fixed before upload so a presigned URL can be scoped to it.
+ */
+export function uploadPathname(submissionId: string, fileName: string, unique: string): string {
   const dot = fileName.lastIndexOf(".");
   const ext = dot > 0 ? fileName.slice(dot + 1).toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 5) : "";
   const stem = (dot > 0 ? fileName.slice(0, dot) : fileName)
     .replace(/[^A-Za-z0-9-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 60);
-  return `${filePrefix(submissionId)}${stem || "file"}${ext ? `.${ext}` : ""}`;
+  const tag = unique.replace(/[^A-Za-z0-9]/g, "").slice(0, 12);
+  return `${filePrefix(submissionId)}${stem || "file"}${tag ? `-${tag}` : ""}${ext ? `.${ext}` : ""}`;
 }
 
 export function formatBytes(n: number): string {
