@@ -28,6 +28,8 @@ Each question says what the workbook does, what the app will do until it is answ
 | Q21 old app | **Answered (13 Nov 2026)**: the old app stays live alongside this one; retirement not yet decided |
 | Q2 Effective Date | **Decided (13 Nov 2026)**: gazetted 2 Nov 2026, entered by an admin, placeholder cleared |
 | Q18 sign-in | **Decided (13 Nov 2026)**: no Microsoft sign-in for now |
+| Q29 revenue codes | **Open (14 Nov 2026)**: for Finance |
+| Q30 Revenue Registry import | **Open (14 Nov 2026)**: for the Revenue Registry's developer |
 | Q23 form sections | **Deferred (13 Nov 2026)**: two summary fields kept; step 1 built 14 Nov 2026 (the filed form is uploaded with each submission); steps 2 and 3 only if needed |
 | Q22 | Staff entered by an admin |
 
@@ -138,6 +140,16 @@ Default: left as it is. Decide before the export is used again whether its Regis
 **Decided (13 Nov 2026):** keep the Registry sheets as they are.
 
 ## Templates received (13 Nov 2026)
+
+## Phase 11: payment handover to the Revenue Registry (14 Nov 2026)
+
+Decided 14 Nov 2026: Payments & Finance stays in this app; Finance hands confirmed payments to the Revenue Registry as numbered batches in Excel; a batch holds every confirmed payment not yet handed over (docs/PLAN.md §11k).
+
+**Q29. Revenue codes.** Does the Revenue Registry file payments under revenue codes or account heads that this app does not record? This app records only a purpose: Registration fee, Late registration charge, Fee and late charge.
+Default: a *Revenue code* column, filled from an admin-editable code per purpose, blank until Finance supplies the codes. If a "Fee and late charge" payment must be split between two codes, say so: the app knows the fee and late charge due on each submission and can split the line.
+
+**Q30. The Revenue Registry's import.** For its developer: which columns and names its import expects, whether it can skip a PAY number it already holds (so a repeated import is harmless), how it treats a reversal line (negative amount, same PAY number), and whether it would rather fetch batches from this app directly (11b) than import files.
+Default: the columns in docs/PLAN.md §11k, Excel, PAY number as the key.
 
 **Q28. Details the templates leave open.** (Phase 10)
 a) **Contact email.** The templates print `registration@ogserc.gov.ng`; staff emails elsewhere are `@ogserc.org.ng`.

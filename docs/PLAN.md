@@ -343,6 +343,25 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 - **Tests**: `tests/integration/files.test.ts` (fake store).
 - **Not built**: files on own-use notifications; scanning or text extraction; per-category form fields (Q23 step 2, only when a report needs them).
 
+## 11k. Phase 11 plan: payment handover to the Revenue Registry (proposed 14 Nov 2026)
+
+Finance records and confirms payments here, then keeps every payment in the Revenue Registry, a separate app (a colleague's, also on Vercel). Payments & Finance stays in this app; Finance hands confirmed payments over in numbered batches. The aim: no payment imported twice, none missed, and reversals carried across.
+
+**11a · Handover batches (file export)**
+- **Prepare handover** (Payments & Finance; Finance and Admin, new permission `payments:handover`): one transaction takes every confirmed payment not yet in a batch, whenever it was confirmed, plus a reversal line for every payment reversed after it was handed over, and issues a batch number `OGSERC/EXP/{year}/{n}` (new `EXP` series, per year, never reused). Locked against a second Prepare at the same moment. Nothing to hand over: refused with that reason.
+- **One batch per line**: a payment line and a reversal line each belong to exactly one batch (`payment_handover_lines`, unique on payment + line type). The lines are frozen at preparation (jsonb), so a batch downloaded again is identical.
+- **Excel (.xlsx)**: sheet *Payments* (one line per row) and sheet *Batch* (batch no., prepared at/by, first and last confirmation date, line count, payment total, reversal total, net total, SHA-256 of the lines). CSV of the same lines on request. Text columns stay text.
+- **Columns**: Line type (Payment / Reversal), PAY no., Date received, Date confirmed, Amount (NGN; negative on a reversal), Purpose, Revenue code (Q29), Channel, RRR, Payer (registered name), Reference (ACK / OUN), Registration no. or OUN, Filing type, Category, LGA, Recorded by, Confirmed by, Verified with bank, Reversed at, Reversal reason, Batch no.
+- **Key**: the PAY number (with the line type) is the permanent key; the Revenue Registry should skip any it already holds, so a repeated import does no harm.
+- **Marked imported**: Finance records "Imported into the Revenue Registry" on a batch (date, by whom). The Finance dashboard shows batches prepared but not marked imported, and the count of confirmed payments waiting for a batch.
+- **Screens**: Payments & Finance › Handover: waiting count and total, Prepare handover, the list of batches (download .xlsx / .csv, mark imported). Each payment shows its batch number.
+- **Rules**: a payment in a batch can still be reversed (it travels as a reversal line) but cannot be deleted in Admin › Data management. Clearing the Register is refused while batches exist, unless they are cleared together (stated on the screen). Every prepare, download and mark-imported is audited.
+
+**11b · Direct feed (after 11a, only if the Revenue Registry builds the other side)**
+- `GET /api/handover/batches?after={batch no.}` and `GET /api/handover/batches/{no}` (JSON, the same frozen lines and totals), authorised by a shared secret (`HANDOVER_API_KEY`, Bearer), read-only, rate-limited, audited. `POST /api/handover/batches/{no}/imported` lets the Revenue Registry mark a batch imported itself.
+- Optionally a daily automatic batch (07:00 daily review), so Finance does nothing but check.
+- The column names are agreed with the Revenue Registry's developer (Q30) before 11b is built.
+
 ## 12. Phase map
 
 | Phase | Delivers |
@@ -357,5 +376,6 @@ Requested by Kamiye after go-live. Built in three stages, each stopped for testi
 | 8 | Live updates (8a), notifications (8b), idle sign-out with resume (8c) |
 | 9 | Re-scope: the Registry removed; receipt, deemed receipt, ACK and sent dates moved into the Register (§11g) |
 | 10 | The four registration PDFs: acknowledgement letter, deficiency notice, EVAL-01 report, CERT-01 certificate (§11i) |
+| 11 | Payment handover to the Revenue Registry: numbered batches as Excel (11a); a direct feed if the Revenue Registry builds the other side (11b) (§11k, proposed) |
 
 Phases 3, 4 and 6 built registry parts that Phase 9 removed again (§11a, §11b, §11d are kept as history).
