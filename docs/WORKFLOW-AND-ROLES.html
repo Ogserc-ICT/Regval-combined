@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OGSERC Registration Workflow and Roles</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  :root {
+    --ink: #1b2430; --muted: #5b6675; --line: #d9dee5; --soft: #f3f5f8;
+    --brand: #0f4c5c; --brand2: #1f7a8c; --accent: #e0a100; --ok: #2e7d4f; --bad: #b3261e;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); font-size: 10pt; line-height: 1.45; margin: 0; background: #fff; }
+  h1 { font-size: 26pt; margin: 0 0 6px; color: var(--brand); letter-spacing: -0.5px; }
+  h2 { font-size: 15pt; color: var(--brand); margin: 0 0 8px; padding-bottom: 4px; border-bottom: 2px solid var(--brand); }
+  h2, h3 { break-after: avoid; }
+  h3 { font-size: 11.5pt; color: var(--brand2); margin: 14px 0 6px; }
+  p { margin: 0 0 7px; }
+  ul { margin: 0 0 8px; padding-left: 18px; }
+  li { margin-bottom: 2px; }
+  section { margin-bottom: 18px; }
+  .page { page-break-before: always; }
+  .keep { page-break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 10px; font-size: 9pt; }
+  th { background: var(--brand); color: #fff; text-align: left; padding: 5px 6px; font-weight: 600; }
+  td { padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr { page-break-inside: avoid; }
+  tbody tr:nth-child(even) td { background: var(--soft); }
+  .who { white-space: nowrap; font-weight: 600; color: var(--brand2); }
+  .num { width: 22px; color: var(--muted); font-weight: 600; }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 8.6pt; background: var(--soft); padding: 0 3px; border-radius: 3px; }
+  .note { background: #fff8e1; border-left: 4px solid var(--accent); padding: 7px 10px; margin: 8px 0; font-size: 9.2pt; }
+  .rule { background: #fdecea; border-left: 4px solid var(--bad); padding: 7px 10px; margin: 8px 0; font-size: 9.2pt; }
+  .tip { background: #e8f4ee; border-left: 4px solid var(--ok); padding: 7px 10px; margin: 8px 0; font-size: 9.2pt; }
+  .muted { color: var(--muted); }
+
+  /* cover */
+  .cover { height: 255mm; display: flex; flex-direction: column; }
+  .cover .top { display: flex; align-items: center; gap: 14px; }
+  .cover img { height: 64px; }
+  .cover .org { font-size: 11pt; color: var(--muted); }
+  .cover .title { margin-top: 70mm; }
+  .cover .sub { font-size: 13pt; color: var(--muted); margin-bottom: 18px; }
+  .cover .band { height: 6px; background: linear-gradient(90deg, var(--brand), var(--brand2), var(--accent)); width: 120px; margin: 14px 0 20px; border-radius: 3px; }
+  .cover .meta { font-size: 10pt; color: var(--muted); }
+  .cover .meta b { color: var(--ink); }
+  .cover .foot { margin-top: auto; font-size: 8.5pt; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+
+  /* journey chips */
+  .journey { display: flex; gap: 6px; margin: 8px 0 12px; }
+  .journey div { flex: 1; background: var(--soft); border-top: 4px solid var(--brand2); padding: 7px 8px; font-size: 8.6pt; }
+  .journey b { display: block; color: var(--brand); font-size: 9.4pt; margin-bottom: 2px; }
+
+  /* matrix */
+  .matrix td, .matrix th { text-align: center; font-size: 8.5pt; padding: 4px; }
+  .matrix td:first-child, .matrix th:first-child { text-align: left; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--brand2); }
+  .ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--brand2); }
+
+  .two { display: flex; gap: 14px; }
+  .two > div { flex: 1; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="top">
+    <img src="../public/ogserc-logo.png" alt="">
+    <div class="org">Ogun State Electricity Regulatory Commission</div>
+  </div>
+  <div class="title">
+    <h1>Registration &amp; Evaluation</h1>
+    <div class="sub">Workflow and roles, end to end</div>
+    <div class="band"></div>
+    <div class="meta">
+      <p>How a registration moves through the app from receipt to certificate, who does each step, and the rules the app enforces along the way.</p>
+      <p>Covers forms REG-01A to REG-01K under Order No. OGSERC/ORD/2026/001, own-use notifications (REG-01I), payments and the Finance gate, the EVAL-01 evaluation, and the handover to the Revenue Registry.</p>
+      <p style="margin-top:14px"><b>Version:</b> 17 November 2026 &nbsp;·&nbsp; <b>App:</b> regval-combined.vercel.app</p>
+    </div>
+  </div>
+  <div class="foot">Internal staff document. The rules summarised here are set out in full in the app's specification (docs/SPEC.md); periods and policies quoted are the current defaults and can be changed by an admin in Admin › Settings.</div>
+</div>
+
+<!-- ============ 1. AT A GLANCE ============ -->
+<section class="page">
+  <h2>1. The journey at a glance</h2>
+  <p>Every filing follows the same path. Each stage is owned by a different role, and the app will not let a stage start until the one before it is finished.</p>
+  <div class="journey">
+    <div><b>1 · Receive</b>Registration officer records the filing. ACK issued, fee priced.</div>
+    <div><b>2 · Pay</b>Payment recorded, then confirmed by Finance. Gate opens.</div>
+    <div><b>3 · Evaluate</b>Officers assigned; EVAL-01 checks; documents ticked.</div>
+    <div><b>4 · Complete or deficient</b>Mark complete (30-day clock) or issue a deficiency notice.</div>
+    <div><b>5 · Decide</b>Approving officer registers, refuses or lapses.</div>
+    <div><b>6 · Issue</b>CERT-01 printed, signed, sealed, sent; date recorded.</div>
+  </div>
+
+  <h3>Who is involved</h3>
+  <table>
+    <thead><tr><th style="width:24%">Role</th><th>What they do</th></tr></thead>
+    <tbody>
+      <tr><td class="who">Registration officer</td><td>Front of the process: records new submissions and own-use notifications, uploads the filed form, records payments, ticks documents, sends letters and records the dates they were sent.</td></tr>
+      <tr><td class="who">Finance officer</td><td>Confirms, rejects or reverses payments after checking the bank / Remita. Prepares the handover batches for the Revenue Registry.</td></tr>
+      <tr><td class="who">Reviewing supervisor</td><td>Assigns the three officers to each submission, oversees the evaluation, issues deficiency notices, records show-cause letter dates.</td></tr>
+      <tr><td class="who">Evaluating officer</td><td>Works through the EVAL-01 checks, confirms the category, marks the submission complete.</td></tr>
+      <tr><td class="who">Approving officer</td><td>Makes the decision: approve and register, refuse after show-cause, or lapse. Registers own-use notifications.</td></tr>
+      <tr><td class="who">Admin</td><td>Staff accounts and roles, settings, fees, lists, holidays, signatories, go-live checks, daily review, exports, cancellations, data management.</td></tr>
+      <tr><td class="who">Viewer</td><td>Read-only: dashboards and registers.</td></tr>
+      <tr><td class="who">Signatories</td><td>Chairman / CEO and Commissioner. Not app users by role: they are entered in Admin › Signatories and printed on CERT-01, which they sign by hand.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="rule"><b>Separation of duties (enforced by the server).</b> On any one submission, the officer who saved it, the evaluating officer, the reviewing supervisor and the approving officer must be <b>four different people</b>. A Finance officer can never confirm or reject a payment they recorded themselves. On an own-use notification, the approver cannot be the person who saved it. A full run therefore needs at least four staff; Admin and Finance can be held by any of them.</div>
+  <p class="muted">One person may hold several roles (for example Registration officer and Finance officer). The separation rules still apply per record, so they can record a payment on one file and confirm someone else's on another.</p>
+</section>
+
+<!-- ============ 2. ROLE MATRIX ============ -->
+<section>
+  <h2>2. Who does what, stage by stage</h2>
+  <p><span class="dot"></span> does the step &nbsp;&nbsp; <span class="ring"></span> may also do it &nbsp;&nbsp; blank: no part</p>
+  <table class="matrix">
+    <thead><tr><th style="width:34%">Step</th><th>Reg. officer</th><th>Finance</th><th>Supervisor</th><th>Evaluator</th><th>Approver</th><th>Admin</th></tr></thead>
+    <tbody>
+      <tr><td>Set up staff, settings, signatories, holidays</td><td></td><td></td><td></td><td></td><td></td><td><span class="dot"></span></td></tr>
+      <tr><td>Record submission / own-use notification</td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Upload filed form and scans</td><td><span class="dot"></span></td><td></td><td><span class="ring"></span></td><td><span class="ring"></span></td><td></td><td></td></tr>
+      <tr><td>Print and send acknowledgement letter</td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Record payment</td><td><span class="dot"></span></td><td><span class="ring"></span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Confirm / reject payment</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Reverse payment</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td><span class="ring"></span></td></tr>
+      <tr><td>Revenue Registry handover</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Assign evaluator, supervisor, approver</td><td></td><td></td><td><span class="dot"></span></td><td></td><td></td><td><span class="ring"></span></td></tr>
+      <tr><td>Tick Schedule 2 documents</td><td><span class="dot"></span></td><td></td><td><span class="ring"></span></td><td><span class="ring"></span></td><td></td><td></td></tr>
+      <tr><td>Answer EVAL-01 checks, confirm category</td><td></td><td></td><td><span class="ring"></span></td><td><span class="dot"></span></td><td></td><td></td></tr>
+      <tr><td>Mark complete</td><td></td><td></td><td><span class="ring"></span></td><td><span class="dot"></span></td><td></td><td></td></tr>
+      <tr><td>Issue deficiency notice</td><td></td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td></tr>
+      <tr><td>Record deficiency notice sent; send it</td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Record show-cause letter date</td><td></td><td></td><td><span class="ring"></span></td><td></td><td><span class="dot"></span></td><td></td></tr>
+      <tr><td>Approve / refuse / lapse</td><td></td><td></td><td></td><td></td><td><span class="dot"></span></td><td></td></tr>
+      <tr><td>Print CERT-01, send, record date sent</td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Register own-use with certificate</td><td></td><td></td><td></td><td></td><td><span class="dot"></span></td><td></td></tr>
+      <tr><td>Cancel a registration; recalculate pricing</td><td></td><td></td><td></td><td></td><td></td><td><span class="dot"></span></td></tr>
+    </tbody>
+  </table>
+  <p class="muted">Only the officers actually <i>assigned</i> to a submission can act on its evaluation and decision; holding the role is not enough.</p>
+</section>
+
+<!-- ============ 3. STATUS FLOW ============ -->
+<section class="page">
+  <h2>3. How a submission's status changes</h2>
+  <p>A submission is always in exactly one status. The arrows show the only moves the app allows and what triggers each one.</p>
+  <svg viewBox="0 0 720 380" width="100%" style="margin:6px 0 10px">
+    <defs>
+      <marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6675"/></marker>
+    </defs>
+    <style>
+      .b { fill:#f3f5f8; stroke:#1f7a8c; stroke-width:1.5; }
+      .c { fill:#e8f4ee; stroke:#2e7d4f; stroke-width:1.5; }
+      .x { fill:#fdecea; stroke:#b3261e; stroke-width:1.5; }
+      .t { font-size:11px; font-weight:600; fill:#1b2430; }
+      .l { font-size:9.5px; fill:#5b6675; }
+      .ln { stroke:#5b6675; stroke-width:1.3; fill:none; marker-end:url(#a); }
+    </style>
+    <!-- row 1 -->
+    <rect class="b" x="10" y="20" width="150" height="44" rx="6"/><text class="t" x="85" y="38" text-anchor="middle">Acknowledged –</text><text class="t" x="85" y="53" text-anchor="middle">Awaiting Payment</text>
+    <rect class="b" x="275" y="20" width="150" height="44" rx="6"/><text class="t" x="350" y="38" text-anchor="middle">Received –</text><text class="t" x="350" y="53" text-anchor="middle">Under Review</text>
+    <rect class="c" x="540" y="20" width="150" height="44" rx="6"/><text class="t" x="615" y="38" text-anchor="middle">Registered /</text><text class="t" x="615" y="53" text-anchor="middle">Changes Applied</text>
+    <path class="ln" d="M160,42 L273,42"/><text class="l" x="216" y="34" text-anchor="middle">Finance confirms</text><text class="l" x="216" y="58" text-anchor="middle">payment (gate)</text>
+    <path class="ln" d="M425,42 L538,42"/><text class="l" x="481" y="34" text-anchor="middle">Approver approves</text>
+    <!-- deficiency -->
+    <rect class="b" x="275" y="150" width="150" height="44" rx="6"/><text class="t" x="350" y="168" text-anchor="middle">Deficiency Notice</text><text class="t" x="350" y="183" text-anchor="middle">Issued</text>
+    <path class="ln" d="M330,64 L330,148"/><text class="l" x="324" y="100" text-anchor="end">Supervisor issues</text><text class="l" x="324" y="112" text-anchor="end">deficiency notice</text>
+    <path class="ln" d="M370,148 L370,66"/><text class="l" x="376" y="100">Response received:</text><text class="l" x="376" y="112">Mark complete</text>
+    <rect class="x" x="540" y="150" width="150" height="44" rx="6"/><text class="t" x="615" y="176" text-anchor="middle">Lapsed</text>
+    <path class="ln" d="M425,172 L538,172"/><text class="l" x="481" y="164" text-anchor="middle">No response by due</text><text class="l" x="481" y="188" text-anchor="middle">date: Approver lapses</text>
+    <!-- provisional -->
+    <rect class="b" x="10" y="150" width="150" height="44" rx="6"/><text class="t" x="85" y="168" text-anchor="middle">Provisionally</text><text class="t" x="85" y="183" text-anchor="middle">Registered</text>
+    <path class="ln" d="M290,64 C230,100 180,120 140,148"/><text class="l" x="14" y="92">No decision 30 days</text><text class="l" x="14" y="104">after complete (daily</text><text class="l" x="14" y="116">review; new only)</text>
+    <path class="ln" d="M85,194 L85,240 L708,240 L708,42 L692,42" /><text class="l" x="350" y="234" text-anchor="middle">Approver approves later</text>
+    <!-- refused / cancelled -->
+    <rect class="x" x="140" y="290" width="170" height="44" rx="6"/><text class="t" x="225" y="316" text-anchor="middle">Refused</text>
+    <rect class="x" x="390" y="290" width="170" height="44" rx="6"/><text class="t" x="475" y="316" text-anchor="middle">Cancelled</text>
+    <text class="l" x="225" y="350" text-anchor="middle">From any open status: Approver, 14+ days</text><text class="l" x="225" y="362" text-anchor="middle">after the show-cause letter was sent</text>
+    <text class="l" x="475" y="350" text-anchor="middle">From any open status, or Registered:</text><text class="l" x="475" y="362" text-anchor="middle">Admin, with a reason (para 14)</text>
+  </svg>
+  <table>
+    <thead><tr><th style="width:30%">Status</th><th style="width:12%">Closed?</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>Acknowledged – Awaiting Payment</td><td>No</td><td>Saved and acknowledged; waiting for confirmed payment. Evaluation is blocked.</td></tr>
+      <tr><td>Received – Under Review</td><td>No</td><td>Payment cleared; evaluation can proceed.</td></tr>
+      <tr><td>Deficiency Notice Issued</td><td>No</td><td>Waiting for the operator to supply what is missing.</td></tr>
+      <tr><td>Provisionally Registered</td><td>No</td><td>Commission did not decide within 30 days of completion (para 13(4)). The ACK number serves as the registration number until approval.</td></tr>
+      <tr><td>Registered / Changes Applied</td><td>Yes</td><td>Approved. Registered for a new registration; Changes Applied for an update or annual confirmation.</td></tr>
+      <tr><td>Lapsed · Refused · Cancelled</td><td>Yes</td><td>Ended without (or after) registration. Numbers already issued are never reused.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ 4. STEP BY STEP ============ -->
+<section class="page">
+  <h2>4. The workflow, step by step</h2>
+
+  <h3>Stage 0 · Set-up (once, then as needed)</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td class="who">Admin</td><td><b>Admin › Staff &amp; roles</b>: create one account per person and give each their role(s).</td><td>A one-time password for each person; they replace it at first sign-in.</td></tr>
+      <tr><td class="num">2</td><td class="who">Admin</td><td><b>Admin › Settings</b>: Effective Date (gazetted 2 Nov 2026), office closing time (17:00), ACK prefix, idle sign-out minutes, policies.</td><td>Every deadline and fee follows these. Changes are audited.</td></tr>
+      <tr><td class="num">3</td><td class="who">Admin</td><td><b>Admin › Signatories</b>: Chairman / CEO and Commissioner, both ticked confirmed.</td><td>Without a Commissioner, new registrations cannot be approved; unconfirmed signatories make CERT-01 print as a draft.</td></tr>
+      <tr><td class="num">4</td><td class="who">Admin</td><td><b>Admin › Holidays</b>: confirm provisional and estimated public holidays.</td><td>Deemed receipt dates depend on them.</td></tr>
+      <tr><td class="num">5</td><td class="who">Admin</td><td><b>Admin › Go-live checks</b>: work down the list until every row is Ready.</td><td>App ready for live filings.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Stage 1 · Receiving a filing</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">6</td><td class="who">Registration officer</td><td><b>Register › New submission</b>: filing type (New, Update or Annual confirmation), form filed (REG-01A–K), registered name, LGA, activities, installed capacity, licence status, operating on the Effective Date, contact details.</td><td>The app works out the category (highest of all activities) and the document checklist.</td></tr>
+      <tr><td class="num">7</td><td class="who">Registration officer</td><td>Enter the <b>date received, time received and channel</b> (By hand, Email, Online portal), then <b>Save</b>.</td><td><b>Deemed receipt date</b> computed and locked; <b>ACK number</b> issued in that year; fee and any late charge frozen.</td></tr>
+      <tr><td class="num">8</td><td class="who">Registration officer</td><td><b>Documents tab</b>: upload the REG-01 form as filed and any scanned supporting documents.</td><td>Evaluators open these files instead of asking for the paper.</td></tr>
+      <tr><td class="num">9</td><td class="who">Registration officer</td><td>Tick the Schedule 2 documents received, then open the <b>acknowledgement letter</b> from the Documents card and send it to the operator.</td><td>Letter (para 10(3)) lists the ACK, receipt, fee, documents received and pending, and next steps.</td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Deemed receipt (para 10(3)).</b> A filing received on a weekend or public holiday counts from the next working day. A filing by <b>Email or Online portal</b> at or after 17:00 also counts from the next working day. A filing <b>By hand</b> keeps its actual date unless it is a weekend or holiday. Once saved, the date, time, channel and deemed date can no longer be changed.</div>
+  <div class="note"><b>Late charge (new registrations only).</b> Days late = deemed receipt date − deadline. Charge = initial amount + daily rate × days late, capped at the category's maximum (Schedule 3). Updates and annual confirmations carry no late charge.</div>
+</section>
+
+<section>
+  <h3>Stage 2 · Payment and the Finance gate</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">10</td><td class="who">Registration officer</td><td>Entry › <b>Payments tab</b>: record date, amount, channel and RRR / bank reference.</td><td><b>PAY number</b> issued; status Pending. Finance officers' bell turns amber: "Payment to confirm".</td></tr>
+      <tr><td class="num">11</td><td class="who">Finance officer<br><span class="muted">(not the recorder)</span></td><td><b>Payments &amp; Finance</b>: find the payment, tick "verified with the bank / Remita", confirm. Or reject with a reason.</td><td>Confirmation is final. Wrong confirmed payments are <b>reversed</b>, never edited or deleted.</td></tr>
+      <tr><td class="num">12</td><td class="who">The app</td><td>When confirmed payments cover what is due, the gate opens automatically.</td><td>Status → <b>Received – Under Review</b>. The assigned evaluator (or the supervisors, if nobody is assigned) is notified.</td></tr>
+      <tr><td class="num">13</td><td class="who">Finance officer</td><td><b>Payments &amp; Finance › Handover › Prepare handover</b>; download the Excel batch, import it into the Revenue Registry, then <b>Mark imported</b>.</td><td>Batch <code>OGSERC/EXP/{year}/{n}</code> with every confirmed payment not yet handed over, plus reversal lines. No payment is ever in two batches.</td></tr>
+    </tbody>
+  </table>
+  <div class="rule"><b>No evaluation before payment.</b> Until Finance confirms enough, every evaluation action (confirm category, mark complete, deficiency notice, approve) is refused with the reason, e.g. "Payment not yet confirmed by Finance: ₦0 of ₦300,000 confirmed", and the blocked attempt is written to the audit log.</div>
+</section>
+
+<section>
+  <h3>Stage 3 · Evaluation (EVAL-01)</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">14</td><td class="who">Reviewing supervisor</td><td><b>Evaluation tab</b>: assign the evaluating officer, reviewing supervisor and approving officer.</td><td>Each is notified. The app refuses any assignment that breaks the four-different-people rule.</td></tr>
+      <tr><td class="num">15</td><td class="who">Evaluating officer</td><td>Answer the EVAL-01 checks (Y / N / N/A). Many are filled automatically (ACK issued, on time, late charge, documents complete, fees paid, flags reviewed). Confirm the category if the form filed does not match.</td><td>Progress, failed and pending counts, and a recommended outcome shown live.</td></tr>
+      <tr><td class="num">16</td><td class="who">Reg. officer, evaluator or supervisor</td><td><b>Documents tab</b>: tick each Schedule 2 document as received or N/A.</td><td>Feeds check 3.0 and the completeness test.</td></tr>
+      <tr><td class="num">17</td><td class="who">Any of the three officers</td><td>Print the <b>EVAL-01 form</b> from the Documents card at any stage for signature.</td><td>Paper record with all checks and three signature lines.</td></tr>
+      <tr><td class="num">18</td><td class="who">Evaluator or supervisor</td><td><b>Mark complete</b> once documents and payment are complete.</td><td>Starts the <b>30-day determination clock</b>. Approver and supervisor notified: "Ready for decision".</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Stage 3b · If something is missing: the deficiency path</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">19</td><td class="who">Reviewing supervisor</td><td><b>Issue deficiency notice</b>.</td><td><b>DEF number</b> issued; contents frozen. Registration officers and evaluator notified to send it. The clock has not started yet.</td></tr>
+      <tr><td class="num">20</td><td class="who">Supervisor or Reg. officer</td><td>Open the notice from the Documents card to check it.</td><td>Prints "DRAFT – NOT ISSUED" until the sent date is recorded.</td></tr>
+      <tr><td class="num">21</td><td class="who">Registration officer</td><td><b>Evaluation tab › Letters sent</b>: record the date sent, then print the final notice and send it.</td><td>Notice dated that day; <b>14-day response period</b> runs from it.</td></tr>
+      <tr><td class="num">22</td><td class="who">Evaluator or supervisor</td><td>When the response arrives: <b>Mark complete</b> and enter the date the response was received.</td><td>Status back to Under Review. The 30-day clock is not restarted.</td></tr>
+      <tr><td class="num">23</td><td class="who">Approving officer</td><td>If no response in time: <b>Lapse</b>.</td><td>Only allowed after the response date and only if the notice was sent. Never automatic.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h3>Stage 4 · Decision</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">24</td><td class="who">Approving officer<br><span class="muted">(the assigned one)</span></td><td><b>Approve and register</b>. Blocked, with every reason listed together, until checks, documents, payment, signatories and separation of duties all allow it. Open data flags need a written override reason.</td><td>New: <b>registration number</b> <code>OGSERC/REG/{year}/{category}-{activity}/{serial}</code>, certificate date, status Registered. Update / annual: changes copied to the registration, status Changes Applied.</td></tr>
+      <tr><td class="num">25</td><td class="who">Approver or supervisor, then approver</td><td>To refuse: record the date the <b>show-cause letter</b> was sent; after 14 days, <b>Refuse</b> on one of the three permitted grounds.</td><td>Status Refused (para 13(3)).</td></tr>
+      <tr><td class="num">26</td><td class="who">The app (daily review)</td><td>If no decision is made within 30 days of completion on a new registration.</td><td>Status <b>Provisionally Registered</b> (para 13(4)). The approver can still approve it later.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Stage 5 · Issuing the certificate</h3>
+  <table>
+    <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
+    <tbody>
+      <tr><td class="num">27</td><td class="who">Registration officer</td><td>Print <b>CERT-01</b> from the Documents card.</td><td>Landscape certificate: serial number, registration number, both signatories, seal circle, QR code.</td></tr>
+      <tr><td class="num">28</td><td class="who">Chairman / CEO, Commissioner</td><td>Sign; the Commission's seal is applied.</td><td>Certificate ready to issue.</td></tr>
+      <tr><td class="num">29</td><td class="who">Registration officer</td><td>Send it to the registrant; record the date sent under <b>Letters sent</b>.</td><td>Leaves the "certificates to send" queue. Evaluator completes the post-approval checks 9.1–9.7 to close the file.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h3>Other filings</h3>
+  <table>
+    <thead><tr><th style="width:22%">Filing</th><th style="width:20%">Who</th><th>How it differs</th></tr></thead>
+    <tbody>
+      <tr><td><b>Update</b> (material change, para 16(1))</td><td class="who">Registration officer, then the usual officers</td><td>New submission quoting the existing registration number. No late charge; no fee unless the "fee on updates" policy is on (so the gate usually clears at save). On approval the changed fields are copied to the registration; a change to any certificate field marks "certificate needs reissue".</td></tr>
+      <tr><td><b>Annual confirmation</b> (para 16(2))</td><td class="who">As above</td><td>Same as an update. Due by 31 January each year; the app flags late and overdue confirmations.</td></tr>
+      <tr><td><b>Own-use notification</b> (REG-01I)</td><td class="who">Registration officer; Approving officer</td><td><b>Own-use › New</b>: date, time and channel received, site details and generator units. Total from 200 kW to below 1 MW. Issues an <b>ACK</b> and an <b>OUN</b>; fee ₦100,000. 1 MW or more is refused (register as captive generation instead). No Finance gate. Where the certificate policy is on, the approving officer (not the person who saved it) can register it with an <code>I-CPT</code> registration number once the fee is confirmed and documents are complete.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:18px">5. Clocks and deadlines</h2>
+  <p>All dates are worked out in Lagos time on the server. Periods are calendar days unless stated; the numbers shown are the current settings.</p>
+  <table>
+    <thead><tr><th style="width:30%">Clock</th><th>Rule</th><th style="width:22%">Source</th></tr></thead>
+    <tbody>
+      <tr><td>Registration deadline (existing operator)</td><td>Effective Date + 60 days (+ any extension)</td><td>Para 11(1), 25</td></tr>
+      <tr><td>Registration deadline (new operator)</td><td>Planned start date − 30 days</td><td>Para 11(2)</td></tr>
+      <tr><td>Deemed receipt</td><td>Next <i>working</i> day for weekend / holiday, or Email / portal at or after 17:00</td><td>Para 10(3)</td></tr>
+      <tr><td>Determination</td><td>Date complete + 30 days; then provisional registration</td><td>Para 13(1), 13(4)</td></tr>
+      <tr><td>Deficiency response</td><td>Date the notice was sent + 14 days</td><td>Para 13(1)(b)</td></tr>
+      <tr><td>Show-cause before refusal</td><td>14 days from the date the letter was sent</td><td>Para 20</td></tr>
+      <tr><td>Licence application (unlicensed operators)</td><td>Effective Date + 90 days</td><td>Para 18</td></tr>
+      <tr><td>Licence expiry warning</td><td>Licence expiring within 6 months of the Effective Date</td><td>Para 8(5)</td></tr>
+      <tr><td>Annual confirmation</td><td>31 January each year</td><td>Para 16(2)</td></tr>
+    </tbody>
+  </table>
+  <p><b>Traffic light on each open file:</b> <span style="color:var(--bad);font-weight:600">red</span> when the determination date or deficiency response date has passed; <span style="color:var(--accent);font-weight:600">amber</span> within 7 days of the determination date; otherwise green.</p>
+</section>
+
+<section>
+  <h2>6. Numbers the app issues</h2>
+  <p>Every number is issued inside a database transaction, per year, and <b>never reused</b>, even if the record is later cancelled, refused, lapsed or deleted.</p>
+  <table>
+    <thead><tr><th style="width:24%">Number</th><th style="width:32%">Format</th><th>Issued when</th></tr></thead>
+    <tbody>
+      <tr><td>Acknowledgement (ACK)</td><td><code>OGSERC/ACK/2026/00001</code></td><td>A submission or own-use notification is saved. Year = deemed receipt date.</td></tr>
+      <tr><td>Payment (PAY)</td><td><code>OGSERC/PAY/2026/00001</code></td><td>A payment is recorded. Year = date received.</td></tr>
+      <tr><td>Own-use (OUN)</td><td><code>OGSERC/OUN/2026/0001</code></td><td>An own-use notification is saved.</td></tr>
+      <tr><td>Deficiency notice (DEF)</td><td><code>OGSERC/DEF/2026/00001</code></td><td>The supervisor issues a deficiency notice.</td></tr>
+      <tr><td>Registration (REG)</td><td><code>OGSERC/REG/2026/D-GEN/0001</code></td><td>A new registration is approved (one serial per year across all categories and own-use).</td></tr>
+      <tr><td>Certificate serial</td><td><code>0001</code></td><td>With the REG number; never resets.</td></tr>
+      <tr><td>Handover batch (EXP)</td><td><code>OGSERC/EXP/2026/1</code></td><td>Finance prepares a Revenue Registry handover.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:16px">7. Documents the app produces</h2>
+  <p>Each is generated fresh from the records when opened (nothing is kept on a local disk), and every print is audited.</p>
+  <table>
+    <thead><tr><th style="width:22%">Document</th><th>Content</th><th style="width:24%">Signed by</th></tr></thead>
+    <tbody>
+      <tr><td>Acknowledgement letter</td><td>Para 10(3): ACK, receipt and deemed receipt, category, fee, late charge, payments, documents received / pending, next steps, obligations.</td><td>Assigned evaluating officer, else the officer printing it</td></tr>
+      <tr><td>Deficiency notice</td><td>Para 13(1)(b): DEF, documents outstanding, failed checks, balance, response date. Draft until the sent date is recorded.</td><td>Reviewing supervisor who issued it</td></tr>
+      <tr><td>EVAL-01</td><td>Internal: every check by stage, counts, recommended outcome, flags, decision, post-approval checks.</td><td>Evaluator, supervisor and approver</td></tr>
+      <tr><td>CERT-01 certificate</td><td>Para 13(5): serial, registration number, registrant, category, activities, LGA, service area, licence, QR code, seal circle.</td><td>Chairman / CEO and Commissioner</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>8. Every day</h2>
+  <table>
+    <thead><tr><th style="width:22%">Tool</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><b>Dashboard</b></td><td>Each person's work queues: my evaluations, awaiting payment, Finance Desk, ready for decision, overdue deficiency responses, deficiency notices to send, certificates to send. Figures by category, status, activity and LGA, and money collected and outstanding.</td></tr>
+      <tr><td><b>Bell</b></td><td>Turns amber with a count and chimes when something waits for you. "Turn on pop-ups" for alerts while the app is minimised.</td></tr>
+      <tr><td><b>Live updates</b></td><td>Another person's change appears within about 5 seconds without refreshing. While you are typing, a "Refresh" button appears instead.</td></tr>
+      <tr><td><b>Idle sign-out</b></td><td>After the set minutes without activity, a 30-second warning, then sign-out. Signing in again returns you to the same page with your typing restored.</td></tr>
+      <tr><td><b>Daily review</b> (07:00)</td><td>Releases any submission whose payment now clears the gate; makes overdue new registrations provisional; lists deficiency responses that are overdue (it never lapses anything itself); counts red, amber and unpaid files. Admin › Daily review shows each run; admins can "Run now".</td></tr>
+      <tr><td><b>Audit log</b></td><td>Every action: who, when, what changed. It cannot be edited or cleared, not even by a factory reset.</td></tr>
+      <tr><td><b>Exports</b></td><td>Admin › Export registers: the Register, payments, own-use or the audit log as Excel or CSV.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Who watches which queue</h3>
+  <table>
+    <thead><tr><th style="width:24%">Role</th><th>Check daily</th></tr></thead>
+    <tbody>
+      <tr><td class="who">Registration officer</td><td>Awaiting payment (chase operators); deficiency notices to send; certificates to send.</td></tr>
+      <tr><td class="who">Finance officer</td><td>Finance Desk (payments to confirm); handover batch to prepare for the Revenue Registry.</td></tr>
+      <tr><td class="who">Reviewing supervisor</td><td>Released submissions with no officers assigned; red and amber files; overdue deficiency responses.</td></tr>
+      <tr><td class="who">Evaluating officer</td><td>My evaluations; responses received on deficiency notices.</td></tr>
+      <tr><td class="who">Approving officer</td><td>Ready for decision; files near or past the 30-day determination date; overdue responses to lapse.</td></tr>
+      <tr><td class="who">Admin</td><td>Daily review result; go-live checks; staff changes.</td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:16px">9. Administration and housekeeping</h2>
+  <table>
+    <thead><tr><th style="width:24%">Task</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td>Staff changes</td><td>Admin › Staff &amp; roles: deactivate (signed out at once), issue a new one-time password, or delete. A deleted person's name stays on the records they worked on. You cannot delete yourself, the last admin, or an officer still assigned to an open evaluation.</td></tr>
+      <tr><td>Cancel a registration</td><td>Admin, with a reason (para 14). Works on open or Registered submissions.</td></tr>
+      <tr><td>Recalculate pricing</td><td>Admin, with a reason, before a registration number exists; e.g. after the Effective Date or fee table changes. Before and after values are audited.</td></tr>
+      <tr><td>Delete one entry or payment</td><td>Open the entry › "Delete this…" › type its ACK. A confirmed payment must be reversed first. Its numbers are never given out again.</td></tr>
+      <tr><td>Clear data</td><td>Admin › Data management, with your password: "Entries only" or "Everything" (factory reset). Staff, roles and the audit log always stay.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip"><b>In short:</b> the Registration officer takes the filing in and sends everything out; Finance controls the money gate; the supervisor and evaluator test the filing against EVAL-01; the approving officer decides; the signatories sign. The app keeps the clocks, issues the numbers, refuses any step taken out of order or by the wrong person, and records it all in the audit log.</div>
+</section>
+
+</body>
+</html>
