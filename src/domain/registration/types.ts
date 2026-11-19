@@ -166,6 +166,6 @@ export type AssessContext = {
   duplicates: { cac: boolean; name: boolean; registrationNo: boolean };
   /** For a Registered new registration: an annual confirmation was filed this year (not refused, lapsed or cancelled). */
   annualFiledThisYear: boolean;
-  /** [G3] Active Chairman / CEO and Commissioner signatories exist. */
-  signatories: { chairman: boolean; commissioner: boolean };
+  /** [G3] Active Chairman / CEO and Secretary to the Commission signatories exist. */
+  signatories: { chairman: boolean; secretary: boolean };
 };

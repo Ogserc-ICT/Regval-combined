@@ -19,7 +19,7 @@ export function SignatoryForm({ s, editable, roles }: { s?: SignatoryRow; editab
             <Input id={`des-${key}`} name="designation" defaultValue={s?.designation} />
           </Field>
           <Field label="Role" htmlFor={`role-${key}`} errors={fe.role}>
-            <Select id={`role-${key}`} name="role" defaultValue={s?.role ?? "commissioner"}>
+            <Select id={`role-${key}`} name="role" defaultValue={s?.role ?? "secretary"}>
               {roles.map((r) => (
                 <option key={r.value} value={r.value}>
                   {r.label}

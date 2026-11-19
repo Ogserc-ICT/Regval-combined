@@ -33,7 +33,7 @@ export type OwnUseContext = {
   duplicates: { site: boolean; cacOnRegister: boolean };
   /** The registration deadline for existing operators (information only). */
   registrationDeadline: LocalDate;
-  signatories: { chairman: boolean; commissioner: boolean };
+  signatories: { chairman: boolean; secretary: boolean };
 };
 
 export type Eligibility = "" | "Register as operator" | "Not required" | "Notification required";
@@ -117,7 +117,7 @@ export function assessOwnUse(o: OwnUseFacts, ctx: OwnUseContext): OwnUseAssessme
     if (ctx.settings.flagsBlockApproval === "Y") blockers.push(`${blocking.length} unresolved data flag(s): ${list}`);
     else if (!o.flagOverrideReason?.trim()) blockers.push(`${blocking.length} unresolved data flag(s) with no written override reason: ${list}`);
   }
-  const missingSig = [!ctx.signatories.chairman && "Chairman / CEO", !ctx.signatories.commissioner && "Commissioner"].filter(Boolean);
+  const missingSig = [!ctx.signatories.chairman && "Chairman / CEO", !ctx.signatories.secretary && "Secretary to the Commission"].filter(Boolean);
   if (missingSig.length) blockers.push(`Certificate signatory not set: ${missingSig.join(" and ")}. An admin must add it under Admin › Signatories.`);
 
   return {

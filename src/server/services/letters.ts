@@ -285,7 +285,8 @@ export type CertificateData = {
   licence: string;
   issueDate: LocalDate;
   chairman: Signer | null;
-  commissioner: Signer | null;
+  /** Second signatory on CERT-01: the Secretary to the Commission (decided 19 Nov 2026). */
+  secretary: Signer | null;
   /** Why the certificate prints as a draft, if it does (Q28e). */
   draftReason: string | null;
   /** Set when the registration is no longer in force. */
@@ -294,7 +295,7 @@ export type CertificateData = {
   submissionId: string;
 };
 
-async function signer(db: DbOrTx, role: "chairman_ceo" | "commissioner"): Promise<Signer | null> {
+async function signer(db: DbOrTx, role: "chairman_ceo" | "secretary"): Promise<Signer | null> {
   const rows = await db
     .select()
     .from(signatories)
@@ -310,10 +311,10 @@ export async function certificateData(db: DbOrTx, id: string): Promise<Certifica
   if (row.filingType !== "NEW" || !row.registrationNo || !row.certificateIssueDate) {
     throw blocked("A certificate exists only once a new registration is approved and has its registration number.");
   }
-  const [chairman, commissioner] = await Promise.all([signer(db, "chairman_ceo"), signer(db, "commissioner")]);
+  const [chairman, secretary] = await Promise.all([signer(db, "chairman_ceo"), signer(db, "secretary")]);
   const missing = [
     !chairman ? "no Chairman / CEO" : !chairman.confirmed ? `${chairman.name} (Chairman / CEO) not confirmed` : null,
-    !commissioner ? "no Commissioner" : !commissioner.confirmed ? `${commissioner.name} (Commissioner) not confirmed` : null,
+    !secretary ? "no Secretary to the Commission" : !secretary.confirmed ? `${secretary.name} (Secretary to the Commission) not confirmed` : null,
   ].filter(Boolean);
   const area = [row.principalLga, row.otherLgas, row.townsEstates].map((x) => x?.trim()).filter(Boolean).join("; ");
   const licNos = l.licences.map((x) => x.licenceNo?.trim()).filter(Boolean);
@@ -333,7 +334,7 @@ export async function certificateData(db: DbOrTx, id: string): Promise<Certifica
     licence,
     issueDate: row.certificateIssueDate,
     chairman,
-    commissioner,
+    secretary,
     draftReason: missing.length ? `Signatories: ${missing.join("; ")}. Confirm them under Admin › Signatories.` : null,
     voidReason: row.status && row.status !== "Registered" ? row.status : null,
     needsReissue: row.certificateNeedsReissue,

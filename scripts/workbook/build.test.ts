@@ -75,9 +75,10 @@ describe("workbook export (Phase 7 acceptance check)", () => {
     expect([await x.text("Lists", "BK6"), await x.text("Lists", "BM6"), await x.text("Lists", "BM7"), await x.text("Lists", "BO6")]).toEqual(["Eva Evaluator", "Sam Supervisor", "Sue Supervisor", "Ade Approver"]);
     expect(await x.text("Registry Lists", "AC4")).toBe("Chair Person");
     expect(await x.isFormula("Settings", "B29")).toBe(true);
-    expect(await x.text("Settings", "B30")).toBeNull(); // no Commissioner: approvals stay blocked
+    expect(await x.isFormula("Settings", "B30")).toBe(true); // second CERT-01 signatory: the Secretary to the Commission
+    expect(await x.text("Settings", "A30")).toBe("Signatory: Secretary to the Commission");
     expect(await x.text("Settings", "B50")).toBe("abc1234 (clean)");
-    expect(clean.report.join("\n")).toContain("No Commissioner yet");
+    expect(clean.report.join("\n")).toContain("Chairman and Secretary to the Commission set.");
   });
 
   it("G4: no EXAMPLE rows and the real record is not copied; the training copy keeps the EXAMPLE rows", async () => {

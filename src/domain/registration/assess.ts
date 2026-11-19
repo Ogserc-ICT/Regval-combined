@@ -352,7 +352,7 @@ export function assess(s: SubmissionFacts, ctx: AssessContext): Assessment {
       b.push(`The linked registration ${s.linkedRegistrationNo ?? ""} is ${ctx.linked.status}, not Registered`);
     }
   } else {
-    const missingSig = [!ctx.signatories.chairman && "Chairman / CEO", !ctx.signatories.commissioner && "Commissioner"].filter(Boolean);
+    const missingSig = [!ctx.signatories.chairman && "Chairman / CEO", !ctx.signatories.secretary && "Secretary to the Commission"].filter(Boolean);
     if (missingSig.length) {
       b.push(`Certificate signatory not set: ${missingSig.join(" and ")}. An admin must add it under Admin › Signatories.`);
     }

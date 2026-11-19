@@ -1,6 +1,6 @@
 /**
  * Certificate of registration OGSERC/CERT-01, para 13(5) (template: docs/templates/CERT-01.pdf).
- * Signed by the Chairman / CEO and the Commissioner from Admin › Signatories; prints as a
+ * Signed by the Chairman / CEO and the Secretary to the Commission from Admin › Signatories; prints as a
  * draft while either is missing or unconfirmed (Q28e). The QR code opens the registration
  * in this app, for signed-in staff (Q28f). The seal is stamped by hand in the circle (Q28g).
  */
@@ -102,7 +102,7 @@ export function Certificate({ x, qr }: { x: CertificateData; qr: Buffer }) {
           <View style={{ width: 74, height: 74, borderRadius: 37, borderWidth: 1, borderColor: GOLD, alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 7.5, fontWeight: "bold", color: GOLD, textAlign: "center" }}>COMMISSION{"\n"}SEAL</Text>
           </View>
-          <Signature who={x.commissioner} role="Commissioner" />
+          <Signature who={x.secretary} role="Secretary to the Commission" />
           <View style={{ alignItems: "center", width: 84 }}>
             {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt */}
             <Image src={{ data: qr, format: "png" }} style={{ width: 54, height: 54 }} />

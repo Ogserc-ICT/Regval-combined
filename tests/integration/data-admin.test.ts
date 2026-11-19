@@ -96,7 +96,7 @@ describe("clear data", () => {
     await seedHolidays(db);
     await fill(registration, finance);
     await updateSettings(db, admin, { idleMinutes: 30, ackPrefix: "OGSERC/REG-ACK" });
-    await saveSignatory(db, admin, null, { name: "Commissioner Person", designation: "Commissioner", role: "commissioner", active: true, confirmed: true });
+    await saveSignatory(db, admin, null, { name: "Secretary Person", designation: "Secretary to the Commission", role: "secretary", active: true, confirmed: true });
     await db.insert(listItems).values({ listKey: "fuel", value: "Test fuel", sort: 99, active: true });
     await db.insert(holidays).values({ date: "2027-02-02", name: "Extra day", status: "State-declared" });
     const before = (await db.execute<{ n: number }>(sql`select count(*)::int as n from audit_log`)).rows[0].n;

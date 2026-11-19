@@ -135,7 +135,7 @@ const SAMPLE_CERT: CertificateData = {
   licence: "NERC licence (multi-State), No. NERC/LIC/DIS/2019/044",
   issueDate: "2026-10-22",
   chairman: { name: "Chairman Name", designation: "Chairman / Chief Executive Officer", confirmed: true },
-  commissioner: { name: "Commissioner Name", designation: "Commissioner", confirmed: true },
+  secretary: { name: "Secretary Name", designation: "Secretary to the Commission", confirmed: true },
   draftReason: null,
   voidReason: null,
   needsReissue: false,
@@ -187,7 +187,7 @@ describe("registration PDFs (Phase 10)", () => {
   it("CERT-01: one landscape page, also as a draft", async () => {
     const qr = await QRCode.toBuffer("https://example.invalid/register/x", { margin: 0, width: 240 });
     expect((await render("cert-01", createElement(Certificate, { x: SAMPLE_CERT, qr }))).pages).toBe(1);
-    const draft = { ...SAMPLE_CERT, commissioner: { ...SAMPLE_CERT.commissioner!, confirmed: false }, draftReason: "Signatories: not confirmed" };
+    const draft = { ...SAMPLE_CERT, secretary: { ...SAMPLE_CERT.secretary!, confirmed: false }, draftReason: "Signatories: not confirmed" };
     expect((await render("cert-01-draft", createElement(Certificate, { x: draft, qr }))).pages).toBe(1);
   }, 30_000);
 

@@ -55,7 +55,7 @@ export const CLEAR_GROUPS = {
   fees: { label: "Fee table and activity map", detail: "Back to the workbook's Schedule 3 values and activity categories", recommended: false, setup: true },
   lists: { label: "Drop-down lists", detail: "Back to the workbook's lists (values you added are removed)", recommended: false, setup: true },
   holidays: { label: "Holidays", detail: "Back to the workbook's holiday list", recommended: false, setup: true },
-  signatories: { label: "Signatories", detail: "Back to the seed: Jide Onakoya, Chairman / CEO, unconfirmed; no Commissioner", recommended: false, setup: true },
+  signatories: { label: "Signatories", detail: "Back to the seed: Jide Onakoya, Chairman / CEO, unconfirmed; no Secretary to the Commission", recommended: false, setup: true },
 } as const;
 export type ClearGroup = keyof typeof CLEAR_GROUPS;
 export const isClearGroup = (g: string): g is ClearGroup => g in CLEAR_GROUPS;

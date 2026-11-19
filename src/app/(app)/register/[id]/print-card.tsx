@@ -40,7 +40,7 @@ export async function PrintCard({ l }: { l: LoadedSubmission }) {
     .orderBy(desc(deficiencyNotices.issuedAt));
   const hasCert = row.filingType === "NEW" && !!row.registrationNo && !!row.certificateIssueDate;
   const sigs = hasCert ? await db.select({ role: signatories.role, confirmed: signatories.confirmed, active: signatories.active }).from(signatories) : [];
-  const sigReady = ["chairman_ceo", "commissioner"].every((r) => sigs.some((s) => s.role === r && s.active && s.confirmed));
+  const sigReady = ["chairman_ceo", "secretary"].every((r) => sigs.some((s) => s.role === r && s.active && s.confirmed));
 
   return (
     <Card className="mb-6">

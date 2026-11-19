@@ -63,8 +63,8 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
   add({
     area: "Rules",
     label: "Certificate signatories",
-    state: has("chairman_ceo") && has("commissioner") ? "ok" : "fail",
-    detail: [has("chairman_ceo") ? null : "no active Chairman / CEO", has("commissioner") ? null : "no active Commissioner: approvals of new registrations are blocked"].filter(Boolean).join("; ") || "Chairman / CEO and Commissioner set.",
+    state: has("chairman_ceo") && has("secretary") ? "ok" : "fail",
+    detail: [has("chairman_ceo") ? null : "no active Chairman / CEO", has("secretary") ? null : "no active Secretary to the Commission: approvals of new registrations are blocked"].filter(Boolean).join("; ") || "Chairman / CEO and Secretary to the Commission set.",
     href: "/admin/signatories",
   });
   const unconfirmed = sigs.filter((s) => !s.confirmed);

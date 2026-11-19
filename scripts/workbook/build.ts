@@ -214,17 +214,18 @@ export async function buildWorkbook(template: Uint8Array, data: ExportData, opts
     await x.set("Registry Lists", `AC${4 + i}`, g.name);
     await x.set("Registry Lists", `AD${4 + i}`, g.designation);
   }
+  await x.set("Settings", "A30", "Signatory: Secretary to the Commission");
   const rowOf = (role: string) => order.findIndex((g) => g.role === role);
   for (const [ref, role] of [
     ["B29", "chairman_ceo"],
-    ["B30", "commissioner"],
+    ["B30", "secretary"], // second CERT-01 signatory: the Secretary to the Commission (19 Nov 2026)
   ] as const) {
     const i = rowOf(role);
     if (i >= 0) await x.formula("Settings", ref, `'Registry Lists'!AC${4 + i}`);
     else await x.set("Settings", ref, null);
   }
   report.push(
-    `G3: one signatory list (Registry Lists AC:AD) feeds Settings B29/B30. ${rowOf("commissioner") < 0 ? "No Commissioner yet: approvals of new registrations stay blocked, as in the app." : "Chairman and Commissioner set."}`,
+    `G3: one signatory list (Registry Lists AC:AD) feeds Settings B29/B30. ${rowOf("secretary") < 0 ? "No Secretary to the Commission yet: approvals of new registrations stay blocked, as in the app." : "Chairman and Secretary to the Commission set."}`,
   );
 
   // Unit and division emails ([G9] addresses)

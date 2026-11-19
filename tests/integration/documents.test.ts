@@ -89,10 +89,10 @@ async function registered(t: Awaited<ReturnType<typeof released>>) {
   await approve(db, t.approver, t.s.id);
 }
 
-async function sigs(admin: { id: string }, commissionerConfirmed = true) {
+async function sigs(admin: { id: string }, secretaryConfirmed = true) {
   const a = admin as Parameters<typeof saveSignatory>[1];
   await saveSignatory(db, a, null, { name: "Jide Chair", designation: "Chairman / Chief Executive Officer", role: "chairman_ceo", active: true, confirmed: true });
-  await saveSignatory(db, a, null, { name: "Femi Commissioner", designation: "Commissioner", role: "commissioner", active: true, confirmed: commissionerConfirmed });
+  await saveSignatory(db, a, null, { name: "Toyin Secretary", designation: "Secretary to the Commission", role: "secretary", active: true, confirmed: secretaryConfirmed });
 }
 
 async function pdfPages(el: ReturnType<typeof createElement>): Promise<number> {
@@ -122,10 +122,10 @@ describe("CERT-01 certificate (Q28d, Q28e)", () => {
     await sigs(t.admin, false);
     await registered(t);
     const draft = await certificateData(db, t.s.id);
-    expect(draft.draftReason).toMatch(/Femi Commissioner \(Commissioner\) not confirmed/);
-    expect(draft.commissioner?.name).toBe("Femi Commissioner");
+    expect(draft.draftReason).toMatch(/Toyin Secretary \(Secretary to the Commission\) not confirmed/);
+    expect(draft.secretary?.name).toBe("Toyin Secretary");
     expect(draft.serial).toMatch(/^\d{4}$/);
-    await db.update(signatories).set({ confirmed: true }).where(eq(signatories.role, "commissioner"));
+    await db.update(signatories).set({ confirmed: true }).where(eq(signatories.role, "secretary"));
     const x = await certificateData(db, t.s.id);
     expect(x.draftReason).toBeNull();
     expect(x.voidReason).toBeNull();

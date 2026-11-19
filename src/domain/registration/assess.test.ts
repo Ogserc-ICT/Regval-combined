@@ -101,12 +101,12 @@ describe("EVAL-01 and approval (SPEC §12)", () => {
     expect(a.approvalBlockers).toEqual([]);
     expect(a.evaluationStatus).toBe("Ready for decision");
   });
-  it("acceptance: approval is refused while the Commissioner signatory is empty, with the reason", () => {
-    const a = assess(ready(), ctx({ signatories: { chairman: true, commissioner: false } }));
-    expect(a.approvalBlockers).toEqual(["Certificate signatory not set: Commissioner. An admin must add it under Admin › Signatories."]);
+  it("acceptance: approval is refused while the Secretary to the Commission signatory is empty, with the reason", () => {
+    const a = assess(ready(), ctx({ signatories: { chairman: true, secretary: false } }));
+    expect(a.approvalBlockers).toEqual(["Certificate signatory not set: Secretary to the Commission. An admin must add it under Admin › Signatories."]);
   });
   it("lists every blocker at once", () => {
-    const a = assess(ready(), context({ evaluation: null, signatories: { chairman: false, commissioner: false } }));
+    const a = assess(ready(), context({ evaluation: null, signatories: { chairman: false, secretary: false } }));
     expect(a.approvalBlockers.length).toBeGreaterThanOrEqual(6);
     expect(a.approvalBlockers).toContain("No evaluating officer assigned");
     expect(a.approvalBlockers.some((b) => b.startsWith("Payment not yet confirmed"))).toBe(true);
@@ -176,11 +176,11 @@ describe("own-use (SPEC §15)", () => {
     expect(eligibility(1000, 200)).toBe("Register as operator");
     const a = assessOwnUse(
       { ounNo: "OGSERC/OUN/2026/0001", name: "Factory", dateFiled: "2026-11-20", cacNo: null, siteAddress: null, lga: "Ifo", unitsKw: [300], flagOverrideReason: null, pricedFee: null, pricedThresholdKw: null, registrationNo: null, createdBy: "u" },
-      { settings: DEFAULT_SETTINGS, ref: REF, payments: [], checklist: {}, duplicates: { site: false, cacOnRegister: false }, registrationDeadline: "2026-12-21", signatories: { chairman: true, commissioner: false } },
+      { settings: DEFAULT_SETTINGS, ref: REF, payments: [], checklist: {}, duplicates: { site: false, cacOnRegister: false }, registrationDeadline: "2026-12-21", signatories: { chairman: true, secretary: false } },
     );
     expect(a.feeDue).toBe(10_000_000);
     expect(a.documents.listed).toBe(3);
     expect(a.registrationBlockers).toContain("Own-use certificates are switched off in Settings");
-    expect(a.registrationBlockers.some((b) => b.includes("Commissioner"))).toBe(true);
+    expect(a.registrationBlockers.some((b) => b.includes("Secretary to the Commission"))).toBe(true);
   });
 });

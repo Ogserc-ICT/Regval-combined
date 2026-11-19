@@ -80,7 +80,7 @@ async function team() {
 
 async function signatoriesReady(admin: Awaited<ReturnType<typeof team>>["admin"]) {
   await saveSignatory(db, admin, null, { name: "Chair Person", designation: "Chairman", role: "chairman_ceo", active: true, confirmed: true });
-  await saveSignatory(db, admin, null, { name: "Commissioner Person", designation: "Commissioner", role: "commissioner", active: true, confirmed: true });
+  await saveSignatory(db, admin, null, { name: "Secretary Person", designation: "Secretary to the Commission", role: "secretary", active: true, confirmed: true });
 }
 
 describe("receipt, deemed receipt and the ACK (para 10(3), Q3) [G12]", () => {
@@ -264,14 +264,14 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     await confirmCategory(db, t.evaluator, t.s.id, "D", null);
     expect(await markComplete(db, t.evaluator, t.s.id)).toMatch(/Determination due/);
 
-    // acceptance: refused while the Commissioner signatory is empty, with the reason
+    // acceptance: refused while the Secretary to the Commission signatory is empty, with the reason
     const e = await failure(approve(db, t.approver, t.s.id));
-    expect(e.reasons).toEqual(["Certificate signatory not set: Chairman / CEO and Commissioner. An admin must add it under Admin › Signatories."]);
+    expect(e.reasons).toEqual(["Certificate signatory not set: Chairman / CEO and Secretary to the Commission. An admin must add it under Admin › Signatories."]);
     await saveSignatory(db, t.admin, null, { name: "Chair Person", designation: "Chairman", role: "chairman_ceo", active: true, confirmed: true });
     expect((await failure(approve(db, t.approver, t.s.id))).reasons).toEqual([
-      "Certificate signatory not set: Commissioner. An admin must add it under Admin › Signatories.",
+      "Certificate signatory not set: Secretary to the Commission. An admin must add it under Admin › Signatories.",
     ]);
-    await saveSignatory(db, t.admin, null, { name: "Commissioner Person", designation: "Commissioner", role: "commissioner", active: true, confirmed: true });
+    await saveSignatory(db, t.admin, null, { name: "Secretary Person", designation: "Secretary to the Commission", role: "secretary", active: true, confirmed: true });
     expect((await failure(approve(db, t.supervisor, t.s.id))).status).toBe(403); // not an approver
     const msg = await approve(db, t.approver, t.s.id);
     expect(msg).toMatch(/^Registered as OGSERC\/REG\/2026\/D-GEN\/\d{4}\.$/);

@@ -63,7 +63,7 @@ export function context(over: Partial<AssessContext> = {}, settings: Partial<Set
     linked: null,
     duplicates: { cac: false, name: false, registrationNo: false },
     annualFiledThisYear: false,
-    signatories: { chairman: true, commissioner: true },
+    signatories: { chairman: true, secretary: true },
     ...over,
   };
 }

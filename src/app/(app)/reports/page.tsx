@@ -10,7 +10,7 @@ const DOCUMENTS = [
   ["Acknowledgement letter", "Para 10(3): the ACK number, when and how the filing was received, the deemed receipt date, the fee and payments so far, the Schedule 2 documents received and pending, and what happens next. Signed by the evaluating officer, or the officer printing it if none is assigned."],
   ["Deficiency notice", "Para 13(1)(b): the DEF number, the documents outstanding and failed checks as they stood when the notice was issued, the balance due and the response date. A draft until the date it was sent is recorded; then dated that day. Signed by the reviewing supervisor who issued it."],
   ["EVAL-01 evaluation form", "Internal: every check with its answer, the counts, the recommended outcome, the decision and the three officers' signature lines."],
-  ["CERT-01 certificate", "Para 13(5): the registration number, certificate serial, registrant, category and particulars, signed by the Chairman / CEO and the Commissioner from Admin › Signatories. A draft while either signatory is unconfirmed; marked if the registration is no longer in force."],
+  ["CERT-01 certificate", "Para 13(5): the registration number, certificate serial, registrant, category and particulars, signed by the Chairman / CEO and the Secretary to the Commission from Admin › Signatories. A draft while either signatory is unconfirmed; marked if the registration is no longer in force."],
 ] as const;
 
 export default async function ReportsPage() {

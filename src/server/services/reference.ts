@@ -58,10 +58,10 @@ export async function listWithMeta(db: DbOrTx, key: string): Promise<{ value: st
     .orderBy(asc(listItems.sort));
 }
 
-/** [G3] Whether active Chairman / CEO and Commissioner signatories exist. */
-export async function signatoriesReady(db: DbOrTx): Promise<{ chairman: boolean; commissioner: boolean }> {
+/** [G3] Whether active Chairman / CEO and Secretary to the Commission signatories exist (CERT-01). */
+export async function signatoriesReady(db: DbOrTx): Promise<{ chairman: boolean; secretary: boolean }> {
   const rows = await db.select({ role: signatories.role }).from(signatories).where(eq(signatories.active, true));
-  return { chairman: rows.some((r) => r.role === "chairman_ceo"), commissioner: rows.some((r) => r.role === "commissioner") };
+  return { chairman: rows.some((r) => r.role === "chairman_ceo"), secretary: rows.some((r) => r.role === "secretary") };
 }
 
 /** All the drop-down lists the registration forms need, in one load. */

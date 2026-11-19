@@ -177,9 +177,9 @@ Not applicable: registry removed. Correspondence types, outgoing document types,
 One table: name, designation, signatory role (Chairman / CEO, Commissioner, Secretary to the Commission, Other), active, confirmed-by-admin flag. Used for CERT-01 certificates and the other registration documents.
 
 - Seed: Jide Onakoya, Chairman, role Chairman / CEO, **unconfirmed** (from Registry Lists AC4; flag for Kamiye). The Secretary (Registry Lists AC5) was Registry staff and is no longer seeded (Phase 9).
-- Commissioner: no row. Never invent a name.
-- Approval of a new registration and own-use registration is blocked while there is no active Chairman / CEO **or** no active Commissioner, with the message "Certificate signatory not set: Commissioner. An admin must add it under Admin › Signatories." (`tblEvaluation[Approval Blockers]`; `tblOwnUse[Registration Blockers]`). Open: Q12.
-- CERT-01 is signed by the active Chairman / CEO and Commissioner (a confirmed one first); it prints as a draft while either is missing or unconfirmed (Q28e). The acknowledgement letter is signed by the assigned evaluating officer, else the officer printing it (Q28b); the deficiency notice by the reviewing supervisor who issued it (Q28c). Decided 13 Nov 2026 (Q12): Jide Onakoya, Chairman / CEO; Femi Omisanjo, Commissioner.
+- Secretary to the Commission: no seeded row. Never invent a name.
+- Approval of a new registration and own-use registration is blocked while there is no active Chairman / CEO **or** no active Secretary to the Commission, with the message "Certificate signatory not set: Secretary to the Commission. An admin must add it under Admin › Signatories." (`tblEvaluation[Approval Blockers]`; `tblOwnUse[Registration Blockers]`). The workbook names the Commissioner here (Settings B30); changed 19 Nov 2026 (Q12).
+- CERT-01 is signed by the active Chairman / CEO and Secretary to the Commission (a confirmed one first); it prints as a draft while either is missing or unconfirmed (Q28e). The acknowledgement letter is signed by the assigned evaluating officer, else the officer printing it (Q28b); the deficiency notice by the reviewing supervisor who issued it (Q28c). Decided 13 Nov 2026 (Q12): Jide Onakoya, Chairman / CEO. Changed 19 Nov 2026 (Q12): the second signatory is the Secretary to the Commission, not the Commissioner, which the workbook and the CERT-01 template show.
 
 ## 6. Registration: data model
 
@@ -461,7 +461,7 @@ Counts over the 56 decision checks (1.1–7.6): satisfied (Y), failed (N), N/A, 
 - Data flags: if `flagsBlockApproval = Y`, "n unresolved data flag(s): …"; else only when no flag override reason is written. When an approver overrides flags, the approval's audit entry records the flags and the written reason (`ApproveFor`: "n data flag(s) overridden: {reason}").
 - **[G8]** Separation of duties, see §27.2.
 - Linked filings: not linked to a registered submission, or the linked registration is not Registered.
-- New registrations: Chairman / CEO or Commissioner signatory not set **[G3]**.
+- New registrations: Chairman / CEO or Secretary to the Commission signatory not set **[G3]**.
 - The acting user is not the assigned approving officer.
 
 ## 13. Registration: workflow states and actions

@@ -19,11 +19,11 @@ export default async function SignatoriesPage() {
     <>
       <PageHeader
         title="Signatories"
-        description="One list for CERT-01 certificates and outgoing letters. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Commissioner."
+        description="One list for CERT-01 certificates and outgoing letters. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Secretary to the Commission, the two CERT-01 signatories."
       />
-      {!ready.chairman || !ready.commissioner ? (
+      {!ready.chairman || !ready.secretary ? (
         <Notice tone="warn" title="Approvals are blocked" className="mb-6">
-          Missing: {[!ready.chairman && "Chairman / CEO", !ready.commissioner && "Commissioner"].filter(Boolean).join(" and ")}. Add the
+          Missing: {[!ready.chairman && "Chairman / CEO", !ready.secretary && "Secretary to the Commission"].filter(Boolean).join(" and ")}. Add the
           name once the Commission confirms it (Q12).
         </Notice>
       ) : null}
