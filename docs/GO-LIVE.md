@@ -45,6 +45,7 @@ Do **not** set `SEED_EXAMPLES` or `APP_TODAY` for Production. The code refuses b
 3. **Admin › Signatories:** tick Jide Onakoya (Chairman / CEO) confirmed and **add Femi Omisanjo as Commissioner**, ticked confirmed (Q12, Q28e). New registrations cannot be approved without a Commissioner [G3], and CERT-01 prints as a draft while either is unconfirmed.
 4. **Admin › Settings:** enter the gazetted Effective Date and clear "placeholder" (Q2). Under Receipt and letters, check the ACK number prefix (Q25) and the address and email printed on letters (Q28a).
 5. **Admin › Holidays:** confirm the provisional and estimated dates, and keep the list six months ahead; deemed receipt depends on it.
+6. **Admin › Staff & roles › (a person) › E-signature:** upload each signing officer's signature as a PNG (up to 1 MB; a transparent background and a tight crop print best). Needs the Blob store from §2. It prints on the acknowledgement letter at once, on a deficiency notice once it is recorded as sent, and on EVAL-01 (all three officers, dated the decision date) once the final decision is recorded. Without one, the line prints blank for a wet signature. CERT-01 never carries an e-signature: it is signed and sealed by hand. Deleting a staff account deletes their signature.
 
 There is nothing to import: the workbook holds no real registration records.
 

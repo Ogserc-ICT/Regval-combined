@@ -5,7 +5,7 @@ import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { formatNaira } from "@/domain/money";
 import { lagosDateTime } from "@/domain/dates";
 import type { AcknowledgementData } from "../services/letters";
-import { COMMISSION_NAME, ORDER_NO, d, dash, Footer, KvTable, Letterhead, lettered, List, numbered, RefLines, s } from "./common";
+import { COMMISSION_NAME, ORDER_NO, d, dash, Footer, KvTable, Letterhead, lettered, List, numbered, RefLines, s, SignatureImage } from "./common";
 
 const CHANNEL: Record<string, string> = { "By hand": "by hand", Email: "by email", "Online portal": "through the online portal" };
 
@@ -109,7 +109,8 @@ export function AcknowledgementLetter({ x }: { x: AcknowledgementData }) {
         <View wrap={false}>
           <Text style={[s.bold, { marginTop: 8 }]}>This acknowledgement is not a Registration Certificate.</Text>
           <Text style={{ marginTop: 10 }}>Yours faithfully,</Text>
-          <View style={{ marginTop: 26, width: 190, height: 0.6, backgroundColor: "#777" }} />
+          <SignatureImage image={x.signature} width={190} />
+          <View style={{ width: 190, height: 0.6, backgroundColor: "#777" }} />
           <Text style={[s.bold, { marginTop: 4 }]}>{x.signedBy}</Text>
           <Text style={s.small}>For: {COMMISSION_NAME}</Text>
         </View>

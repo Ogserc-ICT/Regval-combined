@@ -10,7 +10,7 @@
  * no token). Browser uploads use a client token in the first case and a presigned URL in the
  * second. Without either, uploads are switched off.
  */
-import { del, get, head } from "@vercel/blob";
+import { del, get, head, put } from "@vercel/blob";
 
 export type BlobMode = "token" | "oidc";
 
@@ -55,4 +55,31 @@ export const blobStore: FileStore = {
       console.error(`Blob: could not delete ${pathnames.length} file(s)`, e);
     }
   },
+};
+
+/** Staff e-signatures: small PNGs the server writes and reads itself (no browser upload). */
+export type SignatureStore = {
+  save(pathname: string, bytes: Uint8Array): Promise<void>;
+  /** The image, or null when it is missing or storage is not set up. */
+  read(pathname: string): Promise<Buffer | null>;
+  /** Best effort, as FileStore.remove. */
+  remove(pathnames: string[]): Promise<void>;
+};
+
+export const signatureBlobStore: SignatureStore = {
+  async save(pathname, bytes) {
+    await put(pathname, Buffer.from(bytes), { access: "private", contentType: "image/png", addRandomSuffix: false, allowOverwrite: false });
+  },
+  async read(pathname) {
+    if (!blobEnabled()) return null;
+    try {
+      const r = await get(pathname, { access: "private", useCache: false });
+      if (!r || r.statusCode !== 200) return null;
+      return Buffer.from(await new Response(r.stream).arrayBuffer());
+    } catch (e) {
+      console.error(`Blob: could not read signature ${pathname}`, e);
+      return null;
+    }
+  },
+  remove: blobStore.remove,
 };

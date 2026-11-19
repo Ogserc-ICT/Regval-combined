@@ -17,6 +17,9 @@ import { Eval01 } from "../../src/server/pdf/eval-01";
 import { acknowledgementData, certificateData, deficiencyData, evaluationData } from "../../src/server/services/letters";
 import { confirmPayment, recordPayment } from "../../src/server/services/payments";
 import { saveSignatory } from "../../src/server/services/signatories";
+import { removeSignature, saveSignature } from "../../src/server/services/signatures";
+import { removeUser } from "../../src/server/services/users";
+import type { SignatureStore } from "../../src/server/blob";
 import { createSubmission, type SubmissionInput } from "../../src/server/services/submissions/save";
 import { loadSubmission } from "../../src/server/services/submissions/load";
 import {
@@ -174,7 +177,7 @@ describe("deficiency notice (para 13(1)(b))", () => {
 describe("acknowledgement letter and EVAL-01", () => {
   it("render from real records; the letter is signed by the evaluating officer, else the officer printing it", async () => {
     const t = await released();
-    const ack = await acknowledgementData(db, t.s.id, "Printing Officer");
+    const ack = await acknowledgementData(db, t.s.id, t.admin);
     expect(ack.ackNo).toBe(t.s.ackNo);
     expect(ack.signedBy).toBe("Eve Evaluator");
     expect(ack.attention).toBe("A. Compliance");
@@ -182,7 +185,7 @@ describe("acknowledgement letter and EVAL-01", () => {
     expect(await pdfPages(createElement(AcknowledgementLetter, { x: ack }))).toBeGreaterThanOrEqual(1);
 
     const bare = await createSubmission(db, t.registry, input());
-    expect((await acknowledgementData(db, bare.id, "Printing Officer")).signedBy).toBe("Printing Officer");
+    expect((await acknowledgementData(db, bare.id, t.admin)).signedBy).toBe(t.admin.name);
 
     const ev = await evaluationData(db, t.s.id);
     expect(ev.evaluator).toBe("Eve Evaluator");
@@ -191,4 +194,68 @@ describe("acknowledgement letter and EVAL-01", () => {
     expect(ev.postApproval.map((c) => c.id)).toEqual(["9.1", "9.2", "9.3", "9.4", "9.5", "9.6", "9.7"]);
     expect(await pdfPages(createElement(Eval01, { x: ev }))).toBeGreaterThanOrEqual(2);
   }, 60_000);
+});
+
+function fakeSignatureStore() {
+  const files = new Map<string, Buffer>();
+  const store: SignatureStore = {
+    save: async (p, b) => void files.set(p, Buffer.from(b)),
+    read: async (p) => files.get(p) ?? null,
+    remove: async (ps) => ps.forEach((p) => files.delete(p)),
+  };
+  return { files, store };
+}
+
+describe("staff e-signatures", () => {
+  it("only an admin uploads; only a PNG is accepted; replacing one removes the old file", async () => {
+    const t = await released();
+    const { files, store } = fakeSignatureStore();
+    const png = await QRCode.toBuffer("sig", { margin: 0, width: 200 });
+    await expect(saveSignature(db, t.registry, t.evaluator.id, png, store)).rejects.toBeInstanceOf(ServiceError);
+    const notPng = await saveSignature(db, t.admin, t.evaluator.id, Buffer.from("%PDF-1.7 not an image"), store).catch((e) => e as ServiceError);
+    expect(notPng).toBeInstanceOf(ServiceError);
+    await saveSignature(db, t.admin, t.evaluator.id, png, store);
+    expect(files.size).toBe(1);
+    await saveSignature(db, t.admin, t.evaluator.id, png, store);
+    expect(files.size).toBe(1);
+    await removeSignature(db, t.admin, t.evaluator.id, store);
+    expect(files.size).toBe(0);
+  }, 60_000);
+
+  it("stamp the letter at once, the notice once sent, EVAL-01 once decided; a deleted person's never", async () => {
+    const t = await released();
+    const { files, store } = fakeSignatureStore();
+    const png = await QRCode.toBuffer("sig", { margin: 0, width: 200 });
+    for (const who of [t.evaluator, t.supervisor, t.approver]) await saveSignature(db, t.admin, who.id, png, store);
+
+    expect((await acknowledgementData(db, t.s.id, t.admin, store)).signature).not.toBeNull();
+    const ev0 = await evaluationData(db, t.s.id, store);
+    expect(ev0.signatures).toEqual({ evaluator: null, supervisor: null, approver: null });
+
+    await answerChecks(db, t.evaluator, t.s.id, { "2.2": "N" });
+    await issueDeficiency(db, t.supervisor, t.s.id);
+    expect((await deficiencyData(db, t.s.id, null, store)).signature).toBeNull();
+    await recordDeficiencySent(db, t.registry, t.s.id, (await loadSubmission(db, t.s.id)).ctx.today);
+    const sent = await deficiencyData(db, t.s.id, null, store);
+    expect(sent.signature).not.toBeNull();
+    expect(await pdfPages(createElement(DeficiencyNotice, { x: sent }))).toBe(1);
+
+    const t2 = await released();
+    for (const who of [t2.evaluator, t2.supervisor, t2.approver]) await saveSignature(db, t2.admin, who.id, png, store);
+    await sigs(t2.admin);
+    await registered(t2);
+    const ev = await evaluationData(db, t2.s.id, store);
+    expect(ev.signatures.evaluator && ev.signatures.supervisor && ev.signatures.approver).toBeTruthy();
+    expect(await pdfPages(createElement(Eval01, { x: ev }))).toBeLessThanOrEqual(3);
+
+    // The letter's signer falls back to the officer printing it; once deleted, theirs is gone.
+    const leaver = await makeActor(db, ["registration"], "Lee Leaver");
+    await saveSignature(db, t2.admin, leaver.id, png, store);
+    const bare = await createSubmission(db, t2.registry, input());
+    expect((await acknowledgementData(db, bare.id, leaver, store)).signature).not.toBeNull();
+    const before = files.size;
+    await removeUser(db, t2.admin, leaver.id, store);
+    expect(files.size).toBe(before - 1);
+    expect((await acknowledgementData(db, bare.id, leaver, store)).signature).toBeNull();
+  }, 120_000);
 });

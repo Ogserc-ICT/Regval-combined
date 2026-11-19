@@ -194,10 +194,28 @@ export const numbered = (i: number) => `${i + 1}.`;
 export const lettered = (i: number) => `(${String.fromCharCode(97 + i)})`;
 export const bullet = () => "•";
 
-/** Signature line with the name in bold and a caption under it. */
-export function SignatureBlock({ name, caption, width = 190 }: { name: string | null; caption: string; width?: number }) {
+/** The height an e-signature takes above the line; without one the line keeps the same space for a wet signature. */
+const SIGNATURE_HEIGHT = 36;
+
+/** A stored e-signature sitting on the signature line (staff accounts; never CERT-01). */
+export function SignatureImage({ image, width }: { image: Buffer | null | undefined; width: number }) {
+  if (!image) return <View style={{ height: SIGNATURE_HEIGHT, flexGrow: 1 }} />;
   return (
-    <View wrap={false} style={{ marginTop: 26 }}>
+    <View style={{ height: SIGNATURE_HEIGHT, flexGrow: 1, justifyContent: "flex-end" }}>
+      {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt */}
+      <Image src={{ data: image, format: "png" }} style={{ height: SIGNATURE_HEIGHT, maxWidth: Math.min(width, 150), objectFit: "contain", objectPosition: "left bottom" }} />
+    </View>
+  );
+}
+
+/** Signature line with the name in bold and a caption under it; the e-signature, when given, sits on the line. */
+export function SignatureBlock({ name, caption, width = 190, image, date }: { name: string | null; caption: string; width?: number; image?: Buffer | null; date?: string | null }) {
+  return (
+    <View wrap={false} style={{ marginTop: 4 }}>
+      <View style={{ flexDirection: "row", alignItems: "flex-end", width }}>
+        <SignatureImage image={image} width={width} />
+        {image && date ? <Text style={{ fontSize: 8, color: GREY, marginBottom: 2 }}>{date}</Text> : null}
+      </View>
       <View style={{ height: 0.6, width, backgroundColor: "#777", marginBottom: 4 }} />
       {name ? <Text style={{ fontWeight: "bold" }}>{name}</Text> : null}
       <Text style={{ fontSize: 8, color: GREY }}>{caption}</Text>

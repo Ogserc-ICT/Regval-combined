@@ -6,11 +6,13 @@ import { HistoryTable } from "@/components/history-table";
 import { Card, CardHeader, Notice, PageHeader } from "@/components/ui";
 import { lagosDateTime } from "@/domain/dates";
 import { requirePermission } from "@/server/auth/session";
+import { blobEnabled } from "@/server/blob";
 import { db } from "@/server/db/client";
 import { auditLog } from "@/server/db/schema";
 import { listUsers } from "@/server/services/users";
 import { DeleteUserCard } from "./delete-user-card";
 import { EditUserForm } from "./edit-user-form";
+import { SignatureCard } from "./signature-card";
 
 export const metadata: Metadata = { title: "Staff account" };
 
@@ -45,6 +47,9 @@ export default async function UserPage({ params }: PageProps<"/admin/users/[id]"
       ) : (
         <>
           <EditUserForm user={{ id: user.id, name: user.name, email: user.email, active: user.active, pendingConfirmation: user.pendingConfirmation, roles: user.roles }} />
+          <div className="mt-6">
+            <SignatureCard id={user.id} name={user.name} has={!!user.signaturePath} updatedAt={user.signatureUpdatedAt?.toISOString() ?? null} storage={blobEnabled()} />
+          </div>
           <div className="mt-6">
             <DeleteUserCard id={user.id} name={user.name} isSelf={user.id === me.id} />
           </div>

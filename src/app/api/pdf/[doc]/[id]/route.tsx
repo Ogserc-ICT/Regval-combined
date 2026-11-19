@@ -46,7 +46,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ doc: str
     let detail: string;
     switch (doc as Doc) {
       case "acknowledgement": {
-        const x = await acknowledgementData(db, id, actor.name);
+        const x = await acknowledgementData(db, id, { id: actor.id, name: actor.name });
         element = <AcknowledgementLetter x={x} />;
         ref = x.ackNo;
         filename = `Acknowledgement-${fileSafe(x.ackNo)}.pdf`;

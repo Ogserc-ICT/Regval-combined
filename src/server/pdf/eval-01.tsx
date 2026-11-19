@@ -36,6 +36,7 @@ function Checks({ title, checks }: { title: string; checks: EvalCheckLine[] }) {
 
 export function Eval01({ x }: { x: EvaluationData }) {
   const footer = `EVAL-01 · ${x.ackNo} · printed ${d(x.printedOn)}`;
+  const signedOn = x.approvalDate ? d(x.approvalDate) : null;
   const decision: [string, string][] = [
     ["Checks satisfied / failed / N/A / pending", `${x.counts.satisfied} / ${x.counts.failed} / ${x.counts.notApplicable} / ${x.counts.pending}`],
     ["Recommended outcome (automatic)", x.recommendedOutcome],
@@ -73,9 +74,9 @@ export function Eval01({ x }: { x: EvaluationData }) {
         </View>
 
         <View wrap={false}>
-          <SignatureBlock name={x.evaluator} caption="Evaluating officer — signature / date" width={240} />
-          <SignatureBlock name={x.supervisor} caption="Reviewing supervisor — signature / date" width={240} />
-          <SignatureBlock name={x.approver} caption="Approving officer — signature / date" width={240} />
+          <SignatureBlock name={x.evaluator} caption="Evaluating officer — signature / date" width={240} image={x.signatures.evaluator} date={signedOn} />
+          <SignatureBlock name={x.supervisor} caption="Reviewing supervisor — signature / date" width={240} image={x.signatures.supervisor} date={signedOn} />
+          <SignatureBlock name={x.approver} caption="Approving officer — signature / date" width={240} image={x.signatures.approver} date={signedOn} />
         </View>
 
         <Checks title="POST-APPROVAL ACTIONS" checks={x.postApproval} />

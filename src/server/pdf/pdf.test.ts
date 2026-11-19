@@ -51,6 +51,7 @@ export const SAMPLE_ACK: AcknowledgementData = {
   licenceApplicationDue: "2027-01-20",
   days: { determination: 30, deficiency: 14, showCause: 14 },
   signedBy: "Sample Officer",
+  signature: null,
 };
 
 const SAMPLE_DEF: DeficiencyData = {
@@ -74,6 +75,7 @@ const SAMPLE_DEF: DeficiencyData = {
     balance: 15_000_000,
     issuedByName: "Sample Supervisor",
   },
+  signature: null,
 };
 
 function sampleEval(): EvaluationData {
@@ -103,6 +105,7 @@ function sampleEval(): EvaluationData {
     evaluator: "Sample Evaluator",
     supervisor: "Sample Supervisor",
     approver: null,
+    signatures: { evaluator: null, supervisor: null, approver: null },
     startedOn: "2026-10-22",
     stages,
     postApproval: checks.filter((c) => post.has(c.id)).map((c) => ({ id: c.id, text: c.text, value: "", automatic: false, applicable: true })),
@@ -170,6 +173,15 @@ describe("registration PDFs (Phase 10)", () => {
     const r = await render("eval-01", createElement(Eval01, { x: sampleEval() }));
     expect(r.pages).toBeGreaterThanOrEqual(2);
     expect(r.pages).toBeLessThanOrEqual(3);
+  }, 30_000);
+
+  it("e-signatures fit on the line without adding pages", async () => {
+    // A generated PNG stands in for a signature (no staff signature is kept in the repo).
+    const sig = await QRCode.toBuffer("signature", { margin: 0, width: 300 });
+    expect((await render("acknowledgement-signed", createElement(AcknowledgementLetter, { x: { ...SAMPLE_ACK, signature: sig } }))).pages).toBe(2);
+    expect((await render("deficiency-signed", createElement(DeficiencyNotice, { x: { ...SAMPLE_DEF, draft: false, signature: sig } }))).pages).toBe(1);
+    const ev = { ...sampleEval(), approver: "Sample Approver", finalDecision: "Approve", approvalDate: "2026-11-13", signatures: { evaluator: sig, supervisor: sig, approver: sig } };
+    expect((await render("eval-01-signed", createElement(Eval01, { x: ev }))).pages).toBeLessThanOrEqual(3);
   }, 30_000);
 
   it("CERT-01: one landscape page, also as a draft", async () => {

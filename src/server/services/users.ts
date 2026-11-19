@@ -11,6 +11,7 @@ import { isRole, ROLE_LABELS, type Role } from "@/domain/roles";
 import { CLOSED_STATUSES } from "@/domain/registration/types";
 import { auditActor, authorize, type Actor } from "../auth/actor";
 import { writeAudit, type AuditActor } from "../audit";
+import { signatureBlobStore, type SignatureStore } from "../blob";
 import type { Db, DbOrTx, Tx } from "../db/connect";
 import { accounts, evaluations, formDrafts, notifications, sessions, submissions, userRoles, users } from "../db/schema";
 import { blocked, notFound, Problems } from "../errors";
@@ -287,9 +288,9 @@ async function openAssignments(tx: DbOrTx, userId: string): Promise<string[]> {
  * their name (the app is the system of record), so the row stays as a marker,
  * which also stops the workbook seed from re-creating them.
  */
-export async function removeUser(db: Db, actor: Actor | null, userId: string): Promise<string> {
+export async function removeUser(db: Db, actor: Actor | null, userId: string, store: SignatureStore = signatureBlobStore): Promise<string> {
   authorize(actor, "users:manage");
-  return db.transaction(async (tx) => {
+  const { name, signaturePath } = await db.transaction(async (tx) => {
     const [u] = await tx.select().from(users).where(eq(users.id, userId)).for("update");
     if (!u) throw notFound("User");
     if (u.removedAt) throw blocked(`${u.name} was already deleted.`);
@@ -310,6 +311,9 @@ export async function removeUser(db: Db, actor: Actor | null, userId: string): P
         removedAt: now,
         removedBy: actor.id,
         updatedAt: now,
+        // A deleted person's signature is never stamped again.
+        signaturePath: null,
+        signatureUpdatedAt: now,
       })
       .where(eq(users.id, userId));
     await tx.delete(userRoles).where(eq(userRoles.userId, userId));
@@ -323,8 +327,10 @@ export async function removeUser(db: Db, actor: Actor | null, userId: string): P
       module: "admin",
       entityType: "user",
       entityId: userId,
-      detail: `${u.name} <${u.email}>; roles were: ${roles.map((r) => ROLE_LABELS[r]).join(", ") || "none"}. The name stays on the records they worked on.`,
+      detail: `${u.name} <${u.email}>; roles were: ${roles.map((r) => ROLE_LABELS[r]).join(", ") || "none"}. The name stays on the records they worked on.${u.signaturePath ? " E-signature deleted." : ""}`,
     });
-    return u.name;
+    return { name: u.name, signaturePath: u.signaturePath };
   });
+  if (signaturePath) await store.remove([signaturePath]);
+  return name;
 }

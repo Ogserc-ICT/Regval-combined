@@ -120,6 +120,13 @@
       "when": 1794696573695,
       "tag": "0016_payment_handover",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795092532337,
+      "tag": "0017_staff_signatures",
+      "breakpoints": true
     }
   ]
 }

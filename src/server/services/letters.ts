@@ -3,6 +3,11 @@
  * Each loader gathers what one document prints, from the current records, as plain data
  * for its PDF component in src/server/pdf/. The deficiency notice prints what was frozen
  * when it was issued.
+ *
+ * E-signatures (users.signaturePath) are stamped on the first three only, and only once the
+ * person has done their step: the acknowledgement letter always (its signer is fixed when it
+ * prints), the deficiency notice once sent, EVAL-01 once the final decision is recorded.
+ * CERT-01 is signed by hand and never carries one.
  */
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { addDays, type LocalDate } from "@/domain/dates";
@@ -12,6 +17,8 @@ import type { DbOrTx } from "../db/connect";
 import { deficiencyNotices, signatories, users, type DeficiencyContents } from "../db/schema";
 import { notFound, blocked } from "../errors";
 import { lagosToday } from "../time";
+import { signatureBlobStore, type SignatureStore } from "../blob";
+import { signaturesOf } from "./signatures";
 import { loadSubmission, type LoadedSubmission } from "./submissions/load";
 
 export type Letterhead = { address: string; email: string };
@@ -83,13 +90,17 @@ export type AcknowledgementData = {
   licenceApplicationDue: LocalDate | null;
   days: { determination: number; deficiency: number; showCause: number };
   signedBy: string;
+  signature: Buffer | null;
 };
 
-export async function acknowledgementData(db: DbOrTx, id: string, printedBy: string): Promise<AcknowledgementData> {
+export async function acknowledgementData(db: DbOrTx, id: string, printedBy: { id: string; name: string }, store: SignatureStore = signatureBlobStore): Promise<AcknowledgementData> {
   const l = await loadSubmission(db, id);
   const { row, a } = l;
   if (!row.status) throw blocked("Save the submission before printing its acknowledgement letter.");
   const names = await namesOf(db, [l.evaluation?.evaluatingOfficerId]);
+  // Q28b default: the assigned evaluating officer, else the officer printing it.
+  const signerId = l.evaluation?.evaluatingOfficerId && names.has(l.evaluation.evaluatingOfficerId) ? l.evaluation.evaluatingOfficerId : printedBy.id;
+  const sigs = await signaturesOf(db, [signerId], store);
   const docs = a.documents.items;
   return {
     head: letterhead(l),
@@ -123,8 +134,8 @@ export async function acknowledgementData(db: DbOrTx, id: string, printedBy: str
     unlicensed: row.licenceStatus === UNLICENSED,
     licenceApplicationDue: a.licenceApplicationDue,
     days: { determination: l.settings.determinationDays, deficiency: l.settings.deficiencyResponseDays, showCause: l.settings.showCauseDays },
-    // Q28b default: the assigned evaluating officer, else the officer printing it.
-    signedBy: names.get(l.evaluation?.evaluatingOfficerId ?? "") ?? printedBy,
+    signedBy: names.get(signerId) ?? printedBy.name,
+    signature: sigs.get(signerId) ?? null,
   };
 }
 
@@ -144,10 +155,12 @@ export type DeficiencyData = {
   attention: string | null;
   submissionDate: LocalDate;
   contents: DeficiencyContents;
+  /** The issuing officer's e-signature, once the notice is sent. */
+  signature: Buffer | null;
 };
 
 /** The latest notice on the submission, or the one asked for. */
-export async function deficiencyData(db: DbOrTx, id: string, noticeId?: string | null): Promise<DeficiencyData> {
+export async function deficiencyData(db: DbOrTx, id: string, noticeId?: string | null, store: SignatureStore = signatureBlobStore): Promise<DeficiencyData> {
   const l = await loadSubmission(db, id);
   const where = noticeId ? and(eq(deficiencyNotices.submissionId, id), eq(deficiencyNotices.id, noticeId)) : eq(deficiencyNotices.submissionId, id);
   const [notice] = await db.select().from(deficiencyNotices).where(where).orderBy(desc(deficiencyNotices.issuedAt)).limit(1);
@@ -160,6 +173,7 @@ export async function deficiencyData(db: DbOrTx, id: string, noticeId?: string |
   }
   const today = lagosToday();
   const sent = notice.sentOn;
+  const sig = sent && notice.issuedBy ? ((await signaturesOf(db, [notice.issuedBy], store)).get(notice.issuedBy) ?? null) : null;
   return {
     head: letterhead(l),
     defNo: notice.defNo,
@@ -172,6 +186,7 @@ export async function deficiencyData(db: DbOrTx, id: string, noticeId?: string |
     attention: l.row.complianceOfficer,
     submissionDate: l.row.deemedReceiptDate,
     contents,
+    signature: sig,
   };
 }
 
@@ -188,6 +203,8 @@ export type EvaluationData = {
   evaluator: string | null;
   supervisor: string | null;
   approver: string | null;
+  /** E-signatures, once the final decision is recorded (dated the approval date). */
+  signatures: { evaluator: Buffer | null; supervisor: Buffer | null; approver: Buffer | null };
   startedOn: LocalDate | null;
   stages: { title: string; checks: EvalCheckLine[] }[];
   postApproval: EvalCheckLine[];
@@ -203,12 +220,15 @@ export type EvaluationData = {
   printedOn: LocalDate;
 };
 
-export async function evaluationData(db: DbOrTx, id: string): Promise<EvaluationData> {
+export async function evaluationData(db: DbOrTx, id: string, store: SignatureStore = signatureBlobStore): Promise<EvaluationData> {
   const l = await loadSubmission(db, id);
   const { row, a } = l;
   const ev = l.evaluation;
   const names = await namesOf(db, [ev?.evaluatingOfficerId, ev?.reviewingSupervisorId, ev?.approvingOfficerId]);
   const name = (uid: string | null | undefined) => (uid ? (names.get(uid) ?? null) : null);
+  const decided = !!(ev?.finalDecision && ev.approvalDate);
+  const sigs = decided ? await signaturesOf(db, [ev?.evaluatingOfficerId, ev?.reviewingSupervisorId, ev?.approvingOfficerId], store) : new Map<string, Buffer>();
+  const sig = (uid: string | null | undefined) => (uid ? (sigs.get(uid) ?? null) : null);
   const post = new Set<string>(POST_APPROVAL_CHECKS);
   const line = (c: (typeof l.ref.checks)[number]): EvalCheckLine => {
     const r = a.checks.results.find((x) => x.id === c.id);
@@ -231,6 +251,7 @@ export async function evaluationData(db: DbOrTx, id: string): Promise<Evaluation
     evaluator: name(ev?.evaluatingOfficerId),
     supervisor: name(ev?.reviewingSupervisorId),
     approver: name(ev?.approvingOfficerId),
+    signatures: { evaluator: sig(ev?.evaluatingOfficerId), supervisor: sig(ev?.reviewingSupervisorId), approver: sig(ev?.approvingOfficerId) },
     startedOn: ev?.startedOn ?? null,
     stages,
     postApproval: ordered.filter((c) => post.has(c.id)).map(line),

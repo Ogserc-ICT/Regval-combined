@@ -62,7 +62,7 @@ export function DeficiencyNotice({ x }: { x: DeficiencyData }) {
         <Text style={s.p}>Please quote the acknowledgement number above in all correspondence.</Text>
 
         <View wrap={false}>
-          <SignatureBlock name={c.issuedByName} caption={`For: ${COMMISSION_NAME}`} />
+          <SignatureBlock name={c.issuedByName} caption={`For: ${COMMISSION_NAME}`} image={x.signature} />
         </View>
         <Footer left={x.defNo} />
         {x.draft ? <Watermark text="DRAFT – NOT ISSUED" /> : null}

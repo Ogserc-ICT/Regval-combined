@@ -11,6 +11,7 @@ import { toResult, type ActionResult } from "@/server/errors";
 import { deleteHoliday, saveHoliday } from "@/server/services/holidays";
 import { updateSettings, type SettingsChange } from "@/server/services/settings";
 import { saveSignatory } from "@/server/services/signatories";
+import { removeSignature, saveSignature } from "@/server/services/signatures";
 import { createUser, removeUser, resetPassword, updateUser } from "@/server/services/users";
 
 /** Turn a submitted form field into the setting's value type. */
@@ -132,4 +133,22 @@ export async function verifyAuditAction(): Promise<ActionResult<ChainCheck>> {
     authorize(actor, "settings:write");
     return verifyAuditChain(db);
   });
+}
+
+export async function saveSignatureAction(_prev: ActionResult | undefined, form: FormData) {
+  const actor = await getCurrentActor();
+  const id = String(form.get("id") ?? "");
+  const file = form.get("signature");
+  const bytes = file instanceof File ? new Uint8Array(await file.arrayBuffer()) : new Uint8Array();
+  const res = await toResult(() => saveSignature(db, actor, id, bytes), "Signature saved. It now prints on this person's letters, notices and EVAL-01 forms.");
+  if (res.ok) revalidatePath(`/admin/users/${id}`);
+  return res;
+}
+
+export async function removeSignatureAction(_prev: ActionResult | undefined, form: FormData) {
+  const actor = await getCurrentActor();
+  const id = String(form.get("id") ?? "");
+  const res = await toResult(() => removeSignature(db, actor, id), "Signature removed. Their lines print blank for a wet signature.");
+  if (res.ok) revalidatePath(`/admin/users/${id}`);
+  return res;
 }
