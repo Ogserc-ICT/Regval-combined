@@ -109,7 +109,7 @@ export function AcknowledgementLetter({ x }: { x: AcknowledgementData }) {
         <View wrap={false}>
           <Text style={[s.bold, { marginTop: 8 }]}>This acknowledgement is not a Registration Certificate.</Text>
           <Text style={{ marginTop: 10 }}>Yours faithfully,</Text>
-          <SignatureImage image={x.signature} width={190} />
+          <SignatureImage image={x.signature} width={190} date={d(x.date)} />
           <View style={{ width: 190, height: 0.6, backgroundColor: "#777" }} />
           <Text style={[s.bold, { marginTop: 4 }]}>{x.signedBy}</Text>
           <Text style={s.small}>For: {COMMISSION_NAME}</Text>

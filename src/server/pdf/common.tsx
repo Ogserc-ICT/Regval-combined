@@ -197,13 +197,21 @@ export const bullet = () => "•";
 /** The height an e-signature takes above the line; without one the line keeps the same space for a wet signature. */
 const SIGNATURE_HEIGHT = 36;
 
-/** A stored e-signature sitting on the signature line (staff accounts; never CERT-01). */
-export function SignatureImage({ image, width }: { image: Buffer | null | undefined; width: number }) {
-  if (!image) return <View style={{ height: SIGNATURE_HEIGHT, flexGrow: 1 }} />;
+/**
+ * A stored e-signature sitting on the signature line (staff accounts; never CERT-01), with the
+ * date it was signed beside it. Without a signature the space stays empty for a wet signature
+ * and a handwritten date.
+ */
+export function SignatureImage({ image, width, date }: { image: Buffer | null | undefined; width: number; date?: string | null }) {
   return (
-    <View style={{ height: SIGNATURE_HEIGHT, flexGrow: 1, justifyContent: "flex-end" }}>
-      {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt */}
-      <Image src={{ data: image, format: "png" }} style={{ height: SIGNATURE_HEIGHT, maxWidth: Math.min(width, 150), objectFit: "contain", objectPosition: "left bottom" }} />
+    <View style={{ flexDirection: "row", alignItems: "flex-end", width, height: SIGNATURE_HEIGHT }}>
+      <View style={{ flexGrow: 1, height: SIGNATURE_HEIGHT, justifyContent: "flex-end" }}>
+        {image ? (
+          // eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt
+          <Image src={{ data: image, format: "png" }} style={{ height: SIGNATURE_HEIGHT, maxWidth: Math.min(width - 70, 150), objectFit: "contain", objectPosition: "left bottom" }} />
+        ) : null}
+      </View>
+      {image && date ? <Text style={{ fontSize: 8, color: GREY, marginBottom: 2 }}>{date}</Text> : null}
     </View>
   );
 }
@@ -212,10 +220,7 @@ export function SignatureImage({ image, width }: { image: Buffer | null | undefi
 export function SignatureBlock({ name, caption, width = 190, image, date }: { name: string | null; caption: string; width?: number; image?: Buffer | null; date?: string | null }) {
   return (
     <View wrap={false} style={{ marginTop: 4 }}>
-      <View style={{ flexDirection: "row", alignItems: "flex-end", width }}>
-        <SignatureImage image={image} width={width} />
-        {image && date ? <Text style={{ fontSize: 8, color: GREY, marginBottom: 2 }}>{date}</Text> : null}
-      </View>
+      <SignatureImage image={image} width={width} date={date} />
       <View style={{ height: 0.6, width, backgroundColor: "#777", marginBottom: 4 }} />
       {name ? <Text style={{ fontWeight: "bold" }}>{name}</Text> : null}
       <Text style={{ fontSize: 8, color: GREY }}>{caption}</Text>
