@@ -36,7 +36,7 @@ This Next.js version (16.4) differs from older ones; read `node_modules/next/dis
 - `docs/QUESTIONS.md`: open questions for Kamiye and the Commission (written in Phase 0)
 - `docs/REVENUE-REGISTRY-CONTRACT.md`: the payment handover format shared with the Revenue Registry app (change it before the code)
 - `docs/GO-LIVE.md`: production checklist; `docs/ACCEPTANCE.md`: acceptance check → test; `docs/END-TO-END.md`: walk-through of the whole app
-- `docs/WORKFLOW-AND-ROLES.pdf`: staff guide to the workflow and roles, end to end (17 Nov 2026); regenerate from `docs/WORKFLOW-AND-ROLES.html` with headless Chrome `--print-to-pdf` when the workflow or settings change
+- `docs/WORKFLOW-AND-ROLES.pdf`: staff guide to the workflow and roles, end to end (20 Nov 2026); regenerate from `docs/WORKFLOW-AND-ROLES.html` with headless Chrome `--print-to-pdf` when the workflow or settings change
 
 ## Status
 

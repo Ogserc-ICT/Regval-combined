@@ -77,7 +77,7 @@
     <div class="meta">
       <p>How a registration moves through the app from receipt to certificate, who does each step, and the rules the app enforces along the way.</p>
       <p>Covers forms REG-01A to REG-01K under Order No. OGSERC/ORD/2026/001, own-use notifications (REG-01I), payments and the Finance gate, the EVAL-01 evaluation, and the handover to the Revenue Registry.</p>
-      <p style="margin-top:14px"><b>Version:</b> 17 November 2026 &nbsp;·&nbsp; <b>App:</b> regval-combined.vercel.app</p>
+      <p style="margin-top:14px"><b>Version:</b> 20 November 2026 &nbsp;·&nbsp; <b>App:</b> regval-combined.vercel.app</p>
     </div>
   </div>
   <div class="foot">Internal staff document. The rules summarised here are set out in full in the app's specification (docs/SPEC.md); periods and policies quoted are the current defaults and can be changed by an admin in Admin › Settings.</div>
@@ -89,7 +89,7 @@
   <p>Every filing follows the same path. Each stage is owned by a different role, and the app will not let a stage start until the one before it is finished.</p>
   <div class="journey">
     <div><b>1 · Receive</b>Registration officer records the filing. ACK issued, fee priced.</div>
-    <div><b>2 · Pay</b>Payment recorded, then confirmed by Finance. Gate opens.</div>
+    <div><b>2 · Pay</b>Payment recorded, confirmed by Finance, receipt printed. Gate opens.</div>
     <div><b>3 · Evaluate</b>Officers assigned; EVAL-01 checks; documents ticked.</div>
     <div><b>4 · Complete or deficient</b>Mark complete (30-day clock) or issue a deficiency notice.</div>
     <div><b>5 · Decide</b>Approving officer registers, refuses or lapses.</div>
@@ -128,6 +128,7 @@
       <tr><td>Print and send acknowledgement letter</td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td><td></td></tr>
       <tr><td>Record payment</td><td><span class="dot"></span></td><td><span class="ring"></span></td><td></td><td></td><td></td><td></td></tr>
       <tr><td>Confirm / reject payment</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Print payment receipt</td><td><span class="ring"></span></td><td><span class="dot"></span></td><td></td><td></td><td></td><td><span class="ring"></span></td></tr>
       <tr><td>Reverse payment</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td><span class="ring"></span></td></tr>
       <tr><td>Revenue Registry handover</td><td></td><td><span class="dot"></span></td><td></td><td></td><td></td><td></td></tr>
       <tr><td>Assign evaluator, supervisor, approver</td><td></td><td></td><td><span class="dot"></span></td><td></td><td></td><td><span class="ring"></span></td></tr>
@@ -233,7 +234,8 @@
     <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
     <tbody>
       <tr><td class="num">10</td><td class="who">Registration officer</td><td>Entry › <b>Payments tab</b>: record date, amount, channel and RRR / bank reference.</td><td><b>PAY number</b> issued; status Pending. Finance officers' bell turns amber: "Payment to confirm".</td></tr>
-      <tr><td class="num">11</td><td class="who">Finance officer<br><span class="muted">(not the recorder)</span></td><td><b>Payments &amp; Finance</b>: find the payment, tick "verified with the bank / Remita", confirm. Or reject with a reason.</td><td>Confirmation is final. Wrong confirmed payments are <b>reversed</b>, never edited or deleted. Then <b>Print receipt</b> on the payment: the official receipt (numbered by the PAY number, CERT-01 style) signed by the Head of Finance, for the operator.</td></tr>
+      <tr><td class="num">11</td><td class="who">Finance officer<br><span class="muted">(not the recorder)</span></td><td><b>Payments &amp; Finance</b>: find the payment, tick "verified with the bank / Remita", confirm. Or reject with a reason.</td><td>Confirmation is final. Wrong confirmed payments are <b>reversed</b>, never edited or deleted.</td></tr>
+      <tr><td class="num">11a</td><td class="who">Finance officer<br><span class="muted">(or Registration officer)</span></td><td>On the confirmed payment (Payments tab or Payments &amp; Finance): <b>Print receipt</b> or <b>Download</b>, and give it to the operator.</td><td><b>Official receipt</b> in the CERT-01 style, numbered by the PAY number, signed with the Head of Finance's e-signature. Draft without a confirmed Head of Finance; marked REVERSED if the payment is reversed. None for pending or rejected payments.</td></tr>
       <tr><td class="num">12</td><td class="who">The app</td><td>When confirmed payments cover what is due, the gate opens automatically.</td><td>Status → <b>Received – Under Review</b>. The assigned evaluator (or the supervisors, if nobody is assigned) is notified.</td></tr>
       <tr><td class="num">13</td><td class="who">Finance officer</td><td><b>Payments &amp; Finance › Handover › Prepare handover</b>; download the Excel batch, import it into the Revenue Registry, then <b>Mark imported</b>.</td><td>Batch <code>OGSERC/EXP/{year}/{n}</code> with every confirmed payment not yet handed over, plus reversal lines. No payment is ever in two batches.</td></tr>
     </tbody>
@@ -344,6 +346,7 @@
       <tr><td>Deficiency notice</td><td>Para 13(1)(b): DEF, documents outstanding, failed checks, balance, response date. Draft until the sent date is recorded.</td><td>Reviewing supervisor who issued it</td></tr>
       <tr><td>EVAL-01</td><td>Internal: every check by stage, counts, recommended outcome, flags, decision, post-approval checks.</td><td>Evaluator, supervisor and approver</td></tr>
       <tr><td>CERT-01 certificate</td><td>Para 13(5): serial, registration number, registrant, category, activities, LGA, service area, licence, QR code, seal circle.</td><td>Chairman / CEO and Secretary to the Commission</td></tr>
+      <tr><td>Official receipt</td><td>For each confirmed payment: PAY number, payer, amount in figures and words, purpose, ACK / OUN and registration number, date paid, mode and RRR, date confirmed and by whom, account balance, QR code, Finance stamp circle.</td><td>Head of Finance (e-signature)</td></tr>
     </tbody>
   </table>
 </section>
