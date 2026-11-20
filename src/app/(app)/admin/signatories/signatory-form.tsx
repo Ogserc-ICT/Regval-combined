@@ -4,9 +4,20 @@ import { ActionForm } from "@/components/action-form";
 import { Field, Input, Select } from "@/components/ui";
 import { saveSignatoryAction } from "../actions";
 
-export type SignatoryRow = { id: string; name: string; designation: string; role: string; active: boolean; confirmed: boolean };
+export type SignatoryRow = { id: string; name: string; designation: string; role: string; active: boolean; confirmed: boolean; userId: string | null };
+export type StaffOption = { id: string; name: string; hasSignature: boolean };
 
-export function SignatoryForm({ s, editable, roles }: { s?: SignatoryRow; editable: boolean; roles: { value: string; label: string }[] }) {
+export function SignatoryForm({
+  s,
+  editable,
+  roles,
+  staff,
+}: {
+  s?: SignatoryRow;
+  editable: boolean;
+  roles: { value: string; label: string }[];
+  staff: StaffOption[];
+}) {
   const key = s?.id ?? "new";
   return (
     <ActionForm action={saveSignatoryAction} submitLabel={s ? "Save" : "Add signatory"} size="sm" variant={s ? "secondary" : "primary"} hidden={s ? { id: s.id } : undefined} resetOnSuccess={!s}>
@@ -23,6 +34,23 @@ export function SignatoryForm({ s, editable, roles }: { s?: SignatoryRow; editab
               {roles.map((r) => (
                 <option key={r.value} value={r.value}>
                   {r.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field
+            label="Staff account for the e-signature (optional)"
+            htmlFor={`user-${key}`}
+            errors={fe.userId}
+            hint="Used on payment receipts only: the Head of Finance's e-signature from their staff account. CERT-01 is always signed by hand."
+            className="md:col-span-3"
+          >
+            <Select id={`user-${key}`} name="userId" defaultValue={s?.userId ?? ""}>
+              <option value="">None</option>
+              {staff.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                  {u.hasSignature ? "" : " (no e-signature yet)"}
                 </option>
               ))}
             </Select>

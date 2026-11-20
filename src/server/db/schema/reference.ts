@@ -5,6 +5,7 @@
  */
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { users } from "./auth";
 
 /** Schedule 3 fee table (Lists A5:G16). Money in kobo. */
 export const feeSchedule = pgTable("fee_schedule", {
@@ -83,7 +84,7 @@ export const listItems = pgTable(
   (t) => [primaryKey({ columns: [t.listKey, t.value] })],
 );
 
-export const SIGNATORY_ROLES = ["chairman_ceo", "commissioner", "secretary", "other"] as const;
+export const SIGNATORY_ROLES = ["chairman_ceo", "commissioner", "secretary", "head_of_finance", "other"] as const;
 export type SignatoryRole = (typeof SIGNATORY_ROLES)[number];
 
 /** One signatory list for certificates and outgoing letters ([G3]). */
@@ -97,7 +98,12 @@ export const signatories = pgTable(
     active: boolean("active").notNull().default(true),
     confirmed: boolean("confirmed").notNull().default(false),
     note: text("note"),
+    /**
+     * The staff account whose e-signature is stamped where this signatory signs. Used by the
+     * payment receipt (Head of Finance) only; CERT-01 is always signed by hand.
+     */
+    userId: uuid("user_id").references(() => users.id),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("signatories_role_check", sql`${t.role} in ('chairman_ceo', 'commissioner', 'secretary', 'other')`)],
+  (t) => [check("signatories_role_check", sql`${t.role} in ('chairman_ceo', 'commissioner', 'secretary', 'head_of_finance', 'other')`)],
 );

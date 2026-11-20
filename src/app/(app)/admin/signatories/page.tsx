@@ -6,6 +6,7 @@ import { db } from "@/server/db/client";
 import { SIGNATORY_ROLES } from "@/server/db/schema";
 import { signatoriesReady } from "@/server/services/reference";
 import { listSignatories, SIGNATORY_ROLE_LABELS } from "@/server/services/signatories";
+import { listUsers } from "@/server/services/users";
 import { SignatoryForm } from "./signatory-form";
 
 export const metadata: Metadata = { title: "Signatories" };
@@ -13,13 +14,14 @@ export const metadata: Metadata = { title: "Signatories" };
 export default async function SignatoriesPage() {
   const actor = await requirePermission("registers:read");
   const editable = can(actor, "signatories:manage");
-  const [list, ready] = await Promise.all([listSignatories(db), signatoriesReady(db)]);
+  const [list, ready, people] = await Promise.all([listSignatories(db), signatoriesReady(db), listUsers(db)]);
+  const staff = people.filter((u) => !u.removedAt).map((u) => ({ id: u.id, name: u.name, hasSignature: !!u.signaturePath }));
   const roles = SIGNATORY_ROLES.map((r) => ({ value: r, label: SIGNATORY_ROLE_LABELS[r] }));
   return (
     <>
       <PageHeader
         title="Signatories"
-        description="One list for CERT-01 certificates and outgoing letters. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Secretary to the Commission, the two CERT-01 signatories."
+        description="One list for CERT-01 certificates, payment receipts and outgoing letters. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Secretary to the Commission, the two CERT-01 signatories."
       />
       {!ready.chairman || !ready.secretary ? (
         <Notice tone="warn" title="Approvals are blocked" className="mb-6">
@@ -42,7 +44,7 @@ export default async function SignatoriesPage() {
               }
             />
             <CardBody>
-              <SignatoryForm s={s} editable={editable} roles={roles} />
+              <SignatoryForm s={s} editable={editable} roles={roles} staff={staff} />
             </CardBody>
           </Card>
         ))}
@@ -50,7 +52,7 @@ export default async function SignatoriesPage() {
           <Card>
             <CardHeader title="Add a signatory" />
             <CardBody>
-              <SignatoryForm editable roles={roles} />
+              <SignatoryForm editable roles={roles} staff={staff} />
             </CardBody>
           </Card>
         ) : null}

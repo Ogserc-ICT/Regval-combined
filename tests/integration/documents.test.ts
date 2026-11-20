@@ -14,8 +14,9 @@ import { Certificate } from "../../src/server/pdf/certificate";
 import { registerFonts } from "../../src/server/pdf/common";
 import { DeficiencyNotice } from "../../src/server/pdf/deficiency-notice";
 import { Eval01 } from "../../src/server/pdf/eval-01";
-import { acknowledgementData, certificateData, deficiencyData, evaluationData } from "../../src/server/services/letters";
-import { confirmPayment, recordPayment } from "../../src/server/services/payments";
+import { PaymentReceipt } from "../../src/server/pdf/payment-receipt";
+import { acknowledgementData, certificateData, deficiencyData, evaluationData, receiptData } from "../../src/server/services/letters";
+import { confirmPayment, recordPayment, rejectPayment, reversePayment } from "../../src/server/services/payments";
 import { saveSignatory } from "../../src/server/services/signatories";
 import { removeSignature, saveSignature } from "../../src/server/services/signatures";
 import { removeUser } from "../../src/server/services/users";
@@ -257,5 +258,48 @@ describe("staff e-signatures", () => {
     await removeUser(db, t2.admin, leaver.id, store);
     expect(files.size).toBe(before - 1);
     expect((await acknowledgementData(db, bare.id, leaver, store)).signature).toBeNull();
+  }, 120_000);
+});
+
+describe("payment receipt", () => {
+  it("prints only for a confirmed payment; signed by a confirmed Head of Finance with the linked e-signature; marked when reversed", async () => {
+    const t = await released();
+    const finance = await makeActor(db, ["finance"], "Fin Checker");
+    const { store } = fakeSignatureStore();
+    const qr = await QRCode.toBuffer("x", { margin: 0, width: 120 });
+
+    const [confirmed] = (await db.execute<{ id: string }>(sql`select id from payments where reference = ${t.s.ackNo}`)).rows;
+    await recordPayment(db, t.registry, { dateReceived: "2026-11-05", reference: t.s.ackNo, amount: 5_000 });
+    const [pending] = (await db.execute<{ id: string }>(sql`select id from payments where reference = ${t.s.ackNo} and finance_status = 'Pending'`)).rows;
+    await expect(receiptData(db, pending.id, store)).rejects.toBeInstanceOf(ServiceError);
+    await rejectPayment(db, finance, pending.id, "No such credit");
+    await expect(receiptData(db, pending.id, store)).rejects.toBeInstanceOf(ServiceError);
+
+    // No Head of Finance yet: a draft.
+    const draft = await receiptData(db, confirmed.id, store);
+    expect(draft).toMatchObject({ payer: expect.stringMatching(/^Doc Power/), reference: t.s.ackNo, amount: 30_000_000, signature: null, reversedReason: null });
+    expect(draft.draftReason).toMatch(/No Head of Finance/);
+    expect(draft.position?.paid).toBe(30_000_000);
+
+    // A linked staff account must exist.
+    const bad = await saveSignatory(db, t.admin, null, { name: "Head F", designation: "Head of Finance", role: "head_of_finance", active: true, confirmed: true, userId: "00000000-0000-0000-0000-000000000000" }).catch((e) => e);
+    expect(bad).toBeInstanceOf(ServiceError);
+
+    const head = await makeActor(db, ["finance"], "Head F");
+    await saveSignature(db, t.admin, head.id, await QRCode.toBuffer("sig", { margin: 0, width: 200 }), store);
+    const sid = await saveSignatory(db, t.admin, null, { name: "Head F", designation: "Head of Finance", role: "head_of_finance", active: true, confirmed: false, userId: head.id });
+    const unconfirmed = await receiptData(db, confirmed.id, store);
+    expect(unconfirmed.draftReason).toMatch(/not confirmed/);
+    expect(unconfirmed.signature).toBeNull();
+
+    await saveSignatory(db, t.admin, sid, { name: "Head F", designation: "Head of Finance", role: "head_of_finance", active: true, confirmed: true, userId: head.id });
+    const signed = await receiptData(db, confirmed.id, store);
+    expect(signed.draftReason).toBeNull();
+    expect(signed.headOfFinance?.name).toBe("Head F");
+    expect(signed.signature).not.toBeNull();
+    expect(await pdfPages(createElement(PaymentReceipt, { x: signed, qr }))).toBe(1);
+
+    await reversePayment(db, finance, confirmed.id, "Bounced");
+    expect((await receiptData(db, confirmed.id, store)).reversedReason).toBe("Bounced");
   }, 120_000);
 });

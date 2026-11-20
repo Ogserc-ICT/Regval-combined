@@ -9,7 +9,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] Sign in with the bootstrap admin and choose a new password.
 - [ ] **Admin › Staff & roles:** create one account per person, with a role each. Note the one-time password shown for each.
 - [ ] **Admin › Settings:** check the Effective Date (clear "placeholder" once gazetted), the 17:00 office closing time, the ACK number prefix and "Sign out after inactivity".
-- [ ] **Admin › Signatories:** confirm the Chairman / CEO (Jide Onakoya) and add the Secretary to the Commission, both ticked confirmed. Without a Secretary to the Commission, new registrations cannot be approved; while either is unconfirmed the certificate prints as a draft.
+- [ ] **Admin › Signatories:** confirm the Chairman / CEO (Jide Onakoya) and add the Secretary to the Commission, both ticked confirmed. Without a Secretary to the Commission, new registrations cannot be approved; while either is unconfirmed the certificate prints as a draft. Add the Head of Finance too (confirmed, linked to his staff account, which has his e-signature): he signs the payment receipts.
 - [ ] **Admin › Holidays:** confirm the provisional and estimated dates; deemed receipt and working days depend on them.
 - [ ] **Admin › Go-live checks:** work down the list until every row is ready.
 - [ ] Each person signs in once and replaces the one-time password. The eye button shows what they type.
@@ -31,6 +31,7 @@ A user can hold several roles, but on one submission the Registration officer wh
 - [ ] The Finance officers' bell turns amber and chimes: "Payment to confirm".
 - [ ] **Finance officer:** Payments & Finance, find it, tick "verified with the bank / Remita" and confirm. The officer who recorded a payment cannot confirm it.
 - [ ] When confirmed payments cover what is due, the submission is **released for evaluation** and the assigned evaluator (or the supervisors, if nobody is assigned yet) is notified.
+- [ ] **Finance officer: print the receipt.** On a confirmed payment, **Print receipt** (or Download) gives the official receipt in the CERT-01 style: numbered by the PAY number, the amount in figures and words, what it was for, the ACK / OUN and registration number, the RRR, the account balance, a QR code, and the Head of Finance's name and e-signature. Registration officers and admins can print it too. It prints as a draft without a confirmed Head of Finance, and is marked REVERSED if the payment is later reversed. Pending and rejected payments have no receipt.
 - [ ] A wrong payment can be rejected (with a reason) or, once confirmed, reversed.
 - [ ] **Finance officer: hand over to the Revenue Registry.** Payments & Finance › **Handover** › **Prepare handover**: every confirmed payment not handed over before (and a reversal line for any handed-over payment reversed since) goes into one batch, `OGSERC/EXP/{year}/{n}`. Download it (Excel), import it into the Revenue Registry, then **Mark imported**. A payment is never in two batches; a batch never changes, so downloading it again is safe. The format is in `docs/REVENUE-REGISTRY-CONTRACT.md`.
 

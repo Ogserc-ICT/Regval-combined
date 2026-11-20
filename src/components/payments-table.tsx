@@ -27,6 +27,7 @@ export function PaymentsTable({
   const canDecide = can(actor, "payment:decide");
   const canReverse = can(actor, "payment:reverse");
   const canDelete = can(actor, "data:clear");
+  const canReceipt = can(actor, "payment:receipt");
   return (
     <Table>
       <thead>
@@ -85,6 +86,16 @@ export function PaymentsTable({
                 </Td>
                 <Td>
                   <div className="flex flex-col gap-2">
+                    {canReceipt && p.financeStatus === "Confirmed" ? (
+                      <div className="flex gap-3 text-sm">
+                        <a href={`/api/pdf/receipt/${p.id}`} target="_blank" rel="noopener" className="text-accent hover:underline">
+                          {p.reversed ? "Receipt (reversed)" : "Print receipt"}
+                        </a>
+                        <a href={`/api/pdf/receipt/${p.id}?download=1`} className="text-muted hover:underline">
+                          Download
+                        </a>
+                      </div>
+                    ) : null}
                     {pending && canDecide && !mine ? (
                       <>
                         <details>

@@ -9,12 +9,13 @@ import QRCode from "qrcode";
 import { createElement, type ReactElement } from "react";
 import { describe, expect, it } from "vitest";
 import ref from "../../../seed/data/reference.json";
-import type { AcknowledgementData, CertificateData, DeficiencyData, EvaluationData } from "../services/letters";
+import type { AcknowledgementData, CertificateData, DeficiencyData, EvaluationData, ReceiptData } from "../services/letters";
 import { AcknowledgementLetter } from "./acknowledgement-letter";
 import { Certificate } from "./certificate";
 import { dayOfMonthYear, registerFonts } from "./common";
 import { DeficiencyNotice } from "./deficiency-notice";
 import { Eval01 } from "./eval-01";
+import { PaymentReceipt } from "./payment-receipt";
 
 const head = { address: "5th & 6th Floors, OPIC Building, Oke-Ilewo, Abeokuta", email: "registration@ogserc.org.ng" };
 
@@ -142,6 +143,33 @@ const SAMPLE_CERT: CertificateData = {
   submissionId: "00000000-0000-0000-0000-000000000000",
 };
 
+const SAMPLE_RECEIPT: ReceiptData = {
+  head,
+  payNo: "OGSERC/PAY/2026/00001",
+  amount: 25_000_000,
+  purpose: "Registration fee",
+  channel: "Remita",
+  rrr: "280012345678",
+  dateReceived: "2026-11-17",
+  confirmedOn: "2026-11-18",
+  confirmedBy: "Sample Finance Officer",
+  payer: SAMPLE_CERT.registrant,
+  payerAddress: SAMPLE_CERT.address,
+  cacNo: SAMPLE_CERT.cacNo,
+  reference: "OGSERC/ACK/2026/00001",
+  referenceLabel: "Acknowledgement No.",
+  registrationNo: SAMPLE_CERT.registrationNo,
+  position: { totalDue: 25_000_000, paid: 25_000_000, balance: 0 },
+  headOfFinance: { name: "Finance Head Name", designation: "Head of Finance", confirmed: true },
+  signature: null,
+  draftReason: null,
+  reversedReason: null,
+  printedOn: "2026-11-20",
+  ownerType: "submission",
+  ownerId: "00000000-0000-0000-0000-000000000000",
+  ownerPath: "/register/00000000-0000-0000-0000-000000000000?tab=payments",
+};
+
 async function render(name: string, el: ReactElement): Promise<{ pages: number; bytes: number }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- renderToBuffer wants a <Document> element
   const buf = await renderToBuffer(el as any);
@@ -189,6 +217,16 @@ describe("registration PDFs (Phase 10)", () => {
     expect((await render("cert-01", createElement(Certificate, { x: SAMPLE_CERT, qr }))).pages).toBe(1);
     const draft = { ...SAMPLE_CERT, secretary: { ...SAMPLE_CERT.secretary!, confirmed: false }, draftReason: "Signatories: not confirmed" };
     expect((await render("cert-01-draft", createElement(Certificate, { x: draft, qr }))).pages).toBe(1);
+  }, 30_000);
+
+  it("payment receipt: one landscape page, signed, draft or reversed", async () => {
+    const qr = await QRCode.toBuffer("https://example.invalid/register/x", { margin: 0, width: 240 });
+    const sig = await QRCode.toBuffer("signature", { margin: 0, width: 300 });
+    expect((await render("receipt", createElement(PaymentReceipt, { x: SAMPLE_RECEIPT, qr }))).pages).toBe(1);
+    expect((await render("receipt-signed", createElement(PaymentReceipt, { x: { ...SAMPLE_RECEIPT, signature: sig }, qr }))).pages).toBe(1);
+    const draft = { ...SAMPLE_RECEIPT, headOfFinance: null, draftReason: "No Head of Finance", position: null, registrationNo: null };
+    expect((await render("receipt-draft", createElement(PaymentReceipt, { x: draft, qr }))).pages).toBe(1);
+    expect((await render("receipt-reversed", createElement(PaymentReceipt, { x: { ...SAMPLE_RECEIPT, reversedReason: "Bounced" }, qr }))).pages).toBe(1);
   }, 30_000);
 
   it("dates the certificate as the template does", () => {

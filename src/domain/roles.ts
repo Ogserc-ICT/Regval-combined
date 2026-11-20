@@ -51,6 +51,8 @@ export const PERMISSIONS = {
   "payment:record": ["registration", "finance"],
   "payment:decide": ["finance"],
   "payment:reverse": ["finance", "admin"],
+  /** Print the official receipt of a confirmed payment, for the operator. */
+  "payment:receipt": ["finance", "registration", "admin"],
   /** Prepare and download payment handover batches for the Revenue Registry (Phase 11). */
   "payments:handover": ["finance", "admin"],
   "documents:update": ["registration", "evaluator", "supervisor"],

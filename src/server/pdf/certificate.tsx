@@ -12,16 +12,32 @@ export const CERT_FORM = "Form OGSERC/CERT-01  ·  Version 2026.1";
 const MICRO = "OGSERC CERTIFICATE OF REGISTRATION CERT-01 2026.1   ";
 const serif = "DejaVu Serif";
 
-function Micro({ top }: { top: boolean }) {
+function Micro({ top, text }: { top: boolean; text: string }) {
   return (
     <Text style={{ position: "absolute", left: 30, right: 30, [top ? "top" : "bottom"]: 25, fontSize: 3.2, color: GREEN, opacity: 0.7, fontFamily: "DejaVu Sans" }}>
-      {MICRO.repeat(8).trim()}
+      {text.repeat(8).trim()}
     </Text>
   );
 }
 
 function Corner({ style }: { style: Record<string, number> }) {
   return <View style={{ position: "absolute", width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: GOLD, backgroundColor: "#f6efd9", ...style }} />;
+}
+
+/** The CERT-01 frame (gold border, green inner rule, corner roundels, microtext), shared with the payment receipt. */
+export function CertificateFrame({ micro }: { micro: string }) {
+  return (
+    <>
+      <View fixed style={{ position: "absolute", top: 12, left: 12, right: 12, bottom: 12, borderWidth: 5, borderColor: GOLD }} />
+      <View fixed style={{ position: "absolute", top: 20, left: 20, right: 20, bottom: 20, borderWidth: 0.8, borderColor: GREEN }} />
+      <Corner style={{ top: 5, left: 5 }} />
+      <Corner style={{ top: 5, right: 5 }} />
+      <Corner style={{ bottom: 5, left: 5 }} />
+      <Corner style={{ bottom: 5, right: 5 }} />
+      <Micro top text={micro} />
+      <Micro top={false} text={micro} />
+    </>
+  );
 }
 
 function Signature({ who, role }: { who: Signer | null; role: string }) {
@@ -48,15 +64,7 @@ export function Certificate({ x, qr }: { x: CertificateData; qr: Buffer }) {
   return (
     <Document title={`Certificate ${x.registrationNo}`} author={COMMISSION_NAME} subject="Certificate of registration (para 13(5))">
       <Page size="A4" orientation="landscape" style={{ fontFamily: serif, color: "#1a1a1a", paddingTop: 40, paddingBottom: 34, paddingHorizontal: 58, fontSize: 10 }}>
-        {/* Frame */}
-        <View fixed style={{ position: "absolute", top: 12, left: 12, right: 12, bottom: 12, borderWidth: 5, borderColor: GOLD }} />
-        <View fixed style={{ position: "absolute", top: 20, left: 20, right: 20, bottom: 20, borderWidth: 0.8, borderColor: GREEN }} />
-        <Corner style={{ top: 5, left: 5 }} />
-        <Corner style={{ top: 5, right: 5 }} />
-        <Corner style={{ bottom: 5, left: 5 }} />
-        <Corner style={{ bottom: 5, right: 5 }} />
-        <Micro top />
-        <Micro top={false} />
+        <CertificateFrame micro={MICRO} />
         {/* Faint crest behind the particulars */}
         <View style={{ position: "absolute", top: 230, left: 0, right: 0, alignItems: "center", opacity: 0.06 }}>
           {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt */}

@@ -101,13 +101,13 @@
     <thead><tr><th style="width:24%">Role</th><th>What they do</th></tr></thead>
     <tbody>
       <tr><td class="who">Registration officer</td><td>Front of the process: records new submissions and own-use notifications, uploads the filed form, records payments, ticks documents, sends letters and records the dates they were sent.</td></tr>
-      <tr><td class="who">Finance officer</td><td>Confirms, rejects or reverses payments after checking the bank / Remita. Prepares the handover batches for the Revenue Registry.</td></tr>
+      <tr><td class="who">Finance officer</td><td>Confirms, rejects or reverses payments after checking the bank / Remita. Prints the official receipt of each confirmed payment. Prepares the handover batches for the Revenue Registry.</td></tr>
       <tr><td class="who">Reviewing supervisor</td><td>Assigns the three officers to each submission, oversees the evaluation, issues deficiency notices, records show-cause letter dates.</td></tr>
       <tr><td class="who">Evaluating officer</td><td>Works through the EVAL-01 checks, confirms the category, marks the submission complete.</td></tr>
       <tr><td class="who">Approving officer</td><td>Makes the decision: approve and register, refuse after show-cause, or lapse. Registers own-use notifications.</td></tr>
       <tr><td class="who">Admin</td><td>Staff accounts and roles, settings, fees, lists, holidays, signatories, go-live checks, daily review, exports, cancellations, data management.</td></tr>
       <tr><td class="who">Viewer</td><td>Read-only: dashboards and registers.</td></tr>
-      <tr><td class="who">Signatories</td><td>Chairman / CEO and Secretary to the Commission. Not app users by role: they are entered in Admin › Signatories and printed on CERT-01, which they sign by hand.</td></tr>
+      <tr><td class="who">Signatories</td><td>Chairman / CEO and Secretary to the Commission, who sign CERT-01 by hand; the Head of Finance, whose e-signature is printed on payment receipts. Entered in Admin › Signatories.</td></tr>
     </tbody>
   </table>
 
@@ -207,7 +207,7 @@
     <tbody>
       <tr><td class="num">1</td><td class="who">Admin</td><td><b>Admin › Staff &amp; roles</b>: create one account per person and give each their role(s).</td><td>A one-time password for each person; they replace it at first sign-in.</td></tr>
       <tr><td class="num">2</td><td class="who">Admin</td><td><b>Admin › Settings</b>: Effective Date (gazetted 2 Nov 2026), office closing time (17:00), ACK prefix, idle sign-out minutes, policies.</td><td>Every deadline and fee follows these. Changes are audited.</td></tr>
-      <tr><td class="num">3</td><td class="who">Admin</td><td><b>Admin › Signatories</b>: Chairman / CEO and Secretary to the Commission, both ticked confirmed.</td><td>Without a Secretary to the Commission, new registrations cannot be approved; unconfirmed signatories make CERT-01 print as a draft.</td></tr>
+      <tr><td class="num">3</td><td class="who">Admin</td><td><b>Admin › Signatories</b>: Chairman / CEO and Secretary to the Commission, both ticked confirmed; the Head of Finance, confirmed and linked to his staff account (which holds his e-signature).</td><td>Without a Secretary to the Commission, new registrations cannot be approved; unconfirmed signatories make CERT-01 print as a draft. Without a confirmed Head of Finance, receipts print as drafts.</td></tr>
       <tr><td class="num">4</td><td class="who">Admin</td><td><b>Admin › Holidays</b>: confirm provisional and estimated public holidays.</td><td>Deemed receipt dates depend on them.</td></tr>
       <tr><td class="num">5</td><td class="who">Admin</td><td><b>Admin › Go-live checks</b>: work down the list until every row is Ready.</td><td>App ready for live filings.</td></tr>
     </tbody>
@@ -233,7 +233,7 @@
     <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
     <tbody>
       <tr><td class="num">10</td><td class="who">Registration officer</td><td>Entry › <b>Payments tab</b>: record date, amount, channel and RRR / bank reference.</td><td><b>PAY number</b> issued; status Pending. Finance officers' bell turns amber: "Payment to confirm".</td></tr>
-      <tr><td class="num">11</td><td class="who">Finance officer<br><span class="muted">(not the recorder)</span></td><td><b>Payments &amp; Finance</b>: find the payment, tick "verified with the bank / Remita", confirm. Or reject with a reason.</td><td>Confirmation is final. Wrong confirmed payments are <b>reversed</b>, never edited or deleted.</td></tr>
+      <tr><td class="num">11</td><td class="who">Finance officer<br><span class="muted">(not the recorder)</span></td><td><b>Payments &amp; Finance</b>: find the payment, tick "verified with the bank / Remita", confirm. Or reject with a reason.</td><td>Confirmation is final. Wrong confirmed payments are <b>reversed</b>, never edited or deleted. Then <b>Print receipt</b> on the payment: the official receipt (numbered by the PAY number, CERT-01 style) signed by the Head of Finance, for the operator.</td></tr>
       <tr><td class="num">12</td><td class="who">The app</td><td>When confirmed payments cover what is due, the gate opens automatically.</td><td>Status → <b>Received – Under Review</b>. The assigned evaluator (or the supervisors, if nobody is assigned) is notified.</td></tr>
       <tr><td class="num">13</td><td class="who">Finance officer</td><td><b>Payments &amp; Finance › Handover › Prepare handover</b>; download the Excel batch, import it into the Revenue Registry, then <b>Mark imported</b>.</td><td>Batch <code>OGSERC/EXP/{year}/{n}</code> with every confirmed payment not yet handed over, plus reversal lines. No payment is ever in two batches.</td></tr>
     </tbody>

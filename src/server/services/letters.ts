@@ -7,17 +7,19 @@
  * E-signatures (users.signaturePath) are stamped on the first three only, and only once the
  * person has done their step: the acknowledgement letter always (its signer is fixed when it
  * prints), the deficiency notice once sent, EVAL-01 once the final decision is recorded.
- * CERT-01 is signed by hand and never carries one.
+ * CERT-01 is signed by hand and never carries one. The payment receipt carries the Head of
+ * Finance's, from the staff account linked to that signatory.
  */
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
-import { addDays, type LocalDate } from "@/domain/dates";
+import { addDays, lagosDate, type LocalDate } from "@/domain/dates";
 import { FILING_LABELS, UNLICENSED } from "@/domain/registration/types";
 import { POST_APPROVAL_CHECKS } from "@/domain/registration/checks";
 import type { DbOrTx } from "../db/connect";
-import { deficiencyNotices, signatories, users, type DeficiencyContents } from "../db/schema";
+import { deficiencyNotices, ownUseNotifications, payments, signatories, users, type DeficiencyContents } from "../db/schema";
 import { notFound, blocked } from "../errors";
 import { lagosToday } from "../time";
 import { signatureBlobStore, type SignatureStore } from "../blob";
+import { getSettings } from "./settings";
 import { signaturesOf } from "./signatures";
 import { loadSubmission, type LoadedSubmission } from "./submissions/load";
 
@@ -295,13 +297,17 @@ export type CertificateData = {
   submissionId: string;
 };
 
-async function signer(db: DbOrTx, role: "chairman_ceo" | "secretary"): Promise<Signer | null> {
+async function signatoryRow(db: DbOrTx, role: "chairman_ceo" | "secretary" | "head_of_finance") {
   const rows = await db
     .select()
     .from(signatories)
     .where(and(eq(signatories.role, role), eq(signatories.active, true)))
     .orderBy(desc(signatories.confirmed), asc(signatories.name));
-  const s = rows[0];
+  return rows[0] ?? null;
+}
+
+async function signer(db: DbOrTx, role: "chairman_ceo" | "secretary"): Promise<Signer | null> {
+  const s = await signatoryRow(db, role);
   return s ? { name: s.name, designation: s.designation, confirmed: s.confirmed } : null;
 }
 
@@ -339,5 +345,102 @@ export async function certificateData(db: DbOrTx, id: string): Promise<Certifica
     voidReason: row.status && row.status !== "Registered" ? row.status : null,
     needsReissue: row.certificateNeedsReissue,
     submissionId: row.id,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Payment receipt (Finance; in the CERT-01 style)
+
+export type ReceiptData = {
+  head: Letterhead;
+  /** The PAY number: the receipt is numbered by the payment it acknowledges. */
+  payNo: string;
+  amount: number;
+  purpose: string;
+  channel: string | null;
+  rrr: string | null;
+  dateReceived: LocalDate;
+  /** The Lagos date Finance confirmed it, after the bank / Remita check. */
+  confirmedOn: LocalDate;
+  confirmedBy: string | null;
+  payer: string;
+  payerAddress: string | null;
+  cacNo: string | null;
+  /** The ACK (registration filing) or OUN (own-use notification) the payment was made against. */
+  reference: string;
+  referenceLabel: string;
+  registrationNo: string | null;
+  /** Registration filings only: the account as at the print date. */
+  position: { totalDue: number; paid: number; balance: number } | null;
+  headOfFinance: Signer | null;
+  /** Stamped only when the Head of Finance is confirmed and linked to a staff account with one. */
+  signature: Buffer | null;
+  draftReason: string | null;
+  reversedReason: string | null;
+  printedOn: LocalDate;
+  ownerType: "submission" | "own_use";
+  ownerId: string;
+  /** Where the QR code points (the record in this app). */
+  ownerPath: string;
+};
+
+export async function receiptData(db: DbOrTx, paymentId: string, store: SignatureStore = signatureBlobStore): Promise<ReceiptData> {
+  const [p] = await db.select().from(payments).where(eq(payments.id, paymentId));
+  if (!p) throw notFound("Payment");
+  if (p.financeStatus !== "Confirmed" || !p.decidedAt) {
+    throw blocked(p.financeStatus === "Rejected" ? "A rejected payment has no receipt." : "A receipt prints only once Finance has confirmed the payment.");
+  }
+  const settings = await getSettings(db);
+  let owner: Pick<ReceiptData, "payer" | "payerAddress" | "cacNo" | "registrationNo" | "referenceLabel" | "position" | "ownerPath">;
+  if (p.ownerType === "submission") {
+    const l = await loadSubmission(db, p.ownerId);
+    owner = {
+      payer: l.row.registeredName,
+      payerAddress: l.row.registeredAddress,
+      cacNo: l.row.cacNo,
+      registrationNo: l.row.registrationNo ?? l.row.linkedRegistrationNo ?? null,
+      referenceLabel: "Acknowledgement No.",
+      position: { totalDue: l.a.totalDue, paid: l.a.payments.amountPaid, balance: Math.max(0, l.a.balance) },
+      ownerPath: `/register/${l.row.id}?tab=payments`,
+    };
+  } else {
+    const [o] = await db.select().from(ownUseNotifications).where(eq(ownUseNotifications.id, p.ownerId));
+    if (!o) throw notFound("Own-use notification");
+    owner = {
+      payer: o.name,
+      payerAddress: o.siteAddress,
+      cacNo: o.cacNo,
+      registrationNo: o.registrationNo,
+      referenceLabel: "Own-use notification No.",
+      position: null,
+      ownerPath: `/own-use/${o.id}`,
+    };
+  }
+  const hof = await signatoryRow(db, "head_of_finance");
+  const draftReason = !hof
+    ? "No Head of Finance under Admin › Signatories."
+    : !hof.confirmed
+      ? `${hof.name} (Head of Finance) is not confirmed under Admin › Signatories.`
+      : null;
+  const signature = hof?.confirmed && hof.userId ? ((await signaturesOf(db, [hof.userId], store)).get(hof.userId) ?? null) : null;
+  return {
+    head: { address: settings.letterAddress, email: settings.letterEmail },
+    payNo: p.payNo,
+    amount: p.amount,
+    purpose: p.purpose?.trim() || "Registration fee",
+    channel: p.channel,
+    rrr: p.rrr,
+    dateReceived: p.dateReceived,
+    confirmedOn: lagosDate(p.decidedAt),
+    confirmedBy: p.decidedByName,
+    reference: p.reference,
+    ownerType: p.ownerType,
+    ownerId: p.ownerId,
+    ...owner,
+    headOfFinance: hof ? { name: hof.name, designation: hof.designation, confirmed: hof.confirmed } : null,
+    signature,
+    draftReason,
+    reversedReason: p.reversed ? (p.reversalReason ?? "Reversed") : null,
+    printedOn: lagosToday(),
   };
 }

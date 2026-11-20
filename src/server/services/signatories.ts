@@ -5,17 +5,27 @@ import { asc, eq } from "drizzle-orm";
 import { auditActor, authorize, type Actor } from "../auth/actor";
 import { writeAudit } from "../audit";
 import type { Db, DbOrTx } from "../db/connect";
-import { SIGNATORY_ROLES, signatories, type SignatoryRole } from "../db/schema";
+import { SIGNATORY_ROLES, signatories, users, type SignatoryRole } from "../db/schema";
 import { notFound, Problems } from "../errors";
 
 export const SIGNATORY_ROLE_LABELS: Record<SignatoryRole, string> = {
   chairman_ceo: "Chairman / Chief Executive Officer",
   commissioner: "Commissioner",
   secretary: "Secretary to the Commission",
+  head_of_finance: "Head of Finance",
   other: "Other",
 };
 
-export type SignatoryInput = { name: string; designation: string; role: string; active: boolean; confirmed: boolean; note?: string | null };
+export type SignatoryInput = {
+  name: string;
+  designation: string;
+  role: string;
+  active: boolean;
+  confirmed: boolean;
+  note?: string | null;
+  /** The staff account whose e-signature prints for this signatory (payment receipts only). */
+  userId?: string | null;
+};
 
 export async function listSignatories(db: DbOrTx) {
   return db.select().from(signatories).orderBy(asc(signatories.role), asc(signatories.name));
@@ -34,6 +44,11 @@ export async function saveSignatory(db: Db, actor: Actor | null, id: string | nu
   authorize(actor, "signatories:manage");
   check(input);
   return db.transaction(async (tx) => {
+    const userId = input.userId?.trim() || null;
+    if (userId) {
+      const [u] = /^[0-9a-f-]{36}$/i.test(userId) ? await tx.select({ removedAt: users.removedAt }).from(users).where(eq(users.id, userId)) : [];
+      if (!u || u.removedAt) new Problems().field("userId", "Choose an existing staff account.").throwIfAny();
+    }
     const values = {
       name: input.name.trim(),
       designation: input.designation.trim(),
@@ -41,6 +56,7 @@ export async function saveSignatory(db: Db, actor: Actor | null, id: string | nu
       active: input.active,
       confirmed: input.confirmed,
       note: input.note?.trim() || null,
+      userId,
       updatedAt: new Date(),
     };
     let sid = id;

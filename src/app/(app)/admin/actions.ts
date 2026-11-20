@@ -120,6 +120,7 @@ export async function saveSignatoryAction(_prev: ActionResult<string> | undefine
         role: String(form.get("role") ?? ""),
         active: form.get("active") === "on",
         confirmed: form.get("confirmed") === "on",
+        userId: String(form.get("userId") ?? "") || null,
       }),
     "Saved.",
   );
