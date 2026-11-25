@@ -404,8 +404,10 @@ export function assess(s: SubmissionFacts, ctx: AssessContext): Assessment {
 }
 
 /**
- * [G8] The approving officer, evaluating officer, reviewing supervisor and the
- * user who saved the submission must be four different people.
+ * [G8] The approving officer, evaluating officer and reviewing supervisor must
+ * be three different people, and neither the supervisor nor the approver may be
+ * the user who saved the submission. The user who saved it may evaluate it
+ * (decided by Kamiye, 25 Nov 2026).
  */
 export function separationOfDuties(
   ev: Pick<NonNullable<AssessContext["evaluation"]>, "evaluatingOfficerId" | "reviewingSupervisorId" | "approvingOfficerId"> | null,
@@ -419,7 +421,6 @@ export function separationOfDuties(
   if (ao && ao === rs) out.push("The approving officer cannot be the reviewing supervisor");
   if (ao && ao === createdBy) out.push("The approving officer cannot be the user who created the submission");
   if (rs && rs === eo) out.push("The reviewing supervisor cannot be the evaluating officer");
-  if (eo && eo === createdBy) out.push("The evaluating officer cannot be the user who created the submission");
   if (rs && rs === createdBy) out.push("The reviewing supervisor cannot be the user who created the submission");
   return out;
 }

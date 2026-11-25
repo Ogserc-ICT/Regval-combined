@@ -645,7 +645,7 @@ Everyone signed in can read the registers and dashboards. Write access is by rol
 
 Enforced on the server for each record, returning every reason at once:
 
-- For a submission, the **approving officer, evaluating officer, reviewing supervisor and the user who saved it (Created By)** must be four different people. Checked when officers are assigned and again at approve, refuse and lapse. (The workbook checked approver ≠ evaluator, approver ≠ supervisor, approver ≠ creator and supervisor ≠ evaluator; the brief adds evaluator ≠ creator and supervisor ≠ creator.)
+- For a submission, the **approving officer, evaluating officer and reviewing supervisor** must be three different people, and neither the supervisor nor the approver may be **the user who saved it (Created By)**. The user who saved it may be the evaluating officer (decided by Kamiye, 25 Nov 2026; the brief had also required evaluator ≠ creator). Checked when officers are assigned and again at approve, refuse and lapse. (The workbook checked approver ≠ evaluator, approver ≠ supervisor, approver ≠ creator and supervisor ≠ evaluator; the brief adds supervisor ≠ creator.)
 - The acting user must be the assigned officer for the action (§13.3).
 - A Finance officer cannot confirm or reject a payment they recorded (403, including through a direct API call).
 - Own-use registration: the approver is not the user who saved the notification.

@@ -2,7 +2,7 @@
 
 How the app works from first sign-in to a registration certificate, as a list you can tick while trying it. Each step names the role that does it. The rules behind each step are in `docs/SPEC.md`.
 
-A user can hold several roles, but on one submission the Registration officer who saved it, the evaluating officer, the reviewing supervisor and the approving officer must be four different people, and a Finance officer cannot confirm a payment they recorded. So a full run needs at least four people; the admin and Finance roles can be held by any of them.
+A user can hold several roles, but on one submission the evaluating officer, the reviewing supervisor and the approving officer must be three different people, the Registration officer who saved it may also evaluate it but may not review or approve it, and a Finance officer cannot confirm a payment they recorded. So a full run needs at least three people; the admin and Finance roles can be held by any of them.
 
 ## 1. Set up (Admin)
 

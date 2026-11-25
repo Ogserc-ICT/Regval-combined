@@ -111,9 +111,11 @@ describe("EVAL-01 and approval (SPEC §12)", () => {
     expect(a.approvalBlockers).toContain("No evaluating officer assigned");
     expect(a.approvalBlockers.some((b) => b.startsWith("Payment not yet confirmed"))).toBe(true);
   });
-  it("[G8] four different people", () => {
-    expect(separationOfDuties({ evaluatingOfficerId: "a", reviewingSupervisorId: "a", approvingOfficerId: "a" }, "a")).toHaveLength(6);
+  it("[G8] three different officers; the creator may evaluate but not review or approve", () => {
+    expect(separationOfDuties({ evaluatingOfficerId: "a", reviewingSupervisorId: "a", approvingOfficerId: "a" }, "a")).toHaveLength(5);
     expect(separationOfDuties({ evaluatingOfficerId: "a", reviewingSupervisorId: "b", approvingOfficerId: "c" }, "d")).toEqual([]);
+    expect(separationOfDuties({ evaluatingOfficerId: "a", reviewingSupervisorId: "b", approvingOfficerId: "c" }, "a")).toEqual([]);
+    expect(separationOfDuties({ evaluatingOfficerId: "a", reviewingSupervisorId: "b", approvingOfficerId: "c" }, "b")).toEqual(["The reviewing supervisor cannot be the user who created the submission"]);
   });
   it("unresolved flags block unless a reason is written (flagsBlockApproval = N, Q11)", () => {
     const s = { ...ready(), cacNo: "123" }; // CAC_FORMAT flag

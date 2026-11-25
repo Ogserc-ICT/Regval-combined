@@ -240,7 +240,7 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     expect(a.action).toBe("Blocked - awaiting Finance confirmation");
   });
 
-  it("[G8] officers must be four different people, holding their roles", async () => {
+  it("[G8] officers must be three different people, holding their roles; the creator may evaluate", async () => {
     const t = await released();
     const e = await failure(assignOfficers(db, t.supervisor, t.s.id, { evaluatingOfficerId: t.registry.id, reviewingSupervisorId: t.supervisor.id, approvingOfficerId: t.approver.id }));
     expect(e.fieldErrors.evaluatingOfficerId).toBeDefined();
@@ -249,8 +249,11 @@ describe("evaluation and decisions (SPEC §12, §13)", () => {
     expect(e2.reasons).toContain("The approving officer cannot be the evaluating officer");
     const creatorEval = await makeActor(db, ["registration", "evaluator"]);
     const s2 = await createSubmission(db, creatorEval, input());
-    const e3 = await failure(assignOfficers(db, t.supervisor, s2.id, { evaluatingOfficerId: creatorEval.id }));
-    expect(e3.reasons).toContain("The evaluating officer cannot be the user who created the submission");
+    await assignOfficers(db, t.supervisor, s2.id, { evaluatingOfficerId: creatorEval.id, reviewingSupervisorId: t.supervisor.id, approvingOfficerId: t.approver.id });
+    const creatorSup = await makeActor(db, ["registration", "supervisor"]);
+    const s3 = await createSubmission(db, creatorSup, input());
+    const e3 = await failure(assignOfficers(db, t.supervisor, s3.id, { reviewingSupervisorId: creatorSup.id }));
+    expect(e3.reasons).toContain("The reviewing supervisor cannot be the user who created the submission");
   });
 
   it("full path: checks, documents, category, complete, approve → registration number", async () => {

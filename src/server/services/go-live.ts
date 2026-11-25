@@ -88,7 +88,7 @@ export async function goLiveChecks(db: Db, env: NodeJS.ProcessEnv = process.env)
     href: "/admin/users",
   });
   if (!roleRows.some((r) => r.role === "approver") || !roleRows.some((r) => r.role === "supervisor") || !roleRows.some((r) => r.role === "evaluator")) {
-    add({ area: "People", label: "Separation of duties possible", state: "warn", detail: "Approval needs four different people: approver, evaluator, supervisor and the officer who saved the submission [G8].", href: "/admin/users" });
+    add({ area: "People", label: "Separation of duties possible", state: "warn", detail: "Approval needs three different people: approver, evaluator and supervisor; the officer who saved the submission may evaluate it but not review or approve it [G8].", href: "/admin/users" });
   }
   add({
     area: "People",

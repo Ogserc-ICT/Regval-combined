@@ -138,7 +138,7 @@ function requireEvaluatorOrSupervisor(actor: Actor, l: LoadedSubmission) {
 
 export type OfficerAssignment = { evaluatingOfficerId?: string | null; reviewingSupervisorId?: string | null; approvingOfficerId?: string | null };
 
-/** Assign the three officers ([G2]: from user accounts with the role; [G8]: four different people). */
+/** Assign the three officers ([G2]: from user accounts with the role; [G8]: three different officers; the creator may evaluate). */
 export async function assignOfficers(db: Db, actor: Actor | null, id: string, input: OfficerAssignment): Promise<void> {
   authorize(actor, "evaluation:assign");
   await db.transaction(async (tx) => {
