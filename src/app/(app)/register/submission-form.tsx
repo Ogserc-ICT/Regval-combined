@@ -272,15 +272,20 @@ export function SubmissionForm<T>({
             <Section title="Document conditions" description="Blank = applies. A document whose condition is N becomes N/A. Holding a licence follows the licence status.">
               {lists.conditions
                 .filter((c) => c.key !== "holds_any_licence")
-                .map((c) => (
-                  <Field key={c.key} label={c.question} htmlFor={`cond_${c.key}`}>
-                    <Select id={`cond_${c.key}`} name={`cond_${c.key}`} defaultValue={values.conditions[c.key] ?? ""}>
-                      <option value="">(blank: applies)</option>
-                      <option value="Y">Y</option>
-                      <option value="N">N</option>
-                    </Select>
-                  </Field>
-                ))}
+                .map((c) => {
+                  // The mini-grid condition reads as a type: Interconnected = Y, Isolated = N
+                  // (an isolated mini-grid needs no interconnection agreement).
+                  const minigrid = c.key === "interconnected_minigrid";
+                  return (
+                    <Field key={c.key} label={minigrid ? "Mini-grid type" : c.question} htmlFor={`cond_${c.key}`}>
+                      <Select id={`cond_${c.key}`} name={`cond_${c.key}`} defaultValue={values.conditions[c.key] ?? ""}>
+                        <option value="">(blank: applies)</option>
+                        <option value="Y">{minigrid ? "Interconnected" : "Y"}</option>
+                        <option value="N">{minigrid ? "Isolated" : "N"}</option>
+                      </Select>
+                    </Field>
+                  );
+                })}
             </Section>
 
             <Section title="Form sections summary" description="The detailed REG-01 sections are not held here; record what is incomplete and the capacity the sections state.">

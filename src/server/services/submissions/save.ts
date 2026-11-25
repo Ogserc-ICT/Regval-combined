@@ -325,7 +325,7 @@ const FIELD_LABELS: Partial<Record<keyof Columns, string>> = {
   plannedStartDate: "Planned start date", approvedWaiver: "Approved waiver (kobo)", categoryOverride: "Category override", overrideReason: "Override reason",
   formSectionsNotComplete: "Form sections not complete", capacityInSectionsMw: "Capacity stated in sections (MW)", remarks: "Remarks",
   condMultiState: "Multi-State licensee", condGenerationForSale: "Generation for sale", condGridConnected: "Grid connected",
-  condInterconnectedMinigrid: "Interconnected mini-grid", condFDistribution: "Form F Part 1", condFTrading: "Form F Part 2",
+  condInterconnectedMinigrid: "Interconnected mini-grid (N = isolated)", condFDistribution: "Form F Part 1", condFTrading: "Form F Part 2",
   condDiscoBulkSupply: "DisCo bulk supply", condSubFranchise: "Sub-franchisee",
 };
 
