@@ -7,8 +7,9 @@
  * E-signatures (users.signaturePath) are stamped on the first three only, and only once the
  * person has done their step: the acknowledgement letter always (its signer is fixed when it
  * prints), the deficiency notice once sent, EVAL-01 once the final decision is recorded.
- * CERT-01 is signed by hand and never carries one. The payment receipt carries the Head of
- * Finance's, from the staff account linked to that signatory.
+ * CERT-01 carries the e-signatures of the Chairman / CEO and the Secretary to the Commission,
+ * uploaded on their rows under Admin › Signatories, once each is confirmed. The payment receipt
+ * carries the Head of Finance's: their own, else that of the staff account linked to them.
  */
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { addDays, lagosDate, type LocalDate } from "@/domain/dates";
@@ -20,7 +21,7 @@ import { notFound, blocked } from "../errors";
 import { lagosToday } from "../time";
 import { signatureBlobStore, type SignatureStore } from "../blob";
 import { getSettings } from "./settings";
-import { signaturesOf } from "./signatures";
+import { signatoryImage, signaturesOf } from "./signatures";
 import { loadSubmission, type LoadedSubmission } from "./submissions/load";
 
 export type Letterhead = { address: string; email: string };
@@ -273,7 +274,13 @@ export async function evaluationData(db: DbOrTx, id: string, store: SignatureSto
 // ---------------------------------------------------------------------------
 // CERT-01 certificate (para 13(5))
 
-export type Signer = { name: string; designation: string; confirmed: boolean };
+export type Signer = {
+  name: string;
+  designation: string;
+  confirmed: boolean;
+  /** Stamped on the line; only for a confirmed signatory with an e-signature. */
+  signature?: Buffer | null;
+};
 export type CertificateData = {
   serial: string;
   registrationNo: string;
@@ -306,18 +313,20 @@ async function signatoryRow(db: DbOrTx, role: "chairman_ceo" | "secretary" | "he
   return rows[0] ?? null;
 }
 
-async function signer(db: DbOrTx, role: "chairman_ceo" | "secretary"): Promise<Signer | null> {
+async function signer(db: DbOrTx, role: "chairman_ceo" | "secretary", store: SignatureStore): Promise<Signer | null> {
   const s = await signatoryRow(db, role);
-  return s ? { name: s.name, designation: s.designation, confirmed: s.confirmed } : null;
+  if (!s) return null;
+  const signature = s.confirmed ? await signatoryImage(db, s, store) : null;
+  return { name: s.name, designation: s.designation, confirmed: s.confirmed, signature };
 }
 
-export async function certificateData(db: DbOrTx, id: string): Promise<CertificateData> {
+export async function certificateData(db: DbOrTx, id: string, store: SignatureStore = signatureBlobStore): Promise<CertificateData> {
   const l = await loadSubmission(db, id);
   const { row, a } = l;
   if (row.filingType !== "NEW" || !row.registrationNo || !row.certificateIssueDate) {
     throw blocked("A certificate exists only once a new registration is approved and has its registration number.");
   }
-  const [chairman, secretary] = await Promise.all([signer(db, "chairman_ceo"), signer(db, "secretary")]);
+  const [chairman, secretary] = await Promise.all([signer(db, "chairman_ceo", store), signer(db, "secretary", store)]);
   const missing = [
     !chairman ? "no Chairman / CEO" : !chairman.confirmed ? `${chairman.name} (Chairman / CEO) not confirmed` : null,
     !secretary ? "no Secretary to the Commission" : !secretary.confirmed ? `${secretary.name} (Secretary to the Commission) not confirmed` : null,
@@ -373,7 +382,7 @@ export type ReceiptData = {
   /** Registration filings only: the account as at the print date. */
   position: { totalDue: number; paid: number; balance: number } | null;
   headOfFinance: Signer | null;
-  /** Stamped only when the Head of Finance is confirmed and linked to a staff account with one. */
+  /** Stamped only when the Head of Finance is confirmed and has an e-signature (their own or the linked account's). */
   signature: Buffer | null;
   draftReason: string | null;
   reversedReason: string | null;
@@ -422,7 +431,7 @@ export async function receiptData(db: DbOrTx, paymentId: string, store: Signatur
     : !hof.confirmed
       ? `${hof.name} (Head of Finance) is not confirmed under Admin › Signatories.`
       : null;
-  const signature = hof?.confirmed && hof.userId ? ((await signaturesOf(db, [hof.userId], store)).get(hof.userId) ?? null) : null;
+  const signature = hof?.confirmed ? await signatoryImage(db, hof, store) : null;
   return {
     head: { address: settings.letterAddress, email: settings.letterEmail },
     payNo: p.payNo,

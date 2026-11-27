@@ -9,7 +9,7 @@ A user can hold several roles, but on one submission the evaluating officer, the
 - [ ] Sign in with the bootstrap admin and choose a new password.
 - [ ] **Admin › Staff & roles:** create one account per person, with a role each. Note the one-time password shown for each.
 - [ ] **Admin › Settings:** check the Effective Date (clear "placeholder" once gazetted), the 17:00 office closing time, the ACK number prefix and "Sign out after inactivity".
-- [ ] **Admin › Signatories:** confirm the Chairman / CEO (Jide Onakoya) and add the Secretary to the Commission, both ticked confirmed. Without a Secretary to the Commission, new registrations cannot be approved; while either is unconfirmed the certificate prints as a draft. Add the Head of Finance too (confirmed, linked to his staff account, which has his e-signature): he signs the payment receipts.
+- [ ] **Admin › Signatories:** confirm the Chairman / CEO (Jide Onakoya) and add the Secretary to the Commission, both ticked confirmed, and upload each one's e-signature on their row (it prints on CERT-01). Without a Secretary to the Commission, new registrations cannot be approved; while either is unconfirmed the certificate prints as a draft. Add the Head of Finance too (confirmed, linked to his staff account, which has his e-signature): he signs the payment receipts.
 - [ ] **Admin › Holidays:** confirm the provisional and estimated dates; deemed receipt and working days depend on them.
 - [ ] **Admin › Go-live checks:** work down the list until every row is ready.
 - [ ] Each person signs in once and replaces the one-time password. The eye button shows what they type.

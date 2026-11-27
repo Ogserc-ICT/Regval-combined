@@ -1,6 +1,7 @@
 /**
- * Staff e-signatures: a PNG per staff account, stamped on the acknowledgement letter,
- * deficiency notice and EVAL-01 where that person signs. CERT-01 is always signed by hand.
+ * E-signatures: a PNG per staff account, stamped on the acknowledgement letter, deficiency
+ * notice and EVAL-01 where that person signs; and a PNG per signatory (Admin › Signatories),
+ * stamped on CERT-01 (Chairman / CEO, Secretary to the Commission) and the payment receipt.
  */
 
 export const SIGNATURE_MAX_BYTES = 1024 * 1024;
@@ -23,3 +24,6 @@ export function signatureProblem(bytes: Uint8Array): string | null {
 
 /** Each upload gets a new path, so a replaced signature never overwrites the old file in place. */
 export const signaturePathname = (userId: string, suffix: string) => `signatures/${userId}/${suffix.replace(/[^A-Za-z0-9]/g, "")}.png`;
+
+/** A signatory's own e-signature (Admin › Signatories); never collides with a staff account's. */
+export const signatoryPathname = (signatoryId: string, suffix: string) => `signatures/signatory-${signatoryId}/${suffix.replace(/[^A-Za-z0-9]/g, "")}.png`;

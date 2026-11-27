@@ -99,10 +99,17 @@ export const signatories = pgTable(
     confirmed: boolean("confirmed").notNull().default(false),
     note: text("note"),
     /**
-     * The staff account whose e-signature is stamped where this signatory signs. Used by the
-     * payment receipt (Head of Finance) only; CERT-01 is always signed by hand.
+     * The staff account whose e-signature is stamped where this signatory signs, when the
+     * signatory has none of their own (payment receipt, Head of Finance).
      */
     userId: uuid("user_id").references(() => users.id),
+    /**
+     * The signatory's own e-signature (a PNG in the private Blob store, uploaded under
+     * Admin › Signatories), for people without a staff account: the Chairman / CEO and the
+     * Secretary to the Commission on CERT-01. Takes precedence over the linked account's.
+     */
+    signaturePath: text("signature_path"),
+    signatureUpdatedAt: timestamp("signature_updated_at", { withTimezone: true }),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [check("signatories_role_check", sql`${t.role} in ('chairman_ceo', 'commissioner', 'secretary', 'head_of_finance', 'other')`)],

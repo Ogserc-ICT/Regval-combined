@@ -217,6 +217,9 @@ describe("registration PDFs (Phase 10)", () => {
     expect((await render("cert-01", createElement(Certificate, { x: SAMPLE_CERT, qr }))).pages).toBe(1);
     const draft = { ...SAMPLE_CERT, secretary: { ...SAMPLE_CERT.secretary!, confirmed: false }, draftReason: "Signatories: not confirmed" };
     expect((await render("cert-01-draft", createElement(Certificate, { x: draft, qr }))).pages).toBe(1);
+    const sig = await QRCode.toBuffer("signature", { margin: 0, width: 300 });
+    const signed = { ...SAMPLE_CERT, chairman: { ...SAMPLE_CERT.chairman!, signature: sig }, secretary: { ...SAMPLE_CERT.secretary!, signature: sig } };
+    expect((await render("cert-01-signed", createElement(Certificate, { x: signed, qr }))).pages).toBe(1);
   }, 30_000);
 
   it("payment receipt: one landscape page, signed, draft or reversed", async () => {

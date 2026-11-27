@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Badge, Card, CardBody, CardHeader, Notice, PageHeader } from "@/components/ui";
 import { can } from "@/server/auth/actor";
 import { requirePermission } from "@/server/auth/session";
+import { blobEnabled } from "@/server/blob";
 import { db } from "@/server/db/client";
 import { SIGNATORY_ROLES } from "@/server/db/schema";
 import { signatoriesReady } from "@/server/services/reference";
 import { listSignatories, SIGNATORY_ROLE_LABELS } from "@/server/services/signatories";
 import { listUsers } from "@/server/services/users";
 import { SignatoryForm } from "./signatory-form";
+import { SignatorySignature } from "./signatory-signature";
 
 export const metadata: Metadata = { title: "Signatories" };
 
@@ -21,7 +23,7 @@ export default async function SignatoriesPage() {
     <>
       <PageHeader
         title="Signatories"
-        description="One list for CERT-01 certificates, payment receipts and outgoing letters. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Secretary to the Commission, the two CERT-01 signatories."
+        description="One list for CERT-01 certificates, payment receipts and outgoing letters. Upload the e-signature of each person who signs CERT-01 on their row; it prints once they are confirmed. Approval of a new registration is blocked until there is an active Chairman / CEO and an active Secretary to the Commission, the two CERT-01 signatories."
       />
       {!ready.chairman || !ready.secretary ? (
         <Notice tone="warn" title="Approvals are blocked" className="mb-6">
@@ -45,6 +47,11 @@ export default async function SignatoriesPage() {
             />
             <CardBody>
               <SignatoryForm s={s} editable={editable} roles={roles} staff={staff} />
+              {editable ? (
+                <SignatorySignature id={s.id} name={s.name} has={!!s.signaturePath} updatedAt={s.signatureUpdatedAt?.toISOString() ?? null} storage={blobEnabled()} />
+              ) : s.signaturePath ? (
+                <p className="mt-4 text-sm text-muted">E-signature on file.</p>
+              ) : null}
             </CardBody>
           </Card>
         ))}

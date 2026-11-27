@@ -29,8 +29,9 @@ export const users = pgTable("users", {
   removedBy: uuid("removed_by"),
   /**
    * The person's e-signature (a PNG in the private Blob store, uploaded by an admin), stamped
-   * on the acknowledgement letter, deficiency notice and EVAL-01 where they sign. Never on
-   * CERT-01, which is signed by hand. Null: the line is left blank for a wet signature.
+   * on the acknowledgement letter, deficiency notice and EVAL-01 where they sign; on CERT-01 and
+   * the payment receipt only through a signatory linked to this account (Admin › Signatories) with
+   * no e-signature of its own. Null: the line is left blank for a wet signature.
    */
   signaturePath: text("signature_path"),
   signatureUpdatedAt: timestamp("signature_updated_at", { withTimezone: true }),

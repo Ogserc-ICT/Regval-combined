@@ -93,7 +93,7 @@
     <div><b>3 · Evaluate</b>Officers assigned; EVAL-01 checks; documents ticked.</div>
     <div><b>4 · Complete or deficient</b>Mark complete (30-day clock) or issue a deficiency notice.</div>
     <div><b>5 · Decide</b>Approving officer registers, refuses or lapses.</div>
-    <div><b>6 · Issue</b>CERT-01 printed, signed, sealed, sent; date recorded.</div>
+    <div><b>6 · Issue</b>CERT-01 printed with e-signatures, sealed, sent; date recorded.</div>
   </div>
 
   <h3>Who is involved</h3>
@@ -107,7 +107,7 @@
       <tr><td class="who">Approving officer</td><td>Makes the decision: approve and register, refuse after show-cause, or lapse. Registers own-use notifications.</td></tr>
       <tr><td class="who">Admin</td><td>Staff accounts and roles, settings, fees, lists, holidays, signatories, go-live checks, daily review, exports, cancellations, data management.</td></tr>
       <tr><td class="who">Viewer</td><td>Read-only: dashboards and registers.</td></tr>
-      <tr><td class="who">Signatories</td><td>Chairman / CEO and Secretary to the Commission, who sign CERT-01 by hand; the Head of Finance, whose e-signature is printed on payment receipts. Entered in Admin › Signatories.</td></tr>
+      <tr><td class="who">Signatories</td><td>Chairman / CEO and Secretary to the Commission, whose e-signatures (uploaded on their rows) are printed on CERT-01; the Head of Finance, whose e-signature is printed on payment receipts. Entered in Admin › Signatories.</td></tr>
     </tbody>
   </table>
 
@@ -208,7 +208,7 @@
     <tbody>
       <tr><td class="num">1</td><td class="who">Admin</td><td><b>Admin › Staff &amp; roles</b>: create one account per person and give each their role(s).</td><td>A one-time password for each person; they replace it at first sign-in.</td></tr>
       <tr><td class="num">2</td><td class="who">Admin</td><td><b>Admin › Settings</b>: Effective Date (gazetted 2 Nov 2026), office closing time (17:00), ACK prefix, idle sign-out minutes, policies.</td><td>Every deadline and fee follows these. Changes are audited.</td></tr>
-      <tr><td class="num">3</td><td class="who">Admin</td><td><b>Admin › Signatories</b>: Chairman / CEO and Secretary to the Commission, both ticked confirmed; the Head of Finance, confirmed and linked to his staff account (which holds his e-signature).</td><td>Without a Secretary to the Commission, new registrations cannot be approved; unconfirmed signatories make CERT-01 print as a draft. Without a confirmed Head of Finance, receipts print as drafts.</td></tr>
+      <tr><td class="num">3</td><td class="who">Admin</td><td><b>Admin › Signatories</b>: Chairman / CEO and Secretary to the Commission, both ticked confirmed, each with their e-signature uploaded; the Head of Finance, confirmed and linked to his staff account (which holds his e-signature).</td><td>Without a Secretary to the Commission, new registrations cannot be approved; unconfirmed signatories make CERT-01 print as a draft. Without a confirmed Head of Finance, receipts print as drafts.</td></tr>
       <tr><td class="num">4</td><td class="who">Admin</td><td><b>Admin › Holidays</b>: confirm provisional and estimated public holidays.</td><td>Deemed receipt dates depend on them.</td></tr>
       <tr><td class="num">5</td><td class="who">Admin</td><td><b>Admin › Go-live checks</b>: work down the list until every row is Ready.</td><td>App ready for live filings.</td></tr>
     </tbody>
@@ -284,8 +284,8 @@
   <table>
     <thead><tr><th class="num">#</th><th style="width:20%">Who</th><th>Action in the app</th><th style="width:30%">Result</th></tr></thead>
     <tbody>
-      <tr><td class="num">27</td><td class="who">Registration officer</td><td>Print <b>CERT-01</b> from the Documents card.</td><td>Landscape certificate: serial number, registration number, both signatories, seal circle, QR code.</td></tr>
-      <tr><td class="num">28</td><td class="who">Chairman / CEO, Secretary to the Commission</td><td>Sign; the Commission's seal is applied.</td><td>Certificate ready to issue.</td></tr>
+      <tr><td class="num">27</td><td class="who">Registration officer</td><td>Print <b>CERT-01</b> from the Documents card.</td><td>Landscape certificate: serial number, registration number, both signatories with their e-signatures, seal circle, QR code.</td></tr>
+      <tr><td class="num">28</td><td class="who">Chairman / CEO, Secretary to the Commission</td><td>Signatures print automatically (e-signatures); the Commission's seal is applied.</td><td>Certificate ready to issue.</td></tr>
       <tr><td class="num">29</td><td class="who">Registration officer</td><td>Send it to the registrant; record the date sent under <b>Letters sent</b>.</td><td>Leaves the "certificates to send" queue. Evaluator completes the post-approval checks 9.1–9.7 to close the file.</td></tr>
     </tbody>
   </table>

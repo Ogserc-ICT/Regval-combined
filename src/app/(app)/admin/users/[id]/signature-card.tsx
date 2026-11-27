@@ -6,7 +6,7 @@ import { removeSignatureAction, saveSignatureAction } from "../../actions";
 
 /**
  * The person's e-signature: stamped on the acknowledgement letter, deficiency notice and
- * EVAL-01 where they sign. CERT-01 is always signed by hand.
+ * EVAL-01 where they sign. CERT-01 carries the signatories' e-signatures from Admin › Signatories.
  */
 export function SignatureCard({ id, name, has, updatedAt, storage }: { id: string; name: string; has: boolean; updatedAt: string | null; storage: boolean }) {
   const [saved, saveAction, saving] = useActionState(saveSignatureAction, undefined);
@@ -19,7 +19,7 @@ export function SignatureCard({ id, name, has, updatedAt, storage }: { id: strin
     <Card>
       <CardHeader
         title="E-signature"
-        description="Printed on this person's acknowledgement letters, sent deficiency notices, and EVAL-01 forms once the decision is recorded. Never on the certificate, which is signed by hand."
+        description="Printed on this person's acknowledgement letters, sent deficiency notices, and EVAL-01 forms once the decision is recorded. The certificate (CERT-01) uses the signatures uploaded under Admin › Signatories."
       />
       <CardBody>
         {[saved, removed].map((state, i) =>

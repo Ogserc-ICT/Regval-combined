@@ -144,7 +144,8 @@ type RefSeed = {
 };
 type HolidaySeed = { date: string; name: string; status: "Fixed" | "Provisional" | "Estimated" | "State-declared"; note?: string }[];
 
-async function restoreSetup(tx: Tx, group: ClearGroup): Promise<number> {
+/** `files` collects the signatories' e-signature files to delete once the transaction commits. */
+async function restoreSetup(tx: Tx, group: ClearGroup, files: string[]): Promise<number> {
   const ref = referenceSeed as unknown as RefSeed;
   switch (group) {
     case "settings":
@@ -170,7 +171,8 @@ async function restoreSetup(tx: Tx, group: ClearGroup): Promise<number> {
       return rows.length;
     }
     case "signatories": {
-      await tx.delete(signatories);
+      const gone = await tx.delete(signatories).returning({ path: signatories.signaturePath });
+      files.push(...gone.map((g) => g.path).filter((x): x is string => !!x));
       for (const sg of ref.signatories) {
         const role = /chairman/i.test(sg.designation) ? "chairman_ceo" : /secretary/i.test(sg.designation) ? "secretary" : "other";
         await tx.insert(signatories).values({
@@ -221,7 +223,7 @@ export async function clearData(db: Db, actor: Actor | null, groups: string[], p
     if (chosen.includes("notifications")) cleared.notifications = (await tx.delete(notifications).returning({ id: notifications.id })).length;
     if (chosen.includes("drafts")) cleared.drafts = (await tx.delete(formDrafts).returning({ id: formDrafts.id })).length;
     if (chosen.includes("dailyReview")) cleared.dailyReview = (await tx.delete(dailyReviewRuns).returning({ d: dailyReviewRuns.lagosDate })).length;
-    for (const g of chosen) if (CLEAR_GROUPS[g].setup) cleared[g] = await restoreSetup(tx, g);
+    for (const g of chosen) if (CLEAR_GROUPS[g].setup) cleared[g] = await restoreSetup(tx, g, files);
     const restarted = await restartEmptySeries(tx);
     const all = (Object.keys(CLEAR_GROUPS) as ClearGroup[]).every((g) => chosen.includes(g));
     await writeAudit(tx, {

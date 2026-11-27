@@ -42,7 +42,7 @@ export function SignatoryForm({
             label="Staff account for the e-signature (optional)"
             htmlFor={`user-${key}`}
             errors={fe.userId}
-            hint="Used on payment receipts only: the Head of Finance's e-signature from their staff account. CERT-01 is always signed by hand."
+            hint="For a signatory who is also on the staff (e.g. the Head of Finance on payment receipts): their staff account's e-signature is used when none is uploaded below."
             className="md:col-span-3"
           >
             <Select id={`user-${key}`} name="userId" defaultValue={s?.userId ?? ""}>

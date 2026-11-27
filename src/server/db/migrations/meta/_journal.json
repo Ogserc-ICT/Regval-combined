@@ -134,6 +134,13 @@
       "when": 1795168679026,
       "tag": "0018_signatory_head_of_finance",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795778302378,
+      "tag": "0019_signatory_signatures",
+      "breakpoints": true
     }
   ]
 }

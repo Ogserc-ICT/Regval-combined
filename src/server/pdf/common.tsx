@@ -198,7 +198,7 @@ export const bullet = () => "•";
 const SIGNATURE_HEIGHT = 36;
 
 /**
- * A stored e-signature sitting on the signature line (staff accounts; never CERT-01), with the
+ * A stored e-signature sitting on the signature line (letters, notices, EVAL-01, receipts), with the
  * date it was signed beside it. Without a signature the space stays empty for a wet signature
  * and a handwritten date.
  */

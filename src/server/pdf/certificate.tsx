@@ -1,7 +1,8 @@
 /**
  * Certificate of registration OGSERC/CERT-01, para 13(5) (template: docs/templates/CERT-01.pdf).
- * Signed by the Chairman / CEO and the Secretary to the Commission from Admin › Signatories; prints as a
- * draft while either is missing or unconfirmed (Q28e). The QR code opens the registration
+ * Signed by the Chairman / CEO and the Secretary to the Commission from Admin › Signatories, with
+ * their e-signatures stamped on the lines once confirmed; prints as a draft while either is missing
+ * or unconfirmed (Q28e). The QR code opens the registration
  * in this app, for signed-in staff (Q28f). The seal is stamped by hand in the circle (Q28g).
  */
 import { Document, Image, Page, Text, View } from "@react-pdf/renderer";
@@ -11,6 +12,8 @@ import { COMMISSION, COMMISSION_NAME, dayOfMonthYear, GOLD, GREEN, GREY, Waterma
 export const CERT_FORM = "Form OGSERC/CERT-01  ·  Version 2026.1";
 const MICRO = "OGSERC CERTIFICATE OF REGISTRATION CERT-01 2026.1   ";
 const serif = "DejaVu Serif";
+/** Room above each signature line: the e-signature, or a wet signature. */
+const SIGN_SPACE = 46;
 
 function Micro({ top, text }: { top: boolean; text: string }) {
   return (
@@ -43,6 +46,12 @@ export function CertificateFrame({ micro }: { micro: string }) {
 function Signature({ who, role }: { who: Signer | null; role: string }) {
   return (
     <View style={{ width: 205, alignItems: "center" }}>
+      <View style={{ height: SIGN_SPACE, width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
+        {who?.signature ? (
+          // eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt
+          <Image src={{ data: who.signature, format: "png" }} style={{ height: SIGN_SPACE, maxWidth: 170, objectFit: "contain" }} />
+        ) : null}
+      </View>
       <View style={{ height: 0.7, width: "100%", backgroundColor: "#555", marginBottom: 5 }} />
       <Text style={{ fontFamily: serif, fontWeight: "bold", fontSize: 10.5 }}>{who?.name ?? "[Not set]"}</Text>
       <Text style={{ fontFamily: serif, fontSize: 9 }}>{who?.designation ?? role}</Text>
@@ -105,7 +114,7 @@ export function Certificate({ x, qr }: { x: CertificateData; qr: Buffer }) {
 
         <Text style={{ textAlign: "center", fontWeight: "bold", fontSize: 10.5, marginTop: 12 }}>Issued at Abeokuta this {dayOfMonthYear(x.issueDate)}</Text>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginTop: 16, paddingHorizontal: 30 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginTop: 4, paddingHorizontal: 30 }}>
           <Signature who={x.chairman} role="Chairman / Chief Executive Officer" />
           <View style={{ width: 74, height: 74, borderRadius: 37, borderWidth: 1, borderColor: GOLD, alignItems: "center", justifyContent: "center" }}>
             <Text style={{ fontSize: 7.5, fontWeight: "bold", color: GOLD, textAlign: "center" }}>COMMISSION{"\n"}SEAL</Text>

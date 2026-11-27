@@ -18,7 +18,7 @@ import { PaymentReceipt } from "../../src/server/pdf/payment-receipt";
 import { acknowledgementData, certificateData, deficiencyData, evaluationData, receiptData } from "../../src/server/services/letters";
 import { confirmPayment, recordPayment, rejectPayment, reversePayment } from "../../src/server/services/payments";
 import { saveSignatory } from "../../src/server/services/signatories";
-import { removeSignature, saveSignature } from "../../src/server/services/signatures";
+import { removeSignatorySignature, removeSignature, saveSignatorySignature, saveSignature } from "../../src/server/services/signatures";
 import { removeUser } from "../../src/server/services/users";
 import type { SignatureStore } from "../../src/server/blob";
 import { createSubmission, type SubmissionInput } from "../../src/server/services/submissions/save";
@@ -258,6 +258,42 @@ describe("staff e-signatures", () => {
     await removeUser(db, t2.admin, leaver.id, store);
     expect(files.size).toBe(before - 1);
     expect((await acknowledgementData(db, bare.id, leaver, store)).signature).toBeNull();
+  }, 120_000);
+});
+
+describe("signatory e-signatures on CERT-01", () => {
+  it("only an admin uploads; stamped once the signatory is confirmed; replacing or removing deletes the old file", async () => {
+    const t = await released();
+    const { files, store } = fakeSignatureStore();
+    const png = await QRCode.toBuffer("sig", { margin: 0, width: 200 });
+    await sigs(t.admin, false);
+    await registered(t);
+    const [chair] = await db.select().from(signatories).where(eq(signatories.role, "chairman_ceo"));
+    const [sec] = await db.select().from(signatories).where(eq(signatories.role, "secretary"));
+
+    await expect(saveSignatorySignature(db, t.registry, chair.id, png, store)).rejects.toBeInstanceOf(ServiceError);
+    await expect(saveSignatorySignature(db, t.admin, chair.id, Buffer.from("not a png"), store)).rejects.toBeInstanceOf(ServiceError);
+    await saveSignatorySignature(db, t.admin, chair.id, png, store);
+    await saveSignatorySignature(db, t.admin, sec.id, png, store);
+    expect(files.size).toBe(2);
+
+    // The Secretary is unconfirmed: their line stays blank and the certificate is a draft.
+    const draft = await certificateData(db, t.s.id, store);
+    expect(draft.chairman?.signature).toBeTruthy();
+    expect(draft.secretary?.signature).toBeNull();
+
+    await db.update(signatories).set({ confirmed: true }).where(eq(signatories.id, sec.id));
+    const x = await certificateData(db, t.s.id, store);
+    expect(x.draftReason).toBeNull();
+    expect(x.chairman?.signature && x.secretary?.signature).toBeTruthy();
+    const qr = await QRCode.toBuffer("x", { margin: 0, width: 120 });
+    expect(await pdfPages(createElement(Certificate, { x, qr }))).toBe(1);
+
+    await saveSignatorySignature(db, t.admin, chair.id, png, store);
+    expect(files.size).toBe(2);
+    await removeSignatorySignature(db, t.admin, chair.id, store);
+    expect(files.size).toBe(1);
+    expect((await certificateData(db, t.s.id, store)).chairman?.signature).toBeNull();
   }, 120_000);
 });
 
